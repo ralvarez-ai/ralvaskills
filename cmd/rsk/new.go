@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -18,7 +17,6 @@ import (
 	"github.com/ralvarezdev/ralvaskills/v3/internal"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/install"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
@@ -31,9 +29,9 @@ var newCmd = &cobra.Command{
 	Short: "Initialize an rsk project in the current directory.",
 	Long: `Create .rsk/rsk.mod and tool-specific config in the current directory so
 this folder becomes an rsk project. The .claude/skills/ directory is created
-lazily the first time a skill is installed. .rsk/rsk.lock is added to
-.gitignore: it records what this machine installed, not what the project
-depends on.
+lazily the first time a skill is installed. Commit .rsk/rsk.mod,
+.rsk/rsk.lock and .rsk/CLAUDE.md: the lock resolves the same versions on
+every machine.
 
 Claude Code also gets an agent guide: AGENTS.md is created from a short
 skeleton when the project has none, and CLAUDE.md imports it (@AGENTS.md) above
@@ -93,9 +91,6 @@ func runNew(cmd *cobra.Command, _ []string) error {
 	}
 
 	if err = manifest.WriteMod(rskDir, *m); err != nil {
-		return err
-	}
-	if err = ensureGitignoreEntry(cwd, internal.ProjectFolderName+"/"+manifest.LockFileName); err != nil {
 		return err
 	}
 	if err = syncToolConfigs(tools, cwd, m.Pinned); err != nil {
@@ -194,32 +189,6 @@ func syncToolConfigs(tools []tool.ID, cwd string, pinned []string) error {
 		if err := t.SyncPinned(cwd, pinned); err != nil {
 			return err
 		}
-	}
-	return nil
-}
-
-// ensureGitignoreEntry appends entry to the project's .gitignore when it is
-// missing, creating the file if needed and keeping one entry per line. The
-// lock records what this machine installed, so it stays out of git; rsk.mod is
-// the file that travels.
-func ensureGitignoreEntry(root, entry string) error {
-	path := filepath.Join(root, ".gitignore")
-	data, err := os.ReadFile(path)
-	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		return fmt.Errorf("read .gitignore: %w", err)
-	}
-	for _, line := range strings.Split(string(data), "\n") {
-		if strings.TrimSpace(line) == entry {
-			return nil
-		}
-	}
-	content := string(data)
-	if content != "" && !strings.HasSuffix(content, "\n") {
-		content += "\n"
-	}
-	content += entry + "\n"
-	if err = os.WriteFile(path, []byte(content), fsperm.File); err != nil {
-		return fmt.Errorf("write .gitignore: %w", err)
 	}
 	return nil
 }

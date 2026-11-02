@@ -1,6 +1,6 @@
 ---
 name: rsk-guide
-version: 0.4.1
+version: 0.4.2
 description: Operator's guide for the rsk CLI — manage ralvaskills via the .rsk/ project manifest (rsk new, rsk install, rsk pin), bundle/global installs and the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards. Use when the user mentions rsk, asks how to install/pin/update skills, wants to add a skill to a project, is starting work in a new project or scaffolding (to learn which standards apply), or wants to set up ralvaskills on a new machine. Companion to cli-tool-architect (CLI design), mcp-architect (server design) and skill-builder (authoring new skills).
 ---
 
@@ -127,7 +127,7 @@ Per the spec this is opt-in with a 24h cache; the current build returns an expli
 **Set up a new project with tracked manifest**
 1. `cd <project>` then `rsk new`
 2. `rsk install <name>` per skill (use `--pin` for ones that should always auto-load)
-3. Commit `.rsk/rsk.mod`, `.rsk/CLAUDE.md` and the `@.rsk/CLAUDE.md` import line in `./CLAUDE.md`. Leave `.rsk/rsk.lock` out of git: with a `"*"` constraint it is only a snapshot of what this machine installed, and `rsk new` adds it to `.gitignore` for you. Commit the lock only when the project must freeze exact versions, and prefer a pinned constraint (`docs-architect = "1.1.0"`) if you want that to be readable
+3. Commit `.rsk/rsk.mod`, `.rsk/rsk.lock`, `.rsk/CLAUDE.md` and the `@.rsk/CLAUDE.md` import line in `./CLAUDE.md`. The lock holds no machine paths (since rsk 3.4.0), only the resolved versions and their source, so a clone installs exactly what the project had. A `"*"` constraint means "whatever the last `rsk install` resolved"; pin it (`docs-architect = "1.1.0"`) when the version itself matters
 
 **Set up a new project with a stack bundle**
 1. `cd <project>` then `rsk new`
