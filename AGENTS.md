@@ -100,6 +100,6 @@ Run `task lint` (and the registry/token checks when those areas change) before d
 ## Documentación
 - Structure and conventions: `docs/README.md`
 - Architecture decisions: `docs/adr/` — read before structural changes; never edit the body of an accepted ADR
-- Pending work: `docs/backlog/<project>.md`; loose ideas go to `docs/backlog/inbox.md`
+- Pending work: `docs/backlog/` (one file per item in `pending/`, `active/`, `done/`; the project note is `docs/backlog/project.md`); loose ideas are items too
 - New docs start from `docs/templates/` and carry frontmatter
 - On a relevant change: update `CHANGELOG.md` and, if warranted, add `docs/changes/`

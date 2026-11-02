@@ -6,7 +6,7 @@ frontmatter `status` tell you the state.
 | Folder | Holds |
 |---|---|
 | adr/ | Architecture decisions, numbered, immutable once accepted |
-| backlog/ | inbox.md, one file per project, done/ per month |
+| backlog/ | project.md, one file per item in pending/, active/ and done/ |
 | ideas/ plans/ designs/ | The path from thought to build |
 | reviews/ changes/ | Dated records; never rewritten |
 | guides/ methodology/ | Living procedures and working rules |
