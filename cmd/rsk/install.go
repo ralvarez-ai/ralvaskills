@@ -29,8 +29,8 @@ var installCmd = &cobra.Command{
 Names are resolved against the catalog: if a name matches a bundle, the bundle
 expands to its skills; otherwise the name is treated as a single skill.
 
-By default installs to the current project (.rsk/skills/) and writes entries
-into .rsk/rsk.mod and .rsk/rsk.lock.
+By default installs into the current project: symlinks in .claude/skills/ and
+entries in .rsk/rsk.mod and .rsk/rsk.lock.
 
 With --global the install targets the configured global skills directories
 without touching any project manifest.

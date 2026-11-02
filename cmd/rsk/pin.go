@@ -21,8 +21,8 @@ opencode.json for OpenCode) so it is auto-loaded by agents in this project.
 
 The skill must already be in rsk.mod — run 'rsk install <name>' first.
 
-Use --remove to unpin instead: the skill stays installed (still symlinked
-into .rsk/skills/) but is no longer auto-imported.
+Use --remove to unpin instead: the skill stays installed (still symlinked in
+.claude/skills/) but is no longer auto-imported.
 
 Examples:
   rsk pin <name>

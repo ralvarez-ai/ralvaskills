@@ -1,6 +1,8 @@
 package manifest
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/ralvarezdev/ralvaskills/v3/internal/schema"
@@ -79,8 +81,8 @@ func TestWriteReadLock_roundtrip(t *testing.T) {
 	dir := t.TempDir()
 
 	l := Lock{Skills: []LockEntry{
-		{Name: "go-architect", Version: "1.0.0", Source: skill.SourceLocal, Path: "/skills/go-architect"},
-		{Name: "tdd", Version: "2.1.0", Source: skill.SourceOfficial, Path: "/cache/tdd"},
+		{Name: "go-architect", Version: "1.0.0", Source: skill.SourceLocal},
+		{Name: "tdd", Version: "2.1.0", Source: skill.SourceOfficial},
 	}}
 	if err := WriteLock(dir, l); err != nil {
 		t.Fatalf("WriteLock: %v", err)
@@ -113,6 +115,43 @@ func TestReadLock_missingFileReturnsEmpty(t *testing.T) {
 	}
 	if len(got.Skills) != 0 {
 		t.Errorf("expected empty lock, got %v", got.Skills)
+	}
+}
+
+// A lock written before the cache path was dropped still decodes: the field is
+// ignored, the version and source are kept.
+func TestReadLock_legacyPathIgnored(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	legacy := `version = 1
+
+[[skills]]
+  name = "docs-architect"
+  version = "1.1.0"
+  source = "registry"
+  path = "/home/someone/.config/rsk/cache/registry/docs-architect/1.1.0"
+`
+	if err := os.WriteFile(LockPath(dir), []byte(legacy), 0o600); err != nil {
+		t.Fatalf("write legacy lock: %v", err)
+	}
+	got, err := ReadLock(dir)
+	if err != nil {
+		t.Fatalf("ReadLock: %v", err)
+	}
+	if len(got.Skills) != 1 || got.Skills[0].Name != "docs-architect" || got.Skills[0].Version != "1.1.0" {
+		t.Fatalf("unexpected lock: %+v", got.Skills)
+	}
+
+	// Rewriting it drops the path.
+	if err := WriteLock(dir, got); err != nil {
+		t.Fatalf("WriteLock: %v", err)
+	}
+	raw, err := os.ReadFile(LockPath(dir))
+	if err != nil {
+		t.Fatalf("read back: %v", err)
+	}
+	if strings.Contains(string(raw), "path") {
+		t.Errorf("rewritten lock still carries a path:\n%s", raw)
 	}
 }
 

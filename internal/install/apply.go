@@ -102,7 +102,6 @@ func applyProject(linked []skill.Skill, opts Options) error {
 			Name:    s.Name,
 			Version: s.Version,
 			Source:  s.Source,
-			Path:    s.Path,
 		})
 	}
 

@@ -16,12 +16,13 @@ import (
 )
 
 type (
-	// LockEntry records the resolved state of one installed skill.
+	// LockEntry records the resolved state of one installed skill. It
+	// deliberately keeps no cache path: the path is machine state, the
+	// version and source are what makes the lock reproducible.
 	LockEntry struct {
 		Name    string       `toml:"name"`
 		Version string       `toml:"version"`
 		Source  skill.Source `toml:"source"`
-		Path    string       `toml:"path"`
 	}
 
 	// Lock is the in-memory representation of rsk.lock.

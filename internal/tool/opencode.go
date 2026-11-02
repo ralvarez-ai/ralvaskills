@@ -59,20 +59,20 @@ func (*openCodeTool) ProjectSkillsDir(projectRoot string) string {
 }
 
 // SyncPinned updates opencode.json in projectDir so that the
-// .rsk/skills/<name>/SKILL.md entries match pinnedNames exactly. Non-rsk
+// .claude/skills/<name>/SKILL.md entries match pinnedNames exactly. Non-rsk
 // entries are preserved. Creates the file if it does not exist.
 func (*openCodeTool) SyncPinned(projectDir string, pinnedNames []string) error {
 	return updateOCInstructions(filepath.Join(projectDir, OpenCodeFileName), pinnedNames)
 }
 
-// RemovePinned removes all rsk-managed .rsk/skills/ entries from opencode.json
+// RemovePinned removes all rsk-managed .claude/skills/ entries from opencode.json
 // in projectDir. Returns nil if the file does not exist.
 func (*openCodeTool) RemovePinned(projectDir string) error {
 	return updateOCInstructions(filepath.Join(projectDir, OpenCodeFileName), nil)
 }
 
 // updateOCInstructions reads opencode.json, replaces the rsk-managed
-// .rsk/skills/ entries with pinnedNames, and writes the file back atomically.
+// .claude/skills/ entries with pinnedNames, and writes the file back atomically.
 // Pass a nil or empty pinnedNames to remove all rsk entries.
 func updateOCInstructions(path string, pinnedNames []string) error {
 	cfg, err := readOCConfig(path)
@@ -95,7 +95,7 @@ func updateOCInstructions(path string, pinnedNames []string) error {
 }
 
 // filterOCEntries returns the subset of raw that are not rsk-managed
-// (.rsk/skills/ prefix). raw must be cfg[openCodeInstructionsKey].
+// (.claude/skills/ prefix). raw must be cfg[openCodeInstructionsKey].
 func filterOCEntries(raw any) []any {
 	existing, ok := raw.([]any)
 	if !ok {

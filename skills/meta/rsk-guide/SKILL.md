@@ -1,6 +1,6 @@
 ---
 name: rsk-guide
-version: 0.4.0
+version: 0.4.1
 description: Operator's guide for the rsk CLI — manage ralvaskills via the .rsk/ project manifest (rsk new, rsk install, rsk pin), bundle/global installs and the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards. Use when the user mentions rsk, asks how to install/pin/update skills, wants to add a skill to a project, is starting work in a new project or scaffolding (to learn which standards apply), or wants to set up ralvaskills on a new machine. Companion to cli-tool-architect (CLI design), mcp-architect (server design) and skill-builder (authoring new skills).
 ---
 
@@ -29,11 +29,11 @@ Pick the one that matches the user's intent.
 
 ### A. Project manifest (`.rsk/`) — preferred for per-project skill sets
 
-Mirrors `go.mod`: a declarative `rsk.mod` lists the skills this project depends on, `rsk.lock` records resolved versions, and pinned skills are auto-imported into `./CLAUDE.md` via `@.rsk/CLAUDE.md`. Lives in `<project>/.rsk/`.
+Mirrors `go.mod`: a declarative `rsk.mod` lists the skills this project depends on, `rsk.lock` records the versions this machine resolved, and pinned skills are auto-imported into `./CLAUDE.md` via `@.rsk/CLAUDE.md`. Lives in `<project>/.rsk/`.
 
 ```bash
 rsk new                                # creates .rsk/rsk.mod + .rsk/CLAUDE.md + appends import to ./CLAUDE.md
-rsk install <name[@version]>           # adds to manifest, symlinks into .rsk/skills/, updates rsk.lock
+rsk install <name[@version]>           # adds to manifest, symlinks into .claude/skills/, updates rsk.lock
 rsk install <name> --pin               # also imports skill into .rsk/CLAUDE.md (auto-loaded in this project)
 rsk pin <name>                         # pin an already-installed skill
 rsk pin <name> --remove                 # remove the import (skill stays installed; `rsk unpin` still works)
@@ -47,10 +47,10 @@ rsk destroy                            # delete .rsk/ and remove @.rsk/CLAUDE.md
 
 ### B. Bundle / global install — fastest path for stack-standard setups
 
-Install a curated bundle or single skill into the project (`.rsk/skills/`) or globally with `--global` (`~/.claude/skills/`, `~/.config/opencode/skills/`).
+Install a curated bundle or single skill into the project (symlinks in `.claude/skills/`) or globally with `--global` (`~/.claude/skills/`, `~/.config/opencode/skills/`).
 
 ```bash
-rsk install <name...>                              # project: bundle or skill → .rsk/skills/, writes rsk.mod
+rsk install <name...>                              # project: bundle or skill → .claude/skills/, writes rsk.mod
 rsk install <name...> --global                     # global: all configured tool dirs, no manifest
 rsk install <name> --global --for claude-code      # global, one tool only
 rsk install <name> --include personal            # personal/ skill, explicit opt-in (`--personal` still works)
@@ -59,7 +59,7 @@ rsk install <name> --dry-run                       # preview without writing
 
 Names are auto-resolved against the catalog: a name that matches a bundle expands to that bundle's skills; otherwise the name is treated as a single skill. Bundles win on name collisions.
 
-> Project installs land in `.rsk/skills/` and always update `rsk.mod`. Use `--global` if you want the skill linked system-wide without manifest tracking.
+> Project installs land in `.claude/skills/` (shared by Claude Code and OpenCode) and always update `rsk.mod`. Use `--global` if you want the skill linked system-wide without manifest tracking.
 
 ## Quick reference
 
@@ -127,7 +127,7 @@ Per the spec this is opt-in with a 24h cache; the current build returns an expli
 **Set up a new project with tracked manifest**
 1. `cd <project>` then `rsk new`
 2. `rsk install <name>` per skill (use `--pin` for ones that should always auto-load)
-3. Commit `.rsk/rsk.mod`, `.rsk/rsk.lock`, `.rsk/CLAUDE.md`, and the `@.rsk/CLAUDE.md` import line in `./CLAUDE.md`
+3. Commit `.rsk/rsk.mod`, `.rsk/CLAUDE.md` and the `@.rsk/CLAUDE.md` import line in `./CLAUDE.md`. Leave `.rsk/rsk.lock` out of git: with a `"*"` constraint it is only a snapshot of what this machine installed, and `rsk new` adds it to `.gitignore` for you. Commit the lock only when the project must freeze exact versions, and prefer a pinned constraint (`docs-architect = "1.1.0"`) if you want that to be readable
 
 **Set up a new project with a stack bundle**
 1. `cd <project>` then `rsk new`
@@ -168,11 +168,11 @@ Per the spec this is opt-in with a 24h cache; the current build returns an expli
 ```
 .rsk/
 ├── rsk.mod         # TOML: version, pinned[], skills{name = version-constraint}
-├── rsk.lock        # TOML: resolved {name, version, source, path} per skill
-├── skills/         # symlinks into the local repo or registry cache
-│   └── <name>/     # → ralvaskills/skills/.../<name>/  or  registry cache
+├── rsk.lock        # TOML: resolved {name, version, source} per skill (machine state)
 └── CLAUDE.md       # one `@skills/<name>/SKILL.md` line per pinned skill
 ```
+
+The installed skills are not stored under `.rsk/`: they are symlinks in `.claude/skills/<name>` pointing at the local clone or the registry cache. That directory is shared, because OpenCode discovers skills from the same path as Claude Code. `.rsk/skills/` does not exist.
 
 `./CLAUDE.md` gets a single appended line: `@.rsk/CLAUDE.md`. Both `rsk new` (creates it) and `rsk destroy` (removes it) are idempotent.
 

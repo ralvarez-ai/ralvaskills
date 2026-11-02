@@ -11,6 +11,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **codebase-hygiene-reviewer:** new skill (1.0.0) for evidence-based declutter audits: dead code, unused exports per consumer, duplication and oversized files. It only proposes changes and writes its report outside the repo.
 
 ### Changed
+- `rsk.lock` no longer records the cache `path` of each skill. It is machine state that `rsk install` and `rsk update` resolve again anyway, and it made every committed lock carry `/home/<user>/...` and churn on each machine. Locks written before this change still decode; the field disappears on the next write.
+- `rsk new` adds `.rsk/rsk.lock` to the project's `.gitignore`, so the manifest travels and the lock stays local. Pinned constraints in `rsk.mod` (`docs-architect = "1.1.0"`) remain the way to freeze a version on purpose.
+- **rsk-guide** (0.4.1): the `.rsk/` tree no longer shows a `skills/` folder that the CLI never creates (installed skills are symlinks in `.claude/skills/`, shared with OpenCode), and the commit guidance says to track `rsk.mod` and `.rsk/CLAUDE.md`, not the lock unless the project freezes versions. The stale `.rsk/skills/` mentions in the `install`, `uninstall` and `pin` help and in the OpenCode tool comments are gone, along with the unused `ProjectSkillsPrefix` constant.
+
+### Changed
 - **docs-architect** (1.1.0): `BACKLOG.md` documents the second layout — `project.md` plus one file per item under `pending/`, `active/`, `done/` and `archive/`, with the id in the filename, the item frontmatter (`title`, `priority`, `section`, `topics`, `blocked_by`, `related`, `resolution`), transitions as renames, and the conversion from a list (state mapping, trackers in tables, the `rdk migrate` command). `FRONTMATTER.md` gains both backlog schemas, `TEMPLATES.md` the `project.md` and item templates, and `MIGRATION.md` the layout decision. The linter understands both layouts: it validates `project.md` and the item files (id in the name, schema, section against `sections`, `resolution` only in `archive/`), skips list size limits in an item-layout backlog, and no longer reads `<project>#<id>` in `related` as a path.
 
 ### Fixed

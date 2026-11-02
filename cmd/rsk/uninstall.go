@@ -28,8 +28,8 @@ var uninstallCmd = &cobra.Command{
 Names are resolved against the catalog: a name that matches a bundle expands
 to that bundle's skills; otherwise the name is treated as a single skill.
 
-By default operates on the current project (.rsk/skills/) and cleans up
-.rsk/rsk.mod, .rsk/rsk.lock, and pinned skill imports. With --global the
+By default operates on the current project (.claude/skills/ symlinks) and
+cleans up .rsk/rsk.mod, .rsk/rsk.lock, and pinned skill imports. With --global the
 operation targets the configured global skills directories instead.
 
 It asks for confirmation first (a plain-text prompt when piped, which aborts

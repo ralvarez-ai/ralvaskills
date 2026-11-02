@@ -6,19 +6,12 @@ import (
 	"runtime"
 
 	"github.com/adrg/xdg"
-
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
 )
 
 const (
 	// ProjectFolderName is the name of the project-local rsk directory that
 	// marks a directory as an rsk project root.
 	ProjectFolderName = ".rsk"
-
-	// ProjectSkillsPrefix is the forward-slash path prefix for .rsk/skills/
-	// entries. Uses "/" rather than filepath.Separator because opencode.json
-	// stores Unix-style paths regardless of the host OS.
-	ProjectSkillsPrefix = ProjectFolderName + "/" + skill.SkillsFolderName + "/"
 )
 
 // ConfigHome returns ~/.config on Windows instead of %APPDATA%, and falls back

@@ -272,7 +272,6 @@ func bumpLockForProject(cmd *cobra.Command, args []string, cfg config.Config) er
 			Name:    s.Name,
 			Version: s.Version,
 			Source:  s.Source,
-			Path:    s.Path,
 		})
 	}
 	return manifest.WriteLock(rskDir, lock)
