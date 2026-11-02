@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-10-30T22:26:42Z",
+  "generated_at": "2026-11-02T12:34:26Z",
   "skills": {
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
@@ -219,13 +219,18 @@
     },
     "docs-architect": {
       "name": "docs-architect",
-      "description": "Project documentation system — a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.",
-      "latest": "1.0.0",
+      "description": "Project documentation system — a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, backlog as a queue or as one file per item, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-10-20T13:33:14Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/docs-architect@v1.0.0/docs-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-02T12:34:26Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/docs-architect@v1.1.0/docs-architect-v1.1.0.tar.gz"
         }
       }
     },
