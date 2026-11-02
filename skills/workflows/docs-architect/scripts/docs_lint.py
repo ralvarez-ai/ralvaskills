@@ -22,6 +22,12 @@ DATED_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}-")
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 FENCE = re.compile(r"^```.*?^```", re.S | re.M)
 BACKLOG_LIMITS = {"doing": 2, "next": 5}
+BACKLOG_STATES = {"pending", "active", "done", "archive"}
+PRIORITIES = {"p0", "p1", "p2", "p3"}
+ITEM_NAME = re.compile(r"^([0-9a-hjkmnp-tv-z]{6})-[a-z0-9]+(-[a-z0-9]+)*\.md$")
+ITEM_REF = re.compile(r"^([a-z0-9][a-z0-9-]*#)?[0-9a-hjkmnp-tv-z]{6}$")
+ITEM_FORBIDDEN = {"status", "date", "created", "closed"}
+ITEM_REQUIRED = ("title", "priority", "section")
 
 
 def parse_frontmatter(text):
@@ -32,17 +38,31 @@ def parse_frontmatter(text):
     if end == -1:
         return None, text
     meta = {}
+    last = None
     for line in text[4:end].splitlines():
-        if not line.strip() or line.lstrip().startswith("#") or ":" not in line:
+        if not line.strip() or line.lstrip().startswith("#"):
+            last = None
+            continue
+        item = re.match(r"^\s*-\s+(.*)$", line)
+        if item and last is not None:
+            if not isinstance(meta[last], list):
+                meta[last] = []
+            meta[last].append(item.group(1).strip().strip("'\""))
+            continue
+        if ":" not in line:
+            last = None
             continue
         key, _, value = line.partition(":")
         value = re.sub(r"\s+#.*$", "", value).strip()
         if value.startswith("[") and value.endswith("]"):
             inner = value[1:-1].strip()
             value = [v.strip().strip("'\"") for v in inner.split(",")] if inner else []
-        else:
+        elif value:
             value = value.strip("'\"")
-        meta[key.strip()] = value
+        else:
+            value = []
+        last = key.strip()
+        meta[last] = value
     return meta, text[end + 4 :]
 
 
@@ -87,6 +107,8 @@ class Linter:
         if isinstance(related, str):
             related = [related] if related else []
         for rel in related:
+            if ITEM_REF.match(str(rel)):
+                continue  # <id> or <project>#<id>: a backlog reference, not a path
             target = (self.root / rel).resolve()
             if not target.exists():
                 self.add("error", path, f"related path not found: {rel}")
@@ -161,6 +183,49 @@ class Linter:
             if meta.get("status") == "superseded" and not new:
                 self.add("error", path, "status superseded but superseded_by is empty")
 
+    def check_backlog_project(self, path, meta):
+        """project.md of the item layout: slug, name and a non-empty sections list."""
+        if meta is None:
+            self.add("error", path, "project.md is missing frontmatter")
+            return
+        for key in ("slug", "name"):
+            if not meta.get(key):
+                self.add("error", path, f"frontmatter missing '{key}'")
+        sections = meta.get("sections")
+        if not isinstance(sections, list) or not sections:
+            self.add("error", path, "frontmatter needs a non-empty 'sections' list")
+
+    def check_backlog_item(self, path, meta, state, sections):
+        """One file per item: id in the name, schema in the frontmatter."""
+        if not ITEM_NAME.match(path.name):
+            self.add("error", path, "item filename must be <id>-<slug>.md (id: 6 chars of [0-9a-hjkmnp-tv-z])")
+        if meta is None:
+            self.add("error", path, "missing frontmatter")
+            return
+        for key in ITEM_REQUIRED:
+            if not meta.get(key):
+                self.add("error", path, f"frontmatter missing '{key}'")
+        for key in ITEM_FORBIDDEN:
+            if key in meta:
+                self.add("error", path, f"frontmatter must not carry '{key}'")
+        priority = str(meta.get("priority", ""))
+        if priority and priority not in PRIORITIES:
+            self.add("error", path, f"priority '{priority}' not in {sorted(PRIORITIES)}")
+        section = str(meta.get("section", ""))
+        if section and sections is not None and section not in sections:
+            self.add("error", path, f"section '{section}' not in project.md sections {sections}")
+        for key in ("blocked_by", "related"):
+            value = meta.get(key)
+            if value is None:
+                continue
+            refs = value if isinstance(value, list) else [value]
+            for ref in refs:
+                if ref and not ITEM_REF.match(str(ref)):
+                    self.add("error", path, f"{key}: '{ref}' must be <id> or <project>#<id>")
+        resolution = meta.get("resolution")
+        if resolution and (resolution != "dropped" or state != "archive"):
+            self.add("error", path, "'resolution: dropped' is the only allowed value, and only in archive/")
+
     def check_backlog(self, path, body):
         section = None
         counts = {}
@@ -176,10 +241,27 @@ class Linter:
 
     def run(self):
         self.load()
+        projects = {}
+        for path, (meta, _) in self.docs.items():
+            if path.parent.name == "backlog" and path.name == "project.md":
+                projects[path.parent] = (meta or {}).get("sections")
         for path, (meta, body) in self.docs.items():
             folder = self.top_dir(path)
             if folder == "backlog":
-                if path.parent.name != "done" and path.name != "inbox.md":
+                parts = path.relative_to(self.root).parts
+                backlog_dir = path.parents[len(parts) - 2]
+                sub = parts[1] if len(parts) > 2 else ""
+                if backlog_dir in projects:
+                    if not sub and path.name == "project.md":
+                        self.check_backlog_project(path, meta)
+                    elif sub in BACKLOG_STATES:
+                        self.check_backlog_item(path, meta, sub, projects[backlog_dir])
+                    elif not sub and path.name == "inbox.md":
+                        pass
+                    else:
+                        where = sub or path.name
+                        self.add("warn", path, f"unexpected entry in an item-layout backlog: {where}")
+                elif path.parent.name != "done" and path.name != "inbox.md":
                     self.check_backlog(path, body)
                 self.check_links(path, meta, body)
                 continue

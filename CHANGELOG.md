@@ -10,6 +10,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `rsk new` bootstraps the `CLAUDE.md` → `@AGENTS.md` pattern: it writes a short `AGENTS.md` skeleton when the project has none, keeps `@AGENTS.md` as the first line of `CLAUDE.md` above `@.rsk/CLAUDE.md`, and leaves an existing `AGENTS.md` and later imports untouched. `uninstall`/`destroy` keep the import, since other tools read `AGENTS.md` directly.
 - **codebase-hygiene-reviewer:** new skill (1.0.0) for evidence-based declutter audits: dead code, unused exports per consumer, duplication and oversized files. It only proposes changes and writes its report outside the repo.
 
+### Changed
+- **docs-architect** (1.1.0): `BACKLOG.md` documents the second layout — `project.md` plus one file per item under `pending/`, `active/`, `done/` and `archive/`, with the id in the filename, the item frontmatter (`title`, `priority`, `section`, `topics`, `blocked_by`, `related`, `resolution`), transitions as renames, and the conversion from a list (state mapping, trackers in tables, the `rdk migrate` command). `FRONTMATTER.md` gains both backlog schemas, `TEMPLATES.md` the `project.md` and item templates, and `MIGRATION.md` the layout decision. The linter understands both layouts: it validates `project.md` and the item files (id in the name, schema, section against `sections`, `resolution` only in `archive/`), skips list size limits in an item-layout backlog, and no longer reads `<project>#<id>` in `related` as a path.
+
 ### Fixed
 - **website-concept-architect** (1.0.1): the sample wireframe now uses a generic example instead of personal project details.
 - `rsk new` no longer glues `@.rsk/CLAUDE.md` onto the last line of a `CLAUDE.md` that lacks a trailing newline.

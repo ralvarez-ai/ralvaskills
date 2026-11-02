@@ -1,6 +1,6 @@
 # Frontmatter Schemas
 
-Two schemas. Frontmatter is mandatory on every doc in `docs/` except `docs/README.md`, `backlog/inbox.md`, `backlog/<project>.md`, `backlog/done/*.md` and `templates/*`.
+Three schemas. Frontmatter is mandatory on every doc in `docs/` except `docs/README.md`, `backlog/inbox.md`, `backlog/<project>.md`, `backlog/done/YYYY-MM.md` and `templates/*` in the queue layout, and except `project.md` in the item layout (which has its own, below).
 
 ## Standard docs (ideas, plans, designs, reviews, changes, guides, methodology)
 
@@ -34,6 +34,37 @@ superseded_by: 7     # filled when a later ADR replaces this one
 - `adr` equals the number in the filename (`0003-slug.md` → `3`).
 - `supersedes` / `superseded_by` must be symmetric. If ADR 7 has `supersedes: 1`, ADR 1 has `status: superseded` and `superseded_by: 7`.
 - Only `status` and `superseded_by` change after acceptance.
+
+## Backlog item layout
+
+`backlog/project.md`:
+
+```yaml
+---
+slug: plc-agent
+name: PLC agent
+sections: [corpus, verifier]
+---
+```
+
+Every file under `backlog/pending/`, `active/`, `done/` and `archive/`:
+
+```yaml
+---
+title: Verify TON timers in the PLC agent
+priority: p1               # p0 | p1 | p2 | p3
+section: verifier          # must be one of project.md sections
+topics: [timers]           # optional
+blocked_by: [k7f3qz, plc-platform#a1b2c3]   # optional; each must exist
+related: [plc-platform#a1b2c3]              # optional; cross-project only
+resolution: dropped        # optional; only in archive/
+---
+```
+
+- The filename is `<id>-<slug>.md`, where `<id>` is six random lowercase characters of the Crockford base32 alphabet without `i`, `l`, `o`, `u`.
+- `blocked_by` and `related` take a bare `<id>` inside the same backlog and `<project>#<id>` across backlogs (`project` is the other backlog's `slug`).
+- No `status` (the folder is the state) and no date field (git has them). A date in the body is prose.
+- `resolution: dropped` is the only field that differs between `done/` and `archive/`; an archived item without it was obsolete, not dropped.
 
 ## Why mandatory
 

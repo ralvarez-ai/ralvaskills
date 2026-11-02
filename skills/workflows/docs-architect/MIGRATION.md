@@ -57,6 +57,23 @@ Present a report per repo before editing:
 
 Then apply only the verdicts the user approved.
 
+### Choosing the layout
+
+While cleaning the backlog, decide its layout ([BACKLOG.md](BACKLOG.md)):
+
+- **Queue** — keep it when there are fewer than ~20 items and one branch at a time touches them.
+- **Item files** — move to it when items run into the dozens, when several branches or agents add items in parallel, or when a tool indexes the backlog. The list conflicts line by line; one file per item does not.
+
+The conversion is mechanical and loses no text:
+
+1. Map the sections: `Doing` → `active/`; `Next`, `Later`, `Someday`, blocked and parked → `pending/`; `Done` or a ticked box → `done/`; `Dropped` → `archive/` with `resolution: dropped`. A ticked box under `Next` is a state to settle first, not a conversion detail.
+2. Tables are not items: `git mv` a tracker to `docs/plans/` with frontmatter and convert only the bullet items; a row that points at another repo's queue stays in the tracker.
+3. With the portal's CLI: `rdk migrate docs/backlog/<project>.md --project <slug> --root docs/backlog`, then `git rm` the list and `rdk check --root docs/backlog` until it prints `ok`.
+4. Item files are one level deeper: every relative link gains a `../`.
+5. Report what the conversion changed — a title split into title and body, a dropped prose block, a hashtag turned into a section — in the commit message.
+
+The reverse is not supported: a list cannot hold ids, per-item history or parallel branches without conflicts.
+
 ## 6. Many repos
 
 Do one pilot repo end to end, adjust this procedure from what broke, then repeat. Libraries first if applications depend on their docs; keep each repo's change in its own commit.

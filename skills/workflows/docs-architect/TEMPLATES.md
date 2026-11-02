@@ -1,6 +1,6 @@
 # Templates
 
-One template per doc type. On scaffold, write each block into `docs/templates/<type>.md` (kebab-case filenames: `adr.md`, `idea.md`, `plan.md`, `design.md`, `review.md`, `change.md`, `guide.md`, `backlog-item.md`). Replace the placeholders; delete sections that add nothing.
+One template per doc type. On scaffold, write each block into `docs/templates/<type>.md` (kebab-case filenames: `adr.md`, `idea.md`, `plan.md`, `design.md`, `review.md`, `change.md`, `guide.md`, `backlog-project.md`, `backlog-item.md`). Replace the placeholders; delete sections that add nothing.
 
 ## docs/README.md
 
@@ -13,7 +13,7 @@ frontmatter `status` tell you the state.
 | Folder | Holds |
 |---|---|
 | adr/ | Architecture decisions, numbered, immutable once accepted |
-| backlog/ | inbox.md, one file per project, done/ per month |
+| backlog/ | A queue (inbox.md, one list per project, done/ per month) or one file per item (project.md, pending/, active/, done/, archive/) |
 | ideas/ plans/ designs/ | The path from thought to build |
 | reviews/ changes/ | Dated records; never rewritten |
 | guides/ methodology/ | Living procedures and working rules |
@@ -169,7 +169,34 @@ related: []
 ## Troubleshooting
 ```
 
+## backlog-project.md
+
+```md
+---
+slug: <project>
+name: <Project>
+sections:
+    - <theme>
+---
+```
+
 ## backlog-item.md
+
+```md
+---
+title: <Imperative, specific task>
+priority: p2
+section: <theme>
+topics: []
+---
+What done means, and the evidence that closes it. Link the origin:
+
+plan: [<title>](../../plans/YYYY-MM-DD-slug.md)
+```
+
+The item sits under `backlog/pending/`, `active/`, `done/` or `archive/`, so its links are one level deeper than the list's (`../../`).
+
+The queue layout has no template: one line, no frontmatter.
 
 ```md
 - [ ] <Imperative, specific task>  #<project>  P2
@@ -184,7 +211,7 @@ For `CLAUDE.md` / `AGENTS.md`. Keep it this short; do not copy the conventions i
 ## Documentation
 - Structure and conventions: `docs/README.md`
 - Architecture decisions: `docs/adr/` — read before structural changes; never edit the body of an accepted ADR
-- Pending work: `docs/backlog/<project>.md`; loose ideas go to `docs/backlog/inbox.md`
+- Pending work: `docs/backlog/<project>.md` (queue layout) or `docs/backlog/pending/` (item layout); loose ideas go to `docs/backlog/inbox.md`
 - New docs start from `docs/templates/` and carry frontmatter
 - On a relevant change: update `CHANGELOG.md` and, if warranted, add `docs/changes/`
 ```

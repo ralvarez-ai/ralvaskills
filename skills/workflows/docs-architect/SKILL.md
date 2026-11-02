@@ -1,12 +1,12 @@
 ---
 name: docs-architect
-version: 1.0.0
-description: Project documentation system — a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.
+version: 1.1.0
+description: Project documentation system — a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, backlog as a queue or as one file per item, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.
 ---
 
 # Docs Architect
 
-A `docs/` convention where **the folder is the doc type, the frontmatter is the state, and moving a file is a state change**. One source of truth per item and per decision. Companion to [grill-with-docs](../grill-with-docs/SKILL.md) (owns `CONTEXT.md` and the ADR *threshold*) and [feature-planner](../feature-planner/SKILL.md) (produces the plans this tree stores). Schemas in [FRONTMATTER.md](FRONTMATTER.md), backlog rules in [BACKLOG.md](BACKLOG.md), templates in [TEMPLATES.md](TEMPLATES.md), the classify/migrate procedure in [MIGRATION.md](MIGRATION.md).
+A `docs/` convention where **the folder is the doc type, the frontmatter is the state, and moving a file is a state change**. One source of truth per item and per decision. Companion to [grill-with-docs](../grill-with-docs/SKILL.md) (owns `CONTEXT.md` and the ADR *threshold*) and [feature-planner](../feature-planner/SKILL.md) (produces the plans this tree stores). Schemas in [FRONTMATTER.md](FRONTMATTER.md), backlog rules in [BACKLOG.md](BACKLOG.md) (two layouts: a list per project, or one file per item), templates in [TEMPLATES.md](TEMPLATES.md), the classify/migrate procedure in [MIGRATION.md](MIGRATION.md).
 
 Suggestion-mode: the tree is a default. Adopt the folders a project actually needs.
 
@@ -28,20 +28,20 @@ Suggestion-mode: the tree is a default. Adopt the folders a project actually nee
 | `changes/` | What changed and why — migrations, impact | dated | No |
 | `guides/` | Current procedures and runbooks | `topic.md` | Yes, always current |
 | `methodology/` | Working rules and standards | `topic.md` | Yes |
-| `backlog/` | `inbox.md`, `<project>.md`, `done/YYYY-MM.md` | see [BACKLOG.md](BACKLOG.md) | Yes |
+| `backlog/` | A queue (`inbox.md`, `<project>.md`, `done/YYYY-MM.md`) or one file per item (`project.md`, `pending/`, `active/`, `done/`, `archive/`) | see [BACKLOG.md](BACKLOG.md) | Yes |
 | `archive/` | Finished or obsolete | keeps its name | No |
 
 `guides/` and `methodology/` are living documents and carry no date; everything else describes a moment and does. Reviews and changes are history — never rewrite them, add a new one.
 
 ## 3. Flow
 
-`inbox` → `ideas` → `plans` → `designs` → `adr` (only if a real architecture decision) → backlog `Next` → `Doing` → `done/`. Reviews and changes feed new backlog items, each linked to its origin.
+`inbox` → `ideas` → `plans` → `designs` → `adr` (only if a real architecture decision) → backlog (in the queue layout, `Next` → `Doing` → `done/`; in the item layout, `pending/` → `active/` → `done/`). Reviews and changes feed new backlog items, each linked to its origin.
 
 1. Capture in `backlog/inbox.md`, one line, no format.
 2. Weekly triage: drop it, move it to a project backlog, or grow it in `ideas/`.
 3. A mature idea becomes a plan with scope and exit criteria.
 4. The plan yields a design; each non-trivial decision becomes an ADR.
-5. The approved design leaves linked items in `Next`.
+5. The approved design leaves linked items in the backlog: `Next` in the queue layout, `pending/` in the item layout.
 6. On close the item moves to `done/YYYY-MM.md`; the doc becomes `status: done`, then moves to `archive/`.
 
 ## 4. ADRs
@@ -65,10 +65,10 @@ Every doc except `README.md`, `inbox.md` and `templates/` carries frontmatter ([
 | When | What | Time |
 |---|---|---|
 | Daily | Capture in `inbox.md` | 0 |
-| Weekly | Triage the inbox; review `Next` | 10 min |
-| Monthly | Prune `Later`, close to `done/`, archive obsolete, resolve drafts older than 2 months | 15 min |
+| Weekly | Triage the inbox; review what is next (`Next` or `pending/`) | 10 min |
+| Monthly | Prune what has not moved, close to `done/`, archive obsolete, resolve drafts older than 2 months | 15 min |
 
-A draft older than 2 months is promoted or deleted. A backlog item sitting in `Later` for 2–3 months is deleted or demoted to `Someday` — prune, don't archive. If the project tracks work in GitHub Issues, the backlog lives there and only the docs stay here.
+A draft older than 2 months is promoted or deleted. A backlog item that has not moved for 2–3 months is deleted or demoted (`Later` → `Someday` in the queue layout, `archive/` with `resolution: dropped` in the item layout) — prune, don't archive. If the project tracks work in GitHub Issues, the backlog lives there and only the docs stay here.
 
 ## 7. Scale rules
 
@@ -78,7 +78,7 @@ A draft older than 2 months is promoted or deleted. A backlog item sitting in `L
 
 ## 8. Linter
 
-`python3 scripts/docs_lint.py [docs-dir]` — stdlib only, read-only, exit code 1 on errors. Checks frontmatter schema and enums, ADR numbering and supersede symmetry, broken relative links, orphans, drafts older than 60 days, backlog size limits. `--index` prints a generated index to stdout. Run it before declaring a docs change done and in the monthly routine.
+`python3 scripts/docs_lint.py [docs-dir]` — stdlib only, read-only, exit code 1 on errors. Checks frontmatter schema and enums, ADR numbering and supersede symmetry, broken relative links, orphans, drafts older than 60 days, backlog size limits, and the `project.md` of the item layout. In the item layout the full item schema (ids, priorities, sections, `blocked_by`) is `rdk check --root docs/backlog` when the project has the portal's CLI. `--index` prints a generated index to stdout. Run it before declaring a docs change done and in the monthly routine.
 
 ## 9. Output naming
 
