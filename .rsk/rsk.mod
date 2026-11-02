@@ -3,6 +3,7 @@ tools = ["claude-code"]
 pinned = ["docs-architect"]
 
 [skills]
+  ci-cd-architect = "*"
   cli-tool-architect = "*"
   docs-architect = "*"
   go-architect = "*"
