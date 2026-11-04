@@ -19,6 +19,9 @@ is the `rsk mcp` server; `registry/` is the generated index served at
 - Registry: `task registry:generate`, `registry:sync-index`, `registry:check`, `registry:clean`,
   `registry:remove[*]`, `registry:lint`, `registry:fmt`
 - Tokens: `task tokens`, `task tokens:lint`, `task tokens:fmt`
+- Local CI: `task ci:local` runs `.github/workflows/check-site.yml` in Docker with `act` (needs Docker
+  and `NODE_AUTH_TOKEN`, or a `.secrets` file copied from `.secrets.example`); never run
+  `publish-registry.yml` with it
 
 Run `task lint` (and the registry/token checks when those areas change) before declaring done.
 

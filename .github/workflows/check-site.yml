@@ -66,8 +66,16 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # verify.mjs drives the system Chrome of the runner (no browser download).
+      # verify.mjs drives a Chrome. Hosted runners ship one; the act image does
+      # not, so fall back to Playwright's Chromium (verify.mjs finds it in
+      # ~/.cache/ms-playwright).
+      - name: Browser
+        run: |
+          if command -v google-chrome >/dev/null; then
+            echo "CHROME=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            pnpm exec playwright-core install --with-deps chromium
+          fi
+
       - name: Gate (axe, overflow, films, rail, style wiring, JS off)
         run: node scripts/verify.mjs
-        env:
-          CHROME: /usr/bin/google-chrome
