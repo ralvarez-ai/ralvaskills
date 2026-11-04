@@ -22,6 +22,16 @@ is the `rsk mcp` server; `registry/` is the generated index served at
 
 Run `task lint` (and the registry/token checks when those areas change) before declaring done.
 
+## Landing page (`web/`)
+
+React 19 + TypeScript + Vite, one prerendered document. `task web:dev`, `task web:build`,
+`task web:check`. The page's numbers are generated from this repository by
+`web/scripts/gen-data.mjs` before every dev run and build, and that script fails when the tree
+drifts from 58 skills / 15 bundles / 13 commands / 3 tools. `web/src/data/facts.ts` holds the
+hand-checked constants and labels them on the page. It consumes `@ralvarez-ts/tokens` directly
+(GitHub Packages, needs `NODE_AUTH_TOKEN`); nothing under `skills/**` or `registry/**` is read at
+runtime, only at build.
+
 ## Layout
 
 - `cmd/rsk/` — the CLI: subcommands, flags, output. Subcommands: `init`, `new`, `destroy`,
@@ -33,6 +43,8 @@ Run `task lint` (and the registry/token checks when those areas change) before d
   registration, resources), `skill`, `source` (registry/local/official), `tool` (the Claude /
   OpenCode / MCP adapters), `ui` (termkit), `update`.
 - `cmd/{generate-registry,registry-remove,count-tokens}` — registry build helpers.
+- `web/` — the landing page (React 19 + Vite): `src/sections`, `src/components`, generated
+  `src/data/catalog.json`, ported styles, prerender and verify scripts. See `web/README.md`.
 - `skills/<domain>/<name>/SKILL.md` — the catalogue (domains: academic, databases, design,
   encoding, frameworks, frontend, infra, languages, messaging, meta, protocols, quality,
   refactoring, robotics, tooling, workflows). One skill per directory; the directory name matches

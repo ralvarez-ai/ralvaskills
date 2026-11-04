@@ -211,3 +211,33 @@ tasks:
     desc: Run all tests
     cmds:
       - go test ./...
+
+  # web/ — the landing page (React + Vite). Its data is generated from this
+  # repository before every dev run and build, so the page cannot state a number
+  # the tree does not prove.
+
+  web:install:
+    desc: Install the landing page dependencies (needs NODE_AUTH_TOKEN for GitHub Packages)
+    dir: web
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  web:dev:
+    desc: Run the landing page dev server
+    dir: web
+    cmds:
+      - pnpm dev
+
+  web:build:
+    desc: Build the landing page into web/dist
+    dir: web
+    cmds:
+      - pnpm build
+
+  web:check:
+    desc: Typecheck, build and run the landing page gate (axe, overflow, reveals, JS off)
+    dir: web
+    cmds:
+      - pnpm typecheck
+      - pnpm build
+      - node scripts/verify.mjs
