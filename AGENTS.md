@@ -28,7 +28,8 @@ Run `task lint` (and the registry/token checks when those areas change) before d
 ## Landing page (`web/`)
 
 React 19 + TypeScript + Vite, one prerendered document. `task web:dev`, `task web:build`,
-`task web:check`. The page's numbers are generated from this repository by
+`task web:check` (lint, typecheck, build, gate). Biome (`pnpm lint` in `web/`) owns formatting
+and lint there. The page's numbers are generated from this repository by
 `web/scripts/gen-data.mjs` before every dev run and build, and that script fails when the tree
 drifts from 58 skills / 15 bundles / 13 commands / 3 tools. `web/src/data/facts.ts` holds the
 hand-checked constants and labels them on the page. It consumes `@ralvarez-ts/tokens` directly

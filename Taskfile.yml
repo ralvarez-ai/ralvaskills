@@ -249,9 +249,10 @@ tasks:
       - pnpm build
 
   web:check:
-    desc: Typecheck, build and run the landing page gate (axe, overflow, reveals, JS off)
+    desc: Lint, typecheck, build and run the landing page gate (axe, overflow, reveals, films, JS off)
     dir: web
     cmds:
+      - pnpm lint
       - pnpm typecheck
       - pnpm build
       - node scripts/verify.mjs

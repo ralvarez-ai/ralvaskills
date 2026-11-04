@@ -15,7 +15,7 @@
     "data": "node scripts/gen-data.mjs",
     "typecheck": "pnpm data && tsc --noEmit",
     "preview": "vite preview",
-    "check": "node scripts/verify.mjs",
+    "check": "pnpm lint && node scripts/verify.mjs",
     "lint": "biome check .",
     "format": "biome check --write ."
   },

@@ -12,7 +12,9 @@ pnpm dev              # data, then vite on :5173
 pnpm build            # tsc, vite build, then prerender dist/index.html
 pnpm preview          # serve dist/
 pnpm data             # regenerate src/data/catalog.json from the repository
-pnpm check            # axe + overflow + reveals + JS-off against dist/
+pnpm lint             # Biome: format, imports, recommended rules (a11y included)
+pnpm format           # Biome, writing fixes
+pnpm check            # lint, then axe + overflow + reveals + films + rail + JS-off against dist/
 ```
 
 `pnpm dev` and `pnpm build` run `pnpm data` first (predev/prebuild), so the
@@ -56,6 +58,10 @@ src/styles/      tokens, reset, layout, chrome, controls, panel, motion,
   from the proposals' directions and said nothing about the page.
 - **State classes are `is-*`** (`is-visible`, `is-filming`, `is-pending`,
   `is-match`), so a grep for `is-` finds everything JavaScript can toggle.
+- **Biome owns style** (`biome.json`): two spaces, single quotes in code, double in JSX,
+  width 120; CSS is excluded on purpose, the sheets are compact and checked against the
+  prerendered HTML. A suppression needs a reason, and a repeated one becomes a component:
+  `CodeRegion` holds the one allowed exception for a focusable, scrollable `<pre>`.
 - **One sheet per component**, imported from `styles/index.css` in cascade order.
   Rules whose classes the prerendered page never uses are dropped; `verify.mjs`
   fails if a reveal never fires, which is how a missing rule surfaces.

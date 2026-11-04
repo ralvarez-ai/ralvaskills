@@ -318,10 +318,23 @@ How it was found, and what now guards it:
   viewport width), or if the nav and the rail do not follow the scroll. It also
   waits for running films before axe, which measures contrast and would otherwise
   catch a step mid-fade. Reduced motion must never hide anything.
-- `.github/workflows/check-site.yml` runs `pnpm build` and `verify.mjs` on pull
+- `.github/workflows/check-site.yml` runs `pnpm lint`, `pnpm build` and `verify.mjs` on pull
   requests and on `main` when `web/` (or the files `gen-data` reads) changes. The
   parity scripts stay manual: they need the mockup and a human to read the
   result.
+
+Interactive states were compared too (`compare-states.mjs`): rest, hover, keyboard
+focus and the open FAQ for buttons, the theme toggle, the film control, filter
+chips, FAQ items, nav, brand and copy, in both themes. Pixels and computed styles
+match in every state, and the states differ from rest, so the match is not
+vacuous. The 390 dark spread was capture timing: `compare.mjs` now waits for films
+and reveals, and three runs agree at 737 px (0.01 %, text anti-aliasing).
+
+Biome now owns style in `web/` (CSS excluded). Its first pass found a real a11y
+slip, `aria-label` on role-less `<pre>` elements, which assistive tech ignores; the
+labels were redundant under their headings and are gone. The focusable scrollable
+code blocks are one `CodeRegion` component carrying the single documented
+suppression.
 
 Result at a threshold of 2: 0.005 % of pixels differ at 1440 and about 0.01 % at
 390 in light, all of it the progress bar, text anti-aliasing and the top rules
