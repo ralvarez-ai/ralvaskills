@@ -37,4 +37,5 @@ Check: `python3 <skill>/scripts/docs_lint.py docs`
 | Date | Doc | Status |
 |---|---|---|
 | 2026-10-02 | [MCP Server Plan — `rsk mcp`](plans/2026-10-02-mcp-server-plan.md) | active |
+| 2026-11-04 | [Landing page — work brief](plans/2026-11-04-landing-page-brief.md) | draft |
 
