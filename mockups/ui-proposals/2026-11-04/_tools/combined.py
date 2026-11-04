@@ -14,6 +14,13 @@ import dir_b as B
 import dir_c as C
 from family import esc, footer, header, page, rail
 
+TITLE = "rsk — your agent asks, you approve, rsk installs"
+DESC = (
+    "rsk installs versioned skills into Claude Code and OpenCode. Its MCP server "
+    "lets the agent propose them from your project's files; the one tool that "
+    "writes asks you first."
+)
+
 SECTIONS = [
     ("top", "The loop"),
     ("writes", "What it writes"),
@@ -97,7 +104,7 @@ def faq(d: dict) -> str:
 </div></section>"""
 
 
-def build(d: dict) -> str:
+def build(d: dict, extra_head: str = "") -> str:
     nav = [("How it works", "#top", True), ("Catalogue", "#catalogue", True), ("Trade-off", "#trade", True), ("Install", "#start", False)]
     tools = C.tools().replace(' style="background:var(--bg2)"', "", 1)
     start = C.start().replace(' style="background:var(--bg2)"', "", 1)
@@ -120,9 +127,10 @@ def build(d: dict) -> str:
         + footer(D.SOURCES, d["version"])
     )
     return page(
-        "rsk — your agent asks, you approve, rsk installs",
-        "rsk installs versioned skills into Claude Code and OpenCode. Its MCP server lets the agent propose them from your project's files; the one tool that writes asks you first.",
+        TITLE,
+        DESC,
         A.CSS + B.CSS + C.CSS + CSS,
         body,
         C.JS + A.JS + B.JS,
+        extra_head=extra_head,
     )

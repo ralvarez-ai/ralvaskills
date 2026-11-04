@@ -6,9 +6,12 @@ Pages import this and add their own composition.
 
 Two palettes, on purpose:
 
-- **Page chrome** is the Ralvarez family brand kit shared with the ralvagym,
-  finance, identity and notifier landing pages: ink #0c0e11, cyan #2bbbd6,
-  paper #f4f5f7, 4/6 px radii, mono kickers, 2 px rules.
+- **Page chrome** is ``@ralvarez-ts/tokens`` (the ``sharp`` layer) — the same
+  package the ralvagym, finance, identity and notifier apps consume. The page is
+  single-file HTML with no CDN, so it reads a pinned snapshot
+  (``tokens.json``, written by ``tokens_extract.py``) instead of the package at
+  runtime. ``python3 tokens_extract.py <pkg> --check`` fails when the package
+  moves, so the page cannot drift into a hand-copied palette.
 - **Terminal surfaces** (``.tn``) keep rsk's real termkit TokyoNight theme
   (github.com/ralvarezdev/termkit theme.go via internal/ui/theme.go), so the
   product inside the frame still looks like the product.
@@ -20,6 +23,8 @@ at build; the TokyoNight surface is fixed-dark and checked separately.
 from __future__ import annotations
 
 import html
+import json
+from pathlib import Path
 
 # --- colour maths (port of go-colorful BlendLab toward black, as rsk's darken) ---
 
@@ -99,47 +104,34 @@ TK = {
 # cycled over six rows by termkit banner.go (i % len).
 WM_STEPS = [0, 0.18, 0.34, 0.48]
 
-# Ralvarez family brand kit, shared with the ralvagym / finance / identity /
-# notifier landing pages (mockups/claude-design/2026-11-04/landing-page.html in
-# each). The terminal surfaces below stay TokyoNight, rsk's own theme.
-LIGHT = {
-    "bg": "#f4f5f7",
-    "bg2": "#ffffff",
-    "surface": "#ffffff",
-    "line": "#e3e6ea",
-    "line-2": "#c4cad2",
-    "text": "#14171a",
-    "muted": "#565d66",
-    "accent": "#00758c",
-    "accent-t": "#00677d",
-    "on-accent": "#ffffff",
-    "ok": "#14683c",
-    "warn": "#75540a",
-    "danger": "#ba362e",
-    "info": "#115c7a",
-    "sel": "#e7f4f7",
-    "shadow": "0 1px 0 rgba(20,23,26,.05), 0 18px 40px -30px rgba(20,23,26,.45)",
+# Ralvarez family brand kit — the real package, pinned. `tokens.json` holds the
+# effective sharp value of every role for both themes, extracted from
+# @ralvarez-ts/tokens by tokens_extract.py. Regenerate it when the package moves;
+# never hand-edit it.
+_TOKENS = json.loads((Path(__file__).with_name("tokens.json")).read_text())
+_META = _TOKENS["_meta"]
+assert _META["package"] == "@ralvarez-ts/tokens", _META
+
+# Roles the package does not own, layered on top: it has no `info` tone, no
+# terminal palette, and no ink label for a cyan fill (its `on-accent` is the
+# label for `accent-solid`). The device shadow is a page composition choice;
+# sharp itself carries no elevation.
+APP = {
+    "light": {
+        "on-accent": "#ffffff",
+        "info": "#115c7a",
+        "shadow": "0 1px 0 rgba(20,23,26,.05), 0 18px 40px -30px rgba(20,23,26,.45)",
+    },
+    "dark": {
+        "on-accent": "#06161a",
+        "info": "#7fdeed",
+        "shadow": "0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9)",
+    },
 }
-DARK = {
-    "bg": "#0c0e11",
-    "bg2": "#111419",
-    "surface": "#171b21",
-    "line": "#282c32",
-    "line-2": "#3b414a",
-    "text": "#eceef1",
-    "muted": "#a0a7b1",
-    "accent": "#2bbbd6",
-    "accent-t": "#2bbbd6",
-    "on-accent": "#06161a",
-    "ok": "#3fcf8a",
-    "warn": "#e3b94d",
-    "danger": "#ff7a70",
-    "info": "#7fdeed",
-    "sel": "#12343b",
-    "shadow": "0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9)",
-}
+LIGHT = {**_TOKENS["light"], **APP["light"]}
+DARK = {**_TOKENS["dark"], **APP["dark"]}
 # The always-dark band (family `.ink`): darker than the dark theme page.
-NIGHT = dict(DARK, bg="#0a0c0f", bg2="#111419", surface="#161a1f")
+NIGHT = dict(DARK, bg="#0a0c0f", surface="#161a1f")
 # rsk's real terminal surface: termkit TokyoNight (dark), fixed in both themes.
 TERM = {
     "bg": "#16161e",
@@ -172,7 +164,13 @@ def _check() -> None:
             for fg in ("text", "muted", "accent-t", "ok", "warn", "danger", "info"):
                 c = contrast(th[fg], th[bg])
                 assert c >= 4.5, f"{name}: {fg} on {bg} = {c:.2f}"
-        assert contrast(th["on-accent"], th["accent-t"]) >= 4.5, name
+        assert contrast(th["on-accent"], th["accent"]) >= 4.5, name
+    # The package's promise for --color-border-strong is a >=3:1 control
+    # boundary (WCAG 1.4.11). The old hand-copied hairline was 1.5:1, so this
+    # assertion is the reason the page takes the role from the package at all.
+    for name, th in (("light", LIGHT), ("dark", DARK)):
+        c = contrast(th["line-2"], th["bg"])
+        assert c >= 3.0, f"{name}: control boundary {c:.2f}"
     for bg in ("bg", "bg2", "surface"):
         for fg in ("text", "muted", "accent-t", "ok", "warn", "danger", "info"):
             c = contrast(TERM[fg], TERM[bg])
@@ -193,7 +191,8 @@ FONTS = """
 
 BASE_CSS = (
     ":root{color-scheme:light;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:72px;--s9:112px;"
-    "--wrap:1200px;--gut:clamp(20px,4vw,56px);--rk:4px;--rc:6px;"
+    "--wrap:1200px;--gut:clamp(20px,4vw,56px);"
+    f"--rk:{_TOKENS['radii']['control']};--rc:{_TOKENS['radii']['card']};"
     "--e-out:cubic-bezier(.16,1,.3,1);--e-io:cubic-bezier(.65,0,.35,1);--d1:160ms;--d2:320ms;--d3:640ms;--d4:1100ms;"
     + FONTS + _vars(LIGHT) + "}"
     "@media (prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;" + _vars(DARK) + "}}"
@@ -524,7 +523,7 @@ def footer(sources: list[tuple[str, str]], version: str) -> str:
 </div></footer>"""
 
 
-def page(title: str, desc: str, css: str, body: str, js: str) -> str:
+def page(title: str, desc: str, css: str, body: str, js: str, extra_head: str = "") -> str:
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -532,7 +531,7 @@ def page(title: str, desc: str, css: str, body: str, js: str) -> str:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
-<meta name="color-scheme" content="light dark">
+{extra_head}<meta name="color-scheme" content="light dark">
 <script>{HEAD_JS}</script>
 <style>{BASE_CSS}{css}</style>
 </head>
