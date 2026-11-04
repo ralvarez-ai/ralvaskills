@@ -216,6 +216,49 @@ the deploy path: it stays only as the proposals' harness in `mockups/`.
 Hosting is still the open item from Round 3: the artifact is now `web/dist`, so the Cloudflare
 Pages step is `pnpm build` then `wrangler pages deploy dist`.
 
+### Round 5 — names, tokens and layers (2026-11-04)
+
+The port was faithful to the proposals, and that was the problem: a page built
+from "directions" carried their names. `.k-`, `.a-`, `.b-` and `.c-` selectors
+said which proposal a rule came from, not what it styles; `--bg2`, `--rk`, `--d2`
+said nothing at all; and `base.css` was one 19 KB sheet for the whole page.
+
+- **Tokens name intent.** The palette block is now `--surface-page`,
+  `--surface-raised`, `--surface-sunken`, `--text-strong`, `--text-muted`,
+  `--text-accent`, `--border-subtle`, `--border-control`,
+  `--status-ok|warn|danger|info`, `--radius-control|panel`, `--space-1..9`,
+  `--duration-1..4`, each an alias of `@ralvarez-ts/tokens` where the package has
+  the role. No component hard-codes a colour or a radius.
+- **Classes name roles.** `manifest-file__line`, `call__message--request`,
+  `agent-hero__line`, `filter__chip`, `unit-chart` — component first, then part,
+  then state. Short names that meant different things per sheet (`.p`, `.b`,
+  `.d`, `.n`) were renamed per file, not globally. JavaScript-toggled states all
+  start with `is-` (`is-visible`, `is-filming`, `is-pending`, `is-match`).
+- **Variants are attributes.** `Button variant="primary|ghost"`,
+  `Tag tone="readonly|destructive|hint|sample"`, `Section tone="paper|sunken|ink"`.
+  CSS matches `[data-variant]` and `[data-tone]`, so a variant is a prop, not a
+  string appended to a class.
+- **Components own their chrome.** `Header`, `Rail`, `Footer`, `Manifest` in
+  `components/`; the primitives in `components/ui/` (`Button`, `Tag`, `Panel`,
+  `Section`, `Eyebrow`, `CopyBlock`, `FilmControl`, `BrandMark`, `Wordmark`).
+  `Panel` has a `flush` mode for a table or pre that *is* the body, and every
+  section now declares its band with `<Section tone>` instead of an inline
+  `background` style.
+- **Styles are one sheet per component.** `styles/index.css` imports
+  `tokens → reset → layout → chrome → controls → panel → motion → terminal →
+  tradeoff`, then one sheet per page area. The split was routed by selector, not
+  by line ranges, because the generated CSS was a single concatenated line.
+- **Dead rules went.** The combined page reuses parts of A, B and C, so its
+  sheets still carried the standalone heroes, the release chart and the bundles
+  index. Rules whose classes the prerendered page does not contain were dropped:
+  85 rules and 6.6 KB of CSS.
+
+Verification after the refactor: typecheck, build, the full gate (8 axe runs,
+overflow, reveals, count-ups, JS-off) and a pixel comparison against the
+pre-refactor captures. The only differing pixels are the section rail's active
+tick, which depends on scroll history, and the content that the old capture
+script never revealed.
+
 ### Real vs sample
 
 | On the page | Status | How it is labelled |
