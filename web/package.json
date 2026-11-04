@@ -15,7 +15,9 @@
     "data": "node scripts/gen-data.mjs",
     "typecheck": "pnpm data && tsc --noEmit",
     "preview": "vite preview",
-    "check": "node scripts/verify.mjs"
+    "check": "node scripts/verify.mjs",
+    "lint": "biome check .",
+    "format": "biome check --write ."
   },
   "dependencies": {
     "@ralvarez-ts/tokens": "^0.1.18",
@@ -23,6 +25,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.4",
     "@tailwindcss/vite": "^4.3.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
