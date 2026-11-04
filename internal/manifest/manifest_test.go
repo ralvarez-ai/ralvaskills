@@ -143,7 +143,7 @@ func TestReadLock_legacyPathIgnored(t *testing.T) {
 	}
 
 	// Rewriting it drops the path.
-	if err := WriteLock(dir, got); err != nil {
+	if err = WriteLock(dir, got); err != nil {
 		t.Fatalf("WriteLock: %v", err)
 	}
 	raw, err := os.ReadFile(LockPath(dir))
