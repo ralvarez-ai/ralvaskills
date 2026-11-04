@@ -5,7 +5,7 @@ import { profileNames } from '../data/facts';
 export function Writes() {
   return (
     <Section id="writes" labelledBy="d-wr-h" tone="sunken">
-      <div className="wrap writes">
+      <div className="container writes">
         <div className="reveal">
           <div className="rule" aria-hidden="true" />
           <p className="call-marker">

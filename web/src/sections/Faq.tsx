@@ -52,7 +52,7 @@ const QA: [string, ReactNode][] = [
 export function Faq() {
   return (
     <Section id="faq" labelledBy="d-faq-h">
-      <div className="wrap">
+      <div className="container">
         <div className="rule" aria-hidden="true" />
         <Eyebrow>Questions</Eyebrow>
         <h2 id="d-faq-h" className="reveal">

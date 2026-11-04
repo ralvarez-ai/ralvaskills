@@ -21,6 +21,19 @@ const AXE = readFileSync(new URL('../node_modules/axe-core/axe.min.js', import.m
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 const VIEWPORTS = { 390: { width: 390, height: 844 }, 1440: { width: 1440, height: 800 } };
 
+// Rules that must actually reach the page. A pruned or renamed selector can
+// leave the markup intact while the styles silently stop applying (the mono
+// stack and the theme toggle both did), and axe cannot see that.
+const WIRED = [
+  ['code', 'fontFamily', 'JetBrains Mono'],
+  ['.agent-hero__line > span', 'transitionDuration', '0.95s'],
+  ['.button', 'transitionDuration', '0.16s'],
+  ['.theme-toggle', 'paddingLeft', '12px'],
+  ['.film-control', 'display', 'flex'],
+  ['.panel', 'borderRadius', '6px'],
+  ['.rule', 'backgroundColor', 'rgb'],
+];
+
 function chromePath() {
   if (process.env.CHROME) return process.env.CHROME;
   const base = join(homedir(), '.cache/ms-playwright');
@@ -100,10 +113,22 @@ try {
           counts: [...document.querySelectorAll('[data-count]')].filter((el) => el.textContent !== el.dataset.count).length,
         }));
 
-        const ok = !violations.length && layout.scroll <= layout.client && !errors.length;
+        const wired = reduced ? [] : await page.evaluate((rules) => {
+          const out = [];
+          for (const [sel, prop, want] of rules) {
+            const el = document.querySelector(sel);
+            if (!el) { out.push(`${sel}: missing`); continue; }
+            const got = String(getComputedStyle(el)[prop]);
+            const bad = want === 'rgb' ? got === 'rgba(0, 0, 0, 0)' : !got.includes(want);
+            if (bad) out.push(`${sel} ${prop}: ${got} (want ${want})`);
+          }
+          return out;
+        }, WIRED);
+        const ok = !violations.length && layout.scroll <= layout.client && !errors.length && !wired.length;
         if (!ok) fail(`${run}: ${violations.map((v) => `${v.id}(${v.nodes})`).join(',') || 'ok'} overflow=${layout.scroll}>${layout.client} errors=${errors.length}`);
         else console.log(`PASS ${run}`);
         for (const v of violations) fail(`  ${v.id}: ${v.targets.join(' | ')}`);
+        for (const w of wired) fail(`${run}: ${w}`);
         if (reduced === false && layout.hidden) fail(`${run}: ${layout.hidden} reveal(s) never fired`);
         if (layout.counts) fail(`${run}: ${layout.counts} count-up(s) did not settle`);
         await ctx.close();

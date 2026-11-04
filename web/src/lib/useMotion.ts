@@ -31,9 +31,37 @@ export function useTheme() {
       ?.setAttribute('content', theme === 'light' ? '#f4f5f7' : '#0c0e11');
   }, [theme]);
 
-  const toggle = useCallback(() => {
-    setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
-  }, []);
+  /**
+   * Switch themes. With motion allowed and View Transitions available, the new
+   * theme is revealed by a circle growing from the toggle, the same wipe the
+   * proposals use; otherwise the attribute changes immediately.
+   */
+  const toggle = useCallback(
+    (event?: { currentTarget: HTMLElement }) => {
+      const next: Theme = theme === 'dark' ? 'light' : 'dark';
+      const apply = () => setTheme(next);
+      if (!motionAllowed() || typeof document.startViewTransition !== 'function') {
+        apply();
+        return;
+      }
+      const rect = event?.currentTarget.getBoundingClientRect();
+      const x = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+      const y = rect ? rect.top + rect.height / 2 : 0;
+      const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+      const transition = document.startViewTransition(apply);
+      transition.ready
+        .then(() => {
+          document.documentElement.animate(
+            { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+            { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)', pseudoElement: '::view-transition-new(root)' },
+          );
+        })
+        .catch(() => {
+          // A cancelled transition leaves the applied theme in place.
+        });
+    },
+    [theme],
+  );
 
   return { theme, toggle, mounted };
 }

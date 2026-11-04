@@ -33,7 +33,7 @@ export function Tools() {
               A resource, not a tool: every skill with its latest version, descriptions cut to 200 characters. Name{' '}
               <code>rsk-catalog</code>.
             </p>
-            <pre aria-label="rsk://catalog details">mimeType:{'\n'} application/json</pre>
+            <pre aria-label="rsk://catalog details">{'mimeType:\n  application/json'}</pre>
           </li>
         </ul>
       </div>

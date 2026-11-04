@@ -7,6 +7,7 @@ h1,h2,h3{line-height:.99;margin:0;text-wrap:balance;letter-spacing:-.04em;font-w
 p{margin:0 0 1em;text-wrap:pretty}
 a{color:var(--text-accent);text-underline-offset:3px;text-decoration-thickness:1px}
 a:hover{text-decoration-thickness:2px}
+code,pre,kbd,.mono{font-family:var(--font-mono)}
 code{font-size:.9em;overflow-wrap:anywhere}
 h1 code,h2 code,h3 code{white-space:nowrap;overflow-wrap:normal}
 pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.86rem;line-height:1.6}

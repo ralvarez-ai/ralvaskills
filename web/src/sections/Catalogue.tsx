@@ -22,21 +22,6 @@ export function Catalogue() {
     return map;
   }, []);
 
-  const notes = useMemo(() => {
-    const out: Record<string, string> = {};
-    for (const b of data.bundles) {
-      let text = `${b.description}. rsk install ${b.name}`;
-      if (b.official.length) {
-        text += ` — includes ${b.official.length} official Anthropic skill${b.official.length > 1 ? 's' : ''} (${b.official.join(', ')}), fetched from Anthropic and not part of the ${data.skills.length}.`;
-      }
-      if (b.missing.length) {
-        text += ` — also names ${b.missing.join(' and ')}, which are not in the catalogue (flagged in the notes).`;
-      }
-      out[b.name] = text;
-    }
-    return out;
-  }, []);
-
   const [bundle, setBundle] = useState('');
   const [includePersonal, setIncludePersonal] = useState(false);
 
@@ -46,10 +31,29 @@ export function Catalogue() {
   const notesFor = (name: string) => `in ${name}, of ${data.skills.length}`;
 
   const note = bundle
-    ? notes[bundle]
+    ? (() => {
+        const b = data.bundles.find((item) => item.name === bundle);
+        if (!b) return null;
+        return (
+          <>
+            {b.description}. <code>rsk install {b.name}</code>
+            {b.official.length
+              ? ` — includes ${b.official.length} official Anthropic skill${b.official.length > 1 ? 's' : ''} (${b.official.join(', ')}), fetched from Anthropic and not part of the ${data.skills.length}.`
+              : ''}
+            {b.missing.length
+              ? ` — also names ${b.missing.join(' and ')}, which are not in the catalogue (flagged in the notes).`
+              : ''}
+          </>
+        );
+      })()
     : includePersonal
       ? `Showing all ${data.skills.length} skills, personal ones included.`
-      : `Showing the ${count} skills rsk catalog lists by default; the ${data.personal} personal ones need --include personal.`;
+      : (
+          <>
+            Showing the {count} skills <code>rsk catalog</code> lists by default; the {data.personal} personal ones
+            need <code>--include personal</code>.
+          </>
+        );
 
   return (
     <Section id="catalogue" labelledBy="b-ex-h" tone="sunken">
@@ -57,12 +61,12 @@ export function Catalogue() {
         <div className="rule" aria-hidden="true" />
         <div className="catalogue__top">
           <div>
-            <span className="section-figure" aria-hidden="true" data-count={data.bundles.length}>
-              {data.bundles.length}
+            <span className="section-figure" aria-hidden="true" data-count={data.skills.length}>
+              {data.skills.length}
             </span>
             <h2 id="b-ex-h" style={{ marginTop: 0 }}>
-              <span className="sr-only">{data.bundles.length} </span>
-              bundles. Filter the catalogue the way <code>rsk catalog</code> does.
+              <span className="sr-only">{data.skills.length} </span>
+              skills the agent chooses from, in {data.bundles.length} bundles.
             </h2>
             <p className="lede">
               Grouped by the folder they live in. Pick a bundle to see what <code>rsk install &lt;bundle&gt;</code>{' '}

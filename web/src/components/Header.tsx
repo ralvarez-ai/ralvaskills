@@ -18,7 +18,7 @@ export function Header({
   nav: NavItem[];
   theme: Theme;
   mounted: boolean;
-  onToggle: () => void;
+  onToggle: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
     <>

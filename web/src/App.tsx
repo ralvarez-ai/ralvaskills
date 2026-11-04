@@ -13,7 +13,6 @@ import { Hero } from './sections/Hero';
 import { QuickStart } from './sections/QuickStart';
 import { Signals } from './sections/Signals';
 import { ThisRepo } from './sections/ThisRepo';
-import { Told } from './sections/Told';
 import { Tools } from './sections/Tools';
 import { Trade } from './sections/Trade';
 import { Writes } from './sections/Writes';
@@ -59,7 +58,6 @@ export default function App() {
         <Catalogue />
         <Tools />
         <Signals />
-        <Told />
         <ThisRepo />
         <Commands />
         <Trade />

@@ -8,11 +8,11 @@
 .agent-hero__title .agent-hero__line>span{display:block}
 .agent-hero__title .is-human{color:var(--status-warn)}
 .agent-hero__title .is-product{color:var(--text-accent)}
-.anim .agent-hero__title.rv{transform:none}
-.anim .agent-hero__title .agent-hero__line>span{transform:translateY(108%);transition:transform .95s var(--ease-out)}
-.anim .agent-hero__title.in .agent-hero__line>span{transform:none}
-.anim .agent-hero__title.in .agent-hero__line:nth-child(2)>span{transition-delay:.1s}
-.anim .agent-hero__title.in .agent-hero__line:nth-child(3)>span{transition-delay:.2s}
+.has-motion .agent-hero__title.reveal{transform:none}
+.has-motion .agent-hero__title .agent-hero__line>span{transform:translateY(108%);transition:transform .95s var(--ease-out)}
+.has-motion .agent-hero__title.is-visible .agent-hero__line>span{transform:none}
+.has-motion .agent-hero__title.is-visible .agent-hero__line:nth-child(2)>span{transition-delay:.1s}
+.has-motion .agent-hero__title.is-visible .agent-hero__line:nth-child(3)>span{transition-delay:.2s}
 .agent-hero__lede{color:var(--text-muted);font-size:clamp(1.05rem,1.4vw,1.2rem);margin:0 0 20px}
 .agent-hero__lede code{color:var(--text-strong)}
 .agent-hero__actions{display:flex;gap:12px;flex-wrap:wrap}
@@ -71,9 +71,9 @@
  .call-card dl.signal-pairs{grid-template-columns:auto auto;column-gap:10px}
  .approval__cell{grid-column:1/2;padding:0 14px}
 }
-.anim .f-run .call .f-h .call-arrow,.anim .f-run .call__message.f-h .call-arrow{clip-path:inset(0 100% 0 0)}
-.anim .f-run .call__message.call__message--left.f-h .call-arrow{clip-path:inset(0 0 0 100%)}
-.anim .call-arrow{transition:clip-path .55s var(--ease-out);clip-path:inset(0 0 0 0)}
+.has-motion .is-filming .call .is-hidden .call-arrow,.has-motion .is-filming .call__message.is-hidden .call-arrow{clip-path:inset(0 100% 0 0)}
+.has-motion .is-filming .call__message.call__message--left.is-hidden .call-arrow{clip-path:inset(0 0 0 100%)}
+.has-motion .call-arrow{transition:clip-path .55s var(--ease-out);clip-path:inset(0 0 0 0)}
 .agent-loop__caption{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin-top:22px;font-size:.86rem;color:var(--text-muted)}
 .agent-loop__caption p{margin:0;max-width:78ch}
 /* tools */

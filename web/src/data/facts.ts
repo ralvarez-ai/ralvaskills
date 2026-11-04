@@ -106,7 +106,7 @@ export const helpGroups: HelpGroup[] = [
   },
   {
     group: 'Project pinning',
-    commands: [{ name: 'pin', desc: 'Pin a skill so it is imported into each tool’s project config.' }],
+    commands: [{ name: 'pin', desc: 'Pin a skill so it is imported into each tool\'s project config.' }],
   },
   { group: 'Tool configuration', commands: [{ name: 'tools', desc: 'Manage tool permissions (allow/deny/list/remove).' }] },
   {
@@ -138,7 +138,7 @@ export interface Tool {
 export const tools: Tool[] = [
   {
     name: 'project_profile',
-    desc: 'Detect this project’s stack from its files and propose the ralvaskills skills that apply. Call it before scaffolding or a non-trivial change.',
+    desc: 'Detect this project\'s stack from its files and propose the ralvaskills skills that apply. Call it before scaffolding or a non-trivial change.',
     kind: 'ro',
   },
   {
