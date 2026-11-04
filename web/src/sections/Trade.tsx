@@ -19,8 +19,7 @@ export function Trade() {
                 Versions in a lock you commit. A clone runs <code>rsk install</code> and matches.
               </li>
               <li>
-                Claude Code and OpenCode from one install: skills are linked once into{' '}
-                <code>.claude/skills/</code>.
+                Claude Code and OpenCode from one install: skills are linked once into <code>.claude/skills/</code>.
               </li>
             </ul>
           </div>

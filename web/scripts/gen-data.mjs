@@ -14,7 +14,7 @@
  *   pnpm data
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync, readdirSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -71,7 +71,10 @@ function main() {
       desc: firstSentence(entry.description),
     };
   });
-  assert(skills.length === 58 && skills.length === Object.keys(index).length, `expected 58 skills, found ${skills.length}`);
+  assert(
+    skills.length === 58 && skills.length === Object.keys(index).length,
+    `expected 58 skills, found ${skills.length}`,
+  );
 
   const domains = {};
   for (const s of skills) (domains[s.domain] ??= []).push(s);

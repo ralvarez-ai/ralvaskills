@@ -1,5 +1,5 @@
-import { Eyebrow, Section } from '../components/ui';
 import type { ReactNode } from 'react';
+import { Eyebrow, Section } from '../components/ui';
 
 import { data } from '../data/types';
 

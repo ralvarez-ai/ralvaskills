@@ -1,10 +1,9 @@
-import { useRef } from 'react';
 import type { ReactNode } from 'react';
-
-import { FilmControl, Panel, Tag } from './ui';
+import { useRef } from 'react';
 import { rskNewOutput } from '../data/facts';
 import { data } from '../data/types';
 import { hideAll, revealAll, show, type, useFilm } from '../lib/useFilm';
+import { FilmControl, Panel, Tag } from './ui';
 
 interface ManifestProps {
   names: string[];
@@ -45,7 +44,14 @@ export function Manifest({ names, second, agent = false, caption }: ManifestProp
 
   const sorted = [...names].sort();
   const mod = [
-    { k: 'new', body: <><span className="syntax-key">version</span> = <span className="syntax-number">1</span></> },
+    {
+      k: 'new',
+      body: (
+        <>
+          <span className="syntax-key">version</span> = <span className="syntax-number">1</span>
+        </>
+      ),
+    },
     {
       k: 'new',
       body: (
@@ -58,7 +64,8 @@ export function Manifest({ names, second, agent = false, caption }: ManifestProp
       k: 'new',
       body: (
         <>
-          <span className="syntax-key">pinned</span> = <span className="manifest-file__pinned" ref={pin}>
+          <span className="syntax-key">pinned</span> ={' '}
+          <span className="manifest-file__pinned" ref={pin}>
             [<S value="go-architect" />]
           </span>
         </>
@@ -178,37 +185,31 @@ export function Manifest({ names, second, agent = false, caption }: ManifestProp
                 <span className="gutter" aria-hidden="true">
                   +
                 </span>
-                <span>
-                  {line.body}
-                </span>
+                <span>{line.body}</span>
               </li>
             ))}
           </ol>
         </Panel>
-        <Panel
-          title=".rsk/rsk.lock"
-          action={<Tag tone="readonly">commit</Tag>}
-          bodyStyle={{ padding: '6px 0 4px' }}
-        >
-            <table className="lock-table">
-              <caption className="sr-only">rsk.lock resolved versions, all from the registry, shown as a table</caption>
-              <thead>
-                <tr>
-                  <th scope="col">skill</th>
-                  <th scope="col" className="lock-table__version">
-                    version
-                  </th>
+        <Panel title=".rsk/rsk.lock" action={<Tag tone="readonly">commit</Tag>} bodyStyle={{ padding: '6px 0 4px' }}>
+          <table className="lock-table">
+            <caption className="sr-only">rsk.lock resolved versions, all from the registry, shown as a table</caption>
+            <thead>
+              <tr>
+                <th scope="col">skill</th>
+                <th scope="col" className="lock-table__version">
+                  version
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {names.map((n, i) => (
+                <tr data-f={`s${i}`} key={n}>
+                  <td>{n}</td>
+                  <td className="lock-table__version">{data.latest[n]}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {names.map((n, i) => (
-                  <tr data-f={`s${i}`} key={n}>
-                    <td>{n}</td>
-                    <td className="lock-table__version">{data.latest[n]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              ))}
+            </tbody>
+          </table>
         </Panel>
       </div>
 

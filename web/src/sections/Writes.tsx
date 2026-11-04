@@ -14,8 +14,8 @@ export function Writes() {
           <h2 id="d-wr-h">It lands in two files you commit.</h2>
           <p className="lede">
             <code>install_skills</code> writes the skills into <code>.rsk/rsk.mod</code> and their exact versions into{' '}
-            <code>.rsk/rsk.lock</code>. Whoever clones the repo runs <code>rsk install</code> and gets the same three, at
-            the same versions. Think <code>go.mod</code> and <code>go.sum</code>, for your agent’s skills.
+            <code>.rsk/rsk.lock</code>. Whoever clones the repo runs <code>rsk install</code> and gets the same three,
+            at the same versions. Think <code>go.mod</code> and <code>go.sum</code>, for your agent’s skills.
           </p>
         </div>
         <Manifest

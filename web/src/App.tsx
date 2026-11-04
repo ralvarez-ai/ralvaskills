@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 
 import { Footer } from './components/Footer';
-import { Header } from './components/Header';
 import type { NavItem } from './components/Header';
+import { Header } from './components/Header';
 import { Rail } from './components/Rail';
 import { useCounts, useReveals, useScrollKit, useTheme } from './lib/useMotion';
 import { Catalogue } from './sections/Catalogue';

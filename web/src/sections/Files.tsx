@@ -67,12 +67,13 @@ export function Files() {
           <Tree rows={INSTALL_FILES} label="Files added by rsk install" />
         </div>
         <div className="reveal">
-          <Panel
-            title="CLAUDE.md, as rsk new wrote it"
-            action={<Tag tone="readonly">real</Tag>}
-            flush
-          >
-            <pre className="panel__body" tabIndex={0} role="region" aria-label="CLAUDE.md written by rsk new: what it writes">
+          <Panel title="CLAUDE.md, as rsk new wrote it" action={<Tag tone="readonly">real</Tag>} flush>
+            <pre
+              className="panel__body"
+              tabIndex={0}
+              role="region"
+              aria-label="CLAUDE.md written by rsk new: what it writes"
+            >
               {rskNewClaudeMd}
             </pre>
           </Panel>

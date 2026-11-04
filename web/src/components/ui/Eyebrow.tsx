@@ -1,7 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
-
-import { cx } from './cx';
 import { BrandMark } from './BrandMark';
+import { cx } from './cx';
 
 /** The mono, uppercase kicker above a section title. */
 export function Eyebrow({

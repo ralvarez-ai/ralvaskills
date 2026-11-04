@@ -9,8 +9,7 @@
  * count-up did not settle. Also renders with JavaScript off, which the
  * prerender makes meaningful.
  */
-import { readFileSync } from 'node:fs';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -41,7 +40,9 @@ const WIRED = [
 function chromePath() {
   if (process.env.CHROME) return process.env.CHROME;
   const base = join(homedir(), '.cache/ms-playwright');
-  for (const dir of readdirSync(base).filter((d) => /^chromium-\d+$/.test(d)).sort((a, b) => Number(b.split('-')[1]) - Number(a.split('-')[1]))) {
+  for (const dir of readdirSync(base)
+    .filter((d) => /^chromium-\d+$/.test(d))
+    .sort((a, b) => Number(b.split('-')[1]) - Number(a.split('-')[1]))) {
     const candidate = join(base, dir, 'chrome-linux64/chrome');
     try {
       readFileSync(candidate);
@@ -62,7 +63,9 @@ async function settle(page) {
   }
   // Films started by the scroll-through must finish first: axe measures
   // contrast, and a step mid-fade is partly transparent.
-  await page.waitForFunction(() => !document.querySelector('.film-control[data-state="playing"]'), null, { timeout: 12000 });
+  await page.waitForFunction(() => !document.querySelector('.film-control[data-state="playing"]'), null, {
+    timeout: 12000,
+  });
   await page.waitForTimeout(1200);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(150);
@@ -106,34 +109,44 @@ try {
 
         const run = `${width} ${theme} ${reduced ? 'reduced' : 'motion'}`;
         await page.addScriptTag({ content: AXE });
-        const violations = await page.evaluate(
-          async (tags) => {
-            const result = await window.axe.run(document, { runOnly: { type: 'tag', values: tags } });
-            return result.violations.map((v) => ({ id: v.id, nodes: v.nodes.length, targets: v.nodes.slice(0, 3).map((n) => String(n.target)) }));
-          },
-          TAGS,
-        );
+        const violations = await page.evaluate(async (tags) => {
+          const result = await window.axe.run(document, { runOnly: { type: 'tag', values: tags } });
+          return result.violations.map((v) => ({
+            id: v.id,
+            nodes: v.nodes.length,
+            targets: v.nodes.slice(0, 3).map((n) => String(n.target)),
+          }));
+        }, TAGS);
         const layout = await page.evaluate(() => ({
           scroll: document.documentElement.scrollWidth,
           client: document.documentElement.clientWidth,
           hidden: document.querySelectorAll('.reveal:not(.is-visible), .rule:not(.is-visible)').length,
-          counts: [...document.querySelectorAll('[data-count]')].filter((el) => el.textContent !== el.dataset.count).length,
+          counts: [...document.querySelectorAll('[data-count]')].filter((el) => el.textContent !== el.dataset.count)
+            .length,
         }));
 
-        const wired = reduced ? [] : await page.evaluate((rules) => {
-          const out = [];
-          for (const [sel, prop, want, minWidth] of rules) {
-            if (minWidth && innerWidth < minWidth) continue;
-            const el = document.querySelector(sel);
-            if (!el) { out.push(`${sel}: missing`); continue; }
-            const got = String(getComputedStyle(el)[prop]);
-            const bad = want === 'rgb' ? got === 'rgba(0, 0, 0, 0)' : !got.includes(want);
-            if (bad) out.push(`${sel} ${prop}: ${got} (want ${want})`);
-          }
-          return out;
-        }, WIRED);
+        const wired = reduced
+          ? []
+          : await page.evaluate((rules) => {
+              const out = [];
+              for (const [sel, prop, want, minWidth] of rules) {
+                if (minWidth && innerWidth < minWidth) continue;
+                const el = document.querySelector(sel);
+                if (!el) {
+                  out.push(`${sel}: missing`);
+                  continue;
+                }
+                const got = String(getComputedStyle(el)[prop]);
+                const bad = want === 'rgb' ? got === 'rgba(0, 0, 0, 0)' : !got.includes(want);
+                if (bad) out.push(`${sel} ${prop}: ${got} (want ${want})`);
+              }
+              return out;
+            }, WIRED);
         const ok = !violations.length && layout.scroll <= layout.client && !errors.length && !wired.length;
-        if (!ok) fail(`${run}: ${violations.map((v) => `${v.id}(${v.nodes})`).join(',') || 'ok'} overflow=${layout.scroll}>${layout.client} errors=${errors.length}`);
+        if (!ok)
+          fail(
+            `${run}: ${violations.map((v) => `${v.id}(${v.nodes})`).join(',') || 'ok'} overflow=${layout.scroll}>${layout.client} errors=${errors.length}`,
+          );
         else console.log(`PASS ${run}`);
         for (const v of violations) fail(`  ${v.id}: ${v.targets.join(' | ')}`);
         for (const w of wired) fail(`${run}: ${w}`);
@@ -176,8 +189,15 @@ try {
         continue;
       }
       const ended = await page
-        .waitForFunction((i) => document.getElementById(i).querySelector('.film-control')?.dataset.state === 'done', id, { timeout: 9000 })
-        .then(() => true, () => false);
+        .waitForFunction(
+          (i) => document.getElementById(i).querySelector('.film-control')?.dataset.state === 'done',
+          id,
+          { timeout: 9000 },
+        )
+        .then(
+          () => true,
+          () => false,
+        );
       const end = await page.evaluate((i) => {
         const r = document.getElementById(i);
         return {
@@ -197,7 +217,8 @@ try {
       nav: document.querySelector('.site-nav a[aria-current]')?.textContent?.trim(),
       rail: document.querySelector('.section-rail a[aria-current] .section-rail__label')?.textContent?.trim(),
     }));
-    if (cur.nav !== 'Catalogue' || cur.rail !== 'Catalogue') fail(`current ${reduced ? 'reduced' : 'motion'}: nav=${cur.nav} rail=${cur.rail} (want Catalogue)`);
+    if (cur.nav !== 'Catalogue' || cur.rail !== 'Catalogue')
+      fail(`current ${reduced ? 'reduced' : 'motion'}: nav=${cur.nav} rail=${cur.rail} (want Catalogue)`);
     else console.log(`PASS current section ${reduced ? 'reduced' : 'motion'}`);
     await ctx.close();
   }
@@ -214,7 +235,8 @@ try {
       scroll: document.documentElement.scrollWidth,
       client: document.documentElement.clientWidth,
     }));
-    if (!r.h1 || r.text < 6000 || r.scroll > r.client) fail(`${width} js-off: h1="${r.h1.slice(0, 30)}" text=${r.text} overflow=${r.scroll}>${r.client}`);
+    if (!r.h1 || r.text < 6000 || r.scroll > r.client)
+      fail(`${width} js-off: h1="${r.h1.slice(0, 30)}" text=${r.text} overflow=${r.scroll}>${r.client}`);
     else console.log(`PASS ${width} js-off (${r.sections} sections, ${r.text} chars)`);
     await ctx.close();
   }

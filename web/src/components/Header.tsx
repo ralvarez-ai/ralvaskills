@@ -1,5 +1,5 @@
-import type { Theme } from '../lib/useMotion';
 import { data } from '../data/types';
+import type { Theme } from '../lib/useMotion';
 import { BrandMark, Button } from './ui';
 
 export interface NavItem {
@@ -31,7 +31,8 @@ export function Header({
       <header className="site-header">
         <div className="container">
           <a className="brand" href="#top">
-            <BrandMark />rsk <small>{data.version}</small>
+            <BrandMark />
+            rsk <small>{data.version}</small>
           </a>
           <nav className="site-nav" aria-label="Page">
             {nav.map((item) => (

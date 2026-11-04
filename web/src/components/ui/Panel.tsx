@@ -27,7 +27,13 @@ export function Panel({
         {title}
         {action ? <span style={{ marginLeft: 'auto' }}>{action}</span> : null}
       </div>
-      {flush ? children : <div className={bodyClassName} style={bodyStyle}>{children}</div>}
+      {flush ? (
+        children
+      ) : (
+        <div className={bodyClassName} style={bodyStyle}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }

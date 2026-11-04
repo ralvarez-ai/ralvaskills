@@ -8,7 +8,7 @@
  * rect, computed typography/colour). scripts/compare.py turns these into
  * side-by-sides and a diff report.
  */
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -50,9 +50,21 @@ const targets = {
 /** Runs in the page: dump text-bearing elements with their section and style. */
 function dump() {
   const props = [
-    'fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'textTransform',
-    'color', 'backgroundColor', 'borderTopColor', 'borderTopWidth', 'borderRadius',
-    'paddingTop', 'paddingLeft', 'display', 'opacity',
+    'fontFamily',
+    'fontSize',
+    'fontWeight',
+    'letterSpacing',
+    'lineHeight',
+    'textTransform',
+    'color',
+    'backgroundColor',
+    'borderTopColor',
+    'borderTopWidth',
+    'borderRadius',
+    'paddingTop',
+    'paddingLeft',
+    'display',
+    'opacity',
   ];
   const rows = [];
   const counts = new Map();

@@ -4,7 +4,7 @@
  *
  *   pnpm build && node scripts/shots.mjs [outDir]
  */
-import { mkdirSync, readFileSync, readdirSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 

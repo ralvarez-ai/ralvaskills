@@ -69,9 +69,17 @@ export const signals: Signal[] = [
   { kind: 'language:go', proof: 'go.mod', proposes: 'go-architect' },
   { kind: 'language:python', proof: 'pyproject.toml, requirements.txt, uv.lock', proposes: 'python-architect' },
   { kind: 'language:typescript', proof: 'tsconfig.json, package.json', proposes: '—' },
-  { kind: 'framework:nextjs', proof: 'next.config.*, or next in package.json', proposes: 'nextjs-architect, react-architect' },
+  {
+    kind: 'framework:nextjs',
+    proof: 'next.config.*, or next in package.json',
+    proposes: 'nextjs-architect, react-architect',
+  },
   { kind: 'framework:astro', proof: 'astro.config.*', proposes: 'astro-architect' },
-  { kind: 'protocol:grpc', proof: 'any .proto, or google.golang.org/grpc in go.mod', proposes: 'grpc-architect, protobuf-architect' },
+  {
+    kind: 'protocol:grpc',
+    proof: 'any .proto, or google.golang.org/grpc in go.mod',
+    proposes: 'grpc-architect, protobuf-architect',
+  },
   { kind: 'protocol:rest', proof: 'openapi.yaml/.yml, swagger.json, any .http', proposes: 'rest-api-architect' },
   { kind: 'infra:docker', proof: 'Dockerfile, docker-compose.yml/.yaml', proposes: 'docker-architect' },
   { kind: 'infra:k8s', proof: 'Chart.yaml, kustomization.yaml/.yml', proposes: '—' },
@@ -106,9 +114,12 @@ export const helpGroups: HelpGroup[] = [
   },
   {
     group: 'Project pinning',
-    commands: [{ name: 'pin', desc: 'Pin a skill so it is imported into each tool\'s project config.' }],
+    commands: [{ name: 'pin', desc: "Pin a skill so it is imported into each tool's project config." }],
   },
-  { group: 'Tool configuration', commands: [{ name: 'tools', desc: 'Manage tool permissions (allow/deny/list/remove).' }] },
+  {
+    group: 'Tool configuration',
+    commands: [{ name: 'tools', desc: 'Manage tool permissions (allow/deny/list/remove).' }],
+  },
   {
     group: 'Read-only views',
     commands: [
@@ -138,7 +149,7 @@ export interface Tool {
 export const tools: Tool[] = [
   {
     name: 'project_profile',
-    desc: 'Detect this project\'s stack from its files and propose the ralvaskills skills that apply. Call it before scaffolding or a non-trivial change.',
+    desc: "Detect this project's stack from its files and propose the ralvaskills skills that apply. Call it before scaffolding or a non-trivial change.",
     kind: 'ro',
   },
   {

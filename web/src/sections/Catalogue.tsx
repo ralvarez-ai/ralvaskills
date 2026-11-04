@@ -1,8 +1,7 @@
-import { Section } from '../components/ui';
 import { useMemo, useState } from 'react';
-
-import { data } from '../data/types';
+import { Section } from '../components/ui';
 import type { Skill } from '../data/types';
+import { data } from '../data/types';
 
 export function Catalogue() {
   const domains = useMemo(
@@ -30,30 +29,30 @@ export function Catalogue() {
   const count = data.skills.filter(shown).length;
   const notesFor = (name: string) => `in ${name}, of ${data.skills.length}`;
 
-  const note = bundle
-    ? (() => {
-        const b = data.bundles.find((item) => item.name === bundle);
-        if (!b) return null;
-        return (
-          <>
-            {b.description}. <code>rsk install {b.name}</code>
-            {b.official.length
-              ? ` — includes ${b.official.length} official Anthropic skill${b.official.length > 1 ? 's' : ''} (${b.official.join(', ')}), fetched from Anthropic and not part of the ${data.skills.length}.`
-              : ''}
-            {b.missing.length
-              ? ` — also names ${b.missing.join(' and ')}, which are not in the catalogue (flagged in the notes).`
-              : ''}
-          </>
-        );
-      })()
-    : includePersonal
-      ? `Showing all ${data.skills.length} skills, personal ones included.`
-      : (
-          <>
-            Showing the {count} skills <code>rsk catalog</code> lists by default; the {data.personal} personal ones
-            need <code>--include personal</code>.
-          </>
-        );
+  const note = bundle ? (
+    (() => {
+      const b = data.bundles.find((item) => item.name === bundle);
+      if (!b) return null;
+      return (
+        <>
+          {b.description}. <code>rsk install {b.name}</code>
+          {b.official.length
+            ? ` — includes ${b.official.length} official Anthropic skill${b.official.length > 1 ? 's' : ''} (${b.official.join(', ')}), fetched from Anthropic and not part of the ${data.skills.length}.`
+            : ''}
+          {b.missing.length
+            ? ` — also names ${b.missing.join(' and ')}, which are not in the catalogue (flagged in the notes).`
+            : ''}
+        </>
+      );
+    })()
+  ) : includePersonal ? (
+    `Showing all ${data.skills.length} skills, personal ones included.`
+  ) : (
+    <>
+      Showing the {count} skills <code>rsk catalog</code> lists by default; the {data.personal} personal ones need{' '}
+      <code>--include personal</code>.
+    </>
+  );
 
   return (
     <Section id="catalogue" labelledBy="b-ex-h" tone="sunken">
@@ -92,7 +91,12 @@ export function Catalogue() {
           </li>
           {data.bundles.map((b) => (
             <li key={b.name}>
-              <button className="filter__chip" type="button" aria-pressed={bundle === b.name} onClick={() => setBundle(b.name)}>
+              <button
+                className="filter__chip"
+                type="button"
+                aria-pressed={bundle === b.name}
+                onClick={() => setBundle(b.name)}
+              >
                 {b.name}
               </button>
             </li>

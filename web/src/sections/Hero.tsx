@@ -1,5 +1,5 @@
-import { Fragment, useRef } from 'react';
 import type { CSSProperties } from 'react';
+import { Fragment, useRef } from 'react';
 
 import { BrandMark, ButtonLink, Eyebrow, FilmControl, Tag } from '../components/ui';
 import { profile, profileNames } from '../data/facts';
@@ -66,8 +66,8 @@ export function Hero() {
           <div>
             <p className="agent-hero__lede reveal" style={{ '--i': 2 } as CSSProperties}>
               <code>rsk</code> gives your coding agent three tools. Two only read: your project’s files and a catalogue
-              of {data.skills.length} skills. The one that writes, <code>install_skills</code>, makes Claude Code ask you
-              on every call.
+              of {data.skills.length} skills. The one that writes, <code>install_skills</code>, makes Claude Code ask
+              you on every call.
             </p>
             <div className="agent-hero__actions reveal" style={{ '--i': 3 } as CSSProperties}>
               <ButtonLink href="#start" variant="primary">
@@ -189,10 +189,10 @@ export function Hero() {
           </ol>
           <figcaption className="agent-loop__caption" id="c-cap">
             <p>
-              <Tag tone="readonly">real</Tag> Call 1 is a real <code>project_profile</code> response for a scratch Go folder
-              (go.mod, Dockerfile, cmd/demo/main.go). <Tag tone="sample">sample</Tag> The approval is drawn, not a capture
-              of the client dialog, and call 3’s reply is the shape from <code>internal/mcp/install_tool.go</code> with
-              real latest versions.
+              <Tag tone="readonly">real</Tag> Call 1 is a real <code>project_profile</code> response for a scratch Go
+              folder (go.mod, Dockerfile, cmd/demo/main.go). <Tag tone="sample">sample</Tag> The approval is drawn, not
+              a capture of the client dialog, and call 3’s reply is the shape from{' '}
+              <code>internal/mcp/install_tool.go</code> with real latest versions.
             </p>
             <FilmControl state={state} onToggle={toggle} ref={ctl} />
           </figcaption>

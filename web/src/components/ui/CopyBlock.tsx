@@ -47,7 +47,11 @@ export function CopyBlock({
         <span className="sr-only"> {label}</span>
       </Button>
       <p className="sr-only" aria-live="polite">
-        {status === 'ok' ? 'Commands copied to the clipboard' : status === 'fail' ? 'Copy failed; select the text instead' : ''}
+        {status === 'ok'
+          ? 'Commands copied to the clipboard'
+          : status === 'fail'
+            ? 'Copy failed; select the text instead'
+            : ''}
       </p>
     </div>
   );
