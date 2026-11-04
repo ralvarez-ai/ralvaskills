@@ -305,7 +305,7 @@ description: One line. WHAT the skill enforces + WHEN to invoke (trigger phrases
 
 **Body discipline:**
 
-- **Rules first, code second.** Each section explains the rule and the *why*; code is illustrative, not exhaustive. If a code block grows past ~15 lines or appears as a full reference implementation (a Dockerfile, an auth middleware, a project tree, a test scaffold), move it to `RECIPES.md` and replace it in `SKILL.md` with a one-line pointer like *"Skeleton in [RECIPES.md](RECIPES.md)."*
+- **Rules first, code second.** Each section explains the rule and the *why*; code is illustrative, not exhaustive. If a code block grows past ~15 lines or appears as a full reference implementation (a Dockerfile, an auth middleware, a project tree, a test scaffold), move it to `RECIPES.md` and replace it in `SKILL.md` with a one-line pointer like *"Skeleton in `RECIPES.md` (inside the skill)."*
 - **No duplicated cross-skill content.** If a pattern is canonically explained in another skill (auth in `rest-api-architect §11`, status codes in `rest-api-architect/STATUS_CODES.md`), link to it instead of restating. The link is the contract; restatement drifts.
 - **Body target:** keep the SKILL.md body under ~10 KB / ~250 lines where the topic allows. Foundational skills (`go-architect`, `rest-api-architect`) may run longer because the conventions themselves are dense; that's fine. Framework / infra / encoding skills should almost always factor recipes out.
 

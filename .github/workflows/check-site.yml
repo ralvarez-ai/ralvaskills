@@ -1,0 +1,85 @@
+name: Check site
+
+# The landing page in web/. It reads the registry, skills/**, the Go sources and
+# the git tags to generate its data (web/scripts/gen-data.mjs), so changes to any
+# of those can break it as well.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "web/**"
+      - "registry/index.json"
+      - "skills/**"
+      - "internal/mcp/**"
+      - "internal/tool/**"
+      - "cmd/rsk/**"
+      - ".github/workflows/check-site.yml"
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/check-site.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # gen-data.mjs reads the latest tag for the version shown on the page.
+          fetch-depth: 0
+          fetch-tags: true
+
+      # pnpm's version comes from "packageManager" in web/package.json.
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: web/package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+          registry-url: https://npm.pkg.github.com
+          scope: "@ralvarez-ts"
+
+      # @ralvarez-ts/tokens is on GitHub Packages: the secret needs packages:read.
+      - name: Install
+        run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      # Biome: format, imports and the recommended lint rules (a11y included).
+      - name: Lint
+        run: pnpm lint
+
+      # Typecheck, vite build, prerender. gen-data fails the build if the tree
+      # drifts from 58 skills / 15 bundles / 13 commands / 3 tools.
+      - name: Build
+        run: pnpm build
+
+      # verify.mjs drives a Chrome. Hosted runners ship one; the act image does
+      # not, so fall back to Playwright's Chromium (verify.mjs finds it in
+      # ~/.cache/ms-playwright).
+      - name: Browser
+        run: |
+          if command -v google-chrome >/dev/null; then
+            echo "CHROME=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            pnpm exec playwright-core install --with-deps chromium
+          fi
+
+      - name: Gate (axe, overflow, films, rail, style wiring, JS off)
+        run: node scripts/verify.mjs

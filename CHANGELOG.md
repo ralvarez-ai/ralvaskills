@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## Unreleased
 
 ### Added
+- **Landing page (`web/`):** a React 19 + TypeScript + Vite site, prerendered and hydrated, that reproduces the combined proposal (`mockups/ui-proposals/2026-11-04/direction-4-combined.html`) from the repo's own data. `scripts/verify.mjs` is its gate (axe in eight combinations, overflow, reveals, count-ups, films, rail and nav, style wiring, JavaScript off). `scripts/compare*.mjs` check parity against the mockup. Biome lints and formats it. A `check-site` workflow runs lint, build and the gate on pull requests, and `task ci:local` runs the same workflow locally with `act`. Not deployed yet.
 - `rsk new` bootstraps the `CLAUDE.md` → `@AGENTS.md` pattern: it writes a short `AGENTS.md` skeleton when the project has none, keeps `@AGENTS.md` as the first line of `CLAUDE.md` above `@.rsk/CLAUDE.md`, and leaves an existing `AGENTS.md` and later imports untouched. `uninstall`/`destroy` keep the import, since other tools read `AGENTS.md` directly.
 - **codebase-hygiene-reviewer:** new skill (1.0.0) for evidence-based declutter audits: dead code, unused exports per consumer, duplication and oversized files. It only proposes changes and writes its report outside the repo.
 

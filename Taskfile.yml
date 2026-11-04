@@ -211,3 +211,48 @@ tasks:
     desc: Run all tests
     cmds:
       - go test ./...
+
+  # Local CI: runs a real workflow file in Docker with act, so the gate that
+  # guards a pull request can run here first. Scoped with -W on purpose:
+  # publish-registry.yml is also workflow_dispatch and must never run locally.
+
+  ci:local:
+    desc: Run the site workflow locally with act (WORKFLOW=check-site.yml; secrets from .secrets, else $NODE_AUTH_TOKEN)
+    vars:
+      WORKFLOW: '{{.WORKFLOW | default "check-site.yml"}}'
+    cmds:
+      - |
+        if [ -f .secrets ]; then secrets="--secret-file .secrets"; else secrets="-s NODE_AUTH_TOKEN"; fi
+        act workflow_dispatch -W .github/workflows/{{.WORKFLOW}} $secrets \
+          --artifact-server-path .artifacts --env-file /dev/null
+
+  # web/ — the landing page (React + Vite). Its data is generated from this
+  # repository before every dev run and build, so the page cannot state a number
+  # the tree does not prove.
+
+  web:install:
+    desc: Install the landing page dependencies (needs NODE_AUTH_TOKEN for GitHub Packages)
+    dir: web
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  web:dev:
+    desc: Run the landing page dev server
+    dir: web
+    cmds:
+      - pnpm dev
+
+  web:build:
+    desc: Build the landing page into web/dist
+    dir: web
+    cmds:
+      - pnpm build
+
+  web:check:
+    desc: Lint, typecheck, build and run the landing page gate (axe, overflow, reveals, films, JS off)
+    dir: web
+    cmds:
+      - pnpm lint
+      - pnpm typecheck
+      - pnpm build
+      - node scripts/verify.mjs

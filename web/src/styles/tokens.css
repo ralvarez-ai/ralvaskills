@@ -1,0 +1,34 @@
+/* @ralvarez-ts/tokens — the real package, at build time. The page consumes the
+ * `sharp` palette (ink #0c0e11, cyan #2bbbd6, paper #f4f5f7) through the aliases
+ * declared in base.css, so no colour is copied into this repo.
+ *
+ * One deliberate deviation: sharp squares every corner (--radius-*: 0). The
+ * family landing pages draw 4/6 px, and a fully square console reads as an app
+ * rather than a page, so the control and card radii are restored to the base
+ * ladder here.
+ */
+/* Tailwind is here for the @theme directive, not for utilities: it is what
+ * turns the package's `@theme static` block into real :root variables. Without
+ * it the status roles (--color-warning-text, --color-success-text, ...) and the
+ * radius/motion scales never resolve, and the status colour falls back to nothing. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import '@ralvarez-ts/tokens/tokens.css';
+@import '@ralvarez-ts/tokens/sharp.css';
+
+:root[data-style='sharp'] {
+  --radius-control: 4px;
+  --radius-panel: 6px;
+}
+
+/* Ported from the landing proposals (mockups/ui-proposals/2026-11-04).
+ * Page palette = @ralvarez-ts/tokens (sharp) aliases; terminal surfaces and
+ * the night band stay literal because they are rsk's own theme. This file is
+ * now the source of truth for the page. */
+:root{color-scheme:light;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:72px;--space-9:112px;--measure:1200px;--gutter:clamp(20px,4vw,56px);--radius-control:4px;--radius-panel:6px;--ease-out:cubic-bezier(.16,1,.3,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--duration-1:160ms;--duration-2:320ms;--duration-3:640ms;--duration-4:1100ms;
+--font-mono:ui-monospace,"JetBrains Mono","Cascadia Mono","SF Mono",Menlo,Consolas,"DejaVu Sans Mono","Liberation Mono",monospace;
+--font-sans:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif;
+--surface-page:var(--color-bg);--surface-sunken:var(--color-surface);--surface-raised:var(--color-card);--border-subtle:var(--color-border);--border-control:var(--color-border-strong);--text-strong:var(--color-text);--text-muted:var(--color-muted);--fill-accent:var(--color-accent-text);--text-accent:var(--color-accent-text);--status-ok:var(--color-success-text);--status-warn:var(--color-warning-text);--status-danger:var(--color-danger-text);--surface-selected:var(--color-accent-tint);--on-accent:#ffffff;--status-info:#115c7a;--shadow-device:0 1px 0 rgba(20,23,26,.05), 0 18px 40px -30px rgba(20,23,26,.45);--wordmark-0:#2e7de9;--wordmark-1:#2d65bb;--wordmark-2:#2a5193;--wordmark-3:#264072;--wordmark-4:#2e7de9;--wordmark-5:#2d65bb}
+@media (prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--surface-page:var(--color-bg);--surface-sunken:var(--color-surface);--surface-raised:var(--color-card);--border-subtle:var(--color-border);--border-control:var(--color-border-strong);--text-strong:var(--color-text);--text-muted:var(--color-muted);--fill-accent:var(--color-accent-text);--text-accent:var(--color-accent-text);--status-ok:var(--color-success-text);--status-warn:var(--color-warning-text);--status-danger:var(--color-danger-text);--surface-selected:var(--color-accent-tint);--on-accent:#06161a;--status-info:#7fdeed;--shadow-device:0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9);--wordmark-0:#7aa2f7;--wordmark-1:#6483c6;--wordmark-2:#51689c;--wordmark-3:#415178;--wordmark-4:#7aa2f7;--wordmark-5:#6483c6}}
+[data-theme=light]{color-scheme:light;--surface-page:var(--color-bg);--surface-sunken:var(--color-surface);--surface-raised:var(--color-card);--border-subtle:var(--color-border);--border-control:var(--color-border-strong);--text-strong:var(--color-text);--text-muted:var(--color-muted);--fill-accent:var(--color-accent-text);--text-accent:var(--color-accent-text);--status-ok:var(--color-success-text);--status-warn:var(--color-warning-text);--status-danger:var(--color-danger-text);--surface-selected:var(--color-accent-tint);--on-accent:#ffffff;--status-info:#115c7a;--shadow-device:0 1px 0 rgba(20,23,26,.05), 0 18px 40px -30px rgba(20,23,26,.45);--wordmark-0:#2e7de9;--wordmark-1:#2d65bb;--wordmark-2:#2a5193;--wordmark-3:#264072;--wordmark-4:#2e7de9;--wordmark-5:#2d65bb}
+[data-theme=dark]{color-scheme:dark;--surface-page:var(--color-bg);--surface-sunken:var(--color-surface);--surface-raised:var(--color-card);--border-subtle:var(--color-border);--border-control:var(--color-border-strong);--text-strong:var(--color-text);--text-muted:var(--color-muted);--fill-accent:var(--color-accent-text);--text-accent:var(--color-accent-text);--status-ok:var(--color-success-text);--status-warn:var(--color-warning-text);--status-danger:var(--color-danger-text);--surface-selected:var(--color-accent-tint);--on-accent:#06161a;--status-info:#7fdeed;--shadow-device:0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9);--wordmark-0:#7aa2f7;--wordmark-1:#6483c6;--wordmark-2:#51689c;--wordmark-3:#415178;--wordmark-4:#7aa2f7;--wordmark-5:#6483c6}
+.section[data-tone="ink"]{color-scheme:dark;--surface-page:#0a0c0f;--surface-sunken:#12151a;--surface-raised:#161a1f;--border-subtle:#282c32;--border-control:#5c6065;--text-strong:#eceef1;--text-muted:#a0a7b1;--fill-accent:#2bbbd6;--text-accent:#2bbbd6;--status-ok:#4cc789;--status-warn:#e0b04a;--status-danger:#ff8a83;--surface-selected:rgba(43, 187, 214, 0.14);--on-accent:#06161a;--status-info:#7fdeed;--shadow-device:0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9);background:var(--surface-page);color:var(--text-strong)}

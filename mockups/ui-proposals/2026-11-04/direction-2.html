@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>rsk — 58 skills for your coding agent (direction B)</title>
+<meta name="description" content="58 skills for Claude Code and OpenCode in 17 domains and 15 bundles, installed and versioned by the rsk CLI.">
+<meta name="color-scheme" content="light dark">
+<script>(function(){var d=document.documentElement,s=null;try{s=localStorage.getItem('rsk-theme')}catch(e){}
+d.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('anim');d.classList.add('js')})();</script>
+<style>:root{color-scheme:light;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:72px;--s9:112px;--wrap:1200px;--gut:clamp(20px,4vw,56px);--rk:4px;--rc:6px;--e-out:cubic-bezier(.16,1,.3,1);--e-io:cubic-bezier(.65,0,.35,1);--d1:160ms;--d2:320ms;--d3:640ms;--d4:1100ms;
+--mono:ui-monospace,"JetBrains Mono","Cascadia Mono","SF Mono",Menlo,Consolas,"DejaVu Sans Mono","Liberation Mono",monospace;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif;
+--bg:#f4f5f7;--bg2:#eceef1;--surface:#ffffff;--line:#e3e6ea;--line-2:#7a7e83;--text:#14171a;--muted:#565d66;--accent:#00677d;--accent-t:#00677d;--ok:#135c36;--warn:#6b4d08;--danger:#9d2a24;--sel:rgba(0, 117, 140, 0.1);--on-accent:#ffffff;--info:#115c7a;--shadow:0 1px 0 rgba(20,23,26,.05), 0 18px 40px -30px rgba(20,23,26,.45);--wm0:#2e7de9;--wm1:#2d65bb;--wm2:#2a5193;--wm3:#264072;--wm4:#2e7de9;--wm5:#2d65bb}@media (prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#0c0e11;--bg2:#12151a;--surface:#171b21;--line:#282c32;--line-2:#5c6065;--text:#eceef1;--muted:#a0a7b1;--accent:#2bbbd6;--accent-t:#2bbbd6;--ok:#4cc789;--warn:#e0b04a;--danger:#ff8a83;--sel:rgba(43, 187, 214, 0.14);--on-accent:#06161a;--info:#7fdeed;--shadow:0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9);--wm0:#7aa2f7;--wm1:#6483c6;--wm2:#51689c;--wm3:#415178;--wm4:#7aa2f7;--wm5:#6483c6}}[data-theme=light]{color-scheme:light;--bg:#f4f5f7;--bg2:#eceef1;--surface:#ffffff;--line:#e3e6ea;--line-2:#7a7e83;--text:#14171a;--muted:#565d66;--accent:#00677d;--accent-t:#00677d;--ok:#135c36;--warn:#6b4d08;--danger:#9d2a24;--sel:rgba(0, 117, 140, 0.1);--on-accent:#ffffff;--info:#115c7a;--shadow:0 1px 0 rgba(20,23,26,.05), 0 18px 40px -30px rgba(20,23,26,.45);--wm0:#2e7de9;--wm1:#2d65bb;--wm2:#2a5193;--wm3:#264072;--wm4:#2e7de9;--wm5:#2d65bb}[data-theme=dark]{color-scheme:dark;--bg:#0c0e11;--bg2:#12151a;--surface:#171b21;--line:#282c32;--line-2:#5c6065;--text:#eceef1;--muted:#a0a7b1;--accent:#2bbbd6;--accent-t:#2bbbd6;--ok:#4cc789;--warn:#e0b04a;--danger:#ff8a83;--sel:rgba(43, 187, 214, 0.14);--on-accent:#06161a;--info:#7fdeed;--shadow:0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9);--wm0:#7aa2f7;--wm1:#6483c6;--wm2:#51689c;--wm3:#415178;--wm4:#7aa2f7;--wm5:#6483c6}.night{color-scheme:dark;--bg:#0a0c0f;--bg2:#12151a;--surface:#161a1f;--line:#282c32;--line-2:#5c6065;--text:#eceef1;--muted:#a0a7b1;--accent:#2bbbd6;--accent-t:#2bbbd6;--ok:#4cc789;--warn:#e0b04a;--danger:#ff8a83;--sel:rgba(43, 187, 214, 0.14);--on-accent:#06161a;--info:#7fdeed;--shadow:0 1px 0 rgba(0,0,0,.35), 0 18px 44px -30px rgba(0,0,0,.9);background:var(--bg);color:var(--text)}.tn{color-scheme:dark;--bg:#16161e;--bg2:#1a1b26;--surface:#1f2335;--line:#2a2e45;--line-2:#3b4261;--text:#c0caf5;--muted:#a9b1d6;--accent:#7aa2f7;--accent-t:#7aa2f7;--on-accent:#16161e;--ok:#9ece6a;--warn:#e0af68;--danger:#f7768e;--info:#7dcfff;--sel:#283457;--shadow:0 18px 44px -30px rgba(0,0,0,.9);background:var(--bg);color:var(--text)}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:88px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.6 var(--sans);overflow-x:clip;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{max-width:100%}
+h1,h2,h3{line-height:.99;margin:0;text-wrap:balance;letter-spacing:-.04em;font-weight:800}
+p{margin:0 0 1em;text-wrap:pretty}
+a{color:var(--accent-t);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+code,pre,kbd,.mono{font-family:var(--mono)}
+code{font-size:.9em;overflow-wrap:anywhere}
+h1 code,h2 code,h3 code{white-space:nowrap;overflow-wrap:normal}
+pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.86rem;line-height:1.6}
+.num{font-variant-numeric:tabular-nums}
+::selection{background:var(--accent);color:var(--on-accent)}
+:focus-visible{outline:2px solid var(--accent-t);outline-offset:3px;border-radius:2px}
+.night :focus-visible,.tn :focus-visible{outline-color:var(--accent-t)}
+.wrap{width:100%;max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0}
+.skip{position:absolute;left:12px;top:-80px;z-index:50;background:var(--accent-t);color:var(--on-accent);padding:12px 16px;border-radius:var(--rk);font-weight:700;min-height:44px;text-decoration:none}
+.skip:focus{top:12px}
+/* family micro-detail: the brand-kit square and dot (12px, radius 2.6 at 64-unit scale) */
+.fd{display:inline-grid;grid-template-columns:repeat(2,5px);gap:2px;vertical-align:middle}
+.fd i{width:5px;height:5px;border-radius:1px;background:currentColor}
+.fd i:last-child{border-radius:50%;background:var(--accent)}
+/* header + scroll progress */
+.k-top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid transparent;transition:border-color var(--d2)}
+.k-top.stuck{border-bottom-color:var(--line)}
+.k-top .wrap{display:flex;align-items:center;gap:8px;min-height:64px}
+.k-brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--text);text-decoration:none;font:700 1.05rem var(--mono);letter-spacing:-.01em}
+.k-brand .fd{color:var(--text)}
+.k-brand small{font:500 .78rem var(--mono);color:var(--muted);letter-spacing:0}
+.k-nav{margin-left:auto;display:flex;align-items:center;gap:2px}
+.k-nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--muted);text-decoration:none;font:500 .9rem var(--sans);border-radius:var(--rk);border-bottom:2px solid transparent}
+.k-nav a:hover{color:var(--text);background:var(--sel)}
+.k-nav a[aria-current]{color:var(--text);border-bottom-color:var(--accent)}
+@media (max-width:760px){.k-nav a[data-opt]{display:none}}
+.k-prog{position:absolute;left:0;right:0;bottom:-1px;height:2px;pointer-events:none;background:color-mix(in srgb,var(--line) 45%,transparent)}
+.k-prog i{display:block;height:100%;background:var(--accent);transform:scaleX(var(--p,0));transform-origin:0 50%;transition:transform 90ms linear}
+html:not(.js) .k-prog{display:none}
+/* buttons */
+.k-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:0 18px;border-radius:var(--rk);border:1px solid var(--line-2);background:transparent;color:var(--text);font:600 .95rem/1 var(--sans);cursor:pointer;text-decoration:none;white-space:nowrap;transition:background var(--d1),border-color var(--d1),color var(--d1)}
+.k-btn:hover{border-color:var(--text)}
+.k-btn.primary{background:var(--accent-t);border-color:var(--accent-t);color:var(--on-accent)}
+.k-btn.primary:hover{background:color-mix(in srgb,var(--accent-t) 86%,var(--text));border-color:color-mix(in srgb,var(--accent-t) 86%,var(--text))}
+.k-btn.ghost{background:transparent}
+.anim .k-btn:active{transform:translateY(1px)}
+.k-theme{margin-left:6px;padding:0 12px}
+.k-theme .ico{font-size:1.1rem;line-height:1}
+@media (max-width:420px){.k-theme .t{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
+/* kicker + section rhythm */
+.k-kick{display:inline-flex;align-items:center;gap:10px;font:600 .74rem/1.5 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.k-kick .fd{margin:-2px 2px 0 0}
+.k-kick .gl{color:var(--accent-t)}
+.k-sec{position:relative;padding:clamp(72px,9vw,128px) 0}
+.k-sec h2{font-size:clamp(2rem,4.4vw,3.4rem);margin:.12em 0 .5em;max-width:22ch}
+.k-lede{font-size:clamp(1.05rem,1.5vw,1.22rem);color:var(--muted);max-width:62ch}
+.k-rule{height:2px;background:var(--text);border:0;margin:0 0 clamp(28px,4vw,48px)}
+.anim .k-rule{transform:scaleX(0);transform-origin:0 50%;transition:transform .95s var(--e-out)}
+.anim .k-rule.in{transform:none}
+/* hero grid texture (decorative) */
+.k-grid{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+ background-image:linear-gradient(to right,color-mix(in srgb,var(--line) 58%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,var(--line) 58%,transparent) 1px,transparent 1px);
+ background-size:72px 72px;
+ mask-image:radial-gradient(120% 90% at 78% 0%,#000 0%,transparent 68%);
+ -webkit-mask-image:radial-gradient(120% 90% at 78% 0%,#000 0%,transparent 68%)}
+/* badges */
+.k-badge{display:inline-flex;align-items:center;gap:6px;padding:1px 7px;border:1px solid currentColor;border-radius:3px;font:600 .68rem/1.7 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;vertical-align:1px}
+.k-badge.ro{color:var(--ok)}.k-badge.de{color:var(--danger)}.k-badge.hu{color:var(--warn)}.k-badge.sa{color:var(--muted);border-style:dashed}
+/* code window */
+.k-win{background:var(--surface);border:1px solid var(--line);border-radius:var(--rc);box-shadow:var(--shadow);overflow:hidden}
+.k-win-h{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line);font:600 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--surface) 80%,var(--bg))}
+.k-win-h .dots{display:inline-flex;gap:4px}.k-win-h .dots i{width:6px;height:6px;border-radius:1px;background:currentColor;opacity:.65;display:block}
+.k-win-b{padding:14px 16px}
+/* copy block */
+.k-copy{position:relative}
+.k-copy pre{padding:18px 20px;padding-right:96px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rc)}
+.k-copy .k-btn{position:absolute;top:8px;right:8px;min-height:40px;padding:0 14px;background:var(--surface)}
+.k-cm{color:var(--muted)}.k-c{display:block;margin-bottom:.55em}
+/* film control: label + a real progress bar */
+.k-film-ctl{display:inline-flex;align-items:center;gap:10px;min-height:40px;min-width:44px;padding:0 12px;border-radius:var(--rk);border:1px solid var(--line-2);background:transparent;color:var(--muted);font:600 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.k-film-ctl:hover{color:var(--text);border-color:var(--text)}
+.k-film-ctl .ic{display:inline-block;width:10px;text-align:center}
+.k-film-ctl .bar{width:42px;height:2px;background:var(--line);position:relative;overflow:hidden}
+.k-film-ctl .bar i{position:absolute;inset:0;background:var(--accent);transform:scaleX(var(--p,1));transform-origin:0 50%}
+/* section rail */
+.k-rail{display:none}
+@media (min-width:1400px){
+ .k-rail{display:block;position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:15}
+ .k-rail ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+ .k-rail a{display:flex;align-items:center;gap:10px;min-height:30px;padding:2px 6px;color:var(--muted);text-decoration:none;font:500 .7rem var(--mono);border-radius:3px}
+ .k-rail a::before{content:"";width:12px;height:2px;background:var(--line-2);transition:width var(--d2) var(--e-out),background var(--d2)}
+ .k-rail a .n{color:var(--muted);opacity:0;transform:translateX(-4px);transition:opacity var(--d2),transform var(--d2) var(--e-out)}
+ .k-rail a .lb{opacity:0;transform:translateX(-4px);transition:opacity var(--d2),transform var(--d2) var(--e-out);white-space:nowrap;background:var(--bg);padding:3px 6px;border:1px solid var(--line);border-radius:3px;color:var(--text)}
+ .k-rail:hover a .lb,.k-rail a:focus-visible .lb,.k-rail:hover a .n,.k-rail a:focus-visible .n,.k-rail a[aria-current] .n{opacity:1;transform:none}
+ .k-rail a[aria-current]::before{width:28px;background:var(--accent)}
+ .k-rail a[aria-current] .n{color:var(--accent-t)}
+}
+/* reveals: content visible unless motion is allowed; one-shot, ends at 1 */
+.anim .rv{opacity:0;transform:translateY(20px);transition:opacity .55s var(--e-out),transform .8s var(--e-out);transition-delay:calc(var(--i,0) * 70ms)}
+.anim .rv.in{opacity:1;transform:none}
+.anim .rv--l{transform:translateX(-26px)}
+.anim .rv--s{transform:scale(.975)}
+.anim .rv--d{transform:translateY(32px)}
+/* film: hidden steps keep their box (no layout shift) */
+.f-run .f-h{visibility:hidden}
+.anim .f-run .f-h{visibility:visible;opacity:0;transform:translateY(6px)}
+.anim .f-run [data-f]{transition:opacity .35s ease,transform .45s var(--e-out),background-color .5s ease}
+.f-caret::after{content:"";display:inline-block;width:.55em;height:1.05em;margin-left:1px;vertical-align:-.15em;background:currentColor;animation:k-blink 1s steps(1) infinite}
+@keyframes k-blink{50%{opacity:0}}
+/* scroll-linked helpers (Chromium 115+; progressive elsewhere) */
+@supports (animation-timeline:view()){
+ .anim .par{animation:k-par linear both;animation-timeline:view();animation-range:entry 0% cover 70%}
+ @keyframes k-par{from{transform:translateY(26px)}to{transform:translateY(-26px)}}
+ .anim .drift-x{animation:k-drift-x linear both;animation-timeline:view();animation-range:entry 10% exit 60%}
+ @keyframes k-drift-x{from{transform:translateX(-4%)}to{transform:translateX(3%)}}
+}
+/* terminal surface: termkit TokyoNight, fixed in both themes */
+.tn{--wm0:#2e7de9;--wm1:#2d65bb;--wm2:#2a5193;--wm3:#264072;--wm4:#2e7de9;--wm5:#2d65bb}
+.tn .k-win-h{background:color-mix(in srgb,var(--surface) 80%,#000);border-color:var(--line)}
+/* trade-off */
+.k-trade{display:grid;gap:clamp(24px,4vw,64px);grid-template-columns:1fr}
+@media (min-width:900px){.k-trade{grid-template-columns:1.1fr 1fr;align-items:start}}
+.k-trade .give,.k-trade .take{border-top:2px solid var(--line);padding-top:20px}
+.k-trade .give{border-color:var(--ok)}.k-trade .take{border-color:var(--warn)}
+.k-trade h3{font-size:clamp(1.4rem,2.6vw,2rem);margin-bottom:.5em}
+.k-trade ul{margin:0;padding-left:1.1em}.k-trade li{margin:.35em 0}
+/* footer */
+.k-foot{border-top:1px solid var(--line);padding:56px 0 64px;font-size:.92rem;color:var(--muted)}
+.k-foot .wrap{display:grid;gap:28px}
+@media (min-width:900px){.k-foot .wrap{grid-template-columns:auto 1fr;align-items:start}}
+.k-foot details{max-width:72ch}
+.k-foot summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600;color:var(--text)}
+.k-src{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.k-src li{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+@media (min-width:640px){.k-src li{grid-template-columns:minmax(0,17ch) minmax(0,1fr);gap:16px}}
+.k-wm{display:block;width:180px;height:auto}
+.wm0{fill:var(--wm0)}.wm1{fill:var(--wm1)}.wm2{fill:var(--wm2)}.wm3{fill:var(--wm3)}.wm4{fill:var(--wm4)}.wm5{fill:var(--wm5)}
+/* view-transition theme wipe */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+@media (forced-colors:active){.k-badge,.k-btn,.k-film-ctl,.k-win{border:1px solid CanvasText}.k-btn.primary{forced-color-adjust:none;background:Highlight;color:HighlightText}.fd i,.k-rule,.k-prog i,.k-rail a::before{background:CanvasText;forced-color-adjust:none}}
+
+.b-num{font:800 clamp(8rem,14vw,12.5rem)/.82 var(--mono);letter-spacing:-.07em;color:var(--accent-t);font-variant-numeric:tabular-nums;display:block}
+.b-sec-n{font:800 clamp(3.6rem,9vw,7.5rem)/.85 var(--mono);letter-spacing:-.06em;color:var(--accent-t);display:block;margin-bottom:.12em;font-variant-numeric:tabular-nums}
+.b-hero{position:relative;padding:clamp(28px,5vw,72px) 0 clamp(56px,8vw,112px)}
+.b-hero .wrap{position:relative;z-index:1}
+.b-grid{display:grid;gap:32px clamp(32px,5vw,80px);grid-template-columns:minmax(0,1fr)}
+@media (min-width:1080px){.b-grid{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}}
+.b-h1{font-size:clamp(1.8rem,3.3vw,2.75rem);font-weight:800;letter-spacing:-.04em;line-height:1.04}
+.b-h1 .b-num{margin-bottom:.1em}
+.b-h1 .w{display:block;max-width:19ch}
+.b-lede{color:var(--muted);font-size:clamp(1.05rem,1.4vw,1.2rem);max-width:46ch;margin:22px 0 26px}
+.b-cta{display:flex;flex-wrap:wrap;gap:12px}
+/* unit chart */
+.b-units{margin:0}
+.b-rows{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.b-rows li{display:grid;grid-template-columns:minmax(0,8.5em) minmax(0,1fr) 2.2em;align-items:center;gap:12px;min-height:30px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);padding:3px 0}
+.b-rows .dn{font:600 .85rem var(--mono);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b-rows .ct{font:700 .9rem var(--mono);text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.b-sq{display:flex;flex-wrap:wrap;gap:4px}
+.b-sq i{display:block;width:18px;height:18px;border-radius:2px;background:var(--accent)}
+@media (max-width:600px){.b-sq{gap:3px}.b-sq i{width:14px;height:14px}.b-rows li{grid-template-columns:minmax(0,7.2em) minmax(0,1fr) 1.6em;gap:8px}}
+.b-rows li.p .b-sq i{background:transparent;border:2px dashed var(--muted)}
+.anim .f-run .b-rows li.f-h{opacity:1;visibility:visible;transform:none}
+.anim .f-run .b-rows li.f-h .b-sq i{transform:scale(0)}
+.anim .b-sq i{transition:transform .38s cubic-bezier(.3,1.5,.5,1)}
+.b-cap{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between;align-items:center;margin-top:14px;font-size:.86rem;color:var(--muted)}
+.b-cap p{margin:0;max-width:60ch}
+/* explorer */
+.b-ex-top{display:grid;gap:24px;grid-template-columns:minmax(0,1fr);align-items:end}
+@media (min-width:980px){.b-ex-top{grid-template-columns:minmax(0,1fr) auto}}
+.b-count{font:800 clamp(3rem,6vw,5.2rem)/.85 var(--mono);letter-spacing:-.06em;color:var(--accent-t);font-variant-numeric:tabular-nums;min-width:2ch;display:inline-block;text-align:right}
+.b-count-l{font:600 .95rem var(--mono);color:var(--muted)}
+.b-chips{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 12px;padding:0;list-style:none}
+.b-chip{min-height:44px;min-width:44px;padding:0 14px;border-radius:var(--rk);border:1px solid var(--line-2);background:transparent;color:var(--text);font:500 .8rem var(--mono);cursor:pointer}
+.b-chip:hover{border-color:var(--accent-t)}
+.b-chip[aria-pressed=true]{background:var(--accent-t);border-color:var(--accent-t);color:var(--on-accent)}
+.b-chip.tg[aria-pressed=true]{background:var(--warn);border-color:var(--warn);color:var(--bg)}
+.b-chip.tg{border-color:var(--line);border-style:dashed}
+@media (max-width:700px){.b-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-inline:calc(-1*clamp(20px,4vw,56px));padding-inline:clamp(20px,4vw,56px);scrollbar-width:thin}.b-chip{flex:none}}
+.b-note{min-height:3.2em;color:var(--muted);font-size:.95rem;margin:0 0 22px;max-width:80ch}
+.b-note code{color:var(--text)}
+.b-field{columns:4 15rem;column-gap:28px}
+.b-dom{break-inside:avoid;margin:0 0 22px;padding-top:10px;border-top:2px solid var(--text)}
+.b-dom h3{font:700 .8rem var(--mono);letter-spacing:.06em;text-transform:uppercase;display:flex;justify-content:space-between;margin-bottom:8px}
+.b-dom ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.b-tag{font:500 .82rem/1 var(--mono);padding:7px 9px;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+.b-field.f .b-tag{border-style:dashed;color:var(--muted);background:transparent}
+.b-field.f .b-tag.on{border:1px solid var(--accent-t);border-left-width:4px;color:var(--text);background:var(--sel)}
+.b-tag .v{color:var(--muted);margin-left:6px;font-size:.92em}
+.b-field .ph{font-size:.85rem;color:var(--muted);font-style:italic}
+.b-field:not(.inc) .b-tag.p{display:none}
+.b-field.inc .ph{display:none}
+/* bundles list */
+.b-bl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);border-top:2px solid var(--text)}
+@media (min-width:900px){.b-bl{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:32px}}
+.b-bl li{padding:14px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 14px}
+.b-bl .n{font:800 1.6rem/1 var(--mono);color:var(--accent-t);grid-row:span 2;min-width:1.4ch;text-align:right}
+.b-bl b{font-family:var(--mono)}
+.b-bl span{color:var(--muted);font-size:.92rem}
+/* releases */
+.b-rel{display:grid;gap:32px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.b-rel{grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);align-items:end}}
+.b-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.b-chart .bar{fill:var(--accent)}
+.anim .b-chart .bar{transform:scaleY(0);transform-box:fill-box;transform-origin:50% 100%;transition:transform .7s var(--e-out);transition-delay:calc(var(--i,0) * 14ms)}
+.anim .b-chart.in .bar{transform:none}
+.b-chart .ax{stroke:var(--text);stroke-width:1.5}
+.b-chart text{fill:var(--muted);font:500 12px var(--mono)}
+.b-chart text.pk{fill:var(--text);font-weight:700}
+.b-chart details{margin-top:10px;font-size:.9rem}
+.b-chart summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--accent-t);font-weight:600}
+.b-chart table{border-collapse:collapse;font:500 .82rem var(--mono)}
+.b-chart td,.b-chart th{padding:3px 14px 3px 0;text-align:left;border-bottom:1px solid var(--line)}
+/* cli */
+.b-cli{display:grid;gap:48px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.b-cli{grid-template-columns:1fr 1fr}}
+.b-cmds{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.b-cmds code{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);font-size:.92rem}
+.b-tools{list-style:none;margin:0;padding:0;border-top:2px solid var(--text)}
+.b-tools li{padding:14px 0;border-bottom:1px solid var(--line)}
+.b-tools code{font-weight:700;font-size:1rem;margin-right:10px}
+.b-tools p{margin:6px 0 0;color:var(--muted);font-size:.95rem}
+/* ones */
+.b-ones{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);border-top:2px solid var(--text)}
+@media (min-width:900px){.b-ones{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:40px}}
+.b-ones li{padding:22px 0;border-bottom:1px solid var(--line)}
+.b-ones .b-sec-n{font-size:clamp(3rem,6vw,5rem)}
+.b-ones li.take .b-sec-n{color:var(--warn)}
+.b-ones h3{font-size:1.25rem;margin:.2em 0 .4em}
+.b-ones p{color:var(--muted);margin:0}
+.b-start{display:grid;gap:32px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.b-start{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="k-top"><div class="wrap">
+<a class="k-brand" href="#top"><span class="fd" aria-hidden="true"><i></i><i></i></span>rsk <small>3.4.1</small></a>
+<nav class="k-nav" aria-label="Page"><a href="#catalogue" data-opt>Catalogue</a><a href="#releases" data-opt>Releases</a><a href="#trade" data-opt>Trade-off</a><a href="#start">Install</a>
+<button class="k-btn ghost k-theme" type="button" aria-pressed="false" hidden><span class="ico" aria-hidden="true">◐</span><span class="t">Dark theme</span></button></nav>
+<div class="k-prog" aria-hidden="true"><i></i></div>
+</div></header><nav class="k-rail" aria-label="Sections"><ol><li><a href="#top"><span class="n">01</span><span class="lb">58 skills</span></a></li><li><a href="#catalogue"><span class="n">02</span><span class="lb">Filter</span></a></li><li><a href="#bundles"><span class="n">03</span><span class="lb">Bundles</span></a></li><li><a href="#releases"><span class="n">04</span><span class="lb">Releases</span></a></li><li><a href="#cli"><span class="n">05</span><span class="lb">Commands</span></a></li><li><a href="#trade"><span class="n">06</span><span class="lb">Trade-off</span></a></li><li><a href="#start"><span class="n">07</span><span class="lb">Install</span></a></li></ol></nav><main id="main">
+<section class="b-hero" id="top" aria-labelledby="b-h1"><div class="k-grid" aria-hidden="true"></div><div class="wrap b-grid">
+<div>
+<p class="k-kick rv"><span class="fd" aria-hidden="true"><i></i><i></i></span> rsk · the catalogue</p>
+<h1 class="b-h1 rv" id="b-h1" style="--i:1"><span class="b-num drift-x" aria-hidden="true" id="b-count0">58</span><span class="sr">58 </span><span class="w">skills your coding agent can load, installed and versioned by one CLI.</span></h1>
+<p class="b-lede rv" style="--i:2">Each one is a <code>SKILL.md</code> with the standards for one job: <code>go-architect</code>, <code>sql-architect</code>, <code>mcp-architect</code>. <code>rsk</code> installs them, alone or in bundles, into Claude Code and OpenCode.</p>
+<div class="b-cta rv" style="--i:3"><a class="k-btn primary" href="#start">Install rsk</a><a class="k-btn" href="#catalogue">Filter the 58</a></div>
+</div>
+<figure class="b-units" id="b-film" aria-labelledby="b-units-cap">
+<ul class="b-rows" aria-label="Skills per domain"><li data-f="r0"><span class="dn">frameworks</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="ct">8</span></li><li data-f="r1"><span class="dn">infra</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ct">5</span></li><li data-f="r2"><span class="dn">workflows</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="ct">5</span></li><li data-f="r3"><span class="dn">protocols</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ct">4</span></li><li data-f="r4"><span class="dn">quality</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ct">4</span></li><li data-f="r5"><span class="dn">refactoring</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ct">4</span></li><li data-f="r6"><span class="dn">frontend</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i></span><span class="ct">3</span></li><li data-f="r7"><span class="dn">languages</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i></span><span class="ct">3</span></li><li data-f="r8"><span class="dn">meta</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i></span><span class="ct">3</span></li><li data-f="r9"><span class="dn">academic</span><span class="b-sq" aria-hidden="true"><i></i><i></i></span><span class="ct">2</span></li><li data-f="r10"><span class="dn">design</span><span class="b-sq" aria-hidden="true"><i></i><i></i></span><span class="ct">2</span></li><li data-f="r11"><span class="dn">tooling</span><span class="b-sq" aria-hidden="true"><i></i><i></i></span><span class="ct">2</span></li><li data-f="r12"><span class="dn">databases</span><span class="b-sq" aria-hidden="true"><i></i></span><span class="ct">1</span></li><li data-f="r13"><span class="dn">encoding</span><span class="b-sq" aria-hidden="true"><i></i></span><span class="ct">1</span></li><li data-f="r14"><span class="dn">messaging</span><span class="b-sq" aria-hidden="true"><i></i></span><span class="ct">1</span></li><li data-f="r15"><span class="dn">robotics</span><span class="b-sq" aria-hidden="true"><i></i></span><span class="ct">1</span></li><li data-f="r16" class=p><span class="dn">personal</span><span class="b-sq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="ct">9</span></li></ul>
+<figcaption class="b-cap" id="b-units-cap"><p><span class="k-badge ro">real</span> One square per published skill, by the <code>skills/&lt;domain&gt;/</code> folder it lives in. Dashed: the 9 marked personal, which <code>rsk catalog</code> hides unless you pass <code>--include personal</code>.</p><button class="k-film-ctl" type="button" hidden><span class="ic" aria-hidden="true">↻</span><span class="l">Replay</span><span class="bar" aria-hidden="true"><i></i></span><span class="sr"> the hero animation</span></button></figcaption>
+</figure>
+</div></section>
+<section class="k-sec" id="catalogue" aria-labelledby="b-ex-h" style="background:var(--bg2)"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
+<div class="b-ex-top">
+<div><span class="b-sec-n" aria-hidden="true" data-count="15">15</span><h2 id="b-ex-h" style="margin-top:0"><span class="sr">15 </span>bundles. Filter the catalogue the way <code>rsk catalog</code> does.</h2></div>
+<p style="margin:0;text-align:right"><span class="b-count" id="b-count" aria-hidden="true">49</span><br><span class="b-count-l" id="b-count-l" aria-hidden="true">shown of 58</span></p>
+</div>
+<ul class="b-chips" aria-label="Filter by bundle" hidden id="b-chips"><li><button class="b-chip" type="button" aria-pressed="true" data-bundle="">all</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="global">global</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="docs">docs</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="design">design</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="go-grpc">go-grpc</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="gin">gin</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="nethttp">nethttp</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="go-cli">go-cli</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="fastapi">fastapi</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="llm-app">llm-app</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="ros2">ros2</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="python-grpc">python-grpc</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="python-cli">python-cli</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="event-driven">event-driven</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="observability">observability</button></li><li><button class="b-chip" type="button" aria-pressed="false" data-bundle="code-review">code-review</button></li><li><button class="b-chip tg" type="button" aria-pressed="false" id="b-inc">--include personal</button></li></ul>
+<p class="b-note" id="b-note" aria-live="polite">Showing the 49 skills <code>rsk catalog</code> lists by default; the 9 personal ones need <code>--include personal</code>.</p>
+<div class="b-field" id="b-field"><section class="b-dom" aria-label="frameworks"><h3><span>frameworks</span><span>8</span></h3><ul><li class="b-tag" data-b="">astro-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="fastapi llm-app">fastapi-architect<span class="v">1.0.3</span></li><li class="b-tag" data-b="gin">gin-architect<span class="v">1.0.3</span></li><li class="b-tag" data-b="">hugo-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="nethttp">nethttp-architect<span class="v">1.0.3</span></li><li class="b-tag" data-b="design">nextjs-architect<span class="v">1.0.2</span></li><li class="b-tag" data-b="design">react-architect<span class="v">1.1.0</span></li><li class="b-tag" data-b="">reveal-js-architect<span class="v">1.0.2</span></li></ul></section><section class="b-dom" aria-label="infra"><h3><span>infra</span><span>5</span></h3><ul><li class="b-tag" data-b="">ci-cd-architect<span class="v">1.2.0</span></li><li class="b-tag" data-b="go-grpc gin nethttp go-cli fastapi llm-app ros2 python-grpc python-cli">docker-architect<span class="v">1.3.0</span></li><li class="b-tag" data-b="observability">grafana-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="observability">observability-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="">secrets-architect<span class="v">1.1.1</span></li></ul></section><section class="b-dom" aria-label="workflows"><h3><span>workflows</span><span>5</span></h3><ul><li class="b-tag" data-b="global">commit-author<span class="v">1.11.0</span></li><li class="b-tag" data-b="">docs-architect<span class="v">1.1.0</span></li><li class="b-tag" data-b="global">feature-planner<span class="v">1.0.1</span></li><li class="b-tag" data-b="global">grill-with-docs<span class="v">1.0.1</span></li><li class="b-tag" data-b="global">tdd<span class="v">1.0.0</span></li></ul></section><section class="b-dom" aria-label="protocols"><h3><span>protocols</span><span>4</span></h3><ul><li class="b-tag" data-b="">connectrpc-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="go-grpc python-grpc">grpc-architect<span class="v">1.0.1</span></li><li class="b-tag" data-b="">mcp-architect<span class="v">2.3.0</span></li><li class="b-tag" data-b="gin nethttp fastapi">rest-api-architect<span class="v">1.1.1</span></li></ul></section><section class="b-dom" aria-label="quality"><h3><span>quality</span><span>4</span></h3><ul><li class="b-tag" data-b="code-review">api-contract-reviewer<span class="v">1.0.1</span></li><li class="b-tag" data-b="">codebase-hygiene-reviewer<span class="v">1.1.0</span></li><li class="b-tag" data-b="code-review">performance-reviewer<span class="v">1.0.0</span></li><li class="b-tag" data-b="global code-review">security-reviewer<span class="v">1.0.0</span></li></ul></section><section class="b-dom" aria-label="refactoring"><h3><span>refactoring</span><span>4</span></h3><ul><li class="b-tag" data-b="global">code-design-refactor<span class="v">1.0.1</span></li><li class="b-tag" data-b="global">design-patterns<span class="v">1.0.1</span></li><li class="b-tag" data-b="global">improve-codebase-architecture<span class="v">1.1.0</span></li><li class="b-tag" data-b="global">logic-cleaner<span class="v">1.0.0</span></li></ul></section><section class="b-dom" aria-label="frontend"><h3><span>frontend</span><span>3</span></h3><ul><li class="b-tag" data-b="">landing-page-designer<span class="v">1.0.0</span></li><li class="b-tag" data-b="design">ui-ux-architect<span class="v">1.0.1</span></li><li class="b-tag" data-b="">website-concept-architect<span class="v">1.0.1</span></li></ul></section><section class="b-dom" aria-label="languages"><h3><span>languages</span><span>3</span></h3><ul><li class="b-tag" data-b="go-grpc gin nethttp go-cli">go-architect<span class="v">1.14.0</span></li><li class="b-tag" data-b="">latex-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="fastapi llm-app ros2 python-grpc python-cli">python-architect<span class="v">1.4.2</span></li></ul></section><section class="b-dom" aria-label="meta"><h3><span>meta</span><span>3</span></h3><ul><li class="b-tag" data-b="global">caveman<span class="v">1.0.0</span></li><li class="b-tag" data-b="global">rsk-guide<span class="v">0.4.2</span></li><li class="b-tag" data-b="global">skill-builder<span class="v">1.0.0</span></li></ul></section><section class="b-dom" aria-label="academic"><h3><span>academic</span><span>2</span></h3><ul><li class="b-tag" data-b="">ml-conference-paper-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="">study-artifact-builder<span class="v">1.1.0</span></li></ul></section><section class="b-dom" aria-label="design"><h3><span>design</span><span>2</span></h3><ul><li class="b-tag" data-b="global">ddd-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="global llm-app">hexagonal-arch<span class="v">1.1.0</span></li></ul></section><section class="b-dom" aria-label="tooling"><h3><span>tooling</span><span>2</span></h3><ul><li class="b-tag" data-b="go-cli python-cli">cli-tool-architect<span class="v">1.0.0</span></li><li class="b-tag" data-b="global">repo-tooling-architect<span class="v">1.5.0</span></li></ul></section><section class="b-dom" aria-label="databases"><h3><span>databases</span><span>1</span></h3><ul><li class="b-tag" data-b="go-grpc gin nethttp fastapi python-grpc">sql-architect<span class="v">1.0.1</span></li></ul></section><section class="b-dom" aria-label="encoding"><h3><span>encoding</span><span>1</span></h3><ul><li class="b-tag" data-b="go-grpc python-grpc event-driven">protobuf-architect<span class="v">1.0.0</span></li></ul></section><section class="b-dom" aria-label="messaging"><h3><span>messaging</span><span>1</span></h3><ul><li class="b-tag" data-b="event-driven">event-driven-architect<span class="v">1.0.0</span></li></ul></section><section class="b-dom" aria-label="robotics"><h3><span>robotics</span><span>1</span></h3><ul><li class="b-tag" data-b="ros2">ros2-architect<span class="v">1.0.0</span></li></ul></section><section class="b-dom" aria-label="personal"><h3><span>personal</span><span>9</span></h3><ul><li class="b-tag p" data-b="">demo-presentation-architect<span class="v">1.1.0</span></li><li class="b-tag p" data-b="">demo-script-architect<span class="v">1.0.0</span></li><li class="b-tag p" data-b="">go-house-libs<span class="v">0.6.1</span></li><li class="b-tag p" data-b="">go-library-builder<span class="v">1.1.1</span></li><li class="b-tag p" data-b="">pi-iteration-workflow<span class="v">1.0.0</span></li><li class="b-tag p" data-b="">uru-scientific-paper-architect<span class="v">1.1.0</span></li><li class="b-tag p" data-b="">uru-thesis-architect<span class="v">0.1.0</span></li><li class="b-tag p" data-b="">uru-thesis-defense-architect<span class="v">1.0.1</span></li><li class="b-tag p" data-b="">uru-thesis-reviewer<span class="v">0.2.0</span></li><li class="ph">9 personal skills, hidden by default</li></ul></section></div>
+<script type="application/json" id="b-notes">{"global": "Universal skills \u2014 install machine-wide; apply to every project. <code>rsk install global<\/code>", "docs": "Document creation and technical reference skills (official). <code>rsk install docs<\/code> \u2014 includes 5 official Anthropic skills (docx, xlsx, pdf, pptx, find-docs), fetched from Anthropic and not part of the 58.", "design": "Frontend and UI/UX design skills. <code>rsk install design<\/code> \u2014 includes 1 official Anthropic skill (frontend-design), fetched from Anthropic and not part of the 58.", "go-grpc": "Go service exposing a gRPC API. <code>rsk install go-grpc<\/code>", "gin": "Go service exposing a REST API via Gin. <code>rsk install gin<\/code>", "nethttp": "Go service exposing a REST API via stdlib net/http. <code>rsk install nethttp<\/code>", "go-cli": "Go command-line tool. <code>rsk install go-cli<\/code>", "fastapi": "Python service exposing a REST API with FastAPI. <code>rsk install fastapi<\/code>", "llm-app": "Python-based LLM application or RAG pipeline. <code>rsk install llm-app<\/code> \u2014 also names llm-app-architect and agent-architect, which are not in the catalogue (flagged in the notes).", "ros2": "ROS2 robotics application. <code>rsk install ros2<\/code>", "python-grpc": "Python service exposing a gRPC API. <code>rsk install python-grpc<\/code>", "python-cli": "Python command-line tool. <code>rsk install python-cli<\/code>", "event-driven": "Broker-agnostic event-driven messaging stack (schema-first). <code>rsk install event-driven<\/code>", "observability": "Application-side signals + dashboards and alerts. <code>rsk install observability<\/code>", "code-review": "Cross-language reviewers \u2014 security, API contracts, performance. <code>rsk install code-review<\/code>"}</script>
+</div></section>
+<section class="k-sec" id="bundles" aria-labelledby="b-bl-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
+<p class="k-kick rv">From internal/config/catalog.toml</p>
+<h2 id="b-bl-h" class="rv">One name, a whole stack: <code>rsk install go-grpc</code> brings five.</h2>
+<ul class="b-bl rv" aria-label="Bundles and how many skills each names"><li><span class="n">15</span><b>global</b><span>Universal skills — install machine-wide; apply to every project</span></li><li><span class="n">5</span><b>docs</b><span>Document creation and technical reference skills (official)</span></li><li><span class="n">4</span><b>design</b><span>Frontend and UI/UX design skills</span></li><li><span class="n">5</span><b>go-grpc</b><span>Go service exposing a gRPC API</span></li><li><span class="n">5</span><b>gin</b><span>Go service exposing a REST API via Gin</span></li><li><span class="n">5</span><b>nethttp</b><span>Go service exposing a REST API via stdlib net/http</span></li><li><span class="n">3</span><b>go-cli</b><span>Go command-line tool</span></li><li><span class="n">5</span><b>fastapi</b><span>Python service exposing a REST API with FastAPI</span></li><li><span class="n">6</span><b>llm-app</b><span>Python-based LLM application or RAG pipeline</span></li><li><span class="n">3</span><b>ros2</b><span>ROS2 robotics application</span></li><li><span class="n">5</span><b>python-grpc</b><span>Python service exposing a gRPC API</span></li><li><span class="n">3</span><b>python-cli</b><span>Python command-line tool</span></li><li><span class="n">2</span><b>event-driven</b><span>Broker-agnostic event-driven messaging stack (schema-first)</span></li><li><span class="n">2</span><b>observability</b><span>Application-side signals + dashboards and alerts</span></li><li><span class="n">3</span><b>code-review</b><span>Cross-language reviewers — security, API contracts, performance</span></li></ul>
+<p style="margin-top:18px;color:var(--muted);font-size:.95rem">Your own <code>~/.config/rsk/catalog.toml</code> replaces a bundle with the same name or adds new ones.</p>
+</div></section>
+<section class="k-sec night" id="releases" aria-labelledby="b-rel-h"><div class="wrap b-rel">
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="139">139</span><h2 id="b-rel-h" style="margin-top:0"><span class="sr">139 </span>skill releases since 23 May 2026.</h2>
+<p class="k-lede">Each skill is versioned on its own and published as <code>&lt;skill&gt;@v&lt;version&gt;</code> when its folder changes on <code>main</code>. The lock is what keeps your project on the version you chose.</p></div>
+<figure class="b-chart rv" style="margin:0" aria-labelledby="b-chart-cap">
+<svg viewBox="0 0 760 240" aria-hidden="true" focusable="false"><rect class="bar" style="--i:0" x="32.0" y="30.0" width="24.0" height="170.0" rx="1"/><rect class="bar" style="--i:1" x="60.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:2" x="88.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:3" x="116.0" y="196.0" width="24.0" height="4.0" rx="1"/><rect class="bar" style="--i:4" x="144.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:5" x="172.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:6" x="200.0" y="196.0" width="24.0" height="4.0" rx="1"/><rect class="bar" style="--i:7" x="228.0" y="156.5" width="24.0" height="43.5" rx="1"/><rect class="bar" style="--i:8" x="256.0" y="156.5" width="24.0" height="43.5" rx="1"/><rect class="bar" style="--i:9" x="284.0" y="196.0" width="24.0" height="4.0" rx="1"/><rect class="bar" style="--i:10" x="312.0" y="196.0" width="24.0" height="4.0" rx="1"/><rect class="bar" style="--i:11" x="340.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:12" x="368.0" y="188.1" width="24.0" height="11.9" rx="1"/><rect class="bar" style="--i:13" x="396.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:14" x="424.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:15" x="452.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:16" x="480.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:17" x="508.0" y="200.0" width="24.0" height="0.0" rx="1"/><rect class="bar" style="--i:18" x="536.0" y="188.1" width="24.0" height="11.9" rx="1"/><rect class="bar" style="--i:19" x="564.0" y="124.9" width="24.0" height="75.1" rx="1"/><rect class="bar" style="--i:20" x="592.0" y="172.3" width="24.0" height="27.7" rx="1"/><rect class="bar" style="--i:21" x="620.0" y="124.9" width="24.0" height="75.1" rx="1"/><rect class="bar" style="--i:22" x="648.0" y="164.4" width="24.0" height="35.6" rx="1"/><rect class="bar" style="--i:23" x="676.0" y="176.3" width="24.0" height="23.7" rx="1"/><rect class="bar" style="--i:24" x="704.0" y="184.2" width="24.0" height="15.8" rx="1"/><line class="ax" x1="30" x2="730" y1="200" y2="200"/><text class="pk" x="44.0" y="22.0" text-anchor="middle">43</text><text x="32.0" y="222">May</text><text x="88.0" y="222">Jun</text><text x="228.0" y="222">Jul</text><text x="340.0" y="222">Aug</text><text x="480.0" y="222">Sep</text><text x="592.0" y="222">Oct</text><text x="704.0" y="222">Nov</text></svg>
+<figcaption id="b-chart-cap" style="font-size:.9rem;color:var(--muted)"><span class="k-badge ro">real</span> Releases per week from <code>published_at</code> in <code>registry/index.json</code>. Peak: 43 in the week of 18 May, the first publish.</figcaption>
+<details><summary>Releases per week, as a table</summary><table><thead><tr><th scope="col">Week of</th><th scope="col">Releases</th></tr></thead><tbody><tr><td>2026-05-18</td><td>43</td></tr><tr><td>2026-05-25</td><td>0</td></tr><tr><td>2026-06-01</td><td>0</td></tr><tr><td>2026-06-08</td><td>1</td></tr><tr><td>2026-06-15</td><td>0</td></tr><tr><td>2026-06-22</td><td>0</td></tr><tr><td>2026-06-29</td><td>1</td></tr><tr><td>2026-07-06</td><td>11</td></tr><tr><td>2026-07-13</td><td>11</td></tr><tr><td>2026-07-20</td><td>1</td></tr><tr><td>2026-07-27</td><td>1</td></tr><tr><td>2026-08-03</td><td>0</td></tr><tr><td>2026-08-10</td><td>3</td></tr><tr><td>2026-08-17</td><td>0</td></tr><tr><td>2026-08-24</td><td>0</td></tr><tr><td>2026-08-31</td><td>0</td></tr><tr><td>2026-09-07</td><td>0</td></tr><tr><td>2026-09-14</td><td>0</td></tr><tr><td>2026-09-21</td><td>3</td></tr><tr><td>2026-09-28</td><td>19</td></tr><tr><td>2026-10-05</td><td>7</td></tr><tr><td>2026-10-12</td><td>19</td></tr><tr><td>2026-10-19</td><td>9</td></tr><tr><td>2026-10-26</td><td>6</td></tr><tr><td>2026-11-02</td><td>4</td></tr></tbody></table></details>
+</figure>
+</div></section>
+<section class="k-sec" id="cli" aria-labelledby="b-cli-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
+<h2 id="b-cli-h" class="sr">Commands and MCP tools</h2>
+<div class="b-cli">
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="13">13</span><h3 style="font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:.6em"><span class="sr">13 </span>commands for people.</h3><ul class="b-cmds" aria-label="rsk subcommands"><li><code>init</code></li><li><code>new</code></li><li><code>destroy</code></li><li><code>install</code></li><li><code>uninstall</code></li><li><code>update</code></li><li><code>pin</code></li><li><code>tools</code></li><li><code>catalog</code></li><li><code>list</code></li><li><code>status</code></li><li><code>mcp</code></li><li><code>completion</code></li></ul></div>
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="3">3</span><h3 style="font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:.6em"><span class="sr">3 </span>MCP tools for agents, one that writes.</h3><ul class="b-tools"><li><code>project_profile</code><span class="k-badge ro">read-only</span><p>Detect this project&#x27;s stack from its files and propose the ralvaskills skills that apply. Call it before scaffolding or a non-trivial change.</p></li><li><code>search_skills</code><span class="k-badge ro">read-only</span><p>Search the ralvaskills catalog by keyword. Use it to find a skill by name or intent when project_profile does not name one.</p></li><li><code>install_skills</code><span class="k-badge de">writes · asks you</span><p>Install one or more skills or bundles into this project by name, resolving them through the ralvaskills catalog. Writes symlinks and the project manifest. The client asks the user to approve.</p></li></ul>
+<p style="margin-top:14px;color:var(--muted);font-size:.95rem">Plus the <code>rsk://catalog</code> resource: every skill, its latest version, descriptions cut to 200 characters.</p></div>
+</div></div></section>
+<section class="k-sec" id="trade" aria-labelledby="b-one-h" style="background:var(--bg2)"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
+<h2 id="b-one-h" class="rv">The trade-off, in ones.</h2>
+<ul class="b-ones rv">
+<li><span class="b-sec-n" aria-hidden="true">1</span><h3><span class="sr">1 </span>binary</h3><p>The same <code>rsk</code> for every project on the machine.</p></li>
+<li><span class="b-sec-n" aria-hidden="true">1</span><h3><span class="sr">1 </span>config file</h3><p><code>~/.config/rsk/config.json</code>, written once by <code>rsk init</code>.</p></li>
+<li class="take"><span class="b-sec-n" aria-hidden="true">1</span><h3><span class="sr">1 </span>dependency you accept</h3><p>The registry at skills.ralvarez.dev must be reachable to install or update, or you point rsk at a local clone of the repository.</p></li>
+</ul></div></section>
+<section class="k-sec" id="start" aria-labelledby="b-start-h"><div class="wrap b-start">
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="5">5</span><h2 id="b-start-h" style="margin-top:0"><span class="sr">5 </span>commands from nothing to a pinned skill.</h2></div>
+<div class="rv"><div class="k-copy"><pre id="b-qs" data-raw="go install github.com/ralvarezdev/ralvaskills/v3/cmd/rsk@latest
+rsk init
+rsk new
+rsk install go-grpc
+rsk pin go-architect" aria-label="quick-start commands" role="region" tabindex="0"><span class=k-cm># or a binary from Releases</span>
+<span class=k-c>go install github.com/ralvarezdev/ralvaskills/v3/cmd/rsk@latest</span>
+<span class=k-cm># once per machine</span>
+<span class=k-c>rsk init</span>
+<span class=k-cm># in a project: writes .rsk/ and registers rsk mcp</span>
+<span class=k-c>rsk new</span>
+<span class=k-cm># a bundle or a skill</span>
+<span class=k-c>rsk install go-grpc</span>
+<span class=k-cm># load it in every session</span>
+<span class=k-c>rsk pin go-architect</span></pre>
+<button class="k-btn" type="button" data-copy="b-qs"><span class="l">Copy</span><span class="sr"> quick-start commands</span></button></div></div>
+</div></section></main><footer class="k-foot"><div class="wrap">
+<div><svg class="k-wm" viewBox="0 -16 312 134" role="img" aria-label="rsk"><text class="wm0" x="0" y="0" font-family="DejaVu Sans Mono,Menlo,Consolas,monospace" font-size="20" textLength="312" lengthAdjust="spacingAndGlyphs" xml:space="preserve">██████╗  ███████╗ ██╗  ██╗</text><text class="wm1" x="0" y="22" font-family="DejaVu Sans Mono,Menlo,Consolas,monospace" font-size="20" textLength="312" lengthAdjust="spacingAndGlyphs" xml:space="preserve">██╔══██╗ ██╔════╝ ██║ ██╔╝</text><text class="wm2" x="0" y="44" font-family="DejaVu Sans Mono,Menlo,Consolas,monospace" font-size="20" textLength="300" lengthAdjust="spacingAndGlyphs" xml:space="preserve">██████╔╝ ███████╗ █████╔╝</text><text class="wm3" x="0" y="66" font-family="DejaVu Sans Mono,Menlo,Consolas,monospace" font-size="20" textLength="300" lengthAdjust="spacingAndGlyphs" xml:space="preserve">██╔══██╗ ╚════██║ ██╔═██╗</text><text class="wm4" x="0" y="88" font-family="DejaVu Sans Mono,Menlo,Consolas,monospace" font-size="20" textLength="312" lengthAdjust="spacingAndGlyphs" xml:space="preserve">██║  ██║ ███████║ ██║  ██╗</text><text class="wm5" x="0" y="110" font-family="DejaVu Sans Mono,Menlo,Consolas,monospace" font-size="20" textLength="312" lengthAdjust="spacingAndGlyphs" xml:space="preserve">╚═╝  ╚═╝ ╚══════╝ ╚═╝  ╚═╝</text></svg><p style="margin-top:14px">rsk 3.4.1 · GPL-3.0 · <a href="https://github.com/ralvarezdev/ralvaskills">github.com/ralvarezdev/ralvaskills</a></p></div>
+<details><summary>Where every number on this page comes from</summary>
+<p>Counted in the repository on 2026-11-04. Anything marked <span class="k-badge sa">sample</span> is illustrative.</p>
+<ul class="k-src"><li><span>58 skills</span><code>registry/index.json · skills/*/*/SKILL.md</code></li><li><span>17 domains</span><code>skills/&lt;domain&gt;/</code></li><li><span>15 bundles</span><code>internal/config/catalog.toml</code></li><li><span>13 commands</span><code>cmd/rsk/setup.go (+ cobra completion)</code></li><li><span>3 MCP tools, 1 writes</span><code>internal/mcp/tools.go</code></li><li><span>rsk://catalog</span><code>internal/mcp/resource.go</code></li><li><span>Detection rules</span><code>internal/mcp/signals.go</code></li><li><span>Releases and dates</span><code>registry/index.json versions[].published_at</code></li><li><span>Version</span><code>git tag v3.4.1 · bin/rsk --version</code></li><li><span>Config and cache</span><code>internal/config/config.go</code></li><li><span>What install writes</span><code>internal/install/apply.go</code></li><li><span>rsk new output</span><code>real run, scratch folder, 2026-11-04</code></li><li><span>project_profile JSON</span><code>real call, scratch folder, 2026-11-04</code></li><li><span>Colours</span><code>termkit TokyoNight via internal/ui/theme.go</code></li><li><span>Wordmark</span><code>internal/ui/theme.go</code></li></ul></details>
+</div></footer>
+<p id="k-live" class="sr" aria-live="polite"></p>
+<script>
+(function(){
+var d=document.documentElement, motion=d.classList.contains('anim');
+/* theme toggle: stored preference, system default, circular wipe when motion allowed */
+var tb=document.querySelector('.k-theme');
+function cur(){return d.getAttribute('data-theme')}
+function sync(){if(tb)tb.setAttribute('aria-pressed',cur()==='dark'?'true':'false')}
+if(tb){tb.hidden=false;sync();tb.addEventListener('click',function(){
+  var next=cur()==='dark'?'light':'dark';
+  var apply=function(){d.setAttribute('data-theme',next);try{localStorage.setItem('rsk-theme',next)}catch(e){};sync()};
+  if(motion&&document.startViewTransition){var r=tb.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,
+    R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+    var vt=document.startViewTransition(apply);
+    vt.ready.then(function(){d.animate({clipPath:['circle(0px at '+x+'px '+y+'px)','circle('+R+'px at '+x+'px '+y+'px)']},{duration:520,easing:'cubic-bezier(.16,1,.3,1)',pseudoElement:'::view-transition-new(root)'})}).catch(function(){});
+  }else apply();
+})}
+/* sticky header hairline + reading progress */
+var top=document.querySelector('.k-top'),bar=document.querySelector('.k-prog i'),queued=false;
+function measure(){
+  queued=false;
+  if(top)top.classList.toggle('stuck',scrollY>8);
+  if(bar){var h=d, max=h.scrollHeight-innerHeight, p=max>0?Math.min(1,Math.max(0,scrollY/max)):0;bar.style.setProperty('--p',p.toFixed(4))}
+}
+function onScroll(){if(!queued){queued=true;requestAnimationFrame(measure)}}
+addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll,{passive:true});measure();
+/* one-shot reveals + rule draws + section current */
+var targets=[].slice.call(document.querySelectorAll('.rv,.k-rule'));
+if(motion&&'IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});targets.forEach(function(el){io.observe(el)})}
+else targets.forEach(function(el){el.classList.add('in')});
+var links=[].slice.call(document.querySelectorAll('.k-nav a[href^="#"],.k-rail a[href^="#"]'));
+if(links.length&&'IntersectionObserver' in window){
+  var byId={};links.forEach(function(a){var id=a.getAttribute('href').slice(1);(byId[id]=byId[id]||[]).push(a)});
+  var secs=Object.keys(byId).map(function(id){return document.getElementById(id)}).filter(Boolean);
+  var navio=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;
+    links.forEach(function(a){a.removeAttribute('aria-current')});
+    (byId[e.target.id]||[]).forEach(function(a){a.setAttribute('aria-current','true')})})},{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(function(s){navio.observe(s)});
+}
+/* count-ups: the plain HTML already holds the real number, so JS off and
+   reduced motion both show it; only the motion path starts from zero. */
+var counts=[].slice.call(document.querySelectorAll('[data-count]'));
+function finishCount(el){el.textContent=el.getAttribute('data-final');el.setAttribute('data-done','1')}
+counts.forEach(function(el){
+  el.setAttribute('data-final',el.textContent.trim());
+  if(!motion||!('IntersectionObserver' in window)){el.setAttribute('data-done','1');return}
+  var o=new IntersectionObserver(function(es){if(!es[0].isIntersecting)return;o.disconnect();
+    var to=+el.getAttribute('data-count')||0,from=+(el.getAttribute('data-from')||0),t0=null,dur=1200;
+    function frame(now){if(t0===null)t0=now;var p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,4);
+      el.textContent=Math.round(from+(to-from)*e).toLocaleString('en-US');
+      if(p<1)requestAnimationFrame(frame);else finishCount(el)}
+    requestAnimationFrame(frame);
+  },{threshold:.55});
+  o.observe(el);
+});
+window.kCountsDone=function(){counts.forEach(function(el){if(el.getAttribute('data-done')!=='1')finishCount(el)})};
+/* copy buttons */
+document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){
+  var src=document.getElementById(b.getAttribute('data-copy')),txt=src?src.getAttribute('data-raw')||src.textContent:'';
+  var lbl=b.querySelector('.l'),live=document.getElementById('k-live');
+  function done(ok){lbl.textContent=ok?'Copied':'Copy failed';if(live)live.textContent=ok?'Commands copied to the clipboard':'Copy failed; select the text instead';setTimeout(function(){lbl.textContent='Copy'},1800)}
+  try{navigator.clipboard.writeText(txt).then(function(){done(true)},function(){done(false)})}catch(e){done(false)}
+})});
+/* film engine: steps [{at,dur,fn(p)}], reset() = start state, end() = cleanup; the plain HTML is the final state */
+window.kFilm=function(root,cfg){
+  var btn=root.querySelector('.k-film-ctl'); if(!btn)return; root.setAttribute('data-film','');
+  var ic=btn.querySelector('.ic'),lb=btn.querySelector('.l');
+  var t=0,last=0,raf=0,playing=false,started=false,done=false;
+  function set(state){btn.setAttribute('data-state',state);
+    if(state==='playing'){ic.textContent='❚❚';lb.textContent='Pause'}
+    else if(state==='paused'){ic.textContent='▶';lb.textContent='Play'}
+    else{ic.textContent='↻';lb.textContent='Replay'}}
+  function apply(){cfg.steps.forEach(function(s){if(t>=s.at){var p=s.dur?Math.min(1,(t-s.at)/s.dur):1;if(s._p!==p){s._p=p;s.fn(p)}}});btn.style.setProperty('--p',Math.min(1,t/cfg.total).toFixed(4))}
+  function frame(now){if(!playing)return;t+=Math.min(64,now-last);last=now;apply();if(t>=cfg.total){finish();return}raf=requestAnimationFrame(frame)}
+  function reset(){t=0;done=false;started=true;btn.style.setProperty('--p','0');cfg.steps.forEach(function(s){s._p=undefined});root.classList.add('f-run');cfg.reset()}
+  function play(){if(!started||done)reset();playing=true;last=performance.now();set('playing');raf=requestAnimationFrame(frame)}
+  function pause(){playing=false;cancelAnimationFrame(raf);set('paused')}
+  function finish(){playing=false;done=true;cancelAnimationFrame(raf);cfg.steps.forEach(function(s){if(s._p!==1){s._p=1;s.fn(1)}});cfg.end();root.classList.remove('f-run');btn.style.setProperty('--p','1');set('done')}
+  btn.hidden=false;set('done');
+  btn.addEventListener('click',function(){playing?pause():play()});
+  document.addEventListener('visibilitychange',function(){if(document.hidden&&playing)pause()});
+  root.kFilm={finish:finish,play:play,pause:pause,state:function(){return btn.getAttribute('data-state')}};
+  if(motion&&'IntersectionObserver' in window){var o=new IntersectionObserver(function(es){if(es[0].isIntersecting&&!started){o.disconnect();play()}},{threshold:.3});o.observe(root)}
+};
+/* film helpers */
+window.kF={
+  hide:function(root){root.querySelectorAll('[data-f]').forEach(function(e){e.classList.add('f-h')})},
+  show:function(root,k){root.querySelectorAll('[data-f="'+k+'"]').forEach(function(e){e.classList.remove('f-h')})},
+  type:function(el,p){var full=el.getAttribute('data-t');el.textContent=full.slice(0,Math.round(full.length*p));el.classList.toggle('f-caret',p<1)},
+  end:function(root){root.querySelectorAll('.f-h').forEach(function(e){e.classList.remove('f-h')});root.querySelectorAll('[data-t]').forEach(function(e){e.textContent=e.getAttribute('data-t');e.classList.remove('f-caret')})}
+};
+})();
+</script>
+<script>
+(function(){
+/* hero film: squares fill domain by domain while the count climbs to 58 */
+var root=document.getElementById('b-film'),num=document.getElementById('b-count0');
+if(root&&window.kFilm){var rows=[].slice.call(root.querySelectorAll('[data-f]')),total=+num.textContent,steps=[],acc=0,t0=300,per=3600/total;
+ rows.forEach(function(r,i){var n=r.querySelectorAll('i').length,at=t0+acc*per;steps.push({at:at,fn:function(){r.classList.remove('f-h')}});
+  [].forEach.call(r.querySelectorAll('i'),function(sq,j){sq.style.transitionDelay=(j*per/1000).toFixed(3)+'s'});acc+=n});
+ steps.push({at:t0,dur:3600+300,fn:function(p){num.textContent=Math.round(total*p)}});
+ kFilm(root,{total:t0+3600+900,steps:steps,reset:function(){kF.hide(root);num.textContent='0'},end:function(){kF.end(root);num.textContent=total;root.querySelectorAll('i').forEach(function(i){i.style.transitionDelay=''})}});}
+/* explorer */
+var chips=document.getElementById('b-chips');if(!chips)return;chips.hidden=false;
+var field=document.getElementById('b-field'),note=document.getElementById('b-note'),cnt=document.getElementById('b-count'),cntl=document.getElementById('b-count-l'),inc=document.getElementById('b-inc'),notes=JSON.parse(document.getElementById('b-notes').textContent);
+var tags=[].slice.call(field.querySelectorAll('.b-tag')),cur='',all=tags.length;
+function render(){var incl=inc.getAttribute('aria-pressed')==='true';field.classList.toggle('inc',incl);field.classList.toggle('f',!!cur);var n=0;
+ tags.forEach(function(t){var vis=incl||!t.classList.contains('p'),on=!cur||(' '+t.dataset.b+' ').indexOf(' '+cur+' ')>=0;t.classList.toggle('on',!!cur&&on);if(vis&&on)n++});
+ cnt.textContent=n;cntl.textContent=(cur?'in '+cur+', ':'shown ')+'of '+all;
+ note.innerHTML=cur?notes[cur]:(incl?'Showing all '+all+' skills, personal ones included.':'Showing the '+n+' skills <code>rsk catalog</code> lists by default; the personal ones need <code>--include personal</code>.');
+ var l=document.getElementById('k-live');if(l)l.textContent=n+' of '+all+' skills match'+(cur?' bundle '+cur:'');}
+chips.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+ if(b===inc){inc.setAttribute('aria-pressed',inc.getAttribute('aria-pressed')==='true'?'false':'true')}
+ else{cur=b.dataset.bundle;chips.querySelectorAll('[data-bundle]').forEach(function(c){c.setAttribute('aria-pressed',c===b?'true':'false')})}
+ render()});
+})();
+</script>
+</body>
+</html>

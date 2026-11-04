@@ -1,0 +1,15 @@
+/* The page's stylesheet entry. Order is the cascade: tokens, reset, shared
+ * primitives, motion, then one sheet per page area. */
+@import './tokens.css';
+@import './reset.css';
+@import './layout.css';
+@import './chrome.css';
+@import './controls.css';
+@import './panel.css';
+@import './motion.css';
+@import './terminal.css';
+@import './tradeoff.css';
+@import './manifest.css';
+@import './catalogue.css';
+@import './agent.css';
+@import './combined.css';

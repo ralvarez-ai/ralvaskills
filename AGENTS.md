@@ -19,8 +19,22 @@ is the `rsk mcp` server; `registry/` is the generated index served at
 - Registry: `task registry:generate`, `registry:sync-index`, `registry:check`, `registry:clean`,
   `registry:remove[*]`, `registry:lint`, `registry:fmt`
 - Tokens: `task tokens`, `task tokens:lint`, `task tokens:fmt`
+- Local CI: `task ci:local` runs `.github/workflows/check-site.yml` in Docker with `act` (needs Docker
+  and `NODE_AUTH_TOKEN`, or a `.secrets` file copied from `.secrets.example`); never run
+  `publish-registry.yml` with it
 
 Run `task lint` (and the registry/token checks when those areas change) before declaring done.
+
+## Landing page (`web/`)
+
+React 19 + TypeScript + Vite, one prerendered document. `task web:dev`, `task web:build`,
+`task web:check` (lint, typecheck, build, gate). Biome (`pnpm lint` in `web/`) owns formatting
+and lint there. The page's numbers are generated from this repository by
+`web/scripts/gen-data.mjs` before every dev run and build, and that script fails when the tree
+drifts from 58 skills / 15 bundles / 13 commands / 3 tools. `web/src/data/facts.ts` holds the
+hand-checked constants and labels them on the page. It consumes `@ralvarez-ts/tokens` directly
+(GitHub Packages, needs `NODE_AUTH_TOKEN`); nothing under `skills/**` or `registry/**` is read at
+runtime, only at build.
 
 ## Layout
 
@@ -33,6 +47,8 @@ Run `task lint` (and the registry/token checks when those areas change) before d
   registration, resources), `skill`, `source` (registry/local/official), `tool` (the Claude /
   OpenCode / MCP adapters), `ui` (termkit), `update`.
 - `cmd/{generate-registry,registry-remove,count-tokens}` — registry build helpers.
+- `web/` — the landing page (React 19 + Vite): `src/sections`, `src/components`, generated
+  `src/data/catalog.json`, ported styles, prerender and verify scripts. See `web/README.md`.
 - `skills/<domain>/<name>/SKILL.md` — the catalogue (domains: academic, databases, design,
   encoding, frameworks, frontend, infra, languages, messaging, meta, protocols, quality,
   refactoring, robotics, tooling, workflows). One skill per directory; the directory name matches

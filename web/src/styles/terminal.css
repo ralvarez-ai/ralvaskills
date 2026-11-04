@@ -1,0 +1,5 @@
+/* Split from base.css; routed by component. Edit this file for its component. */
+.surface-terminal{color-scheme:dark;--surface-page:#16161e;--surface-sunken:#1a1b26;--surface-raised:#1f2335;--border-subtle:#2a2e45;--border-control:#3b4261;--text-strong:#c0caf5;--text-muted:#a9b1d6;--fill-accent:#7aa2f7;--text-accent:#7aa2f7;--on-accent:#16161e;--status-ok:#9ece6a;--status-warn:#e0af68;--status-danger:#f7768e;--status-info:#7dcfff;--surface-selected:#283457;--shadow-device:0 18px 44px -30px rgba(0,0,0,.9);background:var(--surface-page);color:var(--text-strong)}
+/* terminal surface: termkit TokyoNight, fixed in both themes */
+.surface-terminal{--wordmark-0:#2e7de9;--wordmark-1:#2d65bb;--wordmark-2:#2a5193;--wordmark-3:#264072;--wordmark-4:#2e7de9;--wordmark-5:#2d65bb}
+.surface-terminal .panel__header{background:color-mix(in srgb,var(--surface-raised) 80%,#000);border-color:var(--border-subtle)}

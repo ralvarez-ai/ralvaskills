@@ -1,0 +1,33 @@
+/* Split from base.css; routed by component. Edit this file for its component. */
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* kicker + section rhythm */
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font:600 .74rem/1.5 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px}
+.eyebrow .brand-mark{margin:-2px 2px 0 0}
+.eyebrow .eyebrow__accent{color:var(--text-accent)}
+.section[data-tone="sunken"]{background:var(--surface-sunken)}
+.section{position:relative;padding:clamp(72px,9vw,128px) 0}
+.section h2{font-size:clamp(2rem,4.4vw,3.4rem);margin:.12em 0 .5em;max-width:22ch}
+.lede{font-size:clamp(1.05rem,1.5vw,1.22rem);color:var(--text-muted);max-width:62ch}
+.rule{height:2px;background:var(--text-strong);border:0;margin:0 0 clamp(28px,4vw,48px)}
+.has-motion .rule{transform:scaleX(0);transform-origin:0 50%;transition:transform .95s var(--ease-out)}
+.has-motion .rule.is-visible{transform:none}
+/* hero grid texture (decorative) */
+.grid-texture{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+ background-image:linear-gradient(to right,color-mix(in srgb,var(--border-subtle) 58%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,var(--border-subtle) 58%,transparent) 1px,transparent 1px);
+ background-size:72px 72px;
+ mask-image:radial-gradient(120% 90% at 78% 0%,#000 0%,transparent 68%);
+ -webkit-mask-image:radial-gradient(120% 90% at 78% 0%,#000 0%,transparent 68%)}
+/* section rail: hidden by default, shown on wide screens. The default must stay
+   in this file, above the media rule: a later sheet would override it. */
+.section-rail{display:none}
+@media (min-width:1400px){
+ .section-rail{display:block;position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:15}
+ .section-rail ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+ .section-rail a{display:flex;align-items:center;gap:10px;min-height:30px;padding:2px 6px;color:var(--text-muted);text-decoration:none;font:500 .7rem var(--font-mono);border-radius:3px}
+ .section-rail a::before{content:"";width:12px;height:2px;background:var(--border-control);transition:width var(--duration-2) var(--ease-out),background var(--duration-2)}
+ .section-rail a .section-rail__number{color:var(--text-muted);opacity:0;transform:translateX(-4px);transition:opacity var(--duration-2),transform var(--duration-2) var(--ease-out)}
+ .section-rail a .section-rail__label{opacity:0;transform:translateX(-4px);transition:opacity var(--duration-2),transform var(--duration-2) var(--ease-out);white-space:nowrap;background:var(--surface-page);padding:3px 6px;border:1px solid var(--border-subtle);border-radius:3px;color:var(--text-strong)}
+ .section-rail:hover a .section-rail__label,.section-rail a:focus-visible .section-rail__label,.section-rail:hover a .section-rail__number,.section-rail a:focus-visible .section-rail__number,.section-rail a[aria-current] .section-rail__number{opacity:1;transform:none}
+ .section-rail a[aria-current]::before{width:28px;background:var(--fill-accent)}
+ .section-rail a[aria-current] .section-rail__number{color:var(--text-accent)}
+}

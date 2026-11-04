@@ -45,3 +45,7 @@ docs/internal/
 
 # GitHub token for private Go modules (local Docker builds)
 .github_token
+
+# act (local CI): secrets and the artifact server's files
+.secrets
+.artifacts/

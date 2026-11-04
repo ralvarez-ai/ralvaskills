@@ -7,6 +7,7 @@ pinned = ["docs-architect", "rsk-guide"]
   cli-tool-architect = "*"
   docs-architect = "*"
   go-architect = "*"
+  landing-page-designer = "*"
   logic-cleaner = "*"
   repo-tooling-architect = "*"
   rsk-guide = "*"

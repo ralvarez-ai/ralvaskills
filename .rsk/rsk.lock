@@ -39,3 +39,8 @@ version = 1
   name = "rsk-guide"
   version = "0.4.2"
   source = "registry"
+
+[[skills]]
+  name = "landing-page-designer"
+  version = "1.0.0"
+  source = "registry"

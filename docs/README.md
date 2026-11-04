@@ -24,6 +24,7 @@ Check: `python3 <skill>/scripts/docs_lint.py docs`
 | Date | Doc | Status |
 |---|---|---|
 | 2026-05-20 | [ralvaskills — Technical Specification](designs/2026-05-20-technical-specification.md) | active |
+| 2026-11-04 | [Landing page — round 1 and combined page](designs/2026-11-04-ralvaskills-landing-page.md) | draft |
 
 ## guides/
 
@@ -37,4 +38,5 @@ Check: `python3 <skill>/scripts/docs_lint.py docs`
 | Date | Doc | Status |
 |---|---|---|
 | 2026-10-02 | [MCP Server Plan — `rsk mcp`](plans/2026-10-02-mcp-server-plan.md) | active |
+| 2026-11-04 | [Landing page — work brief](plans/2026-11-04-landing-page-brief.md) | draft |
 

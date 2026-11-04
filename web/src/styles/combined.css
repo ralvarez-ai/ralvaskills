@@ -1,0 +1,18 @@
+/* Combined-page composition: the sticky "after call 3" column, the FAQ list and
+ * the catalogue count override. Ported from the proposals' combined.py. */
+.writes{display:grid;gap:32px clamp(32px,5vw,72px);grid-template-columns:minmax(0,1fr)}
+@media (min-width:1080px){.writes{grid-template-columns:minmax(0,4fr) minmax(0,7fr);align-items:start}}
+.writes .lede{max-width:40ch}
+.writes .manifest{grid-area:auto}
+@media (min-width:1080px){.writes>.reveal:first-child{position:sticky;top:96px;align-self:start}}
+#catalogue .filter-count{font-size:clamp(2.4rem,4vw,3.4rem)}
+.call-marker{display:inline-flex;align-items:center;gap:10px;font:600 .72rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--status-warn);margin-bottom:6px}
+.call-marker .call__number{color:var(--text-accent);margin:0;width:1.7em;height:1.7em}
+.faq{display:grid;gap:0;grid-template-columns:minmax(0,1fr);border-top:2px solid var(--text-strong);max-width:900px}
+.faq details{border-bottom:1px solid var(--border-subtle)}
+.faq summary{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;font-weight:700;font-size:1.1rem;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:700 1.4rem var(--font-mono);color:var(--text-accent)}
+.faq details[open] summary::after{content:"−"}
+.faq details p{color:var(--text-muted);margin:0 0 18px;max-width:70ch}
+.writes .reveal:first-child .rule{margin-bottom:22px}
