@@ -1,0 +1,37 @@
+{
+  "name": "rsk-landing",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@11.11.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "predev": "pnpm data",
+    "build": "tsc --noEmit && vite build && node scripts/prerender.mjs",
+    "prebuild": "pnpm data",
+    "data": "node scripts/gen-data.mjs",
+    "typecheck": "pnpm data && tsc --noEmit",
+    "preview": "vite preview",
+    "check": "node scripts/verify.mjs"
+  },
+  "dependencies": {
+    "@ralvarez-ts/tokens": "^0.1.18",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "axe-core": "^4.14.0",
+    "playwright-core": "^1.64.1",
+    "smol-toml": "^1.4.2",
+    "tailwindcss": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5"
+  }
+}

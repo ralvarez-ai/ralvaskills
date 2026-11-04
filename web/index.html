@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" data-style="sharp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>rsk — your agent asks, you approve, rsk installs</title>
+    <meta
+      name="description"
+      content="rsk installs versioned skills into Claude Code and OpenCode. Its MCP server lets the agent propose them from your project's files; the one tool that writes asks you first."
+    />
+    <link rel="canonical" href="https://rsk.ralvarez.dev/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="rsk — your agent asks, you approve, rsk installs" />
+    <meta
+      property="og:description"
+      content="rsk installs versioned skills into Claude Code and OpenCode. Its MCP server lets the agent propose them from your project's files; the one tool that writes asks you first."
+    />
+    <meta property="og:url" content="https://rsk.ralvarez.dev/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Resolve the theme, motion and JS flags before first paint, so a stored
+         preference does not flash the wrong palette and the reveal rules only
+         hide content when motion is allowed and JS is running. -->
+    <script>
+      (function () {
+        var d = document.documentElement,
+          s = null;
+        try {
+          s = localStorage.getItem('rsk-theme');
+        } catch (e) {}
+        d.setAttribute('data-theme', s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('anim');
+        d.classList.add('js');
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
