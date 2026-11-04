@@ -37,7 +37,8 @@ src/styles/      tokens, reset, layout, chrome, controls, panel, motion,
 | `scripts/gen-data.mjs` | Reads `registry/index.json`, `skills/**`, `internal/config/catalog.toml`, `cmd/rsk/setup.go`, `internal/mcp/{tools,resource}.go`, `.rsk/rsk.mod`/`.lock` and the git tag. **Fails** when the tree drifts from 58 skills, 15 bundles, 12 `AddCommand`s or the three tool names. |
 | `src/data/facts.ts` | Constants that cannot be derived: a real `rsk new` run, a real `project_profile` response, `rsk --help` groups, the quick start, the source list. |
 | `scripts/prerender.mjs` | Renders the app to HTML into `dist/index.html` after the build, so the page reads and indexes without JavaScript. `main.tsx` hydrates it. |
-| `scripts/verify.mjs` | The gate: axe at 8 combinations, overflow, unfired reveals, unsettled count-ups, JS-off, and a style-wiring check (mono stack, hero mask transition, theme button padding, panel radius) so a pruned or renamed selector cannot silently stop applying. |
+| `scripts/verify.mjs` | The gate: axe at 8 combinations, overflow, unfired reveals, unsettled count-ups, JS-off, and a style-wiring check (mono stack, hero mask transition, theme button padding, panel radius) so a pruned or renamed selector cannot silently stop applying. Also runs each film (`#c-film`, `#a-film`): it must start on scroll, hide steps while playing and end fully revealed. |
+| `scripts/compare.mjs` + `compare-film.mjs` + `compare-behaviour.mjs` | Parity against `mockups/ui-proposals/2026-11-04/direction-4-combined.html`: full-page captures and a per-element style dump (`WIDTHS=… THEMES=… WEB_URL=…` override the matrix), the films sampled at fixed times, and the filter, rail, theme, count-up, progress and copy behaviour. Static pixels alone missed two dead films, so run all three, and diff the PNGs at a strict threshold (about 2 levels): a loose one hid a tinted section. |
 
 ## Conventions
 
