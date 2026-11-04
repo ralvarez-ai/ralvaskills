@@ -13,9 +13,12 @@ export function Header({
   nav,
   theme,
   mounted,
+  active,
   onToggle,
 }: {
   nav: NavItem[];
+  /** Id of the section in view; the nav link pointing at it is marked current. */
+  active: string;
   theme: Theme;
   mounted: boolean;
   onToggle: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -32,7 +35,12 @@ export function Header({
           </a>
           <nav className="site-nav" aria-label="Page">
             {nav.map((item) => (
-              <a key={item.href} href={item.href} data-opt={item.optional ? '' : undefined}>
+              <a
+                key={item.href}
+                href={item.href}
+                data-opt={item.optional ? '' : undefined}
+                aria-current={active === item.href.slice(1) ? 'location' : undefined}
+              >
                 {item.label}
               </a>
             ))}

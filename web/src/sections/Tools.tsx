@@ -8,7 +8,7 @@ const ANNOTATIONS = {
 
 export function Tools() {
   return (
-    <Section id="tools" labelledBy="c-tools-h" tone="sunken">
+    <Section id="tools" labelledBy="c-tools-h">
       <div className="container">
         <div className="rule" aria-hidden="true" />
         <Eyebrow>From internal/mcp/tools.go</Eyebrow>

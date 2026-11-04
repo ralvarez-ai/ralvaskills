@@ -49,7 +49,7 @@ export default function App() {
 
   return (
     <>
-      <Header nav={NAV} theme={theme} mounted={mounted} onToggle={toggle} />
+      <Header nav={NAV} active={active} theme={theme} mounted={mounted} onToggle={toggle} />
       <Rail items={SECTIONS} active={active} />
       <main id="main">
         <Hero />

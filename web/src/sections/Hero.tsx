@@ -78,7 +78,7 @@ export function Hero() {
           </div>
         </div>
 
-        <figure className="agent-loop" id="c-film" aria-describedby="c-cap">
+        <figure ref={fig} className="agent-loop" id="c-film" aria-describedby="c-cap">
           <ol className="agent-loop__list" aria-label="The three calls, in order">
             <li className="agent-loop__lanes" aria-hidden="true">
               <span className="lane is-human">You</span>

@@ -39,6 +39,7 @@ function Cmd({ k, text }: { k: string; text: string }) {
 export function Manifest({ names, second, agent = false, caption }: ManifestProps) {
   const fig = useRef<HTMLElement>(null);
   const ctl = useRef<HTMLButtonElement>(null);
+  /** The pinned value (`["go-architect"]`) the third call rewrites; the key stays put. */
   const pin = useRef<HTMLSpanElement>(null);
   const pinLine = useRef<HTMLLIElement>(null);
 
@@ -57,7 +58,9 @@ export function Manifest({ names, second, agent = false, caption }: ManifestProp
       k: 'new',
       body: (
         <>
-          <span className="syntax-key">pinned</span> = <span className="manifest-file__pinned">[<S value="go-architect" />]</span>
+          <span className="syntax-key">pinned</span> = <span className="manifest-file__pinned" ref={pin}>
+            [<S value="go-architect" />]
+          </span>
         </>
       ),
       pinned: true,
@@ -125,7 +128,7 @@ export function Manifest({ names, second, agent = false, caption }: ManifestProp
   });
 
   return (
-    <figure className="manifest" id="a-film" aria-describedby="a-cap">
+    <figure ref={fig} className="manifest" id="a-film" aria-describedby="a-cap">
       <div className="manifest__terminal surface-terminal">
         <div className="panel__header">
           <span className="panel__dots" aria-hidden="true">
@@ -176,7 +179,7 @@ export function Manifest({ names, second, agent = false, caption }: ManifestProp
                   +
                 </span>
                 <span>
-                  {line.pinned ? <span ref={pin}>{line.body}</span> : line.body}
+                  {line.body}
                 </span>
               </li>
             ))}

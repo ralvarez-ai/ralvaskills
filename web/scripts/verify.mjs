@@ -32,6 +32,10 @@ const WIRED = [
   ['.film-control', 'display', 'flex'],
   ['.panel', 'borderRadius', '6px'],
   ['.rule', 'backgroundColor', 'rgb'],
+  // Optional 4th item: minimum viewport width. The rail once sat under a later
+  // `display:none` and never showed, and no other check noticed.
+  ['.section-rail', 'display', 'block', 1400],
+  ['.section-rail', 'position', 'fixed', 1400],
 ];
 
 function chromePath() {
@@ -56,6 +60,9 @@ async function settle(page) {
     await page.evaluate((to) => window.scrollTo(0, to), y);
     await page.waitForTimeout(40);
   }
+  // Films started by the scroll-through must finish first: axe measures
+  // contrast, and a step mid-fade is partly transparent.
+  await page.waitForFunction(() => !document.querySelector('.film-control[data-state="playing"]'), null, { timeout: 12000 });
   await page.waitForTimeout(1200);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(150);
@@ -115,7 +122,8 @@ try {
 
         const wired = reduced ? [] : await page.evaluate((rules) => {
           const out = [];
-          for (const [sel, prop, want] of rules) {
+          for (const [sel, prop, want, minWidth] of rules) {
+            if (minWidth && innerWidth < minWidth) continue;
             const el = document.querySelector(sel);
             if (!el) { out.push(`${sel}: missing`); continue; }
             const got = String(getComputedStyle(el)[prop]);
@@ -134,6 +142,64 @@ try {
         await ctx.close();
       }
     }
+  }
+
+  // Films: each figure must start when scrolled into view, hide steps while it
+  // runs, and end with every step shown. A figure whose ref never attached
+  // exited the engine silently and sat in its final state; no other check sees it.
+  for (const reduced of [false, true]) {
+    const ctx = await browser.newContext({
+      viewport: VIEWPORTS[1440],
+      reducedMotion: reduced ? 'reduce' : 'no-preference',
+    });
+    const page = await ctx.newPage();
+    await page.goto(base, { waitUntil: 'networkidle' });
+    await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
+    for (const id of ['c-film', 'a-film']) {
+      const run = `film ${id} ${reduced ? 'reduced' : 'motion'}`;
+      await page.evaluate((i) => document.getElementById(i)?.scrollIntoView({ block: 'center' }), id);
+      await page.waitForTimeout(600);
+      const mid = await page.evaluate((i) => {
+        const r = document.getElementById(i);
+        return {
+          state: r?.querySelector('.film-control')?.dataset.state,
+          hidden: r?.querySelectorAll('.is-hidden').length ?? 0,
+        };
+      }, id);
+      if (reduced) {
+        if (mid.state !== 'done' || mid.hidden) fail(`${run}: state=${mid.state} hidden=${mid.hidden} (want done, 0)`);
+        else console.log(`PASS ${run}`);
+        continue;
+      }
+      if (mid.state !== 'playing' || !mid.hidden) {
+        fail(`${run}: did not start (state=${mid.state} hidden=${mid.hidden})`);
+        continue;
+      }
+      const ended = await page
+        .waitForFunction((i) => document.getElementById(i).querySelector('.film-control')?.dataset.state === 'done', id, { timeout: 9000 })
+        .then(() => true, () => false);
+      const end = await page.evaluate((i) => {
+        const r = document.getElementById(i);
+        return {
+          hidden: r.querySelectorAll('.is-hidden').length,
+          typed: [...r.querySelectorAll('[data-t]')].filter((e) => e.textContent !== e.dataset.t).length,
+          pin: r.querySelector('#a-pin')?.textContent ?? 'n/a',
+        };
+      }, id);
+      if (!ended || end.hidden || end.typed || (id === 'a-film' && !/pinned = \["go-architect"\]/.test(end.pin))) {
+        fail(`${run}: ended=${ended} hidden=${end.hidden} untyped=${end.typed} pin=${end.pin.trim()}`);
+      } else console.log(`PASS ${run}`);
+    }
+    // Current section: header nav and rail follow the scroll position.
+    await page.evaluate(() => document.getElementById('catalogue')?.scrollIntoView());
+    await page.waitForTimeout(500);
+    const cur = await page.evaluate(() => ({
+      nav: document.querySelector('.site-nav a[aria-current]')?.textContent?.trim(),
+      rail: document.querySelector('.section-rail a[aria-current] .section-rail__label')?.textContent?.trim(),
+    }));
+    if (cur.nav !== 'Catalogue' || cur.rail !== 'Catalogue') fail(`current ${reduced ? 'reduced' : 'motion'}: nav=${cur.nav} rail=${cur.rail} (want Catalogue)`);
+    else console.log(`PASS current section ${reduced ? 'reduced' : 'motion'}`);
+    await ctx.close();
   }
 
   // JavaScript off: the prerendered document must read on its own.
