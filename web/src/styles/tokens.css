@@ -1,0 +1,21 @@
+/* @ralvarez-ts/tokens — the real package, at build time. The page consumes the
+ * `sharp` palette (ink #0c0e11, cyan #2bbbd6, paper #f4f5f7) through the aliases
+ * declared in base.css, so no colour is copied into this repo.
+ *
+ * One deliberate deviation: sharp squares every corner (--radius-*: 0). The
+ * family landing pages draw 4/6 px, and a fully square console reads as an app
+ * rather than a page, so the control and card radii are restored to the base
+ * ladder here.
+ */
+/* Tailwind is here for the @theme directive, not for utilities: it is what
+ * turns the package's `@theme static` block into real :root variables. Without
+ * it the status roles (--color-warning-text, --color-success-text, ...) and the
+ * radius/motion scales never resolve, and `var(--warn)` falls back to nothing. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import '@ralvarez-ts/tokens/tokens.css';
+@import '@ralvarez-ts/tokens/sharp.css';
+
+:root[data-style='sharp'] {
+  --rk: 4px;
+  --rc: 6px;
+}

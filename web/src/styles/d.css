@@ -1,0 +1,18 @@
+/* Combined-page composition: the sticky "after call 3" column, the FAQ list and
+ * the catalogue count override. Ported from the proposals' combined.py. */
+.d-writes{display:grid;gap:32px clamp(32px,5vw,72px);grid-template-columns:minmax(0,1fr)}
+@media (min-width:1080px){.d-writes{grid-template-columns:minmax(0,4fr) minmax(0,7fr);align-items:start}}
+.d-writes .k-lede{max-width:40ch}
+.d-writes .a-dev{grid-area:auto}
+@media (min-width:1080px){.d-writes>.rv:first-child{position:sticky;top:96px;align-self:start}}
+#catalogue .b-count{font-size:clamp(2.4rem,4vw,3.4rem)}
+.d-call{display:inline-flex;align-items:center;gap:10px;font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--warn);margin-bottom:6px}
+.d-call .c-no{color:var(--accent-t);margin:0;width:1.7em;height:1.7em}
+.d-faq{display:grid;gap:0;grid-template-columns:minmax(0,1fr);border-top:2px solid var(--text);max-width:900px}
+.d-faq details{border-bottom:1px solid var(--line)}
+.d-faq summary{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;font-weight:700;font-size:1.1rem;list-style:none}
+.d-faq summary::-webkit-details-marker{display:none}
+.d-faq summary::after{content:"+";font:700 1.4rem var(--mono);color:var(--accent-t)}
+.d-faq details[open] summary::after{content:"−"}
+.d-faq details p{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.d-writes .rv:first-child .k-rule{margin-bottom:22px}
