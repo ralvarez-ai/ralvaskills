@@ -229,8 +229,11 @@ try {
     const page = await ctx.newPage();
     await page.goto(base, { waitUntil: 'load' });
     const r = await page.evaluate(() => ({
+      // innerText on purpose: the rendered text, which is what a JS-off reader gets.
+      // biome-ignore lint/performance/useDomNodeTextContent: rendered text, not DOM text
       h1: document.querySelector('h1')?.innerText.trim() ?? '',
       sections: document.querySelectorAll('main section').length,
+      // biome-ignore lint/performance/useDomNodeTextContent: rendered text, not DOM text
       text: document.querySelector('main')?.innerText.length ?? 0,
       scroll: document.documentElement.scrollWidth,
       client: document.documentElement.clientWidth,

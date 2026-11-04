@@ -1,4 +1,4 @@
-import { Eyebrow, Section, Tag } from '../components/ui';
+import { CodeRegion, Eyebrow, Section, Tag } from '../components/ui';
 import { profile, signals } from '../data/facts';
 
 const HITS = new Set(profile.signals.map((s) => s.kind));
@@ -43,9 +43,7 @@ export function Signals() {
             <Eyebrow reveal={false} style={{ marginBottom: 10 }}>
               The full response <Tag tone="readonly">real</Tag>
             </Eyebrow>
-            <pre tabIndex={0} role="region" aria-label="project_profile JSON response">
-              {JSON_TEXT}
-            </pre>
+            <CodeRegion label="project_profile JSON response">{JSON_TEXT}</CodeRegion>
           </div>
         </div>
       </div>

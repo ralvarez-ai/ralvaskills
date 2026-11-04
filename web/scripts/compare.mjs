@@ -79,7 +79,7 @@ function dump() {
     const r = el.getBoundingClientRect();
     if (r.width === 0 && r.height === 0) continue;
     const sec = el.closest('section[id], header, footer, nav');
-    const secId = sec ? sec.id || sec.tagName.toLowerCase() + '.' + sec.className.split(' ')[0] : '';
+    const secId = sec ? sec.id || `${sec.tagName.toLowerCase()}.${sec.className.split(' ')[0]}` : '';
     const key = `${secId}|${own.slice(0, 60)}`;
     const n = counts.get(key) ?? 0;
     counts.set(key, n + 1);

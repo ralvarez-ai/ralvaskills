@@ -1,4 +1,4 @@
-import { Eyebrow, Panel, Section, Tag } from '../components/ui';
+import { CodeRegion, Eyebrow, Panel, Section, Tag } from '../components/ui';
 import { data } from '../data/types';
 
 const LOCK = [...data.repoLock].sort((a, b) => a.name.localeCompare(b.name));
@@ -19,9 +19,9 @@ export function ThisRepo() {
               action={<Tag tone="readonly">real · working tree 2026-11-04</Tag>}
               flush
             >
-              <pre className="panel__body" tabIndex={0} role="region" aria-label="ralvaskills .rsk/rsk.mod">
+              <CodeRegion className="panel__body" label="ralvaskills .rsk/rsk.mod">
                 {data.repoMod.trimEnd()}
-              </pre>
+              </CodeRegion>
             </Panel>
           </div>
           <div className="reveal">

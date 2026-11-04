@@ -77,7 +77,10 @@ function main() {
   );
 
   const domains = {};
-  for (const s of skills) (domains[s.domain] ??= []).push(s);
+  for (const s of skills) {
+    domains[s.domain] ??= [];
+    domains[s.domain].push(s);
+  }
 
   const bundles = parseToml(read('internal/config/catalog.toml')).bundle;
   assert(bundles.length === 15, `expected 15 bundles, found ${bundles.length}`);

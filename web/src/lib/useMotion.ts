@@ -81,7 +81,9 @@ export function useReveals() {
       },
       { rootMargin: '0px 0px -12% 0px', threshold: 0.01 },
     );
-    targets.forEach((el) => io.observe(el));
+    targets.forEach((el) => {
+      io.observe(el);
+    });
     return () => io.disconnect();
   }, []);
 }
@@ -100,7 +102,9 @@ export function useCounts() {
       },
       { threshold: 0.55 },
     );
-    document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => io.observe(el));
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+      io.observe(el);
+    });
     return () => io.disconnect();
   }, []);
 }
@@ -143,7 +147,9 @@ export function useScrollKit(onActive: (id: string) => void) {
       },
       { rootMargin: '-45% 0px -50% 0px' },
     );
-    document.querySelectorAll<HTMLElement>('main section[id]').forEach((el) => io.observe(el));
+    document.querySelectorAll<HTMLElement>('main section[id]').forEach((el) => {
+      io.observe(el);
+    });
     return () => io.disconnect();
   }, [onActive]);
 }

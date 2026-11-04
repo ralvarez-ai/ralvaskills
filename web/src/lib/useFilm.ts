@@ -154,15 +154,21 @@ export function useFilm(
 
 /** Film helpers that work on the rendered figure. */
 export function show(root: HTMLElement, key: string) {
-  root.querySelectorAll(`[data-f="${key}"]`).forEach((el) => el.classList.remove('is-hidden'));
+  root.querySelectorAll(`[data-f="${key}"]`).forEach((el) => {
+    el.classList.remove('is-hidden');
+  });
 }
 
 export function hideAll(root: HTMLElement) {
-  root.querySelectorAll('[data-f]').forEach((el) => el.classList.add('is-hidden'));
+  root.querySelectorAll('[data-f]').forEach((el) => {
+    el.classList.add('is-hidden');
+  });
 }
 
 export function revealAll(root: HTMLElement) {
-  root.querySelectorAll('.is-hidden').forEach((el) => el.classList.remove('is-hidden'));
+  root.querySelectorAll('.is-hidden').forEach((el) => {
+    el.classList.remove('is-hidden');
+  });
   root.querySelectorAll<HTMLElement>('[data-t]').forEach((el) => {
     el.textContent = el.dataset.t ?? '';
     el.classList.remove('is-typing');

@@ -65,7 +65,8 @@ for (const [who, c] of Object.entries(T)) {
   page.on('pageerror', (e) => errs.push(e.message));
   await page.goto(c.url, { waitUntil: 'networkidle' });
   await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
-  const r = (out[who] = {});
+  const r = {};
+  out[who] = r;
   r.errors = errs;
 
   // filter chips

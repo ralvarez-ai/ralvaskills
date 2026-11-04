@@ -24,7 +24,7 @@ export function Tools() {
             <li className={tool.kind === 'de' ? 'is-destructive' : undefined} key={tool.name}>
               <h3>{tool.name}</h3>
               <p>{tool.desc}</p>
-              <pre aria-label={`${tool.name} annotations`}>{ANNOTATIONS[tool.kind]}</pre>
+              <pre>{ANNOTATIONS[tool.kind]}</pre>
             </li>
           ))}
           <li>
@@ -33,7 +33,7 @@ export function Tools() {
               A resource, not a tool: every skill with its latest version, descriptions cut to 200 characters. Name{' '}
               <code>rsk-catalog</code>.
             </p>
-            <pre aria-label="rsk://catalog details">{'mimeType:\n  application/json'}</pre>
+            <pre>{'mimeType:\n  application/json'}</pre>
           </li>
         </ul>
       </div>

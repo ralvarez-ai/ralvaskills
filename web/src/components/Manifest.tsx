@@ -178,6 +178,7 @@ export function Manifest({ names, second, agent = false, caption }: ManifestProp
               <li
                 className="manifest-file__line"
                 data-f={line.k}
+                // biome-ignore lint/suspicious/noArrayIndexKey: a static list of lines; the step keys repeat, so the index is what makes them unique
                 key={`${line.k}-${i}`}
                 id={line.pinned ? 'a-pin' : undefined}
                 ref={line.pinned ? pinLine : undefined}

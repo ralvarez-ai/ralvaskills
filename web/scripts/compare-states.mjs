@@ -125,7 +125,8 @@ for (const theme of ['light', 'dark']) {
             height: Math.min(box.height + pad * 2, 140),
           },
         });
-        (styles[name] ??= {})[state] = await loc.evaluate(
+        styles[name] ??= {};
+        styles[name][state] = await loc.evaluate(
           (e, props) => Object.fromEntries(props.map((p) => [p, getComputedStyle(e)[p]])),
           styleProps,
         );

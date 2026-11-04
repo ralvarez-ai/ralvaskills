@@ -1,4 +1,4 @@
-import { Eyebrow, Panel, Section, Tag } from '../components/ui';
+import { CodeRegion, Eyebrow, Panel, Section, Tag } from '../components/ui';
 import { rskNewClaudeMd } from '../data/facts';
 
 const NEW_FILES: [string, string][] = [
@@ -68,14 +68,9 @@ export function Files() {
         </div>
         <div className="reveal">
           <Panel title="CLAUDE.md, as rsk new wrote it" action={<Tag tone="readonly">real</Tag>} flush>
-            <pre
-              className="panel__body"
-              tabIndex={0}
-              role="region"
-              aria-label="CLAUDE.md written by rsk new: what it writes"
-            >
+            <CodeRegion className="panel__body" label="CLAUDE.md written by rsk new: what it writes">
               {rskNewClaudeMd}
-            </pre>
+            </CodeRegion>
           </Panel>
           <p style={{ marginTop: 16, color: 'var(--text-muted)', fontSize: '.95rem' }}>
             <code>@AGENTS.md</code> stays the first line so the guide you wrote loads before anything rsk generates.{' '}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Button } from './Button';
+import { CodeRegion } from './CodeRegion';
 
 /** A copy block: notes above each command, commands only to the clipboard. */
 export function CopyBlock({
@@ -34,14 +35,15 @@ export function CopyBlock({
 
   return (
     <div className="copy-block">
-      <pre id={id} data-raw={raw} aria-label={label} role="region" tabIndex={0}>
+      <CodeRegion id={id} data-raw={raw} label={label}>
         {rows.map((row, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: a static list of lines that never reorders, and two lines can have the same text
           <span key={i}>
             <span className={row.kind === 'note' ? 'copy-block__comment' : 'copy-block__command'}>{row.text}</span>
             {i < rows.length - 1 ? '\n' : null}
           </span>
         ))}
-      </pre>
+      </CodeRegion>
       <Button onClick={copy}>
         <span>{status === 'ok' ? 'Copied' : status === 'fail' ? 'Copy failed' : 'Copy'}</span>
         <span className="sr-only"> {label}</span>
