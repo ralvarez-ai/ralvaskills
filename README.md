@@ -14,10 +14,16 @@ See [`docs/designs/2026-05-20-technical-specification.md`](docs/designs/2026-05-
 
 Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill; folders containing other folders are categories.
 
+### `academic/` — papers and study
+
+- **`ml-conference-paper-architect`** — ML conference papers (NeurIPS, ICML, ICLR, AAAI): official style-file usage, anonymization and camera-ready toggles, page-limit accounting, natbib citations.
+- **`study-artifact-builder`** — Single-file interactive HTML artifact to study a paper's pipeline or dataset until it can be defended from memory: source pinning, paper-versus-code separation, per-component explanations.
+
 ### `languages/` — language standards
 
-- **`go-architect`** — Go 1.26 standards: memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, sqlx + `//go:embed` SQL pattern.
+- **`go-architect`** — Go 1.27 standards: memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, sqlx + `//go:embed` SQL pattern, `go.work` multi-module layout, and the two app-repo shapes for a Go module with a SPA.
 - **`python-architect`** — Python 3.14 enterprise standards: modern typing (PEP 649), immutable dataclasses, Protocol-based DI, asyncio discipline, pytest 9, psycopg + `.sql` files via `importlib.resources`.
+- **`latex-architect`** — LaTeX on TeX Live 2026: latexmk-only builds, preamble and package-order discipline, biblatex + biber bibliographies, semantic cross-references (cleveref, siunitx).
 
 ### `frameworks/` — framework-specific patterns
 
@@ -28,12 +34,14 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 - **`react-architect`** — React 19 + TypeScript strict: feature-based components, hooks-first composition, TanStack Query for server state, zustand for cross-tree client state, Suspense + ErrorBoundary, Radix for a11y.
 - **`hugo-architect`** — Hugo 0.161 Extended static sites: project layout, front matter conventions, template hierarchy, Hugo Modules over submodules, Page Bundles, Hugo Pipes asset pipeline, i18n, render hooks.
 - **`reveal-js-architect`** — reveal.js 6.0.1 presentations: section/fragment structure, HTML vs Markdown-mode authoring, theming, plugin config, vanilla setup or the `@revealjs/react` extension.
+- **`astro-architect`** — Astro 6+: islands architecture with zero JS by default, Content Layer collections with loader + Zod validation, `<script>` processing, `getStaticPaths`, Actions.
 
 ### `protocols/` — wire-level conventions
 
 - **`rest-api-architect`** — Cross-language REST conventions: resource URLs, method semantics, URL-prefix versioning, cursor pagination, snake_case JSON, ISO 8601 timestamps, RFC 9457, Idempotency-Key, ETag/If-Match, OpenAPI as source of truth.
 - **`grpc-architect`** — Vanilla gRPC: `.proto` services, `status.Error` with standard codes, domain→code mapping, interceptor chain (auth/log/recovery/validation/metrics), client deadlines, context propagation, bufconn testing.
-- **`mcp-architect`** — MCP 2026-07-28 servers: tool/resource/prompt primitives, stateless core (no `initialize` handshake), header-based routing, Multi Round-Trip Requests, cacheable list results, OAuth 2.1 + RFC 8707/9207, tool annotations, structured output, prompt-injection/SSRF defenses. Python (FastMCP) and Go SDK recipes.
+- **`mcp-architect`** — MCP 2026-07-28 servers: tool/resource/prompt primitives, stateless core (no `initialize` handshake), header-based routing, Multi Round-Trip Requests, cacheable list results, OAuth 2.1 + RFC 8707/9207, tool annotations, structured output, prompt-injection/SSRF defenses. Python (FastMCP) and Go SDK recipes. Go schema-driven contracts (JSON Schema as source of truth, generated Go types) and MCP Apps panels as an addition to a complete text result.
+- **`connectrpc-architect`** — ConnectRPC: one `.proto` serving Connect, gRPC and gRPC-Web from a single `http.Handler` via `protoc-gen-connect-go`, `connect.Code` error mapping, mandatory interceptor chain.
 
 ### `encoding/` — schemas and wire formats
 
@@ -51,6 +59,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 
 - **`ui-ux-architect`** — WCAG 2.2 AA, Radix + Tailwind 4 + shadcn/ui, design-token theming, mandatory loading/error/empty/success states, mobile-first responsive, keyboard parity, contrast checked in CI.
 - **`website-concept-architect`** — Pre-code website concepting: purpose, audience, content inventory, tone, visual archetype, structure; outputs 2-3 concept directions plus an ASCII homepage wireframe. Hands off to `ui-ux-architect` / `frontend-design`.
+- **`landing-page-designer`** — Landing-page proposals as self-contained HTML grounded in the product's code, real captures and brand: one memorable device per page, a choreographed hero film, accessibility.
 
 ### `design/` — architectural patterns
 
@@ -74,6 +83,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 - **`api-contract-reviewer`** — Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. Runs `buf breaking` / `openapi-diff`. Severity-keyed findings.
 - **`performance-reviewer`** — Cross-language perf review: N+1, missing indexes, blocking I/O in async, allocation hot paths, unbounded memory. Findings grounded in EXPLAIN / pprof / py-spy / metrics.
 - **`security-reviewer`** — Cross-language security review: injection, auth/authz, secrets, insecure defaults, deserialization, CSRF/SSRF/IDOR, dep vulns. Critical/High/Medium/Low with file:line + fixes.
+- **`codebase-hygiene-reviewer`** — Evidence-based declutter audit: dead code, unused exports, duplication, oversized files/functions, modularization candidates. Proposes, never edits.
 
 ### `tooling/` — developer tooling
 
@@ -86,6 +96,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 - **`grill-with-docs`** — Stress-tests plans against the project's domain model, sharpens terminology, updates CONTEXT.md and ADRs inline as decisions crystallise.
 - **`tdd`** — Red-green-refactor loop emphasizing behavior verification through public interfaces.
 - **`commit-author`** — Generates concise Conventional Commits messages from a staged diff. Enforces full type set, imperative subject lines, no AI co-author attribution.
+- **`docs-architect`** — Project documentation system: a folder-per-doc-type `docs/` tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, backlog as a queue or one file per item, a stdlib linter. Scaffold, write-doc and migrate modes.
 
 ### `refactoring/` — code cleanup ladder
 
@@ -101,7 +112,7 @@ Three rungs from expression-level polish to system-level architecture, plus a sk
 Skills about authoring/operating the toolkit itself, plus communication modes that aren't really workflows.
 
 - **`skill-builder`** — Meta-skill that scaffolds new ralvaskills skills per SPECS.md (SKILL.md skeleton, optional STACK/RECIPES, folder placement, SPECS updates). Interview-first.
-- **`rsk-guide`** — Quick reference for the `rsk` CLI and its `rsk mcp` server: discover, install, update, and check ralvaskills bundles and skills.
+- **`rsk-guide`** — Operator's guide for the `rsk` CLI: the `.rsk/` project manifest (`rsk new`, `rsk install`, `rsk pin`), bundle/global installs, the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards.
 - **`caveman`** — Ultra-compressed communication mode that reduces token usage by ~75% while preserving technical accuracy.
 
 ### `personal/` — author-specific, not bundle-installable
@@ -115,8 +126,8 @@ These are personal to me and excluded from bundle installs. Listed here for tran
 - **`uru-thesis-reviewer`** — Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) Trabajos Especiales de Grado. Produces ordered `.md` diff files; never edits the source `.docx`.
 - **`uru-thesis-defense-architect`** — URU-style thesis defense deck specs: fixed institutional slide structure, Spanish-only content, logo placement rules. Outputs `.md` only.
 - **`uru-scientific-paper-architect`** — Manuscript formatting for Revista Tecnocientífica URU: typography rules, IMRyD-derived structure by article type, citation/reference formats. Outputs one `.md` manuscript spec.
-- **`go-library-builder`** — Scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD + hexagonal house style: domain-pure root package, narrow composed ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks. Module namespace is a parameter.
-- **`go-house-libs`** — Maps a need to the ralvarezdev shared Go modules (restkit, ginkit, pgkit, mcpkit, identity, identitygin, ratelimit, email, webpush, termkit): a router plus one `references/` file per module with its package layout, a recipe and the gotchas; the consumer-side companion of `go-library-builder`.
+- **`go-library-builder`** — Scaffolds reusable Go 1.26 library modules in the ralvarezdev house style (flat, vertical-slice, toolkit or framework-adapter shapes): domain-pure root package, narrow ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter.
+- **`go-house-libs`** — Maps a need to the ralvarezdev shared Go modules (restkit, ginkit, pgkit, mcpkit, contracts, connectrpckit, identity, identitygin, ratelimit, email, webpush, termkit, svckit, tick, sqlitekit, resilience): a router plus one `references/` file per module with its package layout, a recipe and the gotchas; the consumer-side companion of `go-library-builder`.
 
 ---
 
