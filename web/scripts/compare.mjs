@@ -112,9 +112,13 @@ for (const width of widths) {
         await page.evaluate((to) => window.scrollTo(0, to), y);
         await page.waitForTimeout(60);
       }
+      // Let everything the scroll-through started finish (films, reveals, rule
+      // draws), or the capture depends on timing and two runs disagree.
+      await page.waitForFunction(() => !document.querySelector('[data-state="playing"]'), null, { timeout: 15000 });
+      await page.waitForTimeout(1500);
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.waitForFunction(() => window.scrollY === 0);
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(600);
       const name = join(out, `${width}-${theme}-${who}`);
       await page.screenshot({ path: `${name}.png`, fullPage: true });
       writeFileSync(`${name}.json`, JSON.stringify(await page.evaluate(dump)));
