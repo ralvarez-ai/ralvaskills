@@ -61,6 +61,9 @@ async function settle(page, { reduced }) {
     await page.waitForFunction(() => [...document.querySelectorAll('.k-film-ctl')].every((b) => b.dataset.state === 'done'), null, { timeout: 15000 }).catch(() => {});
     // films only start when visible: force any still idle ones to their final state
     await page.evaluate(() => document.querySelectorAll('[data-film]').forEach((r) => { if (r.kFilm && r.kFilm.state() !== 'done') r.kFilm.finish(); }));
+    // count-ups are view-triggered too; wait, then force whatever is left
+    await page.waitForFunction(() => [...document.querySelectorAll('[data-count]')].every((e) => e.dataset.done === '1'), null, { timeout: 6000 }).catch(() => {});
+    await page.evaluate(() => window.kCountsDone && window.kCountsDone());
     await page.waitForTimeout(1100);
   } else {
     await page.waitForTimeout(250);

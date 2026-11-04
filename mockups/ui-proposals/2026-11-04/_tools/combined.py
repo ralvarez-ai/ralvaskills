@@ -12,7 +12,7 @@ import data as D
 import dir_a as A
 import dir_b as B
 import dir_c as C
-from family import esc, footer, header, page
+from family import esc, footer, header, page, rail
 
 SECTIONS = [
     ("top", "The loop"),
@@ -33,19 +33,10 @@ CSS = r"""
 @media (min-width:1080px){.d-writes{grid-template-columns:minmax(0,4fr) minmax(0,7fr);align-items:start}}
 .d-writes .k-lede{max-width:40ch}
 .d-writes .a-dev{grid-area:auto}
+@media (min-width:1080px){.d-writes>.rv:first-child{position:sticky;top:96px;align-self:start}}
 #catalogue .b-count{font-size:clamp(2.4rem,4vw,3.4rem)}
-.d-call{display:inline-flex;align-items:center;gap:10px;font:700 .85rem var(--mono);color:var(--warn);margin-bottom:6px}
-.d-call .c-no{color:var(--accent-t);margin:0}
-.d-rail{display:none}
-@media (min-width:1400px){
- .d-rail{display:block;position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:15}
- .d-rail ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
- .d-rail a{display:flex;flex-direction:row-reverse;align-items:center;gap:10px;min-height:44px;min-width:44px;padding:0 10px;border-radius:8px;color:var(--muted);text-decoration:none;font:600 .78rem var(--mono)}
- .d-rail a .lb{opacity:0;transform:translateX(4px);transition:opacity .2s,transform .2s;white-space:nowrap;background:var(--surface);border:1px solid var(--line);padding:4px 8px;border-radius:6px;color:var(--text)}
- .d-rail a:hover .lb,.d-rail a:focus-visible .lb{opacity:1;transform:none}
- .d-rail a[aria-current=true]{color:var(--accent-t)}
- .d-rail a[aria-current=true] .n{border-bottom:2px solid currentColor}
-}
+.d-call{display:inline-flex;align-items:center;gap:10px;font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--warn);margin-bottom:6px}
+.d-call .c-no{color:var(--accent-t);margin:0;width:1.7em;height:1.7em}
 .d-faq{display:grid;gap:0;grid-template-columns:minmax(0,1fr);border-top:2px solid var(--text);max-width:900px}
 .d-faq details{border-bottom:1px solid var(--line)}
 .d-faq summary{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;font-weight:700;font-size:1.1rem;list-style:none}
@@ -53,14 +44,8 @@ CSS = r"""
 .d-faq summary::after{content:"+";font:700 1.4rem var(--mono);color:var(--accent-t)}
 .d-faq details[open] summary::after{content:"−"}
 .d-faq details p{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.d-writes .rv:first-child .k-rule{margin-bottom:22px}
 """
-
-
-def rail() -> str:
-    items = "".join(
-        f'<li><a href="#{i}"><span class="n">{n:02d}</span><span class="lb">{esc(t)}</span></a></li>' for n, (i, t) in enumerate(SECTIONS, 1)
-    )
-    return f'<nav class="d-rail" aria-label="Sections"><ol>{items}</ol></nav>'
 
 
 def writes(d: dict) -> str:
@@ -73,7 +58,7 @@ def writes(d: dict) -> str:
     dev = A.device(d, names=names, c2="install_skills · approved by you", agent=True, cap=cap)
     return f"""
 <section class="k-sec" id="writes" aria-labelledby="d-wr-h" style="background:var(--bg2)"><div class="wrap d-writes">
-<div class="rv"><p class="d-call"><span class="c-no">3</span> after call 3</p>
+<div class="rv"><div class="k-rule" aria-hidden="true"></div><p class="d-call"><span class="c-no">3</span> after call 3</p>
 <h2 id="d-wr-h">It lands in two files you commit.</h2>
 <p class="k-lede"><code>install_skills</code> writes the skills into <code>.rsk/rsk.mod</code> and their exact versions into <code>.rsk/rsk.lock</code>. Whoever clones the repo runs <code>rsk install</code> and gets the same three, at the same versions. Think <code>go.mod</code> and <code>go.sum</code>, for your agent’s skills.</p></div>
 {dev}
@@ -83,10 +68,10 @@ def writes(d: dict) -> str:
 def catalogue(d: dict) -> str:
     html = B.explorer(d)
     nb = len(d["bundles"])
-    a = f'<div><span class="b-sec-n" aria-hidden="true">{nb}</span><h2 id="b-ex-h" style="margin-top:0"><span class="sr">{nb} </span>bundles. Filter the catalogue the way <code>rsk catalog</code> does.</h2></div>'
+    a = f'<div><span class="b-sec-n" aria-hidden="true" data-count="{nb}">{nb}</span><h2 id="b-ex-h" style="margin-top:0"><span class="sr">{nb} </span>bundles. Filter the catalogue the way <code>rsk catalog</code> does.</h2></div>'
     n = len(d["skills"])
     b = (
-        f'<div><span class="b-sec-n" aria-hidden="true">{n}</span><h2 id="b-ex-h" style="margin-top:0"><span class="sr">{n} </span>skills the agent chooses from, in {nb} bundles.</h2>'
+        f'<div><span class="b-sec-n" aria-hidden="true" data-count="{n}">{n}</span><h2 id="b-ex-h" style="margin-top:0"><span class="sr">{n} </span>skills the agent chooses from, in {nb} bundles.</h2>'
         f'<p class="k-lede">Grouped by the folder they live in. Pick a bundle to see what <code>rsk install &lt;bundle&gt;</code> brings; personal skills stay hidden unless you pass <code>--include personal</code>, as in the CLI.</p></div>'
     )
     assert a in html
@@ -106,17 +91,10 @@ def faq(d: dict) -> str:
     items = "".join(f"<details><summary>{q}</summary><p>{a}</p></details>" for q, a in qa)
     return f"""
 <section class="k-sec" id="faq" aria-labelledby="d-faq-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick rv">Questions</p><h2 id="d-faq-h" class="rv">Before you install.</h2>
 <div class="d-faq rv">{items}</div>
 </div></section>"""
-
-
-RAIL_JS = r"""
-(function(){var links=[].slice.call(document.querySelectorAll('.d-rail a'));if(!links.length||!('IntersectionObserver' in window))return;
-var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a});
-var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.removeAttribute('aria-current')});var a=map[e.target.id];if(a)a.setAttribute('aria-current','true')}})},{rootMargin:'-45% 0px -50% 0px'});
-Object.keys(map).forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s)});})();
-"""
 
 
 def build(d: dict) -> str:
@@ -125,7 +103,7 @@ def build(d: dict) -> str:
     start = C.start().replace(' style="background:var(--bg2)"', "", 1)
     body = (
         header(nav, d["version"])
-        + rail()
+        + rail(SECTIONS)
         + '<main id="main">'
         + C.hero(d)
         + writes(d)
@@ -146,5 +124,5 @@ def build(d: dict) -> str:
         "rsk installs versioned skills into Claude Code and OpenCode. Its MCP server lets the agent propose them from your project's files; the one tool that writes asks you first.",
         A.CSS + B.CSS + C.CSS + CSS,
         body,
-        C.JS + A.JS + B.JS + RAIL_JS,
+        C.JS + A.JS + B.JS,
     )

@@ -17,10 +17,10 @@ Pages deploy. The method is `.claude/skills/landing-page-designer/SKILL.md`; the
 
 | What | Where |
 |---|---|
-| Direction A, the manifest | `mockups/ui-proposals/2026-11-04/direction-1.html` (39 KB) |
-| Direction B, the count | `mockups/ui-proposals/2026-11-04/direction-2.html` (53 KB) |
-| Direction C, the agent loop | `mockups/ui-proposals/2026-11-04/direction-3.html` (39 KB) |
-| Combined long page (C + A + B) | `mockups/ui-proposals/2026-11-04/direction-4-combined.html` (82 KB) |
+| Direction A, the manifest | `mockups/ui-proposals/2026-11-04/direction-1.html` (47.8 KB) |
+| Direction B, the count | `mockups/ui-proposals/2026-11-04/direction-2.html` (62.3 KB) |
+| Direction C, the agent loop | `mockups/ui-proposals/2026-11-04/direction-3.html` (48.2 KB) |
+| Combined long page (C + A + B) | `mockups/ui-proposals/2026-11-04/direction-4-combined.html` (89.8 KB) |
 | Contact sheets | `shots/contact-sheet.png` (A/B/C), `shots/contact-sheet-combined.png` (C vs combined) |
 | Screenshots | `shots/<page>-<1440\|390>-<light\|dark>[-reduced\|-full].png` |
 | Generator and harness | `_tools/` (`build.py`, `family.py`, `data.py`, `dir_a.py`, `dir_b.py`, `dir_c.py`, `combined.py`, `verify.js`, `smoke.js`, `shots.js`, `contact.js`, `sec.js`, `parsecheck.py`) |
@@ -36,9 +36,10 @@ drifts, the build fails instead of the page lying. Harness setup: `npm install` 
 
 ### Concept per direction
 
-All three share one family layer (`family.py`): termkit TokyoNight tokens, the header, kicker,
-buttons, film engine, reveals, copy button, footer with the real block wordmark, and a source list
-("Where every number on this page comes from"). They differ in mechanism:
+All three share one family layer (`family.py`): the Ralvarez brand kit for the page, the header,
+kicker, buttons, film engine, reveals, scroll kit, copy button, footer with the real block wordmark,
+and a source list ("Where every number on this page comes from"). Terminal surfaces keep rsk's
+termkit TokyoNight theme. They differ in mechanism:
 
 - **A — the manifest as the argument.** *"`go.mod`, but for your agent’s skills."* A dark terminal
   runs `rsk new` → `rsk install go-grpc` → `rsk pin go-architect`, and a real-format
@@ -87,8 +88,47 @@ One story, one sample project, end to end:
 7. **Commands** (A), **trade-off** (weighted give/take), **quick start** (copy button), **FAQ** (7
    questions, each answer traced to a file).
 
-Pacing alternates paper / tinted / paper / night; a section rail (01–11, right edge, ≥1400 px)
-tracks position. 81.7 KB, two films, both with Pause/Replay.
+Pacing alternates paper / tinted / paper / night; a family section rail (01–11, left edge,
+≥1400 px) tracks position and grows the active tick. 89.8 KB, two films, both with Pause/Replay.
+
+### Round 2 — family theme and scroll effects (2026-11-04)
+
+The first pass themed the whole page with rsk's termkit TokyoNight palette. The owner asked for the
+sharper family look used by the ralvagym, finance, identity and notifier landing pages, and for
+motion tied to scrolling. Both changed in `family.py`; the page copy and the seven flags did not.
+The system was read from `mockups/claude-design/2026-11-04/landing-page.html` in each sibling repo
+(their tokens, 4/6 px radii, mono kickers, 2 px rules, square-plus-dot mark and rail); nothing in
+those repos was edited. Borrowed specifically: ralvagym's drifting giant number and family mark,
+finance's view-timeline entry, identity's count-up idea, and notifier's progress bar inside the
+film control.
+
+**Theme.** Page chrome now uses the Ralvarez brand kit those four pages share: ink `#0c0e11` /
+paper `#f4f5f7`, cyan accent `#2bbbd6` (dark) and `#00758c` (light), the 4/6 px radii, mono
+uppercase kickers, 2 px rules and the square-plus-dot family mark. Terminal surfaces are scoped with
+`.tn` and keep termkit TokyoNight (`#16161e`, `#c0caf5`, `#7aa2f7`), so the product inside the frame
+still looks like the product. Contrast of every page token against every page background, and of the
+terminal tokens against the terminal surfaces, is asserted at build.
+
+**Motion.** One scroll kit is shared by all four pages:
+
+| Effect | Where | Reduced motion / JS off |
+|---|---|---|
+| 2 px reading-progress bar under the sticky header | all | bar hidden without JS |
+| Header hairline once scrolled, active section in the nav | all | static header |
+| Family rail ticks, active tick grows, labels on hover/focus | ≥1400 px | rail hidden below 1400 |
+| Staggered one-shot reveals + `k-rule` wipe | section copy | content visible |
+| h1 line masks (lines rise out of a clipped box) | C and combined | content visible |
+| Count-ups on the section numbers | B, combined | plain HTML number |
+| Histogram bars rise in sequence | B releases | bars at full height |
+| Scroll-linked sideways drift on the 58 | B hero | number static |
+| Sticky “after call 3” copy beside the device | combined | static |
+| Progress bar inside Pause/Replay | both films | control hidden without JS |
+
+Everything except the progress bar and the sticky header sits under `html.anim`, which the head
+script adds only when `prefers-reduced-motion` does not match. Count-ups read their final value from
+the HTML and end there; nothing scroll-jacks, and no content depends on an animation to become
+readable. Scroll-linked drift uses `animation-timeline: view()` behind `@supports`, so browsers
+without it get the static composition.
 
 ### Real vs sample
 
@@ -125,23 +165,29 @@ tracks position. 81.7 KB, two films, both with Pause/Replay.
 | License | GPL-3.0 | `LICENSE` |
 | Quick start | `go install github.com/ralvarezdev/ralvaskills/v3/cmd/rsk@latest`, `rsk init`, `rsk new`, `rsk install <name>`, `rsk pin <name>` | `README.md:139-160` |
 | Brand mark | the six-row block wordmark, `◆` glyph, row gradient = accent darkened 0 / .18 / .34 / .48 in Lab, cycled over 6 rows | `internal/ui/theme.go`; termkit `banner.go` |
-| Colours | termkit TokyoNight accent `#2E7DE9`/`#7AA2F7`, danger, warning, success, info, muted | termkit v0.65.4 `theme.go` via `internal/ui/theme.go` |
+| Page palette | Ralvarez brand kit: ink `#0c0e11`, cyan `#2bbbd6`, paper `#f4f5f7`, light cyan text `#00758c` | `mockups/claude-design/2026-11-04/landing-page.html` in ralvagym / finance / identity / notifier |
+| Terminal palette | termkit TokyoNight: accent `#2E7DE9`/`#7AA2F7`, danger, warning, success, info, muted; terminal bg `#16161e` | termkit v0.65.4 `theme.go` via `internal/ui/theme.go` |
 | Trade-off | needs the registry reachable or a local clone (`rsk init` asks for "Path to your local ralvaskills repo clone"); `rsk` must be on PATH for the MCP server | `rsk init --help`; `README.md:182` |
 
 ## Components and interfaces
 
-- **Family layer** (`family.py`): tokens for light/dark from termkit plus the Tokyo Night
-  backgrounds; contrast of every text token against every background is **asserted ≥ 4.5:1 at
-  build**. `data-theme` + toggle (`aria-pressed`, stored in `localStorage['rsk-theme']`, system
-  default, circular View Transition wipe when motion is allowed). A head script adds `html.anim` only
-  when `prefers-reduced-motion` allows; every hide/animate rule sits under `.anim`.
+- **Family layer** (`family.py`): the Ralvarez brand tokens for the page and a `.tn` scope with
+  termkit TokyoNight for terminal surfaces; contrast of every text token against every background
+  is **asserted ≥ 4.5:1 at build**, for the light page, the dark page, the night band and `.tn`.
+  `data-theme` + toggle (`aria-pressed`, stored in `localStorage['rsk-theme']`, system default,
+  circular View Transition wipe when motion is allowed). A head script adds `html.anim` only when
+  `prefers-reduced-motion` allows; every hide/animate rule sits under `.anim`. The scroll kit
+  (progress, sticky hairline, rail, count-ups, reveal stagger, rule wipe, line masks) lives in the
+  same file; count-ups restore the HTML's final text and expose `window.kCountsDone()` for tests.
 - **Film engine** (`kFilm`): steps `{at, dur, fn(p)}` on a pausable timeline, `reset()` for the start
   state, `end()` cleanup; the final state **is** the plain HTML. Plays once when 30 % visible, pauses
   when the tab is hidden, Pause/Play/Replay button (hidden without JS). Typed text is driven by the
   timeline (Pause freezes it); the typed layer is `aria-hidden`, the full text sits once in `.sr`.
   Hidden steps keep their box (no layout shift).
-- **Reveals**: one-shot IntersectionObserver, opacity + transform, ending at 1. No scroll-linked
-  opacity.
+- **Reveals**: one-shot IntersectionObserver, opacity + transform with a 70 ms `--i` stagger,
+  ending at 1. Section rules use the same observer for a clip wipe; the C hero h1 lines rise under
+  a mask. No scroll-linked opacity. A Chromium-only `animation-timeline: view()` layer adds the
+  drifting 58 and is skipped elsewhere.
 - **Catalogue filter**: chips with `aria-pressed`, a live count, an `aria-live` note; non-matching
   tags are de-emphasised with a dashed border and muted text (contrast-safe), never opacity.
 - **390 px**: A puts the device between h1 and lede; B shrinks the squares; C reflows lanes into a
@@ -176,13 +222,15 @@ tracks position. 81.7 KB, two films, both with Pause/Replay.
    listed in the public `registry/index.json`. The pages show their count and hide the names unless
    you press `--include personal` (mirroring the CLI). Owner call whether the public page should
    name them at all.
-8. **Brand gaps**: termkit carries only semantic colours, so backgrounds and body text are upstream
-   Tokyo Night (`#1a1b26`, `#16161e`, `#c0caf5`; light `#f3f4f7`, `#e1e2e7`, `#343b58`), not rsk
-   code. termkit's light accent `#2E7DE9` is 3.1:1 on paper, so light-theme text uses it darkened 0.34
-   in Lab (the wordmark's third step, `#2a5193`); success/warning/danger/info are darkened the same
-   way. termkit's `Brand` colour (`#9854F1`, purple) is deliberately unused. rsk has no web font: the
-   pages use system sans and mono stacks, so they will look different on macOS and Windows than in
-   these Fedora screenshots.
+8. **Brand split**: rsk still has no web identity of its own. The pages therefore split in two:
+   page chrome borrows the Ralvarez brand kit from the sibling landing pages (cyan `#2bbbd6` on ink
+   `#0c0e11`, paper `#f4f5f7`, 4/6 px radii), while every terminal surface keeps rsk's real
+   termkit TokyoNight theme (`#16161e`, `#c0caf5`, blue `#7AA2F7`). termkit's light accent
+   `#2E7DE9` is 3.1:1 on paper, so the wordmark keeps the CLI's darkened gradient steps and the
+   page never uses it as body text. termkit's `Brand` colour (`#9854F1`, purple) is deliberately
+   unused. No font files are embedded: the pages use system sans and mono stacks, so they will look
+   different on macOS and Windows than in these Fedora screenshots, and the siblings' embedded
+   Inter/JetBrains Mono is not reproduced.
 
 ### Verification
 
@@ -193,18 +241,21 @@ Run on 2026-11-04, Chromium (Playwright build 1248), axe-core 4.10.3, tags wcag2
 |---|---|---|---|---|
 | axe, 390×844 + 1440×800 × light/dark × motion/reduced (8 runs) | 0 violations | 0 | 0 | 0 |
 | No horizontal scroll (all 8 runs) | pass | pass | pass | pass |
-| Every reveal fired before axe (motion runs) | pass | pass | pass | pass |
+| Every reveal fired before axe (motion runs), and every count-up reached its final text | pass | pass | pass | pass |
 | JS off: h1 present, nothing left hidden, no overflow (390 + 1440) | pass | pass | pass | pass |
 | Images blocked (no `<img>` is load-bearing; text present) | pass | pass | pass | pass |
 | HTML parser check (unknown tags, leaked `{templates}`) | pass | pass | pass | pass |
+| Scroll kit: progress bar advanced mid-page, rail marked the current section at 1440 | pass | pass | pass | pass |
 | Smoke at 1440 + 390: skip link by keyboard, film autoplay → pause → resume → settle → replay, theme ×3 (attribute, `aria-pressed`, storage), copy (label + clipboard), every in-page link, every `<details>`, no uncovered buttons, no `pageerror`/console error, axe + overflow again in the end state | pass | pass (plus filter counts: go-grpc 5, llm-app 4, docs 0, global 15, all 49, all + personal 58) | pass | pass (two films) |
-| Size < 200 KB | 39.1 KB | 52.7 KB | 39.0 KB | 81.7 KB |
+| Size < 200 KB | 47.8 KB | 62.3 KB | 48.2 KB | 89.8 KB |
 
 The harness was checked against a planted page (missing alt, heading skip, low contrast): it
 reported all three. It caught one real gap of its own: the first runs scrolled with
 `scroll-behavior: smooth` still on, so the below-fold reveals never fired and axe (which skips
 `opacity: 0`) never saw that copy. `settle()` now scrolls instantly, and an unfired reveal counts as
-a failure.
+a failure. Round 2 added a second trap: a count-up caught mid-way would be read as “3” where the
+page says “139”, so `settle()` waits for every `[data-count]` to set `data-done`, and
+`kCountsDone()` force-finishes any that are still running.
 
 **Screenshot rounds** (changes made because of what the shots showed):
 
@@ -221,13 +272,27 @@ a failure.
 5. Combined: A's `grid-area: dev` leaked into the new grid and crushed the "What it writes" column →
    reset; the section rail only appeared ≥1500 px (never tested) → ≥1400 px, then it sat next to the
    film's ①②③ and read as a second numbering → moved to the right edge.
+6. Round 2 theme: the `◆` kicker glyph next to the family square-dot mark read as two marks →
+   replaced in the header and hero kickers; 10–12 px corners and pill badges still read as the old
+   system → 4/6 px radii and rectangular badges; the terminal on paper lost its edge → `.tn` keeps
+   TokyoNight inside the frame. The first family shots put C's approval card back below the 1440
+   fold (the larger display type) → h1 3.7 rem and a tighter hero, so Allow is visible at 800 px.
+7. Round 2 chrome: the rail's numbers at rest competed with the ticks → numbers appear only on
+   hover/focus, the active tick grows; `rsk --help` broke across lines inside a heading → heading
+   `code` is nowrap; the h1 line masks got extra line padding after checking descenders at 390.
+8. Round 2 motion: a mid-scroll capture showed the first sticky attempt pinned the device, whose
+   grid row is only as tall as itself, so it never moved → the “after call 3” copy is sticky while
+   the taller manifest scrolls beside it. The C h1 reveal, B count-ups and histogram, the rail and
+   the progress bar were then checked at 1440 and 390 in both themes, with reduced motion and JS off.
 
 ### Not covered
 
 - **Screen readers** (NVDA, VoiceOver, Orca): not run. axe checks structure, not the listening
   experience of the lanes or the live count.
-- **Firefox and Safari**: not run. View Transitions (theme wipe) and `color-mix()` fall back or
-  differ; `text-wrap` is progressive.
+- **Firefox and Safari**: not run. View Transitions (theme wipe), `color-mix()` and the
+  scroll-linked drift (`animation-timeline: view()`) fall back or differ; `text-wrap` is
+  progressive. Firefox and Safari get the static positions and the IntersectionObserver reveals,
+  not the drift.
 - **Real devices**: only emulated viewports at DPR 1; no touch, no real 390 phone, no zoom/400 %
   reflow test, no Windows High Contrast run (a `forced-colors` block exists but was not seen).
 - **The five-second claim**: judged by me, not tested with people.
@@ -258,3 +323,7 @@ a failure.
   updates story.
 - Port the combined page into whatever serves `skills.ralvarez.dev` (separate job; keep
   `index.json` at its URL).
+- If the 200 KB budget is lifted, embed subset woff2 builds of Inter and JetBrains Mono like the
+  sibling pages do; the system stacks render close but not identically off Fedora.
+- The family tokens and scroll kit now exist in five places: the four sibling landing pages and this
+  `family.py`. If they ever get a shared CSS file, `family.py` is the source to compare against.

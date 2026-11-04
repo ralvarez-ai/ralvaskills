@@ -8,23 +8,23 @@ beneath it. Personality: exact, editorial; paper page, one dark terminal.
 from __future__ import annotations
 
 import data as D
-from family import copy_block, esc, film_ctl, footer, header, page, wordmark_svg
+from family import copy_block, esc, film_ctl, footer, header, page, rail, wordmark_svg
 
 GRPC = ["go-architect", "grpc-architect", "protobuf-architect", "docker-architect", "sql-architect"]
 
 CSS = r"""
-.a-hero{padding:clamp(32px,6vw,88px) 0 clamp(64px,9vw,128px)}
+.a-hero{position:relative;padding:clamp(32px,6vw,88px) 0 clamp(64px,9vw,128px)}
+.a-hero .wrap{position:relative;z-index:1}
 .a-grid{display:grid;gap:22px 64px;grid-template-columns:minmax(0,1fr);grid-template-areas:"kick" "h" "dev" "lede" "cta"}
 @media (min-width:1000px){.a-grid{grid-template-columns:minmax(0,5fr) minmax(0,6.4fr);grid-template-rows:auto auto auto 1fr;grid-template-areas:"kick dev" "h dev" "lede dev" "cta dev"}}
 .a-kick{grid-area:kick}.a-h{grid-area:h}.a-lede{grid-area:lede}.a-cta{grid-area:cta}.a-dev{grid-area:dev}
-.a-h{font-size:clamp(2.6rem,5.2vw,4.5rem);font-weight:800;letter-spacing:-.045em;line-height:.98}
-.a-h code{font:inherit;font-family:var(--mono);font-weight:700;letter-spacing:-.03em;color:var(--accent-t);font-size:.94em}
+.a-h{font-size:clamp(2.6rem,5.2vw,4.5rem);font-weight:800;letter-spacing:-.05em;line-height:.96}
+.a-h code{font:inherit;font-family:var(--mono);font-weight:700;letter-spacing:-.04em;color:var(--accent-t);font-size:.94em}
 .a-lede{font-size:clamp(1.08rem,1.5vw,1.28rem);color:var(--muted);max-width:44ch;margin:0}
 .a-lede code{color:var(--text)}
 .a-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .a-dev{margin:0;display:grid;gap:14px;align-self:start}
-.a-term{border-radius:12px;overflow:hidden;border:1px solid #2a2e45;box-shadow:var(--shadow)}
-.a-term .k-win-h{border-color:#2a2e45;color:var(--muted)}
+.a-term{border-radius:var(--rc);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow)}
 .a-cmds{list-style:none;margin:0;padding:14px 18px 16px;font:500 .9rem/1.75 var(--mono)}
 .a-cmds .ps{color:var(--accent-t);margin-right:.6em}
 .a-cmds .out{color:var(--ok);padding-left:1.3em}
@@ -38,10 +38,10 @@ CSS = r"""
 .a-mod .g{color:var(--ok);font-weight:700}
 .a-mod li.add{background:color-mix(in srgb,var(--ok) 9%,transparent)}
 .a-mod .k{color:var(--text)}.a-mod .s{color:var(--ok)}.a-mod .n{color:var(--warn)}.a-mod .t{color:var(--accent-t);font-weight:700}
-.a-mod li.chg{background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.a-mod li.chg{background:color-mix(in srgb,var(--accent) 16%,transparent)}
 .a-lock{width:100%;border-collapse:collapse;font:500 .84rem/1.4 var(--mono)}
 .a-lock caption{text-align:left;padding:0 0 6px;color:var(--muted);font:500 .78rem var(--sans)}
-.a-lock th{text-align:left;font-weight:600;color:var(--muted);padding:6px 12px;border-bottom:1px solid var(--line);font-size:.76rem}
+.a-lock th{text-align:left;font-weight:600;color:var(--muted);padding:6px 12px;border-bottom:1px solid var(--line);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
 .a-lock td{white-space:nowrap;padding:8px 12px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
 .a-lock td.v{color:var(--accent-t);font-weight:700;text-align:right}
 .a-lock th.v{text-align:right}
@@ -50,26 +50,26 @@ CSS = r"""
 /* files section */
 .a-two{display:grid;gap:clamp(28px,4vw,64px);grid-template-columns:minmax(0,1fr)}
 @media (min-width:980px){.a-two{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
-.a-tree{list-style:none;margin:0;padding:0;font:500 .92rem/1.5 var(--mono);border-top:1px solid var(--line)}
+.a-tree{list-style:none;margin:0;padding:0;font:500 .92rem/1.5 var(--mono);border-top:2px solid var(--text)}
 .a-tree li{display:grid;grid-template-columns:1.6em minmax(0,15em) minmax(0,1fr);gap:8px;padding:10px 0;border-bottom:1px solid var(--line);align-items:baseline}
 .a-tree .g{color:var(--ok);font-weight:700}
 .a-tree .yours{color:var(--muted)}
 .a-tree .d{font:400 .9rem/1.45 var(--sans);color:var(--muted)}
 @media (max-width:600px){.a-tree li{grid-template-columns:1.6em minmax(0,1fr)}.a-tree .d{grid-column:2}}
-.a-step{font:700 .8rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:36px 0 10px}
+.a-step{font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:36px 0 10px}
 /* this repo, night band */
 .a-night h2{color:var(--text)}
 .a-real{display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:980px){.a-real{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}}
-.a-real pre{font-size:clamp(.86rem,1.2vw,1rem);line-height:1.75;padding:22px 24px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.a-real pre{font-size:clamp(.86rem,1.2vw,1rem);line-height:1.75;padding:22px 24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rc)}
 .a-notes{list-style:none;margin:0;padding:0;display:grid;gap:18px}
-.a-notes li{border-left:3px solid var(--accent-t);padding:2px 0 2px 16px;color:var(--muted)}
+.a-notes li{border-left:2px solid var(--accent-t);padding:2px 0 2px 16px;color:var(--muted)}
 .a-notes b{color:var(--text)}
 /* commands */
 .a-help{list-style:none;margin:0;padding:0;border-top:2px solid var(--text)}
 .a-help>li{display:grid;grid-template-columns:minmax(0,1fr);gap:6px 32px;padding:18px 0;border-bottom:1px solid var(--line)}
 @media (min-width:800px){.a-help>li{grid-template-columns:minmax(0,16em) minmax(0,1fr)}}
-.a-help h3{font:700 .82rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:4px}
+.a-help h3{font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:4px}
 .a-help dl{margin:0;display:grid;gap:6px}
 .a-help dl div{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:12px}
 .a-help dt{font:700 1rem var(--mono);color:var(--accent-t)}.a-help dd{margin:0}
@@ -112,7 +112,7 @@ def device(d: dict, names: list[str] = GRPC, c2: str = "rsk install go-grpc", ag
         line2 = cmd("c2", c2)
     cap = cap or f"""<span class="k-badge sa">sample project</span> The <code>rsk new</code> lines are a real run (paths shortened). The install and pin results are what <code>internal/install/apply.go</code> writes for the real <code>go-grpc</code> bundle, with versions from the registry on 2026-11-04 — not a capture."""
     return f"""<figure class="a-dev" id="a-film" aria-describedby="a-cap">
-<div class="a-term night"><div class="k-win-h"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>~/demo — a Go project</div>
+<div class="a-term tn"><div class="k-win-h"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>~/demo — a Go project</div>
 <ol class="a-cmds" aria-label="Commands run">{cmd("c1", "rsk new")}{out}{line2}{cmd("c3", "rsk pin go-architect")}</ol></div>
 <div class="a-files">
 <div class="k-win"><div class="k-win-h">.rsk/rsk.mod <span class="k-badge ro" style="margin-left:auto">commit</span></div><ol class="a-mod" aria-label=".rsk/rsk.mod contents">{mod}</ol></div>
@@ -125,11 +125,11 @@ def device(d: dict, names: list[str] = GRPC, c2: str = "rsk install go-grpc", ag
 
 def hero(d: dict) -> str:
     return f"""
-<section class="a-hero" id="top" aria-labelledby="a-h1"><div class="wrap a-grid">
-<p class="k-kick a-kick"><span class="gl" aria-hidden="true">◆</span> Skills for Claude Code + OpenCode</p>
-<h1 class="a-h" id="a-h1"><code>go.mod</code>, but for your agent’s skills.</h1>
-<p class="a-lede">rsk installs versioned skills from a catalogue of {len(d["skills"])} into Claude Code and OpenCode, and writes what it did into two files you commit. A fresh clone runs <code>rsk install</code> and gets the same skills at the same versions.</p>
-<div class="a-cta"><a class="k-btn primary" href="#start">Install rsk</a><a class="k-btn" href="#files">See what it writes</a></div>
+<section class="a-hero" id="top" aria-labelledby="a-h1"><div class="k-grid" aria-hidden="true"></div><div class="wrap a-grid">
+<p class="k-kick a-kick rv"><span class="fd" aria-hidden="true"><i></i><i></i></span> Skills for Claude Code + OpenCode</p>
+<h1 class="a-h rv" id="a-h1" style="--i:1"><code>go.mod</code>, but for your agent’s skills.</h1>
+<p class="a-lede rv" style="--i:2">rsk installs versioned skills from a catalogue of {len(d["skills"])} into Claude Code and OpenCode, and writes what it did into two files you commit. A fresh clone runs <code>rsk install</code> and gets the same skills at the same versions.</p>
+<div class="a-cta rv" style="--i:3"><a class="k-btn primary" href="#start">Install rsk</a><a class="k-btn" href="#files">See what it writes</a></div>
 {device(d)}
 </div></section>"""
 
@@ -158,6 +158,7 @@ def files(d: dict) -> str:
     return f"""
 <section class="k-sec" id="files" aria-labelledby="a-files-h"><div class="wrap a-two">
 <div class="rv">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick">Before and after</p>
 <h2 id="a-files-h">What <code>rsk new</code> actually writes.</h2>
 <p class="k-lede">Six files in the project root and <code>.rsk/</code>, from a real run on a three-file Go project. Installing adds the lock and the links. Nothing lands outside the project except the cache.</p>
@@ -182,6 +183,7 @@ def this_repo(d: dict) -> str:
     n = len(d["repo_lock"])
     return f"""
 <section class="k-sec night a-night" id="this-repo" aria-labelledby="a-real-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick rv">The real file</p>
 <h2 id="a-real-h" class="rv">The repository that ships rsk runs on rsk.</h2>
 <div class="a-real">
@@ -207,6 +209,7 @@ def commands() -> str:
     )
     return f"""
 <section class="k-sec" id="commands" aria-labelledby="a-cmd-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick rv">The whole surface</p>
 <h2 id="a-cmd-h" class="rv">Thirteen commands, grouped the way <code>rsk --help</code> groups them.</h2>
 <ul class="a-help rv">{groups}</ul>
@@ -217,6 +220,7 @@ def commands() -> str:
 def trade() -> str:
     return """
 <section class="k-sec" id="trade" aria-labelledby="a-trade-h" style="background:var(--bg2)"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick rv">The trade-off</p>
 <h2 id="a-trade-h" class="rv">One binary and one config file for every project. One dependency in exchange.</h2>
 <div class="k-trade">
@@ -236,6 +240,7 @@ def trade() -> str:
 def start() -> str:
     return f"""
 <section class="k-sec" id="start" aria-labelledby="a-start-h"><div class="wrap a-start">
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
 <div class="rv"><p class="k-kick">Quick start</p><h2 id="a-start-h">Five commands from nothing to a pinned skill.</h2>
 <p class="k-lede">Needs Go to build from source, or take a binary from the Releases page.</p></div>
 <div class="rv">{copy_block("a-qs", D.QUICK_START, "quick-start commands")}</div>
@@ -265,6 +270,7 @@ def build(d: dict) -> str:
     nav = [("What it writes", "#files", True), ("Commands", "#commands", True), ("Trade-off", "#trade", True), ("Install", "#start", False)]
     body = (
         header(nav, d["version"])
+        + rail([("top", "The manifest"), ("files", "rsk new"), ("this-repo", "Real file"), ("commands", "Commands"), ("trade", "Trade-off"), ("start", "Install")])
         + '<main id="main">'
         + hero(d)
         + files(d)

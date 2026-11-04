@@ -9,15 +9,16 @@ folder; the same count drives the page (58 → 15 bundles → 139 releases →
 from __future__ import annotations
 
 import data as D
-from family import copy_block, esc, film_ctl, footer, header, page
+from family import copy_block, esc, film_ctl, footer, header, page, rail
 
 CSS = r"""
 .b-num{font:800 clamp(8rem,14vw,12.5rem)/.82 var(--mono);letter-spacing:-.07em;color:var(--accent-t);font-variant-numeric:tabular-nums;display:block}
 .b-sec-n{font:800 clamp(3.6rem,9vw,7.5rem)/.85 var(--mono);letter-spacing:-.06em;color:var(--accent-t);display:block;margin-bottom:.12em;font-variant-numeric:tabular-nums}
-.b-hero{padding:clamp(28px,5vw,72px) 0 clamp(56px,8vw,112px)}
+.b-hero{position:relative;padding:clamp(28px,5vw,72px) 0 clamp(56px,8vw,112px)}
+.b-hero .wrap{position:relative;z-index:1}
 .b-grid{display:grid;gap:32px clamp(32px,5vw,80px);grid-template-columns:minmax(0,1fr)}
 @media (min-width:1080px){.b-grid{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}}
-.b-h1{font-size:clamp(1.8rem,3.3vw,2.75rem);font-weight:750;letter-spacing:-.03em;line-height:1.08}
+.b-h1{font-size:clamp(1.8rem,3.3vw,2.75rem);font-weight:800;letter-spacing:-.04em;line-height:1.04}
 .b-h1 .b-num{margin-bottom:.1em}
 .b-h1 .w{display:block;max-width:19ch}
 .b-lede{color:var(--muted);font-size:clamp(1.05rem,1.4vw,1.2rem);max-width:46ch;margin:22px 0 26px}
@@ -29,7 +30,7 @@ CSS = r"""
 .b-rows .dn{font:600 .85rem var(--mono);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .b-rows .ct{font:700 .9rem var(--mono);text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
 .b-sq{display:flex;flex-wrap:wrap;gap:4px}
-.b-sq i{display:block;width:18px;height:18px;border-radius:3px;background:var(--accent)}
+.b-sq i{display:block;width:18px;height:18px;border-radius:2px;background:var(--accent)}
 @media (max-width:600px){.b-sq{gap:3px}.b-sq i{width:14px;height:14px}.b-rows li{grid-template-columns:minmax(0,7.2em) minmax(0,1fr) 1.6em;gap:8px}}
 .b-rows li.p .b-sq i{background:transparent;border:2px dashed var(--muted)}
 .anim .f-run .b-rows li.f-h{opacity:1;visibility:visible;transform:none}
@@ -43,10 +44,11 @@ CSS = r"""
 .b-count{font:800 clamp(3rem,6vw,5.2rem)/.85 var(--mono);letter-spacing:-.06em;color:var(--accent-t);font-variant-numeric:tabular-nums;min-width:2ch;display:inline-block;text-align:right}
 .b-count-l{font:600 .95rem var(--mono);color:var(--muted)}
 .b-chips{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 12px;padding:0;list-style:none}
-.b-chip{min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:600 .85rem var(--mono);cursor:pointer}
+.b-chip{min-height:44px;min-width:44px;padding:0 14px;border-radius:var(--rk);border:1px solid var(--line-2);background:transparent;color:var(--text);font:500 .8rem var(--mono);cursor:pointer}
 .b-chip:hover{border-color:var(--accent-t)}
 .b-chip[aria-pressed=true]{background:var(--accent-t);border-color:var(--accent-t);color:var(--on-accent)}
 .b-chip.tg[aria-pressed=true]{background:var(--warn);border-color:var(--warn);color:var(--bg)}
+.b-chip.tg{border-color:var(--line);border-style:dashed}
 @media (max-width:700px){.b-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-inline:calc(-1*clamp(20px,4vw,56px));padding-inline:clamp(20px,4vw,56px);scrollbar-width:thin}.b-chip{flex:none}}
 .b-note{min-height:3.2em;color:var(--muted);font-size:.95rem;margin:0 0 22px;max-width:80ch}
 .b-note code{color:var(--text)}
@@ -54,7 +56,7 @@ CSS = r"""
 .b-dom{break-inside:avoid;margin:0 0 22px;padding-top:10px;border-top:2px solid var(--text)}
 .b-dom h3{font:700 .8rem var(--mono);letter-spacing:.06em;text-transform:uppercase;display:flex;justify-content:space-between;margin-bottom:8px}
 .b-dom ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.b-tag{font:500 .82rem/1 var(--mono);padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.b-tag{font:500 .82rem/1 var(--mono);padding:7px 9px;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
 .b-field.f .b-tag{border-style:dashed;color:var(--muted);background:transparent}
 .b-field.f .b-tag.on{border:1px solid var(--accent-t);border-left-width:4px;color:var(--text);background:var(--sel)}
 .b-tag .v{color:var(--muted);margin-left:6px;font-size:.92em}
@@ -71,8 +73,10 @@ CSS = r"""
 /* releases */
 .b-rel{display:grid;gap:32px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:980px){.b-rel{grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);align-items:end}}
-.b-chart svg{display:block;width:100%;height:auto}
+.b-chart svg{display:block;width:100%;height:auto;overflow:visible}
 .b-chart .bar{fill:var(--accent)}
+.anim .b-chart .bar{transform:scaleY(0);transform-box:fill-box;transform-origin:50% 100%;transition:transform .7s var(--e-out);transition-delay:calc(var(--i,0) * 14ms)}
+.anim .b-chart.in .bar{transform:none}
 .b-chart .ax{stroke:var(--text);stroke-width:1.5}
 .b-chart text{fill:var(--muted);font:500 12px var(--mono)}
 .b-chart text.pk{fill:var(--text);font-weight:700}
@@ -84,7 +88,7 @@ CSS = r"""
 .b-cli{display:grid;gap:48px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:980px){.b-cli{grid-template-columns:1fr 1fr}}
 .b-cmds{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
-.b-cmds code{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-size:.92rem}
+.b-cmds code{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:3px;background:var(--surface);font-size:.92rem}
 .b-tools{list-style:none;margin:0;padding:0;border-top:2px solid var(--text)}
 .b-tools li{padding:14px 0;border-bottom:1px solid var(--line)}
 .b-tools code{font-weight:700;font-size:1rem;margin-right:10px}
@@ -119,12 +123,12 @@ def hero(d: dict) -> str:
     )
     n = len(d["skills"])
     return f"""
-<section class="b-hero" id="top" aria-labelledby="b-h1"><div class="wrap b-grid">
+<section class="b-hero" id="top" aria-labelledby="b-h1"><div class="k-grid" aria-hidden="true"></div><div class="wrap b-grid">
 <div>
-<p class="k-kick"><span class="gl" aria-hidden="true">◆</span> rsk · the catalogue</p>
-<h1 class="b-h1" id="b-h1"><span class="b-num" aria-hidden="true" id="b-count0">{n}</span><span class="sr">{n} </span><span class="w">skills your coding agent can load, installed and versioned by one CLI.</span></h1>
-<p class="b-lede">Each one is a <code>SKILL.md</code> with the standards for one job: <code>go-architect</code>, <code>sql-architect</code>, <code>mcp-architect</code>. <code>rsk</code> installs them, alone or in bundles, into Claude Code and OpenCode.</p>
-<div class="b-cta"><a class="k-btn primary" href="#start">Install rsk</a><a class="k-btn" href="#catalogue">Filter the {n}</a></div>
+<p class="k-kick rv"><span class="fd" aria-hidden="true"><i></i><i></i></span> rsk · the catalogue</p>
+<h1 class="b-h1 rv" id="b-h1" style="--i:1"><span class="b-num drift-x" aria-hidden="true" id="b-count0">{n}</span><span class="sr">{n} </span><span class="w">skills your coding agent can load, installed and versioned by one CLI.</span></h1>
+<p class="b-lede rv" style="--i:2">Each one is a <code>SKILL.md</code> with the standards for one job: <code>go-architect</code>, <code>sql-architect</code>, <code>mcp-architect</code>. <code>rsk</code> installs them, alone or in bundles, into Claude Code and OpenCode.</p>
+<div class="b-cta rv" style="--i:3"><a class="k-btn primary" href="#start">Install rsk</a><a class="k-btn" href="#catalogue">Filter the {n}</a></div>
 </div>
 <figure class="b-units" id="b-film" aria-labelledby="b-units-cap">
 <ul class="b-rows" aria-label="Skills per domain">{rows}</ul>
@@ -161,8 +165,9 @@ def explorer(d: dict) -> str:
     pub = len(d["skills"]) - d["personal"]
     return f"""
 <section class="k-sec" id="catalogue" aria-labelledby="b-ex-h" style="background:var(--bg2)"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <div class="b-ex-top">
-<div><span class="b-sec-n" aria-hidden="true">{len(d["bundles"])}</span><h2 id="b-ex-h" style="margin-top:0"><span class="sr">{len(d["bundles"])} </span>bundles. Filter the catalogue the way <code>rsk catalog</code> does.</h2></div>
+<div><span class="b-sec-n" aria-hidden="true" data-count="{len(d["bundles"])}">{len(d["bundles"])}</span><h2 id="b-ex-h" style="margin-top:0"><span class="sr">{len(d["bundles"])} </span>bundles. Filter the catalogue the way <code>rsk catalog</code> does.</h2></div>
 <p style="margin:0;text-align:right"><span class="b-count" id="b-count" aria-hidden="true">{pub}</span><br><span class="b-count-l" id="b-count-l" aria-hidden="true">shown of {len(d["skills"])}</span></p>
 </div>
 <ul class="b-chips" aria-label="Filter by bundle" hidden id="b-chips">{chips}</ul>
@@ -179,6 +184,7 @@ def bundles(d: dict) -> str:
     )
     return f"""
 <section class="k-sec" id="bundles" aria-labelledby="b-bl-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick rv">From internal/config/catalog.toml</p>
 <h2 id="b-bl-h" class="rv">One name, a whole stack: <code>rsk install go-grpc</code> brings five.</h2>
 <ul class="b-bl rv" aria-label="Bundles and how many skills each names">{items}</ul>
@@ -196,7 +202,7 @@ def releases(d: dict) -> str:
     for i, (wk, c) in enumerate(hist):
         h = (c / mx) * (base - 30)
         x = pad + i * bw
-        bars.append(f'<rect class="bar" x="{x + 2:.1f}" y="{base - h:.1f}" width="{bw - 4:.1f}" height="{h:.1f}" rx="2"/>')
+        bars.append(f'<rect class="bar" style="--i:{i}" x="{x + 2:.1f}" y="{base - h:.1f}" width="{bw - 4:.1f}" height="{h:.1f}" rx="1"/>')
         if c == mx:
             labels.append(f'<text class="pk" x="{x + bw / 2:.1f}" y="{base - h - 8:.1f}" text-anchor="middle">{c}</text>')
         if wk.month != last_m:
@@ -210,7 +216,8 @@ def releases(d: dict) -> str:
     peak_wk = next(wk for wk, c in hist if c == mx)
     return f"""
 <section class="k-sec night" id="releases" aria-labelledby="b-rel-h"><div class="wrap b-rel">
-<div class="rv"><span class="b-sec-n" aria-hidden="true">{d["releases"]}</span><h2 id="b-rel-h" style="margin-top:0"><span class="sr">{d["releases"]} </span>skill releases since {d["first"].strftime("%-d %B %Y")}.</h2>
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="{d["releases"]}">{d["releases"]}</span><h2 id="b-rel-h" style="margin-top:0"><span class="sr">{d["releases"]} </span>skill releases since {d["first"].strftime("%-d %B %Y")}.</h2>
 <p class="k-lede">Each skill is versioned on its own and published as <code>&lt;skill&gt;@v&lt;version&gt;</code> when its folder changes on <code>main</code>. The lock is what keeps your project on the version you chose.</p></div>
 <figure class="b-chart rv" style="margin:0" aria-labelledby="b-chart-cap">
 {svg}
@@ -228,10 +235,11 @@ def cli() -> str:
     )
     return f"""
 <section class="k-sec" id="cli" aria-labelledby="b-cli-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <h2 id="b-cli-h" class="sr">Commands and MCP tools</h2>
 <div class="b-cli">
-<div class="rv"><span class="b-sec-n" aria-hidden="true">13</span><h3 style="font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:.6em"><span class="sr">13 </span>commands for people.</h3><ul class="b-cmds" aria-label="rsk subcommands">{cmds}</ul></div>
-<div class="rv"><span class="b-sec-n" aria-hidden="true">3</span><h3 style="font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:.6em"><span class="sr">3 </span>MCP tools for agents, one that writes.</h3><ul class="b-tools">{tools}</ul>
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="13">13</span><h3 style="font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:.6em"><span class="sr">13 </span>commands for people.</h3><ul class="b-cmds" aria-label="rsk subcommands">{cmds}</ul></div>
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="3">3</span><h3 style="font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:.6em"><span class="sr">3 </span>MCP tools for agents, one that writes.</h3><ul class="b-tools">{tools}</ul>
 <p style="margin-top:14px;color:var(--muted);font-size:.95rem">Plus the <code>rsk://catalog</code> resource: every skill, its latest version, descriptions cut to 200 characters.</p></div>
 </div></div></section>"""
 
@@ -239,6 +247,7 @@ def cli() -> str:
 def ones() -> str:
     return """
 <section class="k-sec" id="trade" aria-labelledby="b-one-h" style="background:var(--bg2)"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <h2 id="b-one-h" class="rv">The trade-off, in ones.</h2>
 <ul class="b-ones rv">
 <li><span class="b-sec-n" aria-hidden="true">1</span><h3><span class="sr">1 </span>binary</h3><p>The same <code>rsk</code> for every project on the machine.</p></li>
@@ -250,7 +259,8 @@ def ones() -> str:
 def start() -> str:
     return f"""
 <section class="k-sec" id="start" aria-labelledby="b-start-h"><div class="wrap b-start">
-<div class="rv"><span class="b-sec-n" aria-hidden="true">5</span><h2 id="b-start-h" style="margin-top:0"><span class="sr">5 </span>commands from nothing to a pinned skill.</h2></div>
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
+<div class="rv"><span class="b-sec-n" aria-hidden="true" data-count="5">5</span><h2 id="b-start-h" style="margin-top:0"><span class="sr">5 </span>commands from nothing to a pinned skill.</h2></div>
 <div class="rv">{copy_block("b-qs", D.QUICK_START, "quick-start commands")}</div>
 </div></section>"""
 
@@ -285,6 +295,7 @@ def build(d: dict) -> str:
     nav = [("Catalogue", "#catalogue", True), ("Releases", "#releases", True), ("Trade-off", "#trade", True), ("Install", "#start", False)]
     body = (
         header(nav, d["version"])
+        + rail([("top", "58 skills"), ("catalogue", "Filter"), ("bundles", "Bundles"), ("releases", "Releases"), ("cli", "Commands"), ("trade", "Trade-off"), ("start", "Install")])
         + '<main id="main">'
         + hero(d)
         + explorer(d)

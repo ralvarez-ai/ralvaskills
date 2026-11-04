@@ -18,6 +18,16 @@ const { launch, open, axe, overflow } = require('./lib');
     await page.keyboard.press('Enter');
     if (!(await page.evaluate(() => location.hash === '#main'))) fail('skip link did not move to #main');
     await page.evaluate(() => { history.replaceState(null, '', location.pathname); document.documentElement.style.scrollBehavior = 'auto'; scrollTo(0, 0); });
+    // scroll kit: progress bar follows, rail marks the section at wide sizes
+    await page.evaluate(() => { scrollTo(0, document.documentElement.scrollHeight * 0.55); });
+    await page.waitForTimeout(350);
+    const prog = await page.evaluate(() => parseFloat(document.querySelector('.k-prog i').style.getPropertyValue('--p')) || 0);
+    if (!(prog > 0.3 && prog <= 1)) fail('progress bar at mid-page: ' + prog);
+    if (width === 1440) {
+      const cur = await page.$$eval('.k-rail a[aria-current]', (as) => as.length);
+      if (!cur) fail('rail has no current section after scrolling');
+    }
+    await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; scrollTo(0, 0); });
     // films: pause, resume, let it settle, replay
     const films = await page.$$('[data-film]');
     for (const [i, f] of films.entries()) {
@@ -27,7 +37,7 @@ const { launch, open, axe, overflow } = require('./lib');
       await ctl.click();
       if ((await f.evaluate((el) => el.kFilm.state())) !== 'paused') fail(`film ${i} pause`);
       const label = await ctl.innerText();
-      if (!/Play/.test(label)) fail(`film ${i} label after pause: ${label}`);
+      if (!/play/i.test(label)) fail(`film ${i} label after pause: ${label}`);
       await ctl.click();
       await page.waitForFunction((el) => el.kFilm.state() === 'done', f, { timeout: 12000 }).catch(() => fail(`film ${i} never settled`));
       await ctl.click();

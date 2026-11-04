@@ -10,19 +10,25 @@ from __future__ import annotations
 import json
 
 import data as D
-from family import copy_block, esc, film_ctl, footer, header, page
+from family import copy_block, esc, film_ctl, footer, header, page, rail
 
 NAMES = [c["skill"] for c in D.PROFILE["candidates"]]
 
 CSS = r"""
-.c-hero{padding:clamp(24px,3.5vw,48px) 0 clamp(56px,8vw,112px)}
-.c-top{display:grid;gap:18px 56px;grid-template-columns:minmax(0,1fr);align-items:end;margin-bottom:clamp(24px,3vw,36px)}
+.c-hero{position:relative;padding:clamp(24px,3vw,40px) 0 clamp(56px,8vw,112px)}
+.c-hero .wrap{position:relative;z-index:1}
+.c-top{display:grid;gap:18px 56px;grid-template-columns:minmax(0,1fr);align-items:end;margin-bottom:clamp(18px,2.2vw,26px)}
 @media (min-width:1000px){.c-top{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
-.c-h1{font-size:clamp(2.5rem,4.6vw,4rem);font-weight:800;letter-spacing:-.045em;line-height:.98}
-.c-h1 span{display:block}
+.c-h1{font-size:clamp(2.5rem,4.2vw,3.7rem);font-weight:800;letter-spacing:-.05em;line-height:.96}
+.c-h1 .ln{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.07em}
+.c-h1 .ln>span{display:block}
 .c-h1 .you{color:var(--warn)}
-[data-theme=light] .c-h1 .you{color:#8c6c3e}
 .c-h1 .rsk{color:var(--accent-t)}
+.anim .c-h1.rv{transform:none}
+.anim .c-h1 .ln>span{transform:translateY(108%);transition:transform .95s var(--e-out)}
+.anim .c-h1.in .ln>span{transform:none}
+.anim .c-h1.in .ln:nth-child(2)>span{transition-delay:.1s}
+.anim .c-h1.in .ln:nth-child(3)>span{transition-delay:.2s}
 .c-lede{color:var(--muted);font-size:clamp(1.05rem,1.4vw,1.2rem);margin:0 0 20px}
 .c-lede code{color:var(--text)}
 .c-cta{display:flex;gap:12px;flex-wrap:wrap}
@@ -31,35 +37,35 @@ CSS = r"""
 .c-seq{list-style:none;margin:0;padding:0;display:grid;gap:10px;position:relative}
 .c-lanes{display:none}
 .c-ex{position:relative;display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
-.c-no{font:800 1rem/1 var(--mono);display:inline-flex;align-items:center;justify-content:center;width:1.9em;height:1.9em;border-radius:50%;border:2px solid currentColor;color:var(--accent-t);margin-right:10px;flex:none}
+.c-no{font:800 1rem/1 var(--mono);display:inline-flex;align-items:center;justify-content:center;width:1.9em;height:1.9em;border-radius:2px;border:2px solid currentColor;color:var(--accent-t);margin-right:10px;flex:none}
 .c-ex.h .c-no{color:var(--warn)}
 .c-nod{display:none!important}
-.c-route{display:flex;align-items:center;font:600 .82rem var(--mono);color:var(--muted);margin:0}
+.c-route{display:flex;align-items:center;font:600 .78rem var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0}
 .c-route b{color:var(--text);margin:0 .4em}
-.c-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font:500 .84rem/1.6 var(--mono);box-shadow:var(--shadow)}
+.c-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rc);padding:10px 14px;font:500 .84rem/1.6 var(--mono);box-shadow:none}
 .c-card .m{font-weight:700;color:var(--accent-t);margin-right:8px}
 .c-card dl{margin:4px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px}
 .c-card dt{color:var(--muted)}.c-card dd{margin:0;overflow-wrap:anywhere}
 .c-card .pf{color:var(--muted)}
 .c-card.back{border-style:dashed;box-shadow:none}
 .c-arrow{display:none}
-.c-you{border:2px solid var(--warn);border-radius:12px;background:var(--surface);padding:12px 14px;font-size:.92rem;box-shadow:var(--shadow)}
+.c-you{border:2px solid var(--warn);border-radius:var(--rc);background:var(--surface);padding:12px 14px;font-size:.92rem;box-shadow:none}
 .c-you .q{font-weight:700;margin:0 0 6px}
 .c-you .q code{color:var(--accent-t)}
-.c-you .nm{font:500 .82rem var(--mono);color:var(--muted);margin:0 0 10px}
+.c-you .nm{font:500 .8rem var(--mono);color:var(--muted);margin:0 0 10px}
 .c-you .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.c-you .b{display:inline-flex;align-items:center;min-height:34px;padding:0 12px;border-radius:8px;border:1px solid var(--line);font:600 .84rem var(--sans);color:var(--muted)}
+.c-you .b{display:inline-flex;align-items:center;min-height:34px;padding:0 12px;border-radius:var(--rk);border:1px solid var(--line);font:600 .84rem var(--sans);color:var(--muted)}
 .c-you .b.al{border-color:var(--warn);background:var(--warn);color:var(--bg)}
 .c-you .b.al .p{display:none}
 .c-you.pend .b.al{background:transparent;color:var(--text)}
 .c-you.pend .b.al .p{display:inline}.c-you.pend .b.al .d{display:none}
-.c-you .lbl{font:600 .72rem var(--mono);color:var(--warn);text-transform:uppercase;letter-spacing:.06em;margin-left:auto}
+.c-you .lbl{font:600 .68rem var(--mono);color:var(--warn);text-transform:uppercase;letter-spacing:.08em;margin-left:auto}
 @media (min-width:1000px){
  .c-seq{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:0;row-gap:18px;
   background-image:repeating-linear-gradient(to bottom,var(--line) 0 6px,transparent 6px 12px),repeating-linear-gradient(to bottom,var(--line) 0 6px,transparent 6px 12px),repeating-linear-gradient(to bottom,var(--line) 0 6px,transparent 6px 12px);
   background-size:2px 100%;background-repeat:no-repeat;background-position:16.6667% 0,50% 0,83.3333% 0}
  .c-lanes{display:contents}
- .c-lane{text-align:center;font:700 .8rem var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:8px 0;background:var(--bg);position:relative;z-index:1;justify-self:center;min-width:12em;border:1px solid var(--line);border-radius:999px}
+ .c-lane{text-align:center;font:600 .72rem var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:7px 10px;background:var(--bg);position:relative;z-index:1;justify-self:center;min-width:12em;border:1px solid var(--line);border-radius:var(--rk)}
  .c-lane.y{color:var(--warn);border-color:var(--warn)}
  .c-ex{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:0;row-gap:6px}
  .c-ex>.c-route{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -81,14 +87,14 @@ CSS = r"""
 }
 .anim .f-run .c-ex .f-h .c-arrow,.anim .f-run .c-m.f-h .c-arrow{clip-path:inset(0 100% 0 0)}
 .anim .f-run .c-m.l.f-h .c-arrow{clip-path:inset(0 0 0 100%)}
-.anim .c-arrow{transition:clip-path .55s cubic-bezier(.3,.7,.2,1);clip-path:inset(0 0 0 0)}
+.anim .c-arrow{transition:clip-path .55s var(--e-out);clip-path:inset(0 0 0 0)}
 .c-cap{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin-top:22px;font-size:.86rem;color:var(--muted)}
 .c-cap p{margin:0;max-width:78ch}
 /* tools */
 .c-tools{list-style:none;margin:0;padding:0;border-top:2px solid var(--text)}
 .c-tools>li{display:grid;grid-template-columns:minmax(0,1fr);gap:8px 32px;padding:22px 0;border-bottom:1px solid var(--line)}
 @media (min-width:900px){.c-tools>li{grid-template-columns:minmax(0,15em) minmax(0,1fr) minmax(0,17em)}}
-.c-tools h3{font:700 1.15rem var(--mono)}
+.c-tools h3{font:700 1.15rem var(--mono);letter-spacing:-.02em}
 .c-tools p{margin:0;color:var(--muted)}
 .c-tools pre{font-size:.78rem;color:var(--muted)}
 .c-tools li.w h3{color:var(--danger)}
@@ -96,20 +102,20 @@ CSS = r"""
 .c-two{display:grid;gap:40px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:1000px){.c-two{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:start}}
 .c-sig{width:100%;border-collapse:collapse;font-size:.92rem}
-.c-sig th{text-align:left;font:600 .76rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px 8px 0;border-bottom:2px solid var(--text)}
+.c-sig th{text-align:left;font:600 .72rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 10px 8px 0;border-bottom:2px solid var(--text)}
 .c-sig td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
 .c-sig td:first-child{font:600 .85rem var(--mono);white-space:nowrap}
 .c-sig td:last-child{font:500 .84rem var(--mono);color:var(--accent-t)}
 .c-sig tr.hit td:first-child::before{content:"● ";color:var(--ok)}
 @media (max-width:640px){.c-sig thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.c-sig tr{display:grid;grid-template-columns:1fr;padding:10px 0;border-bottom:1px solid var(--line)}.c-sig td{border:0;padding:1px 0}}
-.c-json pre{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;font-size:.8rem}
+.c-json pre{background:var(--surface);border:1px solid var(--line);border-radius:var(--rc);padding:18px 20px;font-size:.8rem}
 .c-told{display:grid;gap:40px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:1000px){.c-told{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center}}
-.c-told blockquote{margin:0;font-size:clamp(1.5rem,3vw,2.4rem);line-height:1.2;font-weight:700;letter-spacing:-.02em;border-left:4px solid var(--warn);padding-left:24px}
-.c-told pre{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.c-told blockquote{margin:0;font-size:clamp(1.5rem,3vw,2.4rem);line-height:1.15;font-weight:800;letter-spacing:-.035em;border-left:2px solid var(--warn);padding-left:24px}
+.c-told pre{background:var(--surface);border:1px solid var(--line);border-radius:var(--rc);padding:18px 20px}
 .c-trade{display:grid;gap:36px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:1000px){.c-trade{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
-.c-trade .big{font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:750;line-height:1.15;letter-spacing:-.02em;margin:0}
+.c-trade .big{font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:800;line-height:1.1;letter-spacing:-.035em;margin:0}
 .c-trade .big em{font-style:normal;color:var(--warn)}
 .c-trade ul{margin:0;padding-left:1.1em;color:var(--muted)}.c-trade li{margin:.5em 0}
 .c-start{display:grid;gap:32px;grid-template-columns:minmax(0,1fr)}
@@ -155,12 +161,12 @@ def seq(d: dict) -> str:
 
 def hero(d: dict) -> str:
     return f"""
-<section class="c-hero" id="top" aria-labelledby="c-h1"><div class="wrap">
+<section class="c-hero" id="top" aria-labelledby="c-h1"><div class="k-grid" aria-hidden="true"></div><div class="wrap">
 <div class="c-top">
-<div><p class="k-kick"><span class="gl" aria-hidden="true">◆</span> rsk mcp · for Claude Code and OpenCode</p>
-<h1 class="c-h1" id="c-h1"><span>Your agent asks.</span> <span class="you">You approve.</span> <span class="rsk">rsk installs.</span></h1></div>
-<div><p class="c-lede"><code>rsk</code> gives your coding agent three tools. Two only read: your project’s files and a catalogue of {len(d["skills"])} skills. The one that writes, <code>install_skills</code>, makes Claude Code ask you on every call.</p>
-<div class="c-cta"><a class="k-btn primary" href="#start">Install rsk</a><a class="k-btn" href="#tools">The three tools</a></div></div>
+<div><p class="k-kick rv"><span class="fd" aria-hidden="true"><i></i><i></i></span> rsk mcp · for Claude Code and OpenCode</p>
+<h1 class="c-h1 rv" id="c-h1" style="--i:1"><span class="ln"><span>Your agent asks.</span></span><span class="ln"><span class="you">You approve.</span></span><span class="ln"><span class="rsk">rsk installs.</span></span></h1></div>
+<div><p class="c-lede rv" style="--i:2"><code>rsk</code> gives your coding agent three tools. Two only read: your project’s files and a catalogue of {len(d["skills"])} skills. The one that writes, <code>install_skills</code>, makes Claude Code ask you on every call.</p>
+<div class="c-cta rv" style="--i:3"><a class="k-btn primary" href="#start">Install rsk</a><a class="k-btn" href="#tools">The three tools</a></div></div>
 </div>
 {seq(d)}
 </div></section>"""
@@ -178,6 +184,7 @@ def tools() -> str:
     items += '<li><h3>rsk://catalog</h3><p>A resource, not a tool: every skill with its latest version, descriptions cut to 200 characters. Name <code>rsk-catalog</code>.</p><pre aria-label="rsk://catalog details">mimeType:\n  application/json</pre></li>'
     return f"""
 <section class="k-sec" id="tools" aria-labelledby="c-tools-h" style="background:var(--bg2)"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick rv">From internal/mcp/tools.go</p>
 <h2 id="c-tools-h" class="rv">Three tools. One writes, and it is marked to say so.</h2>
 <p class="k-lede rv">The descriptions are the ones the agent reads. <code>destructiveHint</code> is only advice to the client; the <code>requiresUserInteraction</code> flag is what makes Claude Code prompt you even in auto-approve modes.</p>
@@ -193,6 +200,7 @@ def signals() -> str:
     js = json.dumps(D.PROFILE, indent=1)
     return f"""
 <section class="k-sec" id="profile" aria-labelledby="c-sig-h"><div class="wrap">
+<div class="k-rule" aria-hidden="true"></div>
 <p class="k-kick rv">From internal/mcp/signals.go</p>
 <h2 id="c-sig-h" class="rv">What <code>project_profile</code> looks for.</h2>
 <div class="c-two">
@@ -205,6 +213,7 @@ def signals() -> str:
 def told() -> str:
     return f"""
 <section class="k-sec night" id="told" aria-labelledby="c-told-h"><div class="wrap c-told">
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
 <div class="rv"><p class="k-kick">What the agent is told</p>
 <h2 id="c-told-h">rsk new writes the rule into CLAUDE.md.</h2>
 <blockquote><p style="margin:0">“Never install without asking.”</p></blockquote></div>
@@ -216,6 +225,7 @@ def told() -> str:
 def trade() -> str:
     return """
 <section class="k-sec" id="trade" aria-labelledby="c-trade-h"><div class="wrap c-trade">
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
 <div class="rv"><p class="k-kick">The trade-off</p><h2 id="c-trade-h" class="sr">The trade-off</h2>
 <p class="big">One binary, one config file, every project. In exchange, <em>the registry has to be reachable</em> when you install, or you point rsk at a local clone.</p></div>
 <ul class="rv">
@@ -228,6 +238,7 @@ def trade() -> str:
 def start() -> str:
     return f"""
 <section class="k-sec" id="start" aria-labelledby="c-start-h" style="background:var(--bg2)"><div class="wrap c-start">
+<div class="k-rule" aria-hidden="true" style="grid-column:1/-1"></div>
 <div class="rv"><p class="k-kick">Quick start</p><h2 id="c-start-h">Set it up once. Then let the agent ask.</h2>
 <p class="k-lede"><code>rsk new</code> registers the MCP server for both clients. Skip the last two lines if you want the agent to propose them.</p></div>
 <div class="rv">{copy_block("c-qs", D.QUICK_START, "quick-start commands")}</div>
@@ -248,6 +259,7 @@ def build(d: dict) -> str:
     nav = [("Tools", "#tools", True), ("Detection", "#profile", True), ("Trade-off", "#trade", True), ("Install", "#start", False)]
     body = (
         header(nav, d["version"])
+        + rail([("top", "The loop"), ("tools", "Tools"), ("profile", "Detection"), ("told", "The rule"), ("trade", "Trade-off"), ("start", "Install")])
         + '<main id="main">'
         + hero(d)
         + tools()
