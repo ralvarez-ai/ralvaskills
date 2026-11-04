@@ -2,7 +2,7 @@
 status: draft
 project: ralvaskills
 date: 2026-11-04
-related: [plans/2026-11-04-landing-page-brief.md, designs/2026-05-20-technical-specification.md, guides/registry-flow.md]
+related: [plans/2026-11-04-landing-page-brief.md, designs/2026-05-20-technical-specification.md, guides/registry-flow.md, changes/2026-11-04-landing-page-parity-in-use.md]
 ---
 
 # Landing page for ralvaskills — round 1 and the combined page
@@ -283,11 +283,52 @@ After the fixes: text differs only in film state at capture; **every section
 height matches exactly**; per-section pixel diffs are zero outside the reading
 progress bar and the rail tick, which depend on scroll history.
 
+> That last claim was too generous: the diff used a threshold of 24 levels, and
+> the "rail tick" it excused was a whole missing component. Round 7 corrects it.
+
 The gate grew a `WIRED` list for this reason: a selector that stops applying
 leaves valid markup and valid axe results, so `verify.mjs` now asserts the mono
 stack on `code`, the 0.95 s hero mask transition, the 0.16 s button transition,
 the theme toggle's 12 px padding, the film control's display, the panel radius and
 that the section rule has a background.
+
+### Round 7 — parity in use, not only in stills (2026-11-04)
+
+Round 6 compared still screenshots. Looking at the page next to the mockup again
+found five differences that stills, and a loose threshold, had hidden.
+
+| Symptom | Cause |
+|---|---|
+| Both films (hero, "What it writes") never played; a Replay button that did nothing | `useFilm(fig, …)` was called but `ref={fig}` was never put on the `<figure>`, so the engine found no root and returned. The page sat in its final state. |
+| The pinned line collapsed to `[]` mid-film | The ref wrapped the whole line; the mockup swaps only the value. The ref now sits on `.manifest-file__pinned`. |
+| No section rail at any width | `.section-rail{display:none}` in `chrome.css` loads after the `@media (min-width:1400px)` block in `layout.css`; equal specificity, so the later `none` won. The default now sits above the media rule, in the same file. |
+| Header nav never marked the current section | `Header` was not given the active id. It now is, and sets `aria-current`. |
+| Tools section tinted | `tone="sunken"` the mockup does not have. Invisible at a 24-level threshold (8 levels apart), 97 % of the section at a threshold of 2. |
+
+How it was found, and what now guards it:
+
+- `scripts/compare.mjs` captures both pages (any widths and themes, or a running
+  dev server through `WEB_URL`) with a per-element style dump; `compare-film.mjs`
+  samples each film at fixed times; `compare-behaviour.mjs` drives the filter,
+  rail, theme toggle, count-ups, progress and copy button. Diff PNGs at a
+  threshold of about 2, per section.
+- `verify.mjs` fails if a film does not start on scroll, leaves steps hidden or
+  untyped when it ends, loses the `pinned =` key, if the rail is not
+  `display:block` and fixed at 1400 px and up (`WIRED` entries can carry a minimum
+  viewport width), or if the nav and the rail do not follow the scroll. It also
+  waits for running films before axe, which measures contrast and would otherwise
+  catch a step mid-fade. Reduced motion must never hide anything.
+- `.github/workflows/check-site.yml` runs `pnpm build` and `verify.mjs` on pull
+  requests and on `main` when `web/` (or the files `gen-data` reads) changes. The
+  parity scripts stay manual: they need the mockup and a human to read the
+  result.
+
+Result at a threshold of 2: 0.005 % of pixels differ at 1440 and about 0.01 % at
+390 in light, all of it the progress bar, text anti-aliasing and the top rules
+still drawing. 390 dark varies from run to run (0.05 % at worst), which is
+capture timing. One deliberate difference remains: after a filter click the
+mockup's re-render drops the "9" from "the 9 personal ones", and the page keeps
+it.
 
 ### Real vs sample
 

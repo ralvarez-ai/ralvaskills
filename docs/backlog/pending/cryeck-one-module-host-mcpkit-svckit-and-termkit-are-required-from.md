@@ -6,4 +6,4 @@ topics:
     - ralvaskills
 ---
 
-Platform queue R153 decides the host; afterwards this is one sweep of `go.mod` and imports, and the same sweep applies to `ralvaskills-executor-port`. Origin: [reuse audit 2026-11-01](../../../../../../libraries/go/identity/docs/reviews/2026-11-01-reuse-audit.md)
+Platform queue R153 decides the host; afterwards this is one sweep of `go.mod` and imports, and the same sweep applies to `ralvaskills-executor-port`. Origin: reuse audit 2026-11-01 (`libraries/go/identity/docs/reviews/2026-11-01-reuse-audit.md`, another repo)
