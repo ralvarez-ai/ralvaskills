@@ -259,6 +259,36 @@ pre-refactor captures. The only differing pixels are the section rail's active
 tick, which depends on scroll history, and the content that the old capture
 script never revealed.
 
+### Round 6 — parity with the combined page (2026-11-04)
+
+The port had drifted from `direction-4-combined.html` in ways the gate could not
+see, so the two were compared directly: text of `main` (diff), a computed-style
+walk over every element, and per-section pixel diffs at 1440.
+
+What was actually wrong, in the order the comparison found it:
+
+| Symptom | Cause |
+|---|---|
+| Page 728 px taller; an extra section | `Told` was rendered although the combined page never had it. Removed. |
+| Catalogue led with **15 bundles** | Ported B's own hero heading instead of the combined page's replacement: **58 skills the agent chooses from, in 15 bundles**. |
+| `writes` and `faq` full-bleed, content off-screen | `className="wrap"` survived the rename in two sections; `.wrap` no longer exists, so no container width or gutter. |
+| Every 3–6 px section height off; code looked too wide | The prune dropped `code,pre,kbd,.mono{font-family:var(--font-mono)}` because `.mono` was unused; all code fell back to generic `monospace`, changing line boxes and metrics. |
+| Hero line mask and arrow draw dead | `agent.css` was renamed with the C map only, so `.anim`, `.f-run`, `.f-h` and `.in` stayed in its selectors. |
+| Theme toggle 11 px wider, unstyled | `.theme-toggle` and the ghost variant are client-only (hydrated after the prerender), so the prune could not see them. |
+| Copy block lost the gap between note and command | The port put both spans on one line instead of the mockup's newline-separated lines. |
+| `mimeType: application/json` on one line; two curly apostrophes | JSX whitespace collapsing and a typographic substitution. |
+| No theme transition | The circular View Transition wipe was never ported. Now 520 ms from the button, same easing. |
+
+After the fixes: text differs only in film state at capture; **every section
+height matches exactly**; per-section pixel diffs are zero outside the reading
+progress bar and the rail tick, which depend on scroll history.
+
+The gate grew a `WIRED` list for this reason: a selector that stops applying
+leaves valid markup and valid axe results, so `verify.mjs` now asserts the mono
+stack on `code`, the 0.95 s hero mask transition, the 0.16 s button transition,
+the theme toggle's 12 px padding, the film control's display, the panel radius and
+that the section rule has a background.
+
 ### Real vs sample
 
 | On the page | Status | How it is labelled |

@@ -37,7 +37,7 @@ src/styles/      tokens, reset, layout, chrome, controls, panel, motion,
 | `scripts/gen-data.mjs` | Reads `registry/index.json`, `skills/**`, `internal/config/catalog.toml`, `cmd/rsk/setup.go`, `internal/mcp/{tools,resource}.go`, `.rsk/rsk.mod`/`.lock` and the git tag. **Fails** when the tree drifts from 58 skills, 15 bundles, 12 `AddCommand`s or the three tool names. |
 | `src/data/facts.ts` | Constants that cannot be derived: a real `rsk new` run, a real `project_profile` response, `rsk --help` groups, the quick start, the source list. |
 | `scripts/prerender.mjs` | Renders the app to HTML into `dist/index.html` after the build, so the page reads and indexes without JavaScript. `main.tsx` hydrates it. |
-| `scripts/verify.mjs` | The gate: axe at 8 combinations, overflow, unfired reveals, unsettled count-ups, JS-off. |
+| `scripts/verify.mjs` | The gate: axe at 8 combinations, overflow, unfired reveals, unsettled count-ups, JS-off, and a style-wiring check (mono stack, hero mask transition, theme button padding, panel radius) so a pruned or renamed selector cannot silently stop applying. |
 
 ## Conventions
 
