@@ -1,0 +1,9 @@
+/* trade-off */
+.tradeoff{display:grid;gap:clamp(24px,4vw,64px);grid-template-columns:1fr}
+@media (min-width:900px){.tradeoff{grid-template-columns:1.1fr 1fr;align-items:start}}
+.tradeoff .tradeoff__give,.tradeoff .tradeoff__take{border-top:2px solid var(--border-subtle);padding-top:20px}
+.tradeoff .tradeoff__give{border-color:var(--status-ok)}
+.tradeoff .tradeoff__take{border-color:var(--status-warn)}
+.tradeoff h3{font-size:clamp(1.4rem,2.6vw,2rem);margin-bottom:.5em}
+.tradeoff ul{margin:0;padding-left:1.1em}
+.tradeoff li{margin:.35em 0}

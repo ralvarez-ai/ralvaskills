@@ -1,0 +1,20 @@
+/* Split from base.css; routed by component. Edit this file for its component. */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:88px}
+body{margin:0;background:var(--surface-page);color:var(--text-strong);font:400 1.0625rem/1.6 var(--font-sans);overflow-x:clip;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{max-width:100%}
+h1,h2,h3{line-height:.99;margin:0;text-wrap:balance;letter-spacing:-.04em;font-weight:800}
+p{margin:0 0 1em;text-wrap:pretty}
+a{color:var(--text-accent);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+code{font-size:.9em;overflow-wrap:anywhere}
+h1 code,h2 code,h3 code{white-space:nowrap;overflow-wrap:normal}
+pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.86rem;line-height:1.6}
+::selection{background:var(--fill-accent);color:var(--on-accent)}
+:focus-visible{outline:2px solid var(--text-accent);outline-offset:3px;border-radius:2px}
+.section[data-tone="ink"] :focus-visible,.surface-terminal :focus-visible{outline-color:var(--text-accent)}
+.container{width:100%;max-width:var(--measure);margin:0 auto;padding:0 var(--gutter)}
+.sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;margin:-1px;padding:0;border:0}
+.skip-link{position:absolute;left:12px;top:-80px;z-index:50;background:var(--text-accent);color:var(--on-accent);padding:12px 16px;border-radius:var(--radius-control);font-weight:700;min-height:44px;text-decoration:none}
+.skip-link:focus{top:12px}
+html:not(.is-js) .reading-progress{display:none}

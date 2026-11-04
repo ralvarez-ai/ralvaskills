@@ -5,7 +5,7 @@ export type Theme = (typeof THEMES)[number];
 
 /** True when the boot script in index.html allowed motion. */
 export function motionAllowed(): boolean {
-  return document.documentElement.classList.contains('anim');
+  return document.documentElement.classList.contains('has-motion');
 }
 
 /** Theme lives on <html data-theme>, set before paint; this keeps it in sync. */
@@ -38,16 +38,16 @@ export function useTheme() {
   return { theme, toggle, mounted };
 }
 
-/** One-shot reveals: add `.in` when a section element enters the viewport. */
+/** One-shot reveals: add `.is-visible` when a section element enters the viewport. */
 export function useReveals() {
   useEffect(() => {
     if (!motionAllowed() || !('IntersectionObserver' in window)) return;
-    const targets = document.querySelectorAll<HTMLElement>('.rv, .k-rule');
+    const targets = document.querySelectorAll<HTMLElement>('.reveal, .rule');
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          entry.target.classList.add('in');
+          entry.target.classList.add('is-visible');
           io.unobserve(entry.target);
         }
       },
@@ -95,12 +95,12 @@ function animate(el: HTMLElement) {
 /** Reading progress, the stuck header hairline and the active section. */
 export function useScrollKit(onActive: (id: string) => void) {
   useEffect(() => {
-    const bar = document.querySelector<HTMLElement>('.k-prog i');
-    const header = document.querySelector<HTMLElement>('.k-top');
+    const bar = document.querySelector<HTMLElement>('.reading-progress i');
+    const header = document.querySelector<HTMLElement>('.site-header');
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       bar?.style.setProperty('--p', String(max > 0 ? Math.min(1, window.scrollY / max) : 0));
-      header?.classList.toggle('stuck', window.scrollY > 8);
+      header?.classList.toggle('is-stuck', window.scrollY > 8);
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });

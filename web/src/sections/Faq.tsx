@@ -1,3 +1,4 @@
+import { Eyebrow, Section } from '../components/ui';
 import type { ReactNode } from 'react';
 
 import { data } from '../data/types';
@@ -50,14 +51,14 @@ const QA: [string, ReactNode][] = [
 
 export function Faq() {
   return (
-    <section className="k-sec" id="faq" aria-labelledby="d-faq-h">
+    <Section id="faq" labelledBy="d-faq-h">
       <div className="wrap">
-        <div className="k-rule" aria-hidden="true" />
-        <p className="k-kick rv">Questions</p>
-        <h2 id="d-faq-h" className="rv">
+        <div className="rule" aria-hidden="true" />
+        <Eyebrow>Questions</Eyebrow>
+        <h2 id="d-faq-h" className="reveal">
           Before you install.
         </h2>
-        <div className="d-faq rv">
+        <div className="faq reveal">
           {QA.map(([q, a]) => (
             <details key={q}>
               <summary>{q}</summary>
@@ -66,6 +67,6 @@ export function Faq() {
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

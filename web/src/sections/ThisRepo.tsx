@@ -1,30 +1,31 @@
-import { Badge } from '../components/ui';
+import { Eyebrow, Panel, Section, Tag } from '../components/ui';
 import { data } from '../data/types';
 
 const LOCK = [...data.repoLock].sort((a, b) => a.name.localeCompare(b.name));
 
 export function ThisRepo() {
   return (
-    <section className="k-sec night a-night" id="this-repo" aria-labelledby="a-real-h">
-      <div className="wrap">
-        <div className="k-rule" aria-hidden="true" />
-        <p className="k-kick rv">The real file</p>
-        <h2 id="a-real-h" className="rv">
+    <Section id="this-repo" labelledBy="a-real-h" tone="ink" className="manifest-ink">
+      <div className="container">
+        <div className="rule" aria-hidden="true" />
+        <Eyebrow>The real file</Eyebrow>
+        <h2 id="a-real-h" className="reveal">
           The repository that ships rsk runs on rsk.
         </h2>
-        <div className="a-real">
-          <div className="rv">
-            <div className="k-win">
-              <div className="k-win-h">
-                ralvaskills/.rsk/rsk.mod <Badge kind="ro">real · working tree 2026-11-04</Badge>
-              </div>
-              <pre className="k-win-b" tabIndex={0} role="region" aria-label="ralvaskills .rsk/rsk.mod">
+        <div className="real-manifest">
+          <div className="reveal">
+            <Panel
+              title="ralvaskills/.rsk/rsk.mod"
+              action={<Tag tone="readonly">real · working tree 2026-11-04</Tag>}
+              flush
+            >
+              <pre className="panel__body" tabIndex={0} role="region" aria-label="ralvaskills .rsk/rsk.mod">
                 {data.repoMod.trimEnd()}
               </pre>
-            </div>
+            </Panel>
           </div>
-          <div className="rv">
-            <ul className="a-notes">
+          <div className="reveal">
+            <ul className="note-list">
               <li>
                 <b>
                   {LOCK.length} skills, {data.repoPinned.length} pinned.
@@ -43,12 +44,12 @@ export function ThisRepo() {
                 files rsk writes.
               </li>
             </ul>
-            <table className="a-lock" style={{ marginTop: 28 }}>
+            <table className="lock-table" style={{ marginTop: 28 }}>
               <caption>ralvaskills/.rsk/rsk.lock, shown as a table</caption>
               <thead>
                 <tr>
                   <th scope="col">skill</th>
-                  <th scope="col" className="v">
+                  <th scope="col" className="lock-table__version">
                     version
                   </th>
                   <th scope="col">source</th>
@@ -58,7 +59,7 @@ export function ThisRepo() {
                 {LOCK.map((entry) => (
                   <tr key={entry.name}>
                     <td>{entry.name}</td>
-                    <td className="v">{entry.version}</td>
+                    <td className="lock-table__version">{entry.version}</td>
                     <td>{entry.source}</td>
                   </tr>
                 ))}
@@ -67,6 +68,6 @@ export function ThisRepo() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

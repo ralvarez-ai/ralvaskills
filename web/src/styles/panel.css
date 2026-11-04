@@ -1,0 +1,6 @@
+/* code window */
+.panel{background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:var(--radius-panel);box-shadow:var(--shadow-device);overflow:hidden}
+.panel__header{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border-subtle);font:600 .72rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);background:color-mix(in srgb,var(--surface-raised) 80%,var(--surface-page))}
+.panel__header .panel__dots{display:inline-flex;gap:4px}
+.panel__header .panel__dots i{width:6px;height:6px;border-radius:1px;background:currentColor;opacity:.65;display:block}
+.panel__body{padding:14px 16px}

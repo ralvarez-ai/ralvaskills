@@ -72,7 +72,7 @@ export function useFilm(
       timeline.steps.forEach((s) => {
         s._p = undefined;
       });
-      root.classList.add('f-run');
+      root.classList.add('is-filming');
       timeline.reset();
     };
 
@@ -87,7 +87,7 @@ export function useFilm(
         }
       });
       timeline.end();
-      root.classList.remove('f-run');
+      root.classList.remove('is-filming');
       ctl.style.setProperty('--p', '1');
       setState('done');
     };
@@ -154,18 +154,18 @@ export function useFilm(
 
 /** Film helpers that work on the rendered figure. */
 export function show(root: HTMLElement, key: string) {
-  root.querySelectorAll(`[data-f="${key}"]`).forEach((el) => el.classList.remove('f-h'));
+  root.querySelectorAll(`[data-f="${key}"]`).forEach((el) => el.classList.remove('is-hidden'));
 }
 
 export function hideAll(root: HTMLElement) {
-  root.querySelectorAll('[data-f]').forEach((el) => el.classList.add('f-h'));
+  root.querySelectorAll('[data-f]').forEach((el) => el.classList.add('is-hidden'));
 }
 
 export function revealAll(root: HTMLElement) {
-  root.querySelectorAll('.f-h').forEach((el) => el.classList.remove('f-h'));
+  root.querySelectorAll('.is-hidden').forEach((el) => el.classList.remove('is-hidden'));
   root.querySelectorAll<HTMLElement>('[data-t]').forEach((el) => {
     el.textContent = el.dataset.t ?? '';
-    el.classList.remove('f-caret');
+    el.classList.remove('is-typing');
   });
 }
 
@@ -173,5 +173,5 @@ export function type(el: HTMLElement | null, p: number) {
   if (!el) return;
   const full = el.dataset.t ?? '';
   el.textContent = full.slice(0, Math.round(full.length * p));
-  el.classList.toggle('f-caret', p < 1);
+  el.classList.toggle('is-typing', p < 1);
 }

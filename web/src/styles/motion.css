@@ -1,0 +1,12 @@
+/* reveals: content visible unless motion is allowed; one-shot, ends at 1 */
+.has-motion .reveal{opacity:0;transform:translateY(20px);transition:opacity .55s var(--ease-out),transform .8s var(--ease-out);transition-delay:calc(var(--i,0) * 70ms)}
+.has-motion .reveal.is-visible{opacity:1;transform:none}
+/* film: hidden steps keep their box (no layout shift) */
+.is-filming .is-hidden{visibility:hidden}
+.has-motion .is-filming .is-hidden{visibility:visible;opacity:0;transform:translateY(6px)}
+.has-motion .is-filming [data-f]{transition:opacity .35s ease,transform .45s var(--ease-out),background-color .5s ease}
+.is-typing::after{content:"";display:inline-block;width:.55em;height:1.05em;margin-left:1px;vertical-align:-.15em;background:currentColor;animation:k-blink 1s steps(1) infinite}
+@keyframes k-blink{50%{opacity:0}}
+/* view-transition theme wipe */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+@media (forced-colors:active){.tag,.button,.film-control,.panel{border:1px solid CanvasText}.button[data-variant="primary"]{forced-color-adjust:none;background:Highlight;color:HighlightText}.brand-mark i,.rule,.reading-progress i,.section-rail a::before{background:CanvasText;forced-color-adjust:none}}

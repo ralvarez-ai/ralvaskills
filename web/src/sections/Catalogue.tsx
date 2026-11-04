@@ -1,3 +1,4 @@
+import { Section } from '../components/ui';
 import { useMemo, useState } from 'react';
 
 import { data } from '../data/types';
@@ -51,50 +52,50 @@ export function Catalogue() {
       : `Showing the ${count} skills rsk catalog lists by default; the ${data.personal} personal ones need --include personal.`;
 
   return (
-    <section className="k-sec" id="catalogue" aria-labelledby="b-ex-h" style={{ background: 'var(--bg2)' }}>
-      <div className="wrap">
-        <div className="k-rule" aria-hidden="true" />
-        <div className="b-ex-top">
+    <Section id="catalogue" labelledBy="b-ex-h" tone="sunken">
+      <div className="container">
+        <div className="rule" aria-hidden="true" />
+        <div className="catalogue__top">
           <div>
-            <span className="b-sec-n" aria-hidden="true" data-count={data.bundles.length}>
+            <span className="section-figure" aria-hidden="true" data-count={data.bundles.length}>
               {data.bundles.length}
             </span>
             <h2 id="b-ex-h" style={{ marginTop: 0 }}>
-              <span className="sr">{data.bundles.length} </span>
+              <span className="sr-only">{data.bundles.length} </span>
               bundles. Filter the catalogue the way <code>rsk catalog</code> does.
             </h2>
-            <p className="k-lede">
+            <p className="lede">
               Grouped by the folder they live in. Pick a bundle to see what <code>rsk install &lt;bundle&gt;</code>{' '}
               brings; personal skills stay hidden unless you pass <code>--include personal</code>, as in the CLI.
             </p>
           </div>
           <p style={{ margin: 0, textAlign: 'right' }}>
-            <span className="b-count" aria-hidden="true">
+            <span className="filter-count" aria-hidden="true">
               {count}
             </span>
             <br />
-            <span className="b-count-l" aria-hidden="true">
+            <span className="filter-count__label" aria-hidden="true">
               {bundle ? notesFor(bundle) : `shown of ${data.skills.length}`}
             </span>
           </p>
         </div>
 
-        <ul className="b-chips" aria-label="Filter by bundle">
+        <ul className="filter" aria-label="Filter by bundle">
           <li>
-            <button className="b-chip" type="button" aria-pressed={bundle === ''} onClick={() => setBundle('')}>
+            <button className="filter__chip" type="button" aria-pressed={bundle === ''} onClick={() => setBundle('')}>
               all
             </button>
           </li>
           {data.bundles.map((b) => (
             <li key={b.name}>
-              <button className="b-chip" type="button" aria-pressed={bundle === b.name} onClick={() => setBundle(b.name)}>
+              <button className="filter__chip" type="button" aria-pressed={bundle === b.name} onClick={() => setBundle(b.name)}>
                 {b.name}
               </button>
             </li>
           ))}
           <li>
             <button
-              className="b-chip tg"
+              className="filter__chip filter__chip--toggle"
               type="button"
               aria-pressed={includePersonal}
               onClick={() => setIncludePersonal((v) => !v)}
@@ -104,13 +105,13 @@ export function Catalogue() {
           </li>
         </ul>
 
-        <p className="b-note" aria-live="polite">
+        <p className="catalogue__note" aria-live="polite">
           {note}
         </p>
 
-        <div className={`b-field${bundle ? ' f' : ''}${includePersonal ? ' inc' : ''}`}>
+        <div className={`catalogue__field${bundle ? ' is-filtered' : ''}${includePersonal ? ' is-inclusive' : ''}`}>
           {domains.map(([domain, skills]) => (
-            <section className="b-dom" aria-label={domain} key={domain}>
+            <section className="domain" aria-label={domain} key={domain}>
               <h3>
                 <span>{domain}</span>
                 <span>{skills.length}</span>
@@ -118,22 +119,22 @@ export function Catalogue() {
               <ul>
                 {skills.map((s) => (
                   <li
-                    className={`b-tag${s.personal ? ' p' : ''}${bundle && matches(s) ? ' on' : ''}`}
+                    className={`skill${s.personal ? ' is-personal' : ''}${bundle && matches(s) ? ' is-match' : ''}`}
                     data-b={(bundlesOf.get(s.name) ?? []).join(' ')}
                     key={s.name}
                   >
                     {s.name}
-                    <span className="v">{s.latest}</span>
+                    <span className="skill__version">{s.latest}</span>
                   </li>
                 ))}
                 {domain === 'personal' ? (
-                  <li className="ph">{skills.length} personal skills, hidden by default</li>
+                  <li className="domain__placeholder">{skills.length} personal skills, hidden by default</li>
                 ) : null}
               </ul>
             </section>
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

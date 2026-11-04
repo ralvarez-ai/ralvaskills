@@ -1,7 +1,9 @@
 import { useCallback, useState } from 'react';
 
-import { Footer, Header, Rail } from './components/chrome';
-import type { NavItem } from './components/chrome';
+import { Footer } from './components/Footer';
+import { Header } from './components/Header';
+import type { NavItem } from './components/Header';
+import { Rail } from './components/Rail';
 import { useCounts, useReveals, useScrollKit, useTheme } from './lib/useMotion';
 import { Catalogue } from './sections/Catalogue';
 import { Commands } from './sections/Commands';

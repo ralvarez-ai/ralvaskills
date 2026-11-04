@@ -47,13 +47,17 @@ for (const width of [1440, 390]) {
     await page.goto(base, { waitUntil: 'networkidle' });
     await page.waitForTimeout(7500);
     // Scroll through once so every reveal fires; a fullPage shot does not scroll.
+    // Force instant scrolling: the page ships scroll-behavior:smooth, and a
+    // capture taken mid-animation is offset by however far it had left to go.
+    await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
     const height = await page.evaluate(() => document.documentElement.scrollHeight);
     for (let y = 0; y < height; y += 500) {
       await page.evaluate((to) => window.scrollTo(0, to), y);
       await page.waitForTimeout(60);
     }
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(400);
+    await page.waitForFunction(() => window.scrollY === 0);
+    await page.waitForTimeout(250);
     const name = join(out, `${width}-${theme}`);
     await page.screenshot({ path: `${name}.png` });
     await page.screenshot({ path: `${name}-full.png`, fullPage: true });

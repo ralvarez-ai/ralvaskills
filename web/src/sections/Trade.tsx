@@ -1,14 +1,15 @@
+import { Eyebrow, Section } from '../components/ui';
 export function Trade() {
   return (
-    <section className="k-sec" id="trade" aria-labelledby="a-trade-h" style={{ background: 'var(--bg2)' }}>
-      <div className="wrap">
-        <div className="k-rule" aria-hidden="true" />
-        <p className="k-kick rv">The trade-off</p>
-        <h2 id="a-trade-h" className="rv">
+    <Section id="trade" labelledBy="a-trade-h" tone="sunken">
+      <div className="container">
+        <div className="rule" aria-hidden="true" />
+        <Eyebrow>The trade-off</Eyebrow>
+        <h2 id="a-trade-h" className="reveal">
           One binary and one config file for every project. One dependency in exchange.
         </h2>
-        <div className="k-trade">
-          <div className="give rv">
+        <div className="tradeoff">
+          <div className="tradeoff__give reveal">
             <h3>What you get</h3>
             <ul>
               <li>
@@ -23,7 +24,7 @@ export function Trade() {
               </li>
             </ul>
           </div>
-          <div className="take rv">
+          <div className="tradeoff__take reveal">
             <h3>What you accept</h3>
             <ul>
               <li>
@@ -38,6 +39,6 @@ export function Trade() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

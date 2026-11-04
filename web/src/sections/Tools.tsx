@@ -1,3 +1,4 @@
+import { Eyebrow, Section } from '../components/ui';
 import { tools } from '../data/facts';
 
 const ANNOTATIONS = {
@@ -7,20 +8,20 @@ const ANNOTATIONS = {
 
 export function Tools() {
   return (
-    <section className="k-sec" id="tools" aria-labelledby="c-tools-h" style={{ background: 'var(--bg2)' }}>
-      <div className="wrap">
-        <div className="k-rule" aria-hidden="true" />
-        <p className="k-kick rv">From internal/mcp/tools.go</p>
-        <h2 id="c-tools-h" className="rv">
+    <Section id="tools" labelledBy="c-tools-h" tone="sunken">
+      <div className="container">
+        <div className="rule" aria-hidden="true" />
+        <Eyebrow>From internal/mcp/tools.go</Eyebrow>
+        <h2 id="c-tools-h" className="reveal">
           Three tools. One writes, and it is marked to say so.
         </h2>
-        <p className="k-lede rv">
+        <p className="lede reveal">
           The descriptions are the ones the agent reads. <code>destructiveHint</code> is only advice to the client; the{' '}
           <code>requiresUserInteraction</code> flag is what makes Claude Code prompt you even in auto-approve modes.
         </p>
-        <ul className="c-tools rv">
+        <ul className="tool-list reveal">
           {tools.map((tool) => (
-            <li className={tool.kind === 'de' ? 'w' : undefined} key={tool.name}>
+            <li className={tool.kind === 'de' ? 'is-destructive' : undefined} key={tool.name}>
               <h3>{tool.name}</h3>
               <p>{tool.desc}</p>
               <pre aria-label={`${tool.name} annotations`}>{ANNOTATIONS[tool.kind]}</pre>
@@ -36,6 +37,6 @@ export function Tools() {
           </li>
         </ul>
       </div>
-    </section>
+    </Section>
   );
 }

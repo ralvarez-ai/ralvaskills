@@ -1,0 +1,25 @@
+/* buttons */
+.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:0 18px;border-radius:var(--radius-control);border:1px solid var(--border-control);background:transparent;color:var(--text-strong);font:600 .95rem/1 var(--font-sans);cursor:pointer;text-decoration:none;white-space:nowrap;transition:background var(--duration-1),border-color var(--duration-1),color var(--duration-1)}
+.button:hover{border-color:var(--text-strong)}
+.button[data-variant="primary"]{background:var(--text-accent);border-color:var(--text-accent);color:var(--on-accent)}
+.button[data-variant="primary"]:hover{background:color-mix(in srgb,var(--text-accent) 86%,var(--text-strong));border-color:color-mix(in srgb,var(--text-accent) 86%,var(--text-strong))}
+.button[data-variant="ghost"]{background:transparent}
+.has-motion .button:active{transform:translateY(1px)}
+/* badges */
+.tag{display:inline-flex;align-items:center;gap:6px;padding:1px 7px;border:1px solid currentColor;border-radius:3px;font:600 .68rem/1.7 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;vertical-align:1px}
+.tag[data-tone="readonly"]{color:var(--status-ok)}
+.tag[data-tone="destructive"]{color:var(--status-danger)}
+.tag[data-tone="hint"]{color:var(--status-warn)}
+.tag[data-tone="sample"]{color:var(--text-muted);border-style:dashed}
+/* copy block */
+.copy-block{position:relative}
+.copy-block pre{padding:18px 20px;padding-right:96px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:var(--radius-panel)}
+.copy-block .button{position:absolute;top:8px;right:8px;min-height:40px;padding:0 14px;background:var(--surface-raised)}
+.copy-block__comment{color:var(--text-muted)}
+.copy-block__command{display:block;margin-bottom:.55em}
+/* film control: label + a real progress bar */
+.film-control{display:inline-flex;align-items:center;gap:10px;min-height:40px;min-width:44px;padding:0 12px;border-radius:var(--radius-control);border:1px solid var(--border-control);background:transparent;color:var(--text-muted);font:600 .72rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.film-control:hover{color:var(--text-strong);border-color:var(--text-strong)}
+.film-control .film-control__icon{display:inline-block;width:10px;text-align:center}
+.film-control .film-control__bar{width:42px;height:2px;background:var(--border-subtle);position:relative;overflow:hidden}
+.film-control .film-control__bar i{position:absolute;inset:0;background:var(--fill-accent);transform:scaleX(var(--p,1));transform-origin:0 50%}

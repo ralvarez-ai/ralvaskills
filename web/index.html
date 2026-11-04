@@ -31,8 +31,8 @@
           s = localStorage.getItem('rsk-theme');
         } catch (e) {}
         d.setAttribute('data-theme', s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('anim');
-        d.classList.add('js');
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('has-motion');
+        d.classList.add('is-js');
       })();
     </script>
   </head>

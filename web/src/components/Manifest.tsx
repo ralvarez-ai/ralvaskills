@@ -1,42 +1,42 @@
 import { useRef } from 'react';
 import type { ReactNode } from 'react';
 
-import { Badge, FilmButton } from './ui';
+import { FilmControl, Panel, Tag } from './ui';
 import { rskNewOutput } from '../data/facts';
 import { data } from '../data/types';
 import { hideAll, revealAll, show, type, useFilm } from '../lib/useFilm';
 
-interface DeviceProps {
+interface ManifestProps {
   names: string[];
   second: string;
   agent?: boolean;
   caption: ReactNode;
 }
 
-const S = ({ value }: { value: string }) => <span className="s">{`"${value}"`}</span>;
+const S = ({ value }: { value: string }) => <span className="syntax-string">{`"${value}"`}</span>;
 
 function Cmd({ k, text }: { k: string; text: string }) {
   return (
     <li data-f={k}>
-      <span className="ps" aria-hidden="true">
+      <span className="command-list__prompt" aria-hidden="true">
         $
       </span>
       <code>
         <span data-t={text} aria-hidden="true">
           {text}
         </span>
-        <span className="sr">{text}</span>
+        <span className="sr-only">{text}</span>
       </code>
     </li>
   );
 }
 
 /**
- * Direction A's device: the terminal, the manifest assembling line by line and
+ * The manifest device: the terminal, the manifest assembling line by line and
  * the lock resolving beneath it. `second` is the line the agent's call stands
  * for when `agent` is set.
  */
-export function Device({ names, second, agent = false, caption }: DeviceProps) {
+export function Manifest({ names, second, agent = false, caption }: ManifestProps) {
   const fig = useRef<HTMLElement>(null);
   const ctl = useRef<HTMLButtonElement>(null);
   const pin = useRef<HTMLSpanElement>(null);
@@ -44,12 +44,12 @@ export function Device({ names, second, agent = false, caption }: DeviceProps) {
 
   const sorted = [...names].sort();
   const mod = [
-    { k: 'new', body: <><span className="k">version</span> = <span className="n">1</span></> },
+    { k: 'new', body: <><span className="syntax-key">version</span> = <span className="syntax-number">1</span></> },
     {
       k: 'new',
       body: (
         <>
-          <span className="k">tools</span> = [<S value="claude-code" />, <S value="opencode" />]
+          <span className="syntax-key">tools</span> = [<S value="claude-code" />, <S value="opencode" />]
         </>
       ),
     },
@@ -57,19 +57,19 @@ export function Device({ names, second, agent = false, caption }: DeviceProps) {
       k: 'new',
       body: (
         <>
-          <span className="k">pinned</span> = <span className="pin">[<S value="go-architect" />]</span>
+          <span className="syntax-key">pinned</span> = <span className="manifest-file__pinned">[<S value="go-architect" />]</span>
         </>
       ),
       pinned: true,
     },
     { k: 'new', body: <>&nbsp;</> },
-    { k: 'new', body: <span className="t">[skills]</span> },
+    { k: 'new', body: <span className="syntax-table">[skills]</span> },
     ...sorted.map((n) => ({
       k: `s${names.indexOf(n)}`,
       body: (
         <>
           {'  '}
-          <span className="k">{n}</span> = <S value="*" />
+          <span className="syntax-key">{n}</span> = <S value="*" />
         </>
       ),
     })),
@@ -98,7 +98,7 @@ export function Device({ names, second, agent = false, caption }: DeviceProps) {
         if (!pinEl) return;
         pinEl.dataset.full ??= pinEl.innerHTML;
         pinEl.innerHTML = pinEl.dataset.full;
-        pinRow?.classList.add('chg');
+        pinRow?.classList.add('is-changed');
       },
     });
 
@@ -114,44 +114,44 @@ export function Device({ names, second, agent = false, caption }: DeviceProps) {
           pinEl.dataset.full ??= pinEl.innerHTML;
           pinEl.textContent = '[]';
         }
-        pinRow?.classList.remove('chg');
+        pinRow?.classList.remove('is-changed');
       },
       end: () => {
         revealAll(root);
         if (pinEl?.dataset.full) pinEl.innerHTML = pinEl.dataset.full;
-        if (pinRow) setTimeout(() => pinRow.classList.remove('chg'), 900);
+        if (pinRow) setTimeout(() => pinRow.classList.remove('is-changed'), 900);
       },
     };
   });
 
   return (
-    <figure className="a-dev" id="a-film" aria-describedby="a-cap">
-      <div className="a-term tn">
-        <div className="k-win-h">
-          <span className="dots" aria-hidden="true">
+    <figure className="manifest" id="a-film" aria-describedby="a-cap">
+      <div className="manifest__terminal surface-terminal">
+        <div className="panel__header">
+          <span className="panel__dots" aria-hidden="true">
             <i />
             <i />
             <i />
           </span>
           ~/demo — a Go project
         </div>
-        <ol className="a-cmds" aria-label="Commands run">
+        <ol className="command-list" aria-label="Commands run">
           <Cmd k="c1" text="rsk new" />
           {rskNewOutput.map((line) => (
-            <li className="out" data-f="o1" key={line}>
+            <li className="command-list__output" data-f="o1" key={line}>
               {line}
             </li>
           ))}
           {agent ? (
-            <li data-f="c2" className="ag">
-              <span className="ps" aria-hidden="true">
+            <li data-f="c2" className="command-list__agent">
+              <span className="command-list__prompt" aria-hidden="true">
                 ◆
               </span>
               <code>
                 <span data-t={second} aria-hidden="true">
                   {second}
                 </span>
-                <span className="sr">{second}</span>
+                <span className="sr-only">{second}</span>
               </code>
             </li>
           ) : (
@@ -161,21 +161,18 @@ export function Device({ names, second, agent = false, caption }: DeviceProps) {
         </ol>
       </div>
 
-      <div className="a-files">
-        <div className="k-win">
-          <div className="k-win-h">
-            .rsk/rsk.mod <Badge kind="ro">commit</Badge>
-          </div>
-          <ol className="a-mod" aria-label=".rsk/rsk.mod contents">
+      <div className="manifest__files">
+        <Panel title=".rsk/rsk.mod" action={<Tag tone="readonly">commit</Tag>} flush>
+          <ol className="manifest-file" aria-label=".rsk/rsk.mod contents">
             {mod.map((line, i) => (
               <li
-                className="add"
+                className="manifest-file__line"
                 data-f={line.k}
                 key={`${line.k}-${i}`}
                 id={line.pinned ? 'a-pin' : undefined}
                 ref={line.pinned ? pinLine : undefined}
               >
-                <span className="g" aria-hidden="true">
+                <span className="gutter" aria-hidden="true">
                   +
                 </span>
                 <span>
@@ -184,18 +181,18 @@ export function Device({ names, second, agent = false, caption }: DeviceProps) {
               </li>
             ))}
           </ol>
-        </div>
-        <div className="k-win">
-          <div className="k-win-h">
-            .rsk/rsk.lock <Badge kind="ro">commit</Badge>
-          </div>
-          <div className="k-win-b" style={{ padding: '6px 0 4px' }}>
-            <table className="a-lock">
-              <caption className="sr">rsk.lock resolved versions, all from the registry, shown as a table</caption>
+        </Panel>
+        <Panel
+          title=".rsk/rsk.lock"
+          action={<Tag tone="readonly">commit</Tag>}
+          bodyStyle={{ padding: '6px 0 4px' }}
+        >
+            <table className="lock-table">
+              <caption className="sr-only">rsk.lock resolved versions, all from the registry, shown as a table</caption>
               <thead>
                 <tr>
                   <th scope="col">skill</th>
-                  <th scope="col" className="v">
+                  <th scope="col" className="lock-table__version">
                     version
                   </th>
                 </tr>
@@ -204,18 +201,17 @@ export function Device({ names, second, agent = false, caption }: DeviceProps) {
                 {names.map((n, i) => (
                   <tr data-f={`s${i}`} key={n}>
                     <td>{n}</td>
-                    <td className="v">{data.latest[n]}</td>
+                    <td className="lock-table__version">{data.latest[n]}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
+        </Panel>
       </div>
 
-      <figcaption className="a-cap" id="a-cap">
+      <figcaption className="manifest__caption" id="a-cap">
         <p>{caption}</p>
-        <FilmButton state={state} onToggle={toggle} ref={ctl} />
+        <FilmControl state={state} onToggle={toggle} ref={ctl} />
       </figcaption>
     </figure>
   );

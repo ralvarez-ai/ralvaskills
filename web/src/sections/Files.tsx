@@ -1,4 +1,4 @@
-import { Badge } from '../components/ui';
+import { Eyebrow, Panel, Section, Tag } from '../components/ui';
 import { rskNewClaudeMd } from '../data/facts';
 
 const NEW_FILES: [string, string][] = [
@@ -17,18 +17,18 @@ const INSTALL_FILES: [string, string][] = [
 
 function Tree({ rows, label, children }: { rows?: [string, string][]; label: string; children?: React.ReactNode }) {
   return (
-    <ul className="a-tree" aria-label={label}>
+    <ul className="file-tree" aria-label={label}>
       {children}
       {rows?.map(([path, note]) => (
         <li key={path}>
-          <span className="g" aria-hidden="true">
+          <span className="gutter" aria-hidden="true">
             +
           </span>
           <span>
             {path}
-            <span className="sr"> (new)</span>
+            <span className="sr-only"> (new)</span>
           </span>
-          <span className="d">{note}</span>
+          <span className="file-tree__note">{note}</span>
         </li>
       ))}
     </ul>
@@ -37,50 +37,51 @@ function Tree({ rows, label, children }: { rows?: [string, string][]; label: str
 
 export function Files() {
   return (
-    <section className="k-sec" id="files" aria-labelledby="a-files-h">
-      <div className="wrap a-two">
-        <div className="rv">
-          <div className="k-rule" aria-hidden="true" />
-          <p className="k-kick">Before and after</p>
+    <Section id="files" labelledBy="a-files-h">
+      <div className="container manifest-section">
+        <div className="reveal">
+          <div className="rule" aria-hidden="true" />
+          <Eyebrow reveal={false}>Before and after</Eyebrow>
           <h2 id="a-files-h">
             What <code>rsk new</code> actually writes.
           </h2>
-          <p className="k-lede">
+          <p className="lede">
             Six files in the project root and <code>.rsk/</code>, from a real run on a three-file Go project. Installing
             adds the lock and the links. Nothing lands outside the project except the cache.
           </p>
-          <p className="a-step">
-            rsk new <Badge kind="ro">real run</Badge>
+          <p className="step-label">
+            rsk new <Tag tone="readonly">real run</Tag>
           </p>
           <Tree rows={NEW_FILES} label="Files after rsk new">
             {['go.mod', 'Dockerfile', 'cmd/demo/main.go'].map((path) => (
               <li key={path}>
                 <span aria-hidden="true" />
-                <span className="yours">{path}</span>
-                <span className="d">yours, untouched</span>
+                <span className="file-tree__own">{path}</span>
+                <span className="file-tree__note">yours, untouched</span>
               </li>
             ))}
           </Tree>
-          <p className="a-step">
-            rsk install go-grpc <Badge kind="sa">from the code</Badge>
+          <p className="step-label">
+            rsk install go-grpc <Tag tone="sample">from the code</Tag>
           </p>
           <Tree rows={INSTALL_FILES} label="Files added by rsk install" />
         </div>
-        <div className="rv">
-          <div className="k-win">
-            <div className="k-win-h">
-              CLAUDE.md, as rsk new wrote it <Badge kind="ro">real</Badge>
-            </div>
-            <pre className="k-win-b" tabIndex={0} role="region" aria-label="CLAUDE.md written by rsk new: what it writes">
+        <div className="reveal">
+          <Panel
+            title="CLAUDE.md, as rsk new wrote it"
+            action={<Tag tone="readonly">real</Tag>}
+            flush
+          >
+            <pre className="panel__body" tabIndex={0} role="region" aria-label="CLAUDE.md written by rsk new: what it writes">
               {rskNewClaudeMd}
             </pre>
-          </div>
-          <p style={{ marginTop: 16, color: 'var(--muted)', fontSize: '.95rem' }}>
+          </Panel>
+          <p style={{ marginTop: 16, color: 'var(--text-muted)', fontSize: '.95rem' }}>
             <code>@AGENTS.md</code> stays the first line so the guide you wrote loads before anything rsk generates.{' '}
             <code>rsk destroy</code> removes the note and the MCP registration and leaves <code>AGENTS.md</code> alone.
           </p>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

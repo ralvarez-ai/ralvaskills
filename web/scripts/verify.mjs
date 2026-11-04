@@ -96,7 +96,7 @@ try {
         const layout = await page.evaluate(() => ({
           scroll: document.documentElement.scrollWidth,
           client: document.documentElement.clientWidth,
-          hidden: document.querySelectorAll('.rv:not(.in), .k-rule:not(.in)').length,
+          hidden: document.querySelectorAll('.reveal:not(.is-visible), .rule:not(.is-visible)').length,
           counts: [...document.querySelectorAll('[data-count]')].filter((el) => el.textContent !== el.dataset.count).length,
         }));
 
