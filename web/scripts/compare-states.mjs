@@ -50,7 +50,8 @@ const STATES = ['rest', 'hover', 'focus', 'pressed'];
 const server = await preview({ logLevel: 'error', preview: { port: 4332, strictPort: true } });
 const browser = await chromium.launch({ executablePath: exe });
 const URLS = {
-  mock: pathToFileURL(resolve('../mockups/ui-proposals/2026-11-04/direction-4-combined.html')).href,
+  mock: pathToFileURL(resolve(`../mockups/ui-proposals/2026-11-04/${process.env.MOCK ?? 'direction-4-combined.html'}`))
+    .href,
   web: server.resolvedUrls.local[0],
 };
 const styleProps = [
