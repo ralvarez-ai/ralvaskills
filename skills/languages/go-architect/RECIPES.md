@@ -1,6 +1,6 @@
 # Go Architecture Recipes
 
-Reference implementations from [SKILL.md](SKILL.md). Currently: a `go.work` multi-module workspace with two bounded contexts — `order` (a normal context) and `checkout` (an orchestrator that coordinates `order`, inventory, and payment). See §16 for the rules; this file is the worked code.
+Reference implementations from [SKILL.md](SKILL.md). Currently: a `go.work` multi-module workspace with two bounded contexts — `order` (a normal context) and `checkout` (an orchestrator that coordinates `order`, inventory, and payment), see §16 for the rules; and an external program behind a port (§4), at the end of this file.
 
 ## Multi-module workspace layout
 
@@ -325,3 +325,157 @@ func main() {
     }
 }
 ```
+
+## An external program behind a port
+
+For a tool you do not control (a CLI run as a subprocess, a vendor SDK) that runs batches of work
+and writes results somewhere. The failure mode this prevents: the caller learns what happened by
+scanning the tool's output directory, re-derives events from files, and every vendor flag, file
+name and identifier convention leaks into the rest of the code. Rules: §4.
+
+```
+internal/execution/            # the domain's view: request, event, outcome, ports. Imports no vendor.
+internal/execution/vendorcli/  # adapter named by technology: owns flags, files, parsing
+internal/execution/fake/       # in-process adapter, scripted; the second adapter
+internal/execution/executiontest/  # one conformance suite, run against every adapter
+```
+
+### `internal/execution/execution.go` — the port and its types
+
+```go
+package execution
+
+import (
+    "context"
+    "errors"
+)
+
+type (
+    // Kind names an event; the payload is the Event field that matches it.
+    Kind int
+
+    // Request is what to run, in the domain's words. It never holds the tool's flags.
+    Request struct {
+        JobID    string
+        Tasks    []string
+        Attempts int
+    }
+
+    // Outcome is the facts of one finished trial. The verdict is derived from facts elsewhere.
+    Outcome struct {
+        TaskID  string
+        Attempt int
+        Status  string // a small closed set of values; a defined type in real code
+        Reward  *float64
+        Error   string
+    }
+
+    // CancelInfo is why a job was stopped. It is an error so it can be a context cause.
+    CancelInfo struct {
+        By     string
+        Reason string
+    }
+
+    Event struct {
+        Kind    Kind
+        TaskID  string
+        Attempt int
+        Outcome *Outcome    // KindTrialFinished
+        Cancel  *CancelInfo // KindCanceled
+        Err     error       // KindFailed
+    }
+
+    Summary struct{ Finished, Passed int }
+
+    // Executor runs a request until every trial has finished, ctx is canceled or it fails,
+    // reporting through sink. It stops its children when ctx is canceled.
+    Executor interface {
+        Execute(ctx context.Context, req Request, sink EventSink) (Summary, error)
+    }
+
+    // EventSink receives a job's events in order. An error from Emit fails the job.
+    EventSink interface {
+        Emit(ctx context.Context, ev Event) error
+    }
+)
+
+const (
+    KindJobStarted Kind = iota + 1
+    KindTrialStarted
+    KindTrialFinished
+    KindCanceled
+    KindFailed
+)
+
+// ErrCanceled wraps the CancelInfo cause when Execute returns because ctx was canceled.
+var ErrCanceled = errors.New("execution canceled")
+
+func (c CancelInfo) Error() string { return c.By + ": " + c.Reason }
+```
+
+### `internal/execution/vendorcli/executor.go` — the adapter is the anti-corruption layer
+
+```go
+package vendorcli
+
+// Executor runs the vendor program. The vendor's flags, directory layout and result files are
+// known here and nowhere else; vendorTrial never leaves the package.
+type Executor struct {
+    bin     string
+    jobsDir string
+}
+
+func (e *Executor) Execute(ctx context.Context, req execution.Request, sink execution.EventSink) (execution.Summary, error) {
+    cmd := exec.CommandContext(ctx, e.bin, buildArgs(req, e.jobsDir)...) // the only place flags exist
+    // start the process; watch jobsDir/<JobID> and emit KindTrialStarted / KindTrialFinished as the
+    // vendor's files appear (toOutcome is the one mapping); on exit, one reconciliation scan, so
+    // a trial that finished between two ticks is not lost.
+    // On ctx cancel: kill the process group, then
+    //   return Summary{}, fmt.Errorf("%w: %w", execution.ErrCanceled, context.Cause(ctx))
+    // after emitting KindCanceled with the CancelInfo cause.
+    return summary, nil
+}
+```
+
+### `internal/execution/executiontest/conformance.go` — one suite, every adapter
+
+```go
+// Conformance asserts what any Executor must do. Each adapter's test file calls it with its own
+// constructor; the scripted fake and the vendor adapter (against a stand-in program) both pass.
+// Script, PassAll, SlowAll, request and recordingSink are small helpers, elided here.
+func Conformance(t *testing.T, newExecutor func(t *testing.T, script Script) execution.Executor) {
+    t.Helper()
+
+    t.Run("a job starts before any trial", func(t *testing.T) {
+        t.Parallel()
+        sink := &recordingSink{}
+        _, err := newExecutor(t, PassAll(2)).Execute(t.Context(), request(2), sink)
+        require.NoError(t, err)
+        require.Equal(t, execution.KindJobStarted, sink.events[0].Kind)
+    })
+
+    t.Run("a cancel carries who and why", func(t *testing.T) {
+        t.Parallel()
+        ctx, cancel := context.WithCancelCause(t.Context())
+        sink := &recordingSink{onEmit: func(ev execution.Event) {
+            if ev.Kind == execution.KindTrialStarted {
+                cancel(execution.CancelInfo{By: "test", Reason: "stop"})
+            }
+        }}
+        _, err := newExecutor(t, SlowAll(3)).Execute(ctx, request(3), sink)
+        require.ErrorIs(t, err, execution.ErrCanceled)
+        require.Equal(t, execution.KindCanceled, sink.last().Kind)
+        require.Equal(t, "test", sink.last().Cancel.By)
+    })
+}
+```
+
+Notes:
+
+- The fake is a plain struct that plays a `Script` (pass, fail, error, slow, cancel on the Nth);
+  it is what worker and orchestration tests use, so they never need the vendor program.
+- Keep the vendor's real output as golden fixtures under the adapter's `testdata/` and assert
+  `toOutcome` against them: a vendor format change then fails one test, in one package.
+- Enforce the direction with a test that fails if anything outside the adapter imports it.
+- Decide *where a verdict is made* separately: store facts from the tool, derive the verdict at
+  read. Introduce a grader port only when a second grader exists.
