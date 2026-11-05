@@ -35,7 +35,7 @@ function chromePath() {
 
 const out = resolve(process.argv[2] ?? '/tmp/cmp');
 mkdirSync(out, { recursive: true });
-const mockFile = resolve('../mockups/ui-proposals/2026-11-04/direction-4-combined.html');
+const mockFile = resolve(`../mockups/ui-proposals/2026-11-04/${process.env.MOCK ?? 'direction-4-combined.html'}`);
 
 // WEB_URL points the "web" side at a running server (e.g. `pnpm dev`) instead of the build.
 const server = process.env.WEB_URL

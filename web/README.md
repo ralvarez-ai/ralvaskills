@@ -40,7 +40,7 @@ src/styles/      tokens, reset, layout, chrome, controls, panel, motion,
 | `src/data/facts.ts` | Constants that cannot be derived: a real `rsk new` run, a real `project_profile` response, `rsk --help` groups, the quick start, the source list. |
 | `scripts/prerender.mjs` | Renders the app to HTML into `dist/index.html` after the build, so the page reads and indexes without JavaScript. `main.tsx` hydrates it. |
 | `scripts/verify.mjs` | The gate: axe at 8 combinations, overflow, unfired reveals, unsettled count-ups, JS-off, and a style-wiring check (mono stack, hero mask transition, theme button padding, panel radius) so a pruned or renamed selector cannot silently stop applying. Also runs each film (`#c-film`, `#a-film`): it must start on scroll, hide steps while playing and end fully revealed. |
-| `scripts/compare.mjs`, `compare-film.mjs`, `compare-behaviour.mjs`, `compare-states.mjs` (+ `compare-diff.py`, `compare-states.py`) | Parity against `mockups/ui-proposals/2026-11-04/direction-4-combined.html`. `compare.mjs` captures both pages full-page with a per-element style dump (`WIDTHS=… THEMES=… WEB_URL=…` override the matrix) and waits for films and reveals to finish so two runs agree; `compare-diff.py` diffs per section. `compare-film.mjs` samples the films at fixed times, `compare-behaviour.mjs` drives filter, rail, theme, count-ups, progress and copy, `compare-states.mjs` captures rest, hover, focus and open states of buttons, chips, FAQ, nav and copy, and `compare-states.py` diffs them. Stills alone missed two dead films and a missing rail, so run them all, and diff at a strict threshold (about 2 levels): a loose one hid a tinted section. |
+| `scripts/compare.mjs`, `compare-film.mjs`, `compare-behaviour.mjs`, `compare-states.mjs` (+ `compare-diff.py`, `compare-states.py`) | Parity against `mockups/ui-proposals/2026-11-04/direction-4-combined.html`. `MOCK=palette-ember-duo.html` points them at the proposal the page now follows (the default is the original combined page, whose palette the page no longer has). `compare.mjs` captures both pages full-page with a per-element style dump (`WIDTHS=… THEMES=… WEB_URL=…` override the matrix) and waits for films and reveals to finish so two runs agree; `compare-diff.py` diffs per section. `compare-film.mjs` samples the films at fixed times, `compare-behaviour.mjs` drives filter, rail, theme, count-ups, progress and copy, `compare-states.mjs` captures rest, hover, focus and open states of buttons, chips, FAQ, nav and copy, and `compare-states.py` diffs them. Stills alone missed two dead films and a missing rail, so run them all, and diff at a strict threshold (about 2 levels): a loose one hid a tinted section. |
 
 ## Conventions
 
@@ -48,6 +48,7 @@ src/styles/      tokens, reset, layout, chrome, controls, panel, motion,
   `@ralvarez-ts/tokens` and declares the page's roles on top: `--surface-page`,
   `--surface-raised`, `--surface-sunken`, `--text-strong`, `--text-muted`,
   `--text-accent`, `--border-subtle`, `--border-control`, `--status-ok|warn|danger|info`,
+  `--human` (the colour of "you"; `--status-warn` is for what writes),
   `--radius-control|panel`, `--space-1..9`, `--duration-1..4`. A component never
   hard-codes a hex or a px radius.
 - **Variants are data attributes**, not modifier class strings: `Button` takes

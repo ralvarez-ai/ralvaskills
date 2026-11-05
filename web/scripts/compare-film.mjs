@@ -27,7 +27,8 @@ const exe = readdirSync(base)
 const server = await preview({ logLevel: 'error', preview: { port: 4325, strictPort: true } });
 const browser = await chromium.launch({ executablePath: exe });
 const targets = {
-  mock: pathToFileURL(resolve('../mockups/ui-proposals/2026-11-04/direction-4-combined.html')).href,
+  mock: pathToFileURL(resolve(`../mockups/ui-proposals/2026-11-04/${process.env.MOCK ?? 'direction-4-combined.html'}`))
+    .href,
   web: server.resolvedUrls.local[0],
 };
 const times = [0, 700, 1500, 2500, 3500, 4500, 5500, 6500, 7500];

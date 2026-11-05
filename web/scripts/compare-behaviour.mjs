@@ -28,7 +28,8 @@ const server = await preview({ logLevel: 'error', preview: { port: 4328, strictP
 const browser = await chromium.launch({ executablePath: exe });
 const T = {
   mock: {
-    url: pathToFileURL(resolve('../mockups/ui-proposals/2026-11-04/direction-4-combined.html')).href,
+    url: pathToFileURL(resolve(`../mockups/ui-proposals/2026-11-04/${process.env.MOCK ?? 'direction-4-combined.html'}`))
+      .href,
     chips: '#b-chips button',
     tags: '.b-tag',
     on: '.b-tag.on',

@@ -28,7 +28,7 @@ export function useTheme() {
     }
     document
       .querySelector('meta[name="theme-color"]:not([media])')
-      ?.setAttribute('content', theme === 'light' ? '#f4f5f7' : '#0c0e11');
+      ?.setAttribute('content', theme === 'light' ? '#f7f2ea' : '#14100c');
   }, [theme]);
 
   /**

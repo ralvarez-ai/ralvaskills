@@ -6,7 +6,7 @@
 .agent-hero__title{font-size:clamp(2.5rem,4.2vw,3.7rem);font-weight:800;letter-spacing:-.05em;line-height:.96}
 .agent-hero__title .agent-hero__line{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.07em}
 .agent-hero__title .agent-hero__line>span{display:block}
-.agent-hero__title .is-human{color:var(--status-warn)}
+.agent-hero__title .is-human{color:var(--human)}
 .agent-hero__title .is-product{color:var(--text-accent)}
 .has-motion .agent-hero__title.reveal{transform:none}
 .has-motion .agent-hero__title .agent-hero__line>span{transform:translateY(108%);transition:transform .95s var(--ease-out)}
@@ -34,25 +34,25 @@
 .call-card .call-card__note{color:var(--text-muted)}
 .call-card.is-reply{border-style:dashed;box-shadow:none}
 .call-arrow{display:none}
-.approval{border:2px solid var(--status-warn);border-radius:var(--radius-panel);background:var(--surface-raised);padding:12px 14px;font-size:.92rem;box-shadow:none}
+.approval{border:2px solid var(--human);border-radius:var(--radius-panel);background:var(--surface-raised);padding:12px 14px;font-size:.92rem;box-shadow:none}
 .approval .approval__question{font-weight:700;margin:0 0 6px}
 .approval .approval__question code{color:var(--text-accent)}
 .approval .approval__names{font:500 .8rem var(--font-mono);color:var(--text-muted);margin:0 0 10px}
 .approval .approval__actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .approval .approval__button{display:inline-flex;align-items:center;min-height:34px;padding:0 12px;border-radius:var(--radius-control);border:1px solid var(--border-subtle);font:600 .84rem var(--font-sans);color:var(--text-muted)}
-.approval .approval__button.approval__allow{border-color:var(--status-warn);background:var(--status-warn);color:var(--surface-page)}
+.approval .approval__button.approval__allow{border-color:var(--human);background:var(--human);color:var(--surface-page)}
 .approval .approval__button.approval__allow .approval__label-pending{display:none}
 .approval.is-pending .approval__button.approval__allow{background:transparent;color:var(--text-strong)}
 .approval.is-pending .approval__button.approval__allow .approval__label-pending{display:inline}
 .approval.is-pending .approval__button.approval__allow .approval__label-done{display:none}
-.approval .approval__note{font:600 .68rem var(--font-mono);color:var(--status-warn);text-transform:uppercase;letter-spacing:.08em;margin-left:auto}
+.approval .approval__note{font:600 .68rem var(--font-mono);color:var(--human);text-transform:uppercase;letter-spacing:.08em;margin-left:auto}
 @media (min-width:1000px){
  .agent-loop__list{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:0;row-gap:18px;
   background-image:repeating-linear-gradient(to bottom,var(--border-subtle) 0 6px,transparent 6px 12px),repeating-linear-gradient(to bottom,var(--border-subtle) 0 6px,transparent 6px 12px),repeating-linear-gradient(to bottom,var(--border-subtle) 0 6px,transparent 6px 12px);
   background-size:2px 100%;background-repeat:no-repeat;background-position:16.6667% 0,50% 0,83.3333% 0}
  .agent-loop__lanes{display:contents}
  .lane{text-align:center;font:600 .72rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;padding:7px 10px;background:var(--surface-page);position:relative;z-index:1;justify-self:center;min-width:12em;border:1px solid var(--border-subtle);border-radius:var(--radius-control)}
- .lane.is-human{color:var(--status-warn);border-color:var(--status-warn)}
+ .lane.is-human{color:var(--human);border-color:var(--human)}
  .call{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:0;row-gap:6px}
  .call>.call__route{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  .call__number--inline{display:inline-flex!important;position:absolute;left:-3.1em;top:4px;margin:0;background:var(--surface-page)}
@@ -63,7 +63,7 @@
  .call-arrow.call-arrow--right::after{content:"";position:absolute;right:-1px;top:calc(50% - 6px);border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent currentColor}
  .call-arrow.call-arrow--left::after{content:"";position:absolute;left:-1px;top:calc(50% - 6px);border-style:solid;border-width:6px 10px 6px 0;border-color:transparent currentColor transparent transparent}
  .call-arrow.is-reply{color:var(--text-muted)}.call-arrow.is-reply::before{border-top-style:dashed}
- .call-arrow.call-arrow--ask{color:var(--status-warn)}
+ .call-arrow.call-arrow--ask{color:var(--human)}
  .call__message .call-card{width:min(100%,58ch);margin-top:2px}
  .call__message.call__message--request .call-card{order:-1;background:none;border:0;box-shadow:none;padding:0 0 2px;text-align:center;margin:0}
  .agent-loop__list{row-gap:12px}
