@@ -1,13 +1,13 @@
 name: Check site
 
-# The landing page in web/. It reads the registry, skills/**, the Go sources and
-# the git tags to generate its data (web/scripts/gen-data.mjs), so changes to any
+# The landing page in site/. It reads the registry, skills/**, the Go sources and
+# the git tags to generate its data (site/scripts/gen-data.mjs), so changes to any
 # of those can break it as well.
 on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "web/**"
+      - "site/**"
       - "registry/index.json"
       - "skills/**"
       - "internal/mcp/**"
@@ -17,7 +17,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "web/**"
+      - "site/**"
       - ".github/workflows/check-site.yml"
 
 permissions:
@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        working-directory: web
+        working-directory: site
 
     steps:
       - uses: actions/checkout@v4
@@ -42,16 +42,16 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      # pnpm's version comes from "packageManager" in web/package.json.
+      # pnpm's version comes from "packageManager" in site/package.json.
       - uses: pnpm/action-setup@v4
         with:
-          package_json_file: web/package.json
+          package_json_file: site/package.json
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: web/pnpm-lock.yaml
+          cache-dependency-path: site/pnpm-lock.yaml
           registry-url: https://npm.pkg.github.com
           scope: "@ralvarez-ts"
 

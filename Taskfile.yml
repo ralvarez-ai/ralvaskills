@@ -226,31 +226,31 @@ tasks:
         act workflow_dispatch -W .github/workflows/{{.WORKFLOW}} $secrets \
           --artifact-server-path .artifacts --env-file /dev/null
 
-  # web/ — the landing page (React + Vite). Its data is generated from this
+  # site/ — the landing page (React + Vite). Its data is generated from this
   # repository before every dev run and build, so the page cannot state a number
   # the tree does not prove.
 
-  web:install:
+  site:install:
     desc: Install the landing page dependencies (needs NODE_AUTH_TOKEN for GitHub Packages)
-    dir: web
+    dir: site
     cmds:
       - pnpm install --frozen-lockfile
 
-  web:dev:
+  site:dev:
     desc: Run the landing page dev server
-    dir: web
+    dir: site
     cmds:
       - pnpm dev
 
-  web:build:
-    desc: Build the landing page into web/dist
-    dir: web
+  site:build:
+    desc: Build the landing page into site/dist
+    dir: site
     cmds:
       - pnpm build
 
-  web:check:
+  site:check:
     desc: Lint, typecheck, build and run the landing page gate (axe, overflow, reveals, films, JS off)
-    dir: web
+    dir: site
     cmds:
       - pnpm lint
       - pnpm typecheck
