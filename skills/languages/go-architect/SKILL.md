@@ -1,6 +1,6 @@
 ---
 name: go-architect
-version: 1.14.0
+version: 1.15.0
 description: Go 1.27.1 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, or deciding where a Go module and its frontend live in a repo.
 ---
 
@@ -35,6 +35,7 @@ Targets **Go 1.27.1**. See [STACK.md](STACK.md) for pinned dependency versions.
 - **Design:** Define interfaces where they're *used*, not where implemented. Keep them small (1–3 methods) — enforced by `interfacebloat` (see §14).
 - **Signatures:** Accept interfaces (for easy mocking); return concrete structs — enforced by `ireturn` (see §14).
 - **No anonymous interfaces:** an interface written inline (`x.(interface{ Policy() Policy })`, a parameter, a struct field) has no name to document, reuse, or grep, and the capability it describes never appears in the package's API. Declare `type PolicyProvider interface { Policy() Policy }` next to its consumer (or where the capability lives) and assert that. `interface{}`/`any` in a genuinely unconstrained position is fine; the smell is a *capability* left unnamed. Check with [`assets/check-no-anonymous-interfaces.sh`](assets/check-no-anonymous-interfaces.sh) — AST-based, skips generated code, `-tests` to include tests (see §14).
+- **Wrapping an external program or SDK** (a CLI run as a subprocess, a vendor library): the domain owns the request and result types and a one-method port; the adapter is an anti-corruption layer, so the vendor's flags, files and structs never cross its edge. Have it *report* through an event sink instead of the caller scanning output afterwards, carry a cancel's who and why in `context.WithCancelCause`, give the port a second in-process fake adapter (a fake is the second adapter that makes the seam real), and run one conformance suite against every adapter. Pin the vendor's output formats with golden fixtures of real output at the adapter's edge. Don't add a port per concept (a "grader", a "scorer") until a second implementation exists. Worked code: [RECIPES.md](RECIPES.md#an-external-program-behind-a-port).
 
 ## 5. Stdlib defaults
 
