@@ -4,7 +4,7 @@ project: ralvaskills
 date: 2026-11-06
 related:
   - designs/2026-11-06-skill-digests-and-skills-md.md
-  - backlog/pending/q8vm2c-stop-the-adapters-importing-whole-skill-bodies-every-session.md
+  - backlog/done/q8vm2c-stop-the-adapters-importing-whole-skill-bodies-every-session.md
 ---
 
 # Skill digests and lossless-compaction pass

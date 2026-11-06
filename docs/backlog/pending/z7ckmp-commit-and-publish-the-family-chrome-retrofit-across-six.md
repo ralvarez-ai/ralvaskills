@@ -23,3 +23,5 @@ are signed, author Ramón Álvarez, body explains why, no co-author trailer.
 
 Done when each repo has one commit that `git status` shows clean for, and ralvaskills is pushed after the index
 regeneration.
+
+Update 2026-11-06: the ralvaskills tree is committed (family credit, `mockup-architect`, design doc, count 60, the digests and the compaction pass, one commit per concern, no trailer); only the push is left, tracked in the release item. The other five repos are unchanged.
