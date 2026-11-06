@@ -23,6 +23,8 @@ export function Header({
   mounted: boolean;
   onToggle: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
+  /** The button names the theme a click switches to, so it always matches what you will get. */
+  const next: Theme = theme === 'dark' ? 'light' : 'dark';
   return (
     <>
       <a className="skip-link" href="#main">
@@ -46,11 +48,16 @@ export function Header({
               </a>
             ))}
             {mounted ? (
-              <Button variant="ghost" className="theme-toggle" aria-pressed={theme === 'dark'} onClick={onToggle}>
+              <Button
+                variant="ghost"
+                className="theme-toggle"
+                aria-label={`Switch to ${next} theme`}
+                onClick={onToggle}
+              >
                 <span className="theme-toggle__icon" aria-hidden="true">
-                  ◐
+                  {next === 'light' ? '☀' : '☾'}
                 </span>
-                <span className="theme-toggle__label">Dark theme</span>
+                <span className="theme-toggle__label">{next === 'light' ? 'Light' : 'Dark'} theme</span>
               </Button>
             ) : null}
           </nav>
