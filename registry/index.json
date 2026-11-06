@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "generated_at": "2026-11-06T22:11:56Z",
+  "generated_at": "2026-11-06T23:28:56Z",
   "skills": {
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
       "description": "Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. References rest-api-architect / protobuf-architect / grpc-architect for rules; runs `buf breaking` / `openapi-diff`. Severity-keyed findings. Use when reviewing a new endpoint, proto change, or before a breaking-change release.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -16,37 +16,52 @@
           "version": "1.0.1",
           "published_at": "2026-09-30T13:09:12Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/api-contract-reviewer@v1.0.1/api-contract-reviewer-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/api-contract-reviewer@v1.1.0/api-contract-reviewer-v1.1.0.tar.gz"
         }
       }
     },
     "astro-architect": {
       "name": "astro-architect",
       "description": "Astro 6+ standards — islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `\u003cscript\u003e` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-10-01T03:46:09Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/astro-architect@v1.0.0/astro-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/astro-architect@v1.1.0/astro-architect-v1.1.0.tar.gz"
         }
       }
     },
     "caveman": {
       "name": "caveman",
       "description": "Ultra-compressed communication mode — drops filler, articles, pleasantries while keeping technical accuracy. Use when user says \"caveman mode\", \"talk like caveman\", \"less tokens\", \"be brief\", or invokes /caveman.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/caveman@v1.0.0/caveman-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/caveman@v1.1.0/caveman-v1.1.0.tar.gz"
         }
       }
     },
     "ci-cd-architect": {
       "name": "ci-cd-architect",
       "description": "CI/CD principles — pipeline taxonomy, trigger design, supply-chain hygiene (SHA-pinned actions), OIDC cloud auth, caching (and the setup-* cache-key pitfalls that silently disable it), matrix strategy, test gates, release automation, deployment strategies, and running CI locally with act. Suggestion-mode (trade-offs over mandates). GitHub Actions recipes in RECIPES.md. Use when designing, reviewing, or scaffolding CI/CD workflows.",
-      "latest": "1.2.0",
+      "latest": "1.3.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -62,25 +77,35 @@
           "version": "1.2.0",
           "published_at": "2026-10-11T05:48:27Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/ci-cd-architect@v1.2.0/ci-cd-architect-v1.2.0.tar.gz"
+        },
+        "1.3.0": {
+          "version": "1.3.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ci-cd-architect@v1.3.0/ci-cd-architect-v1.3.0.tar.gz"
         }
       }
     },
     "cli-tool-architect": {
       "name": "cli-tool-architect",
       "description": "Cross-language CLI standards — subcommand structure, flag/env/config/default precedence, TOML in XDG, stdout-data/stderr-logs split, --output json|yaml, exit codes, NO_COLOR, completions. Go (cobra+pflag+viper) and Python (typer) recipes. Use when designing or reviewing a CLI.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/cli-tool-architect@v1.0.0/cli-tool-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/cli-tool-architect@v1.1.0/cli-tool-architect-v1.1.0.tar.gz"
         }
       }
     },
     "code-design-refactor": {
       "name": "code-design-refactor",
       "description": "Design-level refactoring rules — extraction, decoupling, SRP, encapsulation, primitive obsession. Language-agnostic. Sits between logic-cleaner (expression-level) and improve-codebase-architecture (system-level). Use when restructuring existing code at the module/class/function level.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -91,13 +116,18 @@
           "version": "1.0.1",
           "published_at": "2026-10-12T23:16:44Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/code-design-refactor@v1.0.1/code-design-refactor-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/code-design-refactor@v1.1.0/code-design-refactor-v1.1.0.tar.gz"
         }
       }
     },
     "codebase-hygiene-reviewer": {
       "name": "codebase-hygiene-reviewer",
       "description": "Evidence-based declutter audit — dead code, unused exports, duplication, oversized files/functions, modularization candidates; shared libraries with several consumers. Proposes, never edits. Use when cleaning up a repo or library, hunting dead code, or sizing a split.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -108,13 +138,18 @@
           "version": "1.1.0",
           "published_at": "2026-10-23T03:14:18Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/codebase-hygiene-reviewer@v1.1.0/codebase-hygiene-reviewer-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/codebase-hygiene-reviewer@v1.2.0/codebase-hygiene-reviewer-v1.2.0.tar.gz"
         }
       }
     },
     "commit-author": {
       "name": "commit-author",
       "description": "Generate concise Conventional Commits messages from a staged diff. Enforces full type set, imperative subject lines, no AI co-author attribution. Use when user wants to commit, asks for a commit message, mentions \"commit\", or invokes /commit.",
-      "latest": "1.11.0",
+      "latest": "1.12.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -125,30 +160,45 @@
           "version": "1.11.0",
           "published_at": "2026-10-08T20:55:07Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/commit-author@v1.11.0/commit-author-v1.11.0.tar.gz"
+        },
+        "1.12.0": {
+          "version": "1.12.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/commit-author@v1.12.0/commit-author-v1.12.0.tar.gz"
         }
       }
     },
     "connectrpc-architect": {
       "name": "connectrpc-architect",
       "description": "ConnectRPC standards — one .proto serving Connect, gRPC and gRPC-Web from a single http.Handler via protoc-gen-connect-go, connect.Code error mapping, the mandatory interceptor chain, streaming caveats (HTTP/2 for client/bidi, gRPC-Web server-stream only), browser callers with no proxy, generic typed clients and conformance testing. Use when designing or reviewing a Connect handler, choosing Connect over vanilla gRPC, or serving proto to browser callers.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-10-15T22:17:52Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/connectrpc-architect@v1.0.0/connectrpc-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/connectrpc-architect@v1.1.0/connectrpc-architect-v1.1.0.tar.gz"
         }
       }
     },
     "ddd-architect": {
       "name": "ddd-architect",
       "description": "Domain-Driven Design — strategic-first (bounded contexts, context mapping) with aggregates, value objects, domain events, repositories. Event sourcing out of scope. Use when shaping a domain model or designing aggregate boundaries.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/ddd-architect@v1.0.0/ddd-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ddd-architect@v1.1.0/ddd-architect-v1.1.0.tar.gz"
         }
       }
     },
@@ -156,12 +206,17 @@
       "name": "demo-presentation-architect",
       "description": "Design slide-deck specifications — slide budget, narrative arc, splitting rule, takeaway-led titles, body word budgets, per-slide layout from a fixed catalog. Outputs one `.md` slide-by-slide; never HTML/PDF/PPTX. Always interviews for language + core info first. Use when authoring presentation specs.",
       "personal": true,
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.1.0": {
           "version": "1.1.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/demo-presentation-architect@v1.1.0/demo-presentation-architect-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/demo-presentation-architect@v1.2.0/demo-presentation-architect-v1.2.0.tar.gz"
         }
       }
     },
@@ -169,31 +224,41 @@
       "name": "demo-script-architect",
       "description": "Design and refine presenter-centric demo scripts — narrative flow over feature lists, visual-cue mapping, progressive capability reveals, query-to-explanation alignment, redundancy audits. Use when creating live demos, structured walkthroughs, or turning specs into engaging narratives.",
       "personal": true,
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/demo-script-architect@v1.0.0/demo-script-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/demo-script-architect@v1.1.0/demo-script-architect-v1.1.0.tar.gz"
         }
       }
     },
     "design-patterns": {
       "name": "design-patterns",
       "description": "Skeptical design-patterns reference catalog for modern Go and Python — keeps repository, adapter, strategy, decorator, observer, builder; flags the rest as anti-patterns. Consultative, not active: consult before introducing a pattern in code-design-refactor or improve-codebase-architecture, or when pushing back on a cargo-cult one. Not a refactoring rung itself.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/design-patterns@v1.0.1/design-patterns-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/design-patterns@v1.1.0/design-patterns-v1.1.0.tar.gz"
         }
       }
     },
     "docker-architect": {
       "name": "docker-architect",
       "description": "Docker standards — multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2. Use when writing or reviewing Dockerfiles or Compose files.",
-      "latest": "1.3.0",
+      "latest": "1.4.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -214,13 +279,18 @@
           "version": "1.3.0",
           "published_at": "2026-10-11T03:18:44Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/docker-architect@v1.3.0/docker-architect-v1.3.0.tar.gz"
+        },
+        "1.4.0": {
+          "version": "1.4.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/docker-architect@v1.4.0/docker-architect-v1.4.0.tar.gz"
         }
       }
     },
     "docs-architect": {
       "name": "docs-architect",
       "description": "Project documentation system — a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, backlog as a queue or as one file per item, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -231,25 +301,35 @@
           "version": "1.1.0",
           "published_at": "2026-11-02T12:34:26Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/docs-architect@v1.1.0/docs-architect-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/docs-architect@v1.2.0/docs-architect-v1.2.0.tar.gz"
         }
       }
     },
     "event-driven-architect": {
       "name": "event-driven-architect",
       "description": "Event-driven architecture — event/command taxonomy, Protobuf schemas, topic naming, mandatory outbox, partitioning, idempotency, DLQs, schema evolution. Broker-agnostic (NATS/Kafka/RabbitMQ). Use when designing event flows or auditing consistency.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/event-driven-architect@v1.0.0/event-driven-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/event-driven-architect@v1.1.0/event-driven-architect-v1.1.0.tar.gz"
         }
       }
     },
     "fastapi-architect": {
       "name": "fastapi-architect",
       "description": "Framework-specific delta on rest-api-architect — FastAPI 0.136 on Python 3.14. Feature layout, Pydantic v2 request/response separation, async DI with lifespan, URL-prefix versioning, RFC 9457 errors, in-house OAuth2+JWT or external IdP. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a FastAPI service.",
-      "latest": "1.0.3",
+      "latest": "1.1.0",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -265,25 +345,35 @@
           "version": "1.0.3",
           "published_at": "2026-10-12T23:16:44Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/fastapi-architect@v1.0.3/fastapi-architect-v1.0.3.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/fastapi-architect@v1.1.0/fastapi-architect-v1.1.0.tar.gz"
         }
       }
     },
     "feature-planner": {
       "name": "feature-planner",
       "description": "Upstream feature planning — requirement clarification, constraint discovery, design outline, vertical-slice task breakdown ordered by risk. Hands off to grill-with-docs and tdd. Use when starting new feature work from a vague request and no plan exists yet; if a plan or design already exists, use grill-with-docs to stress-test it instead.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/feature-planner@v1.0.1/feature-planner-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/feature-planner@v1.1.0/feature-planner-v1.1.0.tar.gz"
         }
       }
     },
     "gin-architect": {
       "name": "gin-architect",
-      "description": "Framework-specific delta on rest-api-architect — Gin 1.12 on Go 1.26. Feature layout, struct-tag validation, RFC 9457 errors, in-house JWT or external IdP, route groups for URL-prefix versioning, OpenAPI. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a Gin service.",
-      "latest": "1.0.3",
+      "description": "Framework-specific delta on rest-api-architect — Gin 1.12 on Go 1.27.3. Feature layout, struct-tag validation, RFC 9457 errors, in-house JWT or external IdP, route groups for URL-prefix versioning, OpenAPI. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a Gin service.",
+      "latest": "1.1.0",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -299,13 +389,18 @@
           "version": "1.0.3",
           "published_at": "2026-10-12T23:16:44Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/gin-architect@v1.0.3/gin-architect-v1.0.3.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/gin-architect@v1.1.0/gin-architect-v1.1.0.tar.gz"
         }
       }
     },
     "go-architect": {
       "name": "go-architect",
-      "description": "Go 1.27.1 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, or deciding where a Go module and its frontend live in a repo.",
-      "latest": "1.15.0",
+      "description": "Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, or deciding where a Go module and its frontend live in a repo.",
+      "latest": "1.16.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -361,6 +456,11 @@
           "version": "1.15.0",
           "published_at": "2026-11-05T01:55:48Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-architect@v1.15.0/go-architect-v1.15.0.tar.gz"
+        },
+        "1.16.0": {
+          "version": "1.16.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-architect@v1.16.0/go-architect-v1.16.0.tar.gz"
         },
         "1.2.0": {
           "version": "1.2.0",
@@ -421,9 +521,9 @@
     },
     "go-house-libs": {
       "name": "go-house-libs",
-      "description": "Maps a need to the ralvarezdev shared Go modules — restkit, ginkit, pgkit, mcpkit (REST envelope and problem details, gin, Postgres, MCP), protos and connectrpckit (shared protobuf contracts and platform-service stubs, ConnectRPC servers and clients), identity and identitygin (accounts, auth, PATs), ratelimit, email, webpush, termkit (CLI UI), svckit (server lifecycle), tick (periodic jobs), sqlitekit (SQLite), resilience (retry, backoff, supervisor). Use when building or extending a Go API, MCP server, gRPC or Connect service, CLI, service or Postgres/SQLite store, before hand-writing envelopes, cursors, protobuf contracts, Connect servers or clients, pgtype conversions, auth, rate limiting, mail, push, a server start/shutdown block, a ticker loop, a retry loop or a SQLite open.",
+      "description": "Maps a need to the ralvarezdev shared Go modules — restkit, ginkit, pgkit, mcpkit (REST envelope and problem details, gin, Postgres, MCP), contracts and connectrpckit (shared protobuf contracts and platform-service stubs, ConnectRPC servers and clients), identity and identitygin (accounts, auth, PATs), ratelimit, email, webpush, termkit (CLI UI), svckit (server lifecycle), tick (periodic jobs), sqlitekit (SQLite), resilience (retry, backoff, supervisor). Use when building or extending a Go API, MCP server, gRPC or Connect service, CLI, service or Postgres/SQLite store, before hand-writing envelopes, cursors, protobuf contracts, Connect servers or clients, pgtype conversions, auth, rate limiting, mail, push, a server start/shutdown block, a ticker loop, a retry loop or a SQLite open.",
       "personal": true,
-      "latest": "0.6.1",
+      "latest": "0.7.0",
       "versions": {
         "0.3.0": {
           "version": "0.3.0",
@@ -449,14 +549,19 @@
           "version": "0.6.1",
           "published_at": "2026-10-15T23:04:23Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/go-house-libs@v0.6.1/go-house-libs-v0.6.1.tar.gz"
+        },
+        "0.7.0": {
+          "version": "0.7.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-house-libs@v0.7.0/go-house-libs-v0.7.0.tar.gz"
         }
       }
     },
     "go-library-builder": {
       "name": "go-library-builder",
-      "description": "Scaffolds reusable Go 1.26 library modules in the ralvarezdev house style — flat, vertical-slice, toolkit or framework-adapter shapes; domain-pure root package, ports as narrow interfaces, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter (default github.com/ralvarezdev). Use when bootstrapping a new Go library, adding an adapter, or auditing one against the house style.",
+      "description": "Scaffolds reusable Go 1.27.3 library modules in the ralvarezdev house style — flat, vertical-slice, toolkit or framework-adapter shapes; domain-pure root package, ports as narrow interfaces, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter (default github.com/ralvarezdev). Use when bootstrapping a new Go library, adding an adapter, or auditing one against the house style.",
       "personal": true,
-      "latest": "1.1.1",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -472,37 +577,52 @@
           "version": "1.1.1",
           "published_at": "2026-10-12T23:25:07Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/go-library-builder@v1.1.1/go-library-builder-v1.1.1.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-library-builder@v1.2.0/go-library-builder-v1.2.0.tar.gz"
         }
       }
     },
     "grafana-architect": {
       "name": "grafana-architect",
       "description": "Grafana dashboards + alerts — dashboards-as-code (Grizzly), per-service folders, one-question-per-panel, unified alerting with runbooks, low-cardinality discipline. Use when designing dashboards, writing alert rules, or auditing.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/grafana-architect@v1.0.0/grafana-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/grafana-architect@v1.1.0/grafana-architect-v1.1.0.tar.gz"
         }
       }
     },
     "grill-with-docs": {
       "name": "grill-with-docs",
       "description": "Grilling session that challenges an existing plan or design against the project's domain model, sharpens terminology, and updates documentation (CONTEXT.md, ADRs) inline as decisions crystallise. Use when a plan or design already exists and needs stress-testing; if no plan exists yet, use feature-planner first.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/grill-with-docs@v1.0.1/grill-with-docs-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/grill-with-docs@v1.1.0/grill-with-docs-v1.1.0.tar.gz"
         }
       }
     },
     "grpc-architect": {
       "name": "grpc-architect",
       "description": "Vanilla gRPC standards — .proto services, status.Error with standard codes, domain→code mapping, interceptor chain (auth/log/recovery/validation/metrics), client deadlines, context propagation, reflection off in prod, bufconn testing. Language-agnostic; Go examples. Use when designing or reviewing a gRPC service.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -513,13 +633,18 @@
           "version": "1.0.1",
           "published_at": "2026-09-30T13:09:12Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/grpc-architect@v1.0.1/grpc-architect-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/grpc-architect@v1.1.0/grpc-architect-v1.1.0.tar.gz"
         }
       }
     },
     "hexagonal-arch": {
       "name": "hexagonal-arch",
       "description": "Hexagonal architecture (ports \u0026 adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -530,25 +655,35 @@
           "version": "1.1.0",
           "published_at": "2026-07-08T23:50:23Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/hexagonal-arch@v1.1.0/hexagonal-arch-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hexagonal-arch@v1.2.0/hexagonal-arch-v1.2.0.tar.gz"
         }
       }
     },
     "hugo-architect": {
       "name": "hugo-architect",
       "description": "Hugo 0.161 static-site architectural standards — project layout, front matter conventions, template hierarchy, Hugo Modules over submodules, Page Bundles, asset pipeline via Hugo Pipes, i18n, render hooks, deployment targets. Extended edition required. Use when scaffolding, reviewing, or auditing a Hugo site or theme.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T20:20:46Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/hugo-architect@v1.0.0/hugo-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hugo-architect@v1.1.0/hugo-architect-v1.1.0.tar.gz"
         }
       }
     },
     "improve-codebase-architecture": {
       "name": "improve-codebase-architecture",
       "description": "Find deepening opportunities in a codebase, informed by the domain language in CONTEXT.md and the decisions in docs/adr/. Use when the user wants to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, or make a codebase more testable and AI-navigable.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -559,49 +694,69 @@
           "version": "1.1.0",
           "published_at": "2026-10-23T03:05:11Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/improve-codebase-architecture@v1.1.0/improve-codebase-architecture-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/improve-codebase-architecture@v1.2.0/improve-codebase-architecture-v1.2.0.tar.gz"
         }
       }
     },
     "landing-page-designer": {
       "name": "landing-page-designer",
       "description": "Design landing-page proposals for a product as self-contained HTML grounded in its code, real captures and brand — one memorable device per page, a choreographed hero film, an accessibility and verification bar (axe x8, parser check, smoke test). Use when asked to draw, propose or improve a product's public/landing page, compare directions, or \"make it more attractive / more dynamic\". Not for porting a chosen design into the app (later job); upstream concept work is website-concept-architect.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-11-04T12:27:23Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/landing-page-designer@v1.0.0/landing-page-designer-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/landing-page-designer@v1.1.0/landing-page-designer-v1.1.0.tar.gz"
         }
       }
     },
     "latex-architect": {
       "name": "latex-architect",
       "description": "LaTeX document standards on TeX Live 2026 — latexmk-only builds, preamble and package-order discipline, biblatex + biber bibliographies, semantic cross-references (cleveref, siunitx, booktabs), float and math conventions, chktex/latexindent gates. Use when writing, building, structuring, or reviewing LaTeX documents, papers, reports, or theses.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-08-10T13:30:11Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/latex-architect@v1.0.0/latex-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/latex-architect@v1.1.0/latex-architect-v1.1.0.tar.gz"
         }
       }
     },
     "logic-cleaner": {
       "name": "logic-cleaner",
       "description": "Expression-level code cleanup — guard clauses, naming, magic values, conditional simplification, duplication. Language-agnostic. Out of scope: architecture, module decomposition. Use when user asks to clean code, simplify expressions, flatten nesting, or invokes /logic-cleaner.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/logic-cleaner@v1.0.0/logic-cleaner-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/logic-cleaner@v1.1.0/logic-cleaner-v1.1.0.tar.gz"
         }
       }
     },
     "mcp-architect": {
       "name": "mcp-architect",
-      "description": "MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations (readOnly/destructive/idempotent), structured output, JSON-RPC error mapping, prompt-injection and SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — authoring JSON Schemas as the source of truth for tool inputs and outputs, and generating Go types with atombender/go-jsonschema, sharing enums through $defs, and the two traps (the SDK resolves OutputSchema with no loader; go-jsonschema does not follow $ref) that silently produce a wrong contract. MCP Apps panels as an addition to a complete text result — never the only path — with capability detection on stateless servers.",
-      "latest": "2.3.0",
+      "description": "MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations, structured output, JSON-RPC error mapping, prompt-injection/SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — JSON Schemas as the source of truth for tool inputs/outputs, Go types generated with atombender/go-jsonschema, enums shared via $defs, and the two traps (SDK resolves OutputSchema with no loader; go-jsonschema ignores $ref) that silently yield a wrong contract. MCP Apps panels only as an addition to a complete text result, with capability detection on stateless servers.",
+      "latest": "2.4.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -637,25 +792,47 @@
           "version": "2.3.0",
           "published_at": "2026-10-13T20:57:26Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/mcp-architect@v2.3.0/mcp-architect-v2.3.0.tar.gz"
+        },
+        "2.4.0": {
+          "version": "2.4.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/mcp-architect@v2.4.0/mcp-architect-v2.4.0.tar.gz"
         }
       }
     },
     "ml-conference-paper-architect": {
       "name": "ml-conference-paper-architect",
       "description": "ML conference paper formatting for NeurIPS, ICML, ICLR, and AAAI — official style-file usage, anonymization and camera-ready toggles, page-limit accounting, natbib citations, standard paper skeleton, reproducibility checklists, appendix and supplementary rules, desk-reject checks. Use when writing, formatting, or submitting a machine-learning conference paper.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-08-10T13:30:11Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/ml-conference-paper-architect@v1.0.0/ml-conference-paper-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ml-conference-paper-architect@v1.1.0/ml-conference-paper-architect-v1.1.0.tar.gz"
+        }
+      }
+    },
+    "mockup-architect": {
+      "name": "mockup-architect",
+      "description": "Standards for UI mockups as self-contained HTML — dated folders, a gallery index, tokens as CSS variables, and the fixed preview bar that flips palette, corners, accent and mark variants (state in data attributes, localStorage and ?query so screenshots are reproducible). Ships pv-bar.css and pv-bar.js. Use when drawing, comparing or retrofitting mockups, or when a mockup offers options to choose between.",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/mockup-architect@v1.0.0/mockup-architect-v1.0.0.tar.gz"
         }
       }
     },
     "nethttp-architect": {
       "name": "nethttp-architect",
-      "description": "Framework-specific delta on rest-api-architect — Go stdlib net/http (Go 1.22+ ServeMux, no router) on Go 1.26. Feature layout, struct-tag validation, RFC 9457 errors, JWT or IdP auth, graceful shutdown, OpenAPI via kin-openapi. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a stdlib net/http service.",
-      "latest": "1.0.3",
+      "description": "Framework-specific delta on rest-api-architect — Go stdlib net/http (Go 1.22+ ServeMux, no router) on Go 1.27.3. Feature layout, struct-tag validation, RFC 9457 errors, JWT or IdP auth, graceful shutdown, OpenAPI via kin-openapi. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a stdlib net/http service.",
+      "latest": "1.1.0",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -671,13 +848,18 @@
           "version": "1.0.3",
           "published_at": "2026-10-12T23:16:44Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/nethttp-architect@v1.0.3/nethttp-architect-v1.0.3.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/nethttp-architect@v1.1.0/nethttp-architect-v1.1.0.tar.gz"
         }
       }
     },
     "nextjs-architect": {
       "name": "nextjs-architect",
       "description": "Next.js 16 standards — App Router only, server components by default with explicit `\"use client\"` boundaries, server actions for mutations, streaming Suspense, edge vs node runtime, Image/Font/Metadata APIs. Pairs with react-architect. Use when scaffolding or reviewing a Next.js app or auditing server/client boundaries.",
-      "latest": "1.0.2",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -693,30 +875,45 @@
           "version": "1.0.2",
           "published_at": "2026-10-12T23:16:44Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/nextjs-architect@v1.0.2/nextjs-architect-v1.0.2.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/nextjs-architect@v1.1.0/nextjs-architect-v1.1.0.tar.gz"
         }
       }
     },
     "observability-architect": {
       "name": "observability-architect",
       "description": "Application-side observability — structured logs, Prometheus metrics, OTel traces, signal correlation, head sampling, PII discipline, RED+USE. Use when instrumenting code, naming metrics, or auditing what a service emits.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/observability-architect@v1.0.0/observability-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/observability-architect@v1.1.0/observability-architect-v1.1.0.tar.gz"
         }
       }
     },
     "performance-reviewer": {
       "name": "performance-reviewer",
       "description": "Cross-language perf review — N+1, missing indexes, blocking I/O in async, allocation hot paths, unbounded memory, slow algorithms. Findings grounded in EXPLAIN / pprof / py-spy / metrics. Use when reviewing for perf or investigating a slow endpoint.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/performance-reviewer@v1.0.0/performance-reviewer-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/performance-reviewer@v1.1.0/performance-reviewer-v1.1.0.tar.gz"
         }
       }
     },
@@ -724,31 +921,41 @@
       "name": "pi-iteration-workflow",
       "description": "Edit-test workflow for the voldemorbot robot codebase — Windows-to-Pi SSH deploy loop, pixi/ROS2 rebuild triggers, flaky-WiFi survival via screen, PowerShell SSH quoting pitfalls, sudo caching on the Pi Zero. Use when pushing platform/robot changes to hardware, restarting the robot service, or a Pi SSH session misbehaves.",
       "personal": true,
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-07-07T19:53:15Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/pi-iteration-workflow@v1.0.0/pi-iteration-workflow-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/pi-iteration-workflow@v1.1.0/pi-iteration-workflow-v1.1.0.tar.gz"
         }
       }
     },
     "protobuf-architect": {
       "name": "protobuf-architect",
       "description": "Protocol Buffers (proto3) standards — Buf-style package naming, protovalidate (CEL), buf toolchain for lint/breaking/generation, field-number reservation, well-known types. Language-agnostic schema design. Use when designing or evolving .proto files.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/protobuf-architect@v1.0.0/protobuf-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/protobuf-architect@v1.1.0/protobuf-architect-v1.1.0.tar.gz"
         }
       }
     },
     "python-architect": {
       "name": "python-architect",
       "description": "Python 3.14 enterprise standards — modern typing (PEP 649), immutable dataclasses, Protocol-based DI, asyncio discipline, pytest 9, psycopg + .sql files via importlib.resources. Use when writing, reviewing, or scaffolding Python code.",
-      "latest": "1.4.2",
+      "latest": "1.5.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -769,13 +976,18 @@
           "version": "1.4.2",
           "published_at": "2026-10-12T23:16:44Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/python-architect@v1.4.2/python-architect-v1.4.2.tar.gz"
+        },
+        "1.5.0": {
+          "version": "1.5.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/python-architect@v1.5.0/python-architect-v1.5.0.tar.gz"
         }
       }
     },
     "react-architect": {
       "name": "react-architect",
       "description": "React 19 standards — TypeScript strict, feature-based components, hooks-first composition, TanStack Query for server state, zustand for cross-tree client state, Suspense + ErrorBoundary at every async boundary, Radix for a11y. Use when writing or reviewing React components, hooks, or client-side state.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -791,13 +1003,18 @@
           "version": "1.1.0",
           "published_at": "2026-10-23T03:05:11Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/react-architect@v1.1.0/react-architect-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/react-architect@v1.2.0/react-architect-v1.2.0.tar.gz"
         }
       }
     },
     "repo-tooling-architect": {
       "name": "repo-tooling-architect",
       "description": "Repo-root developer tooling — .editorconfig, .gitignore, version pinning (mise default, proto alt), task runner (Task default, just alt), CI (GitHub Actions default, act for local/free runs), minimal pre-commit, env vars via dotenv + external secret manager, Renovate, AGENTS.md / CLAUDE.md agent-instruction files. Use when scaffolding or auditing a repo's tooling layer, or naming/renaming Taskfile tasks.",
-      "latest": "1.5.0",
+      "latest": "1.6.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -828,13 +1045,18 @@
           "version": "1.5.0",
           "published_at": "2026-10-23T12:18:16Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/repo-tooling-architect@v1.5.0/repo-tooling-architect-v1.5.0.tar.gz"
+        },
+        "1.6.0": {
+          "version": "1.6.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/repo-tooling-architect@v1.6.0/repo-tooling-architect-v1.6.0.tar.gz"
         }
       }
     },
     "rest-api-architect": {
       "name": "rest-api-architect",
       "description": "Cross-language REST conventions — resource URLs, method semantics, status codes, URL-prefix versioning, cursor pagination, snake_case JSON, ISO 8601 timestamps, RFC 9457 errors, Idempotency-Key, ETag/If-Match, OpenAPI as source of truth. Framework-agnostic. Use when designing or auditing REST endpoints.",
-      "latest": "1.1.1",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -850,13 +1072,18 @@
           "version": "1.1.1",
           "published_at": "2026-09-30T13:09:12Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/rest-api-architect@v1.1.1/rest-api-architect-v1.1.1.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rest-api-architect@v1.2.0/rest-api-architect-v1.2.0.tar.gz"
         }
       }
     },
     "reveal-js-architect": {
       "name": "reveal-js-architect",
       "description": "reveal.js 6.0.1 presentation architecture — section/fragment structure, HTML vs Markdown-mode authoring, theming, plugin config, Reveal.initialize() options, vanilla setup, React extension via @revealjs/react 0.2.1. Use when building, structuring, or reviewing a reveal.js deck.",
-      "latest": "1.0.2",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -872,25 +1099,35 @@
           "version": "1.0.2",
           "published_at": "2026-07-17T11:24:15Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/reveal-js-architect@v1.0.2/reveal-js-architect-v1.0.2.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/reveal-js-architect@v1.1.0/reveal-js-architect-v1.1.0.tar.gz"
         }
       }
     },
     "ros2-architect": {
       "name": "ros2-architect",
       "description": "ROS2 standards across Jazzy/Kilted/Lyrical — colcon + ament_cmake/ament_python layout, lifecycle nodes, explicit QoS, services/actions, parameters, Python launch DSL. Cross-platform dev env via Pixi + RoboStack. C++ (rclcpp) and Python (rclpy) equal first-class. Use when scaffolding or reviewing a ROS2 workspace.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/ros2-architect@v1.0.0/ros2-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ros2-architect@v1.1.0/ros2-architect-v1.1.0.tar.gz"
         }
       }
     },
     "rsk-guide": {
       "name": "rsk-guide",
       "description": "Operator's guide for the rsk CLI — manage ralvaskills via the .rsk/ project manifest (rsk new, rsk install, rsk pin), bundle/global installs and the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards. Use when the user mentions rsk, asks how to install/pin/update skills, wants to add a skill to a project, is starting work in a new project or scaffolding (to learn which standards apply), or wants to set up ralvaskills on a new machine. Companion to cli-tool-architect (CLI design), mcp-architect (server design) and skill-builder (authoring new skills).",
-      "latest": "0.4.2",
+      "latest": "0.5.0",
       "versions": {
         "0.3.0": {
           "version": "0.3.0",
@@ -916,13 +1153,18 @@
           "version": "0.4.2",
           "published_at": "2026-11-02T15:06:41Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rsk-guide@v0.4.2/rsk-guide-v0.4.2.tar.gz"
+        },
+        "0.5.0": {
+          "version": "0.5.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rsk-guide@v0.5.0/rsk-guide-v0.5.0.tar.gz"
         }
       }
     },
     "secrets-architect": {
       "name": "secrets-architect",
       "description": "Secret-handling standards for one external store consumed by reference — consumer decision matrix (Compose secrets, *_FILE, systemd LoadCredential, plain bind mount, CI), permission/uid rules, naming, migration workflow, live verification, pitfalls. Use when wiring a credential into a repo, container, systemd unit or CI job, migrating secrets out of .env or git, or auditing a secrets store.",
-      "latest": "1.1.1",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -938,37 +1180,52 @@
           "version": "1.1.1",
           "published_at": "2026-10-11T05:48:27Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/secrets-architect@v1.1.1/secrets-architect-v1.1.1.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/secrets-architect@v1.2.0/secrets-architect-v1.2.0.tar.gz"
         }
       }
     },
     "security-reviewer": {
       "name": "security-reviewer",
       "description": "Cross-language security review — injection, auth/authz, secrets, insecure defaults, deserialization, CSRF/SSRF/IDOR, dep vulns. Emits a Critical/High/Medium/Low report with file:line + fixes. Use when auditing a PR or pre-release.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/security-reviewer@v1.0.0/security-reviewer-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/security-reviewer@v1.1.0/security-reviewer-v1.1.0.tar.gz"
         }
       }
     },
     "skill-builder": {
       "name": "skill-builder",
       "description": "Scaffold a new ralvaskills skill per SPECS.md — SKILL.md skeleton, optional STACK/RECIPES, folder placement, SPECS updates. Interview-first; never guesses. Use when authoring a new skill or invoking /skill-builder.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/skill-builder@v1.0.0/skill-builder-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/skill-builder@v1.1.0/skill-builder-v1.1.0.tar.gz"
         }
       }
     },
     "sql-architect": {
       "name": "sql-architect",
       "description": "SQL standards — UUID v7 PKs, snake_case, soft delete, forward-only migrations, parameter binding, N+1 prevention, EXPLAIN-driven indexing. PostgreSQL 18 primary; MySQL 9 and SQLite 3.53 noted. Use when designing schemas, writing queries, or auditing a database layer.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -979,13 +1236,18 @@
           "version": "1.0.1",
           "published_at": "2026-07-13T19:06:11Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/sql-architect@v1.0.1/sql-architect-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/sql-architect@v1.1.0/sql-architect-v1.1.0.tar.gz"
         }
       }
     },
     "study-artifact-builder": {
       "name": "study-artifact-builder",
       "description": "Build a single-file interactive HTML artifact to study a paper's pipeline or dataset until it can be defended from memory — source pinning, paper-versus-code separation, per-component explanation (mechanics, real example, measured on the data, non-obvious details), ablation toggles, SVG diagram, numeric audit. Use when asked to study, compare, explain or memorize a method, pipeline, benchmark or dataset, or to turn a diagram into an artifact.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -996,37 +1258,52 @@
           "version": "1.1.0",
           "published_at": "2026-10-20T13:33:14Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/study-artifact-builder@v1.1.0/study-artifact-builder-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/study-artifact-builder@v1.2.0/study-artifact-builder-v1.2.0.tar.gz"
         }
       }
     },
     "tdd": {
       "name": "tdd",
       "description": "Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions \"red-green-refactor\", wants integration tests, or asks for test-first development.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/tdd@v1.0.0/tdd-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/tdd@v1.1.0/tdd-v1.1.0.tar.gz"
         }
       }
     },
     "token-economy": {
       "name": "token-economy",
       "description": "Token-saving habits and setup for coding agents — context and cache hygiene, batched tool calls, subagent exploration and delegation of mechanical work (refactors, checklist audits, repetitive loops) to cheaper models, escalation and session handoff, cheap-model (DeepSeek Flash) guidance, Claude Code guardrail settings and hooks, measuring sessions from transcripts, and an audit of context-mode, RTK and CodeGraph for Claude Code and OpenCode. Use when the user wants to save tokens or cost, shrink context, find where a session's tokens went, choose models or subagents for a task, hand repetitive work to a cheaper model, set up RTK/CodeGraph/context-mode, or invokes /token-economy.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-11-06T22:11:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/token-economy@v1.0.0/token-economy-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/token-economy@v1.1.0/token-economy-v1.1.0.tar.gz"
         }
       }
     },
     "ui-ux-architect": {
       "name": "ui-ux-architect",
       "description": "UI/UX standards — WCAG 2.2 AA, Radix + Tailwind 4 + shadcn/ui, design-token theming, mandatory loading/error/empty/success states on every async surface, mobile-first responsive, keyboard parity, contrast checked in CI. Use when designing UI components, building a design system, or auditing accessibility.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1037,6 +1314,11 @@
           "version": "1.0.1",
           "published_at": "2026-09-30T13:09:12Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/ui-ux-architect@v1.0.1/ui-ux-architect-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ui-ux-architect@v1.1.0/ui-ux-architect-v1.1.0.tar.gz"
         }
       }
     },
@@ -1044,7 +1326,7 @@
       "name": "uru-scientific-paper-architect",
       "description": "Format scientific manuscripts for Revista Tecnocientífica URU (Universidad Rafael Urdaneta) — cover page fields, Times New Roman 12pt/16pt typography rules, IMRyD-derived structure by article type, figure/table/equation numbering, bracketed-numeric citations, reference formats by source type, ethics checklist. Outputs one `.md` manuscript spec. Use when preparing a paper for submission to Revista Tecnocientífica URU.",
       "personal": true,
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1055,6 +1337,11 @@
           "version": "1.1.0",
           "published_at": "2026-07-29T02:03:15Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/uru-scientific-paper-architect@v1.1.0/uru-scientific-paper-architect-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-scientific-paper-architect@v1.2.0/uru-scientific-paper-architect-v1.2.0.tar.gz"
         }
       }
     },
@@ -1062,12 +1349,17 @@
       "name": "uru-thesis-architect",
       "description": "Interview-first drafter for URU (Universidad Rafael Urdaneta) thesis (TEG) chapters — writes one section at a time toward the evaluation rubric the jury grades against, Spanish output, URU chapter order (I. Problema → V. Propuesta), never fabricates data. Complements uru-thesis-reviewer. Use when drafting or iterating a thesis section.",
       "personal": true,
-      "latest": "0.1.0",
+      "latest": "0.2.0",
       "versions": {
         "0.1.0": {
           "version": "0.1.0",
           "published_at": "2026-07-17T14:52:53Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/uru-thesis-architect@v0.1.0/uru-thesis-architect-v0.1.0.tar.gz"
+        },
+        "0.2.0": {
+          "version": "0.2.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-architect@v0.2.0/uru-thesis-architect-v0.2.0.tar.gz"
         }
       }
     },
@@ -1075,7 +1367,7 @@
       "name": "uru-thesis-defense-architect",
       "description": "Design URU-style thesis defense presentation specs — fixed institutional slide structure (portada, problema, objetivos, antecedentes, variables, metodología, resultados, conclusiones), Spanish-only content, logo placement rules (large centered cover, small top-left from slide 2). Outputs one `.md` slide-by-slide spec. Use when authoring a thesis/tesis defense deck for Universidad Real (URU).",
       "personal": true,
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1086,6 +1378,11 @@
           "version": "1.0.1",
           "published_at": "2026-07-17T03:17:12Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/uru-thesis-defense-architect@v1.0.1/uru-thesis-defense-architect-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-defense-architect@v1.1.0/uru-thesis-defense-architect-v1.1.0.tar.gz"
         }
       }
     },
@@ -1093,7 +1390,7 @@
       "name": "uru-thesis-reviewer",
       "description": "Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) theses. Emits ordered `.md` diff files (- old / + new) the author applies manually — never edits the `.docx`. Covers substance, structure, prose, citations vs `NORMAS_URU_2020`. Tracks issues across sessions via stable IDs and carry-forward. Use when the user shares a thesis or chapter.",
       "personal": true,
-      "latest": "0.2.0",
+      "latest": "0.3.0",
       "versions": {
         "0.1.0": {
           "version": "0.1.0",
@@ -1109,13 +1406,18 @@
           "version": "0.2.0",
           "published_at": "2026-07-23T02:49:25Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/uru-thesis-reviewer@v0.2.0/uru-thesis-reviewer-v0.2.0.tar.gz"
+        },
+        "0.3.0": {
+          "version": "0.3.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-reviewer@v0.3.0/uru-thesis-reviewer-v0.3.0.tar.gz"
         }
       }
     },
     "website-concept-architect": {
       "name": "website-concept-architect",
       "description": "Walk the user through designing a website concept before any code — purpose, audience, content inventory, tone, visual archetype, structure — and output 2-3 distinct concept directions plus an ASCII homepage wireframe. Use when planning a new personal site, portfolio, or marketing page upstream of implementation. Hands off to ui-ux-architect / frontend-design.",
-      "latest": "1.0.1",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1126,6 +1428,11 @@
           "version": "1.0.1",
           "published_at": "2026-10-23T03:11:24Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/website-concept-architect@v1.0.1/website-concept-architect-v1.0.1.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-06T23:28:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/website-concept-architect@v1.1.0/website-concept-architect-v1.1.0.tar.gz"
         }
       }
     }
