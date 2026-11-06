@@ -49,3 +49,6 @@ docs/internal/
 # act (local CI): secrets and the artifact server's files
 .secrets
 .artifacts/
+
+# CodeGraph local index
+.codegraph/
