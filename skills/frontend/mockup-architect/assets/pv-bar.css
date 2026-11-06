@@ -1,0 +1,15 @@
+/* Mockup preview bar. Mockup furniture, not part of the page: it reads the page's own tokens.
+   Needs --card --text --muted --line-strong --shadow --btn-bg --btn-fg (fallbacks below). */
+.pv{position:fixed;z-index:80;left:50%;bottom:12px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 16px);display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;padding:8px 12px;background:var(--card,#fff);color:var(--text,#111);border:1px solid var(--line-strong,#888);border-radius:8px;box-shadow:var(--shadow,0 8px 30px rgba(0,0,0,.25));font:500 12px/1 var(--mono,ui-monospace,monospace)}
+.pv fieldset{display:flex;align-items:center;gap:6px;margin:0;padding:0;border:0;min-width:0}
+.pv legend{float:left;margin:0 6px 0 0;padding:0;color:var(--muted,#555);letter-spacing:.06em;text-transform:uppercase}
+.pv button{min-height:36px;padding:0 12px;border:1px solid var(--line-strong,#888);border-radius:4px;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.pv button:hover{border-color:currentColor}
+.pv button[aria-pressed=true]{background:var(--btn-bg,#111);border-color:var(--btn-bg,#111);color:var(--btn-fg,#fff)}
+.pv fieldset[hidden]{display:none}
+.pv .sw{display:inline-block;width:10px;height:10px;margin-right:6px;background:var(--sw);border:1px solid currentColor;vertical-align:-1px}
+:root[data-theme=dark] .pv .sw{background:var(--sw-dark,var(--sw))}
+:root[data-corners=sharp] .pv,:root[data-corners=sharp] .pv button{border-radius:0}
+/* keep the last section clear of the bar */
+.pv-clear{padding-bottom:132px}@media(max-width:900px){.pv-clear{padding-bottom:260px}}
+@media (forced-colors:active){.pv button[aria-pressed=true]{background:Highlight;color:HighlightText}}

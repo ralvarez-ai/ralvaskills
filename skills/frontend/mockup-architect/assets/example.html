@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><title>Mockup with the preview bar</title><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--card:#fbf9f4;--text:#16150f;--muted:#575346;--line-strong:#85806f;--btn-bg:#16150f;--btn-fg:#f3efe6;--shadow:0 8px 30px rgba(0,0,0,.2);--mono:ui-monospace,monospace}
+:root[data-palette=b]{--card:#1f1f1c;--text:#efebe0;--muted:#a39e90;--btn-bg:#efebe0;--btn-fg:#131311}
+body{margin:0;font:16px/1.5 system-ui;background:var(--card);color:var(--text)}main{padding:48px 24px}
+</style>
+<link rel="stylesheet" href="pv-bar.css">
+<script type="application/json" id="pv-config">{"axes":[
+ {"key":"palette","label":"Palette","values":[{"v":"a","label":"A paper"},{"v":"b","label":"B night"}]},
+ {"key":"corners","label":"Corners","values":[{"v":"soft","label":"Soft"},{"v":"sharp","label":"Sharp"}]},
+ {"key":"accent","label":"Accent on B","when":{"key":"palette","is":"b"},"values":[{"v":"teal","label":"Teal","sw":"#3cc4de"},{"v":"plum","label":"Plum","sw":"#e590cd"}]}
+]}</script>
+<script src="pv-bar.js"></script>
+</head>
+<body><main class="pv-clear"><h1>Variant under review</h1><p>Use the bar. Try <code>?palette=b&amp;accent=plum</code>.</p></main></body>
+</html>
