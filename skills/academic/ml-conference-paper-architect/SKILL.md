@@ -21,11 +21,11 @@ Corollary: **never hand-copy a preamble from a previous paper.** Download the of
 1. **Venue and year** — determines the `.sty`, the page limit, and the checklist.
 2. **Track** — main conference, datasets & benchmarks, workshop, or findings-style track. Limits and review criteria differ; workshop tracks are usually 4 pages and often *not* anonymous.
 3. **Stage** — submission (anonymous), camera-ready (de-anonymized, +1 page at most venues), or preprint (arXiv).
-4. **Whether code and data will be released** — this changes what the checklist and reproducibility statements can honestly claim, and it is not a question to answer at the deadline.
+4. **Code/data release plan** — sets what the checklist and reproducibility statements can honestly claim; settle it before the deadline.
 
 ## 3. Venue matrix
 
-Verify each row against the current CFP — see [§1](#1-the-one-rule-that-overrides-everything).
+Verify rows against the current CFP ([§1](#1-the-one-rule-that-overrides-everything)).
 
 | | NeurIPS | ICML | ICLR | AAAI |
 |---|---|---|---|---|
@@ -124,7 +124,6 @@ Run all of these before uploading; the list in [RECIPES §4](RECIPES.md#4-pre-su
 
 ## 11. Out of scope
 
-- **General LaTeX practice** (build, preamble, floats, math, cross-references) → [latex-architect](../../languages/latex-architect/SKILL.md)
 - **Journal and institutional formats** → [uru-scientific-paper-architect](../../personal/uru-scientific-paper-architect/SKILL.md), [uru-thesis-architect](../../personal/uru-thesis-architect/SKILL.md)
 - **Talk and poster design** → [demo-presentation-architect](../../personal/demo-presentation-architect/SKILL.md)
 - **Research content** — this skill formats and structures a paper; it does not generate claims, results, or citations. Never fabricate a number, a baseline, or a reference.

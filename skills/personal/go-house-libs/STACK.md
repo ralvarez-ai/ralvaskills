@@ -49,7 +49,7 @@ Each module pins the siblings it builds on at the version below (its `go.mod`, 2
 
 Consumers are tracked in each project's own `go.mod`, not here. A "second consumer" for the promotion rule means another project that needs the same code; check with a `go.mod` and code search across your projects before promoting.
 
-Every current tag needs Go 1.27.1 (`contracts` and `connectrpckit` need Go 1.27.2), so a project still on an older `go` directive must bump it before importing any module here. `grpckit` and `connectrpckit` are the gRPC and Connect transports (both map `corekit.Kind` to their own code), and `corekit` is consumed by both and by every service that returns `*corekit.Error` from its handlers. `contracts` carries the shared contracts and platform-service stubs; `connectrpckit` is the Connect transport.
+`grpckit` and `connectrpckit` are the gRPC and Connect transports (both map `corekit.Kind` to their own code), and `corekit` is consumed by both and by every service that returns `*corekit.Error` from its handlers. `contracts` carries the shared contracts and platform-service stubs; `connectrpckit` is the Connect transport.
 
 ## Notes
 

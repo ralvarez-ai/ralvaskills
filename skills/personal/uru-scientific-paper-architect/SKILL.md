@@ -11,7 +11,7 @@ Format a **scientific manuscript for Revista Tecnocientífica URU** (Universidad
 ## 1. Scope & output
 
 - **Output is always one `.md` file.** No `.docx` generation, no PDF, no styling code. The `.md` represents exact manuscript content and structure — the user pastes/adapts it into Microsoft Word themselves, since the journal requires an editable Word document.
-- **This skill is personal and self-contained.** It encodes Revista Tecnocientífica URU's norms only (No. 26, Enero–Junio 2024 edition); it is not a general-purpose paper-formatting tool.
+- **This skill is personal.** It encodes Revista Tecnocientífica URU's norms only (No. 26, Enero–Junio 2024 edition).
 - **Never invent content.** Every section, author detail, citation, or reference must come from the user or a source they provide. Where the norms require a field (ORCID, page range, DOI) and the user hasn't supplied it, mark it `[FALTA: <campo>]` rather than fabricating it.
 
 ## 2. Interview-first protocol
@@ -20,10 +20,10 @@ Format a **scientific manuscript for Revista Tecnocientífica URU** (Universidad
 
 1. **Tipo de trabajo** — one of the seven types in [§3](#3-article-types--structure); this determines the required structure and page limit.
 2. **Idioma del trabajo** — español or inglés (norms recommend expert review if written in English).
-3. **Portada** — título completo (ES + EN), autores (máx. 6, cada uno con adscripción institucional, ciudad, país, correo, ORCID), en el formato de nombre exigido (ver [§5](#5-cover-page-portada)).
-4. **Resumen / Abstract** — versión ES y EN, máx. 200 palabras cada una; confirma que cubre objetivo general, metodología, resultados relevantes y conclusión global.
-5. **Palabras clave / Key words** — máx. 5, ES + EN.
-6. **Cuerpo del trabajo** — content section by section per the structure in §3 (introducción, fundamentos teóricos si aplica, parte experimental, resultados, discusión, conclusiones, agradecimientos si aplica).
+3. **Portada** — título (ES + EN) y autores, fields and name format per [§5](#5-cover-page-portada).
+4. **Resumen / Abstract** — ES y EN; limits and coverage per §5.
+5. **Palabras clave / Key words** — ES + EN; limit per §5.
+6. **Cuerpo del trabajo** — content section by section per the structure in §3.
 7. **Figuras, tablas, ecuaciones** — collect each with its caption/source and confirm numbering order of first appearance.
 8. **Referencias** — collect the full bibliographic list in order of in-text appearance; classify each by source type (see [RECIPES §1](RECIPES.md#1-reference-formats-by-source-type)) so the correct template applies.
 
@@ -41,7 +41,7 @@ Only after all fields are collected, propose the section outline and wait for ap
 | 13 | Artículo de invitados especiales | ídem 9 (requiere invitación editorial) | 20 |
 | 14 | Nota técnica | Same structure as Artículo de investigación | 8 |
 
-Definitions of each type live in [RECIPES §2](RECIPES.md#2-article-type-definitions) — confirm the user's content actually fits the chosen type before drafting (e.g. don't let a "reflexión" piece masquerade as a "revisión" — the norms define them by method, not just topic).
+Definitions of each type live in [RECIPES §2](RECIPES.md#2-article-type-definitions), used to confirm the user's content fits the chosen type before drafting (e.g. don't let a "reflexión" piece masquerade as a "revisión").
 
 ## 4. Typography & layout rules
 

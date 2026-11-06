@@ -1,6 +1,6 @@
 # Demo Presentation Layouts
 
-Generic slide-deck layout catalog. Derived from the bundled reference deck at `references/example-deck.html` (or whatever HTML the user supplies as a visual exemplar). Layouts here are language- and topic-agnostic — they describe *shape and field set*, not styling.
+Generic slide-deck layout catalog. Derived from a visual exemplar HTML deck the user supplies. Layouts here are language- and topic-agnostic — they describe *shape and field set*, not styling.
 
 ## How to read this catalog
 

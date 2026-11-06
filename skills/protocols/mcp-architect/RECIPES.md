@@ -134,6 +134,18 @@ async def search_products(query: str, limit: int = 20) -> list[Product]:
 // SDK emits a JSON content[] fallback automatically. See §2.
 ```
 
+### Content block types
+
+An ordered list of content blocks the model reads directly into its context:
+
+| Type | Use for | Notes |
+|---|---|---|
+| `text` | The default — prose, JSON dumps, tables | Always safe; every client renders it |
+| `image` | Inline images (`data` base64 + `mimeType`) | For diagrams, screenshots, chart renders; not all clients display |
+| `audio` | Inline audio clips (since 2025-03-26) | Rare; transcribe to `text` for broader client support |
+| `resource_link` | Pointer to a resource by URI (no body) | Client decides whether to follow and fetch via `resources/read`. Cheaper than embedding |
+| `embedded_resource` | Full resource contents inlined (`uri` + `mimeType` + `text`/`blob`) | When the model needs the content *right now* without a round trip |
+
 ### Mixed unstructured blocks — hand-rolled `content[]`
 
 When you need image/audio/resource_link blocks alongside text — no `outputSchema`, just `content[]`.
@@ -710,6 +722,20 @@ transport := mcp.NewStreamableClientTransport("https://mcp.example.com/mcp",
 client := mcp.NewClient(&mcp.Implementation{Name: "agent", Version: "1.0.0"}, nil)
 sess, err := client.Connect(ctx, transport, nil)
 // ... sess.ListTools, sess.CallTool, sess.ReadResource ...
+```
+
+### Wire example (Streamable HTTP POST)
+
+```http
+POST /mcp HTTP/1.1
+MCP-Protocol-Version: 2026-07-28
+Mcp-Method: tools/call
+Mcp-Name: search
+Content-Type: application/json
+
+{"jsonrpc":"2.0","id":1,"method":"tools/call",
+ "params":{"name":"search","arguments":{"q":"otters"},
+ "_meta":{"io.modelcontextprotocol/clientInfo":{"name":"my-app","version":"1.0"}}}}
 ```
 
 Client responsibilities the spec puts on you (2026-07-28):

@@ -282,3 +282,18 @@ def relative_change(new, base):
 ```
 
 Use `fits` per cell against the nominal n, then against a short list of other plausible n. Use `common_denominators` for a column to tell "one odd cell" from "no single denominator".
+
+## 10. Failure modes
+
+| Symptom | Cause | Guard |
+|---|---|---|
+| A number that matches nothing | Taken from a snippet or from memory | Extract from the source table |
+| "The system does X" with no witness | Paper and code conflated | Three-block notes per component |
+| A cap that is "3" and "5" in different places | Different defaults per language or config | List every config with its value |
+| Rank flips between benchmarks | A mean hides the per-benchmark story | Show mean and per-benchmark max |
+| A diagram nobody can defend | Components with no source | Source locator on every component |
+| Retrieval looks decisive | The corpus overlaps the benchmark | See [DATASETS.md](DATASETS.md) leakage section |
+| A threshold nobody can justify | A score threshold applied to a sum that grows with query length | Sweep it on real data and report the distribution |
+| A type or keyword lookup returns everything | Substring match against the whole record, including its own field names | Probe it and count matches per query |
+| A derived reference set is mostly noise | The generating script matched substrings | Whole-word check against the source and a look at the most frequent entries |
+| An explanation that reads fine and cannot be checked | Mechanics summarized instead of listed | The fixed form of [§6](SKILL.md#6-explain-each-component) |

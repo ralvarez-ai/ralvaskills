@@ -108,18 +108,18 @@ Per [go-architect §9](../../languages/go-architect/SKILL.md#9-testing), sharpen
 
 Copy from [assets/](assets); details in [repo-tooling-architect](../../tooling/repo-tooling-architect/SKILL.md) and [go-architect §14](../../languages/go-architect/SKILL.md#14-tooling):
 
-- **`mise.toml`** pins the toolchain (go, task, golangci-lint, goimports, betteralign, trivy, and sqlc/goose when used).
+- **`mise.toml`** pins the toolchain (versions in [STACK.md](STACK.md) § Toolchain; sqlc/goose only for DB adapters).
 - **`Taskfile.yml`** — `build`, `test` (`-race -count=1`), `test:short`, `fmt` (goimports `-local`), `lint`, `lint:fix`, `lint:doccheck`, `modernize` (`go fix`), `align:check/fix` (betteralign), `scan` (trivy), `tag` (semver-validated), and `check` = the pre-commit gate.
 - **`.golangci.yml`** (v2) — copy [go-architect's `assets/golangci.yml`](../../languages/go-architect/assets/golangci.yml), set `goimports.local-prefixes` to the module path, scope `exhaustruct` to the `Config` structs. Ship the separate **`.golangci.doccheck.yml`** for on-demand doc coverage.
-- **`.github/workflows/ci.yml`** — copy the asset. It is **manual-dispatch only, deliberately**: CI runs locally through `act`, so a push or tag never starts a billed runner. Dependencies under `github.com/ralvarezdev/*` are private for now, so each job takes the optional `GH_PRIVATE_MODULES_TOKEN` and sets `GOPRIVATE`; drop both once they are public.
+- **`.github/workflows/ci.yml`** — copy the asset. Its header states the **manual-dispatch only** policy. Dependencies under `github.com/ralvarezdev/*` are private for now, so each job takes the optional `GH_PRIVATE_MODULES_TOKEN` and sets `GOPRIVATE`; drop both once they are public.
 - **`.editorconfig`**, **`.gitignore`**, **`renovate.json`**, and a **spec-first `docs/YYYY-MM-DD-spec.md`** written so an agent can rebuild the module from it alone (list the invariants explicitly).
 - **`.rsk/`** — pin the architecture skills this repo was built with (`go-architect`, `hexagonal-arch`, `ddd-architect`, plus `sql-architect`/`repo-tooling-architect` as used) so the conventions travel with the repo.
 
 ## 13. Bootstrap procedure
 
-1. Check [go-house-libs](../go-house-libs/SKILL.md): stop if an existing module covers the need. Then ask for `<name>`, `<namespace>` (default `github.com/ralvarezdev`), the shape (§1; §9 for flat vs slice) and the port(s) the library exposes.
+1. Check [go-house-libs](../go-house-libs/SKILL.md) first, as above. Then ask for `<name>`, `<namespace>` (default `github.com/ralvarezdev`), the shape (§1; §9 for flat vs slice) and the port(s) the library exposes.
 2. `git init`; write `go.mod` (`module <namespace>/<name>`, `go 1.26`).
-3. Copy the [assets/](assets) tooling set, including `.github/workflows/ci.yml`; `mise install`; set `Taskfile.yml`'s `MODULE` var and `goimports` `local-prefixes` to `<namespace>/<name>`. Add `.rsk/` and `CLAUDE.md` (§12).
+3. Copy the [assets/](assets) tooling set (§12); `mise install`; set `Taskfile.yml`'s `MODULE` var and `goimports` `local-prefixes` to `<namespace>/<name>`. Add `.rsk/` and `CLAUDE.md` (§12).
 4. Write the domain: value objects, entities, sentinel errors, the port interface(s) — stdlib + uuid only (§3–§7). For a toolkit or framework adapter, write the framework-free core first and give each heavy dependency its own subpackage or module (§1).
 5. Write the in-memory adapter first (it doubles as the test double), then the production adapter(s) (§8).
 6. Add persistence/codegen only if a DB adapter exists, on `pgkit` (§11).

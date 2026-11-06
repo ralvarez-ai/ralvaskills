@@ -13,7 +13,6 @@
 
 - **Hugo Extended edition is mandatory.** Standard edition cannot compile SCSS, cannot run image processing, and is missing several pipeline features. Pin the `-extended` build in CI.
 - **Hugo Modules over git submodules** for themes and shared layouts — SemVer-versioned, resolved via Go's module proxy. Vendor with `hugo mod vendor` for reproducible builds.
-- **TOML is the default for `hugo.toml` and front matter** — match across the repo to keep one parser in the author's head.
 - **Hugo Pipes is the asset pipeline** — no Webpack, no Vite. PostCSS lives outside Hugo and is invoked from the pipe chain when needed.
 - **Page Bundles (`index.md` + co-located assets)** are the default for any page with images; flat `.md` files are acceptable only for text-only posts.
 - **Fingerprinting is mandatory in production.** `hugo --minify` plus `resources.Fingerprint` produces immutable URLs for long-cache headers.

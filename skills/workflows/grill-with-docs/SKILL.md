@@ -20,33 +20,7 @@ During codebase exploration, also look for existing documentation:
 
 ### File structure
 
-Most repos have a single context:
-
-```
-/
-├── CONTEXT.md
-├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
-└── src/
-```
-
-If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The map points to where each one lives:
-
-```
-/
-├── CONTEXT-MAP.md
-├── docs/
-│   └── adr/                          ← system-wide decisions
-├── src/
-│   ├── ordering/
-│   │   ├── CONTEXT.md
-│   │   └── docs/adr/                 ← context-specific decisions
-│   └── billing/
-│       ├── CONTEXT.md
-│       └── docs/adr/
-```
+Most repos have a single context (root `CONTEXT.md`, `docs/adr/`). If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts and the map points to where each lives; each context keeps its own `CONTEXT.md` and `docs/adr/`, with system-wide decisions in the root `docs/adr/`. Directory trees: [CONTEXT_FORMAT.md](./CONTEXT_FORMAT.md#directory-layout).
 
 Create files lazily — only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
 
@@ -72,7 +46,7 @@ When the user states how something works, check whether the code agrees. If you 
 
 When a term is resolved, update `CONTEXT.md` right there. Don't batch these up — capture them as they happen. Use the format in [CONTEXT_FORMAT.md](./CONTEXT_FORMAT.md).
 
-`CONTEXT.md` should be totally devoid of implementation details. Do not treat `CONTEXT.md` as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
+`CONTEXT.md` is a glossary only, totally devoid of implementation details: no specs, scratch pad, or implementation decisions.
 
 ### Offer ADRs sparingly
 

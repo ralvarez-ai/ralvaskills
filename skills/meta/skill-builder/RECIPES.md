@@ -12,7 +12,7 @@ description: <WHAT — short, comma-separated topics> — <version target if app
 ---
 ```
 
-**Description quality (per [SPECS](../../../docs/SPECS.md#description-quality)):**
+**Description quality (per [SPECS](../../../docs/designs/2026-05-20-technical-specification.md#description-quality)):**
 
 - WHAT first, comma-separated, no marketing prose.
 - WHEN last — trigger phrases / commands the user might invoke.

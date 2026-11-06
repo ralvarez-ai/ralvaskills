@@ -6,7 +6,7 @@ description: Cross-language perf review — N+1, missing indexes, blocking I/O i
 
 # Performance Reviewer
 
-Reviews code for performance issues before they show up in production metrics. **Measurement-grounded** — every finding references a profiler output, an `EXPLAIN` plan, or a metric from [observability-architect](../../infra/observability-architect/SKILL.md). Guesses don't go in the report. Findings table + severity guide + tooling reference in [RECIPES.md](RECIPES.md).
+Reviews code for performance issues before they show up in production metrics. **Measurement-grounded** — every finding references a profiler output, an `EXPLAIN` plan, or a metric from [observability-architect](../../infra/observability-architect/SKILL.md). Findings table + severity guide + tooling reference in [RECIPES.md](RECIPES.md).
 
 ## 1. When to invoke
 
@@ -50,7 +50,7 @@ The Python async equivalent of N+1.
 - **Sync DB driver (`psycopg2`) inside `async def`** — blocking. Use `psycopg 3` async.
 - **Detection:** `asyncio.get_event_loop().slow_callback_duration = 0.1` in dev logs callbacks over 100 ms.
 - **`asyncio.to_thread(blocking_fn, args)`** when you genuinely must call a sync API.
-- **`asyncio.TaskGroup`**, not bare `asyncio.gather` — handles cancellation and exception aggregation properly per [python-architect §4](../../languages/python-architect/SKILL.md#4-concurrency--resources).
+- **`asyncio.TaskGroup`**, not bare `asyncio.gather` — handles cancellation and exception aggregation properly per [python-architect §4](../../languages/python-architect/SKILL.md#5-concurrency--resources).
 
 ### Go — goroutine and allocation issues
 
@@ -99,13 +99,12 @@ Quick picks: **SQL** → `EXPLAIN (ANALYZE, BUFFERS)` + `pg_stat_statements`. **
 
 - **Load testing.** Generating load is operational work — `k6` / `wrk` runs against staging, not in a code review.
 - **Capacity planning.** "How many instances at 2× traffic" is a different conversation.
-- **Premature optimization.** A finding requires a measurement; gut-feel optimizations are rejected. If the code isn't measurably slow, don't change it.
+- **Premature optimization.** If the code isn't measurably slow, don't change it.
 
 ## 7. Cross-skill ties
 
 - [sql-architect §3–§5, §9](../../databases/sql-architect/SKILL.md) — indexing, query patterns, N+1, `EXPLAIN ANALYZE`. Most common source of findings.
 - [observability-architect](../../infra/observability-architect/SKILL.md) — RED/USE metrics reveal where to look. Findings often start with "this dashboard shows..."
 - [grafana-architect](../../infra/grafana-architect/SKILL.md) — burn rate / SLO dashboards trigger reviews.
-- [go-architect §7](../../languages/go-architect/SKILL.md#7-concurrency) / [python-architect §4](../../languages/python-architect/SKILL.md#4-concurrency--resources) — concurrency primitives.
 - [rest-api-architect §5](../../protocols/rest-api-architect/SKILL.md#5-pagination--cursor-not-offset) / [§14](../../protocols/rest-api-architect/SKILL.md#14-rate-limiting) — cursor pagination, rate limiting at the API layer.
 - [improve-codebase-architecture](../../refactoring/improve-codebase-architecture/SKILL.md) — when a finding requires structural change, promote to architecture review.

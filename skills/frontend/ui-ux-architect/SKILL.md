@@ -74,18 +74,16 @@ Full shape contracts in [RECIPES §3](RECIPES.md#3-required-ui-states--shape-con
 
 ## 7. Motion
 
-- **`prefers-reduced-motion: reduce`** respected. Tailwind `motion-safe:transition-*`.
 - **Functional motion only** — confirmation feedback, spatial relationships, state changes that wouldn't be perceptible otherwise.
 - **No autoplaying video / animation** without user opt-in.
 - **Easing**: `ease-out` for entrances, `ease-in` for exits, `ease-in-out` for in-place transitions.
-- **Duration** 100–300 ms for UI animation; 0 ms when `prefers-reduced-motion: reduce`.
+- **Duration** 100–300 ms for UI animation; 0 ms when `prefers-reduced-motion: reduce` (respected per §1; use `motion-safe:transition-*`).
 
 ## 8. Icons
 
-- **One icon set per project.** [Lucide](https://lucide.dev) is the modern default.
+- **One icon set per project** — mixing sets reads as instability. [Lucide](https://lucide.dev) is the modern default.
 - **`aria-hidden="true"` on decorative icons.** **`aria-label` on icon-only buttons.**
 - **SVG sprites or per-icon components**, never icon fonts. Fonts cause FOIT and a11y issues.
-- **Don't mix icon sets** — visual inconsistency reads as instability.
 
 ## 9. Internationalization (when in scope)
 
@@ -118,5 +116,5 @@ Where a project sits informs how much investment is justified. Five levels from 
 - [nextjs-architect](../../frameworks/nextjs-architect/SKILL.md) — server-component shells, server actions, image / font / metadata APIs.
 - [rest-api-architect §7](../../protocols/rest-api-architect/SKILL.md#7-error-contracts--rfc-9457-problem-details) — error contracts the UI consumes; correlation IDs surfaced in error states.
 - [security-reviewer](../../quality/security-reviewer/SKILL.md) — security headers (CSP), no stack traces in error UI, no PII in URLs.
-- [observability-architect §5](../../infra/observability-architect/SKILL.md#5-correlation) — correlation IDs visible in the UI so support can match logs.
+- [observability-architect §5](../../infra/observability-architect/SKILL.md#5-correlation-rules) — correlation IDs visible in the UI so support can match logs.
 - [logic-cleaner](../../refactoring/logic-cleaner/SKILL.md) / [code-design-refactor](../../refactoring/code-design-refactor/SKILL.md) — same rules apply to component code as any other code.

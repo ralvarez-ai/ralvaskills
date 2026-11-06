@@ -38,24 +38,7 @@ Proto layout, message naming, pagination and `google.protobuf.Empty` rules come 
 
 Return errors via `connect.NewError(connect.Code, err)`. Map domain errors to codes in one central place (skeleton in [RECIPES.md](RECIPES.md)).
 
-| Code | HTTP | Use for |
-|---|---|---|
-| `CodeInvalidArgument` | 400 | request fails schema or business validation |
-| `CodeFailedPrecondition` | 412 | request valid but system state forbids it (e.g. delete a non-empty resource) |
-| `CodeOutOfRange` | 400 | numeric / range-specific violation distinct from `InvalidArgument` |
-| `CodeUnauthenticated` | 401 | missing or invalid credentials |
-| `CodePermissionDenied` | 403 | authenticated but not authorized |
-| `CodeNotFound` | 404 | resource doesn't exist |
-| `CodeAlreadyExists` | 409 | unique-constraint or idempotency-key collision |
-| `CodeAborted` | 409 | concurrency conflict (ETag-equivalent) — re-fetch and retry |
-| `CodeResourceExhausted` | 429 | rate limit; per-tenant quota |
-| `CodeDeadlineExceeded` | 504 | the request didn't complete in time — set by the runtime |
-| `CodeUnavailable` | 503 | transient — load-balancer drained, restart in progress; client retries |
-| `CodeUnimplemented` | 404 | method exists in proto but server doesn't handle it (rollout) |
-| `CodeInternal` | 500 | unexpected server-side failure |
-| `CodeDataLoss` | 500 | corrupted or lost data |
-| `CodeCanceled` | 499 | the client went away |
-| `CodeUnknown` | 500 | fallback when nothing else fits |
+Full code table in [RECIPES.md](RECIPES.md#connect-code-reference).
 
 - **Don't reach for `CodeInternal` as a default.** Map every known domain error to a specific code; `CodeUnknown` is even worse.
 - **`connect.CodeOf(err)`** recovers the code from any error — use it in the logging interceptor and in tests, never invent your own `error → int` map.
@@ -118,16 +101,8 @@ Generated clients are generic and typed — no reflection at call time.
 
 ## 10. When to pick Connect vs vanilla gRPC vs REST
 
-| Dimension | Connect | vanilla gRPC | REST / OpenAPI |
-|---|---|---|---|
-| Browser callers | ✅ no proxy | ❌ needs a gRPC-Web proxy | ✅ |
-| Client/bidi streaming to browsers | ❌ (gRPC-Web: server-stream only) | ❌ | n/a |
-| Streaming (backend) | ✅ all four, HTTP/2 | ✅ all four | ❌ (SSE/long-poll only) |
-| Contract | `.proto` | `.proto` | OpenAPI |
-| `curl` / manual testing | ✅ JSON mode | ❌ (grpcurl) | ✅ |
-| HTTP caching (ETag/Cache-Control) | ❌ | ❌ | ✅ |
-| Public API discoverability | ❌ | ❌ | ✅ |
+Comparison table in [RECIPES.md](RECIPES.md#connect-vs-vanilla-grpc-vs-rest-comparison).
 
 - **Connect is the default for a new Go RPC service.** It costs nothing over vanilla gRPC when the caller is another backend, and removes the gateway when the caller is a browser.
 - **Vanilla gRPC stays the right call** when every peer is pure gRPC and you want the leanest possible server, or when an existing gRPC ecosystem (interceptors, `bufconn` tooling) is already in place — both can share the same `.proto`.
-- **REST is the right call for the public surface** — external consumers, cache-friendly reads, `OpenAPI` documentation — authored separately, not generated from proto.
+- **REST is the right call for the public surface** — external consumers, cache-friendly reads, `OpenAPI` documentation.

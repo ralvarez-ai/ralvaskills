@@ -106,3 +106,15 @@ Cache via `--cache-to type=gha` (GitHub Actions) or `type=registry,ref=ghcr.io/o
 trivy image --severity HIGH,CRITICAL --exit-code 1 ghcr.io/org/app:${SHA}
 trivy image --format spdx-json --output sbom.json ghcr.io/org/app:${SHA}
 ```
+
+## Compose `depends_on` with conditions
+
+```yaml
+services:
+  app:
+    depends_on:
+      db:
+        condition: service_healthy
+```
+
+This requires `db` to define a working `healthcheck`. `depends_on` without `condition:` only orders startup — doesn't wait for readiness.

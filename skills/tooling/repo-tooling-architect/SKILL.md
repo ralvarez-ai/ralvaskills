@@ -93,79 +93,20 @@ The problem: every project has 5–15 commands a contributor needs to know (`go 
 
 ### Default: Task with `Taskfile.yml`
 
-```yaml
-# Taskfile.yml
-version: '3'
-
-dotenv: ['.env', '.env.local']
-
-tasks:
-  default:
-    desc: List all tasks
-    cmds:
-      - task --list
-
-  proto:generate:
-    desc: Regenerate Go code from .proto files
-    sources:
-      - 'proto/**/*.proto'
-    generates:
-      - 'internal/**/*.pb.go'
-    cmds:
-      - buf generate
-
-  test:unit:
-    desc: Run unit tests
-    cmds:
-      - go test ./...
-
-  test:race:
-    desc: Run all tests with race detector
-    cmds:
-      - go test -race ./...
-
-  docker:up:
-    desc: Start dev stack (DB + app)
-    cmds:
-      - docker compose up -d
-
-  docker:down:
-    desc: Stop dev stack
-    cmds:
-      - docker compose down
-```
+Sample `Taskfile.yml`: [RECIPES.md](RECIPES.md#4-sample-taskfileyml).
 
 - **Why Task as default:** built-in `sources:` / `generates:` for incremental builds, `--watch` mode, first-class Windows support (ships its own POSIX-sh interpreter), built-in `dotenv:` loading.
 - **Discoverability:** `task --list` shows every task with its `desc`.
 
-**Naming: `module[:submodule…]:verb[:target|mode]`.** Name tasks after the thing they act on, then the action — `proto:generate`, `git:update:recursive`, `docker:up:dev` — not the reverse (`generate-proto`, `run-tests`). Environment and service are **targets after the verb** (`docker:up:dev`, not `docker:dev:up`). Cross-cutting actions use the inverse family, `verb:target` (`test:backend`, `scan:fs`). `task --list` groups alphabetically, so this puts every task for a module next to its siblings and reads as a discoverable namespace even without splitting files. Reserve unprefixed names (`default`, `build`, `lint`) for repo-wide entry points that don't belong to a single module.
+**Naming: `module[:submodule…]:verb[:target|mode]`.** Name tasks after the thing they act on, then the action — `proto:generate`, `git:update:recursive`, `docker:up:dev` — not the reverse (`generate-proto`, `run-tests`). Environment and service are **targets after the verb** (`docker:up:dev`, not `docker:dev:up`). Cross-cutting actions use the inverse family, `verb:target` (`test:backend`, `scan:fs`). Reserve unprefixed names (`default`, `build`, `lint`) for repo-wide entry points that don't belong to a single module.
 
 **The full grammar, the canonical verb/module vocabulary, the aggregate/atomic rule, include rules, and the standard Go-library task set are in [TASKFILE.md](TASKFILE.md).** Read it before adding or renaming a task — the audit of the active repos found the same drift (git submodule names, env ordering, `gen`/`generate`, `cover`/`coverage`, `be`/`fe`) everywhere, and TASKFILE.md is the single answer to it.
 
 For a large enough module to warrant its own file, promote the prefix to a real namespace with `includes:` — Task auto-prefixes every task in the included file, so `docker:up` becomes `task docker:up` whether it's a flat key or defined in `Taskfile.docker.yml`:
 
-```yaml
-# Taskfile.yml
-includes:
-  docker: ./Taskfile.docker.yml
-  proto: ./Taskfile.proto.yml
-```
+Example: [RECIPES.md](RECIPES.md#4-includes-example).
 
-```yaml
-# Taskfile.docker.yml
-version: '3'
-tasks:
-  up:
-    desc: Start dev stack (DB + app)
-    cmds:
-      - docker compose up -d
-  down:
-    desc: Stop dev stack
-    cmds:
-      - docker compose down
-```
-
-Stay flat until a module earns its own file (5+ tasks, or config distinct enough to warrant separation) — splitting a two-task module into its own `Taskfile.*.yml` is ceremony the flat `module:verb` key already avoids.
+Stay flat until a module earns its own file — see [TASKFILE.md](TASKFILE.md) §6.
 
 ### Alternative: just with `justfile`
 
@@ -181,25 +122,7 @@ The problem: minor issues (trailing whitespace, committed secrets, large files) 
 
 ### `.pre-commit-config.yaml` — minimal set
 
-```yaml
-repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
-    hooks:
-      - id: trailing-whitespace
-        exclude: '\.md$'             # markdown uses trailing space for hard breaks
-      - id: end-of-file-fixer
-      - id: check-added-large-files
-        args: ['--maxkb=500']
-      - id: check-merge-conflict
-      - id: check-yaml
-      - id: check-json
-
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.0
-    hooks:
-      - id: gitleaks                 # secret detection
-```
+Sample config: [RECIPES.md](RECIPES.md).
 
 - **Install:** `pre-commit install` once per clone.
 - **Run on demand:** `pre-commit run --all-files` (or wire into a Task: `task lint:precommit`).
@@ -248,29 +171,7 @@ The problem: dependency updates accumulate until they hit a security advisory or
 
 `renovate.json` at the repo root:
 
-```json
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "schedule": ["before 6am on Monday"],
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "minor + patch updates"
-    },
-    {
-      "matchPackageNames": ["go", "python", "node"],
-      "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "labels": ["language-bump"]
-    }
-  ],
-  "vulnerabilityAlerts": {
-    "enabled": true,
-    "labels": ["security"]
-  }
-}
-```
+Sample `renovate.json`: [RECIPES.md](RECIPES.md#7-renovatejson).
 
 - **Why Renovate:** grouping rules, scheduled batches, broader ecosystem coverage (Go modules, Python, npm, Docker tags, GitHub Actions, Terraform).
 - **Group minor + patch updates** into one weekly PR — review-bandwidth-friendly.
@@ -300,66 +201,7 @@ as a sibling Docker container, using a runner image
 closely mirrors GitHub's actual runner — including Docker-in-Docker-style
 builds, since that image ships the Docker CLI against the host daemon.
 
-```
-# .actrc — tracked, no secrets
--P ubuntu-latest=catthehacker/ubuntu:act-latest
---container-architecture=linux/amd64
-```
-
-```
-# .secrets.example — tracked template; .secrets itself is gitignored
-MY_TOKEN=
-```
-
-Wire it into the task runner so it's one command, not a memorized `act`
-invocation:
-
-```yaml
-  ci:local:
-    desc: Run CI locally via act
-    cmds:
-      - test -f .secrets || (echo "Missing .secrets — cp .secrets.example .secrets" && exit 1)
-      - act push --secret-file .secrets --artifact-server-path .artifacts
-```
-
-- **Switch the workflow's trigger to `workflow_dispatch`-only** if the goal
-  is "never risk a billed run" rather than "have a free local option in
-  addition to GitHub's" — pushing commits/tags then can't accidentally
-  spin up a hosted runner; `workflow_dispatch` stays available from the
-  Actions tab as a manual, opt-in escape hatch.
-- **`--artifact-server-path`** is required for `actions/upload-artifact` /
-  `actions/download-artifact` to work between jobs locally — without it
-  those calls silently no-op instead of erroring.
-- **Secrets and repo variables** come from `--secret-file` / `--var-file`,
-  not GitHub's secret store — gitignore the real file, commit a
-  `.example` template (same shape as the `.env`/`.env.local` pattern in
-  §6).
-- **A tag-triggered job needs a synthesized event file**, not just
-  `act push` — `{"ref": "refs/tags/vX.Y.Z"}` via `-e event.json` sets
-  `github.ref`/`github.ref_name` the same way a real tag push would, which
-  matters for any `if: startsWith(github.ref, 'refs/tags/v')` gate or
-  version string baked into an image tag.
-- **A job that builds and pushes a Docker image to a registry running on
-  the same machine hits two more gotchas, in sequence:**
-  1. If that registry sits behind a Cloudflare Tunnel (or similar) whose
-     domain is only meaningful for *remote* access, pushing through it
-     from the same host that runs the registry can hit the tunnel's own
-     edge timeout on a multi-MB layer upload (Cloudflare's is ~100s) —
-     traffic that never needed to leave the machine. Make the registry
-     host a repo variable (`REGISTRY_HOST`, default the real domain) and
-     override it to the registry's local address (e.g. `localhost:5000`)
-     for local `act` runs specifically.
-  2. Bypassing to `localhost` then fails with `connection refused` from
-     inside the builder, even though the *job's own* container is
-     host-networked under `act` — `docker/setup-buildx-action`'s default
-     `docker-container` driver builds in a separate, isolated builder
-     container with its own network namespace. Fix: `driver-opts:
-     network=host` on that action.
-  3. Whatever you use to observe the result, use the task runner's actual
-     exit code, not a wrapper's — `task ci:local:publish | tee log | tail`
-     reports `tail`'s exit status, which is `0` even when the piped
-     command failed. Check the real job output (or the exit code without
-     piping through a second command) before calling a run green.
+Config (`.actrc`, `.secrets.example`), the `ci:local` task and the act gotchas (artifact server, secrets, tag events, same-host registry push) are in [RECIPES.md](RECIPES.md#8-act-config-task-wiring-and-gotchas).
 - **Trade-off, accept it deliberately:** no automatic gate on push anymore
   if triggers move to `workflow_dispatch`-only. Running the local task
   before pushing is on the developer, not enforced (a pre-push git hook

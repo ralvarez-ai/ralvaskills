@@ -18,12 +18,9 @@
 
 ## Notes
 
-- **TypeScript is non-negotiable.** `tsconfig.json` enables `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `noFallthroughCasesInSwitch`, `exactOptionalPropertyTypes`.
+- **TypeScript is non-negotiable.** Strict flags: [RECIPES.md § `tsconfig.json` — strict baseline](RECIPES.md#tsconfigjson--strict-baseline).
 - **`@tanstack/react-query` for server state** — never store fetched data in `useState` / `zustand`.
-- **`zustand` only when Context + local state don't fit.** Most apps don't need it.
-- **`@biomejs/biome`** replaces both ESLint and Prettier in 2026 — one tool, one config. Per [repo-tooling-architect](../../tooling/repo-tooling-architect/SKILL.md).
-- **No CSS-in-JS with runtime cost.** Tailwind (covered in [ui-ux-architect](../../frontend/ui-ux-architect/STACK.md)) or CSS Modules.
-- **Vitest** for component + unit; **Playwright** for browser e2e. No Jest in new code.
+- **`zustand` only when Context + local state don't fit.**- **`@biomejs/biome`** replaces both ESLint and Prettier in 2026 — one tool, one config. Per [repo-tooling-architect](../../tooling/repo-tooling-architect/SKILL.md).- **Vitest** for component + unit; **Playwright** for browser e2e. No Jest in new code.
 - **For Next.js apps**, react + react-dom are pinned by Next; this STACK still applies for client-side patterns.
 
 _Last reviewed: 2026-05-21_

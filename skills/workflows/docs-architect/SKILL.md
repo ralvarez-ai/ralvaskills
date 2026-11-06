@@ -35,13 +35,11 @@ Suggestion-mode: the tree is a default. Adopt the folders a project actually nee
 
 ## 3. Flow
 
-`inbox` → `ideas` → `plans` → `designs` → `adr` (only if a real architecture decision) → backlog (in the queue layout, `Next` → `Doing` → `done/`; in the item layout, `pending/` → `active/` → `done/`). Reviews and changes feed new backlog items, each linked to its origin.
-
 1. Capture in `backlog/inbox.md`, one line, no format.
 2. Weekly triage: drop it, move it to a project backlog, or grow it in `ideas/`.
 3. A mature idea becomes a plan with scope and exit criteria.
 4. The plan yields a design; each non-trivial decision becomes an ADR.
-5. The approved design leaves linked items in the backlog: `Next` in the queue layout, `pending/` in the item layout.
+5. The approved design leaves linked items in the backlog: `Next` in the queue layout, `pending/` in the item layout. Reviews and changes feed new backlog items, each linked to its origin.
 6. On close the item moves to `done/YYYY-MM.md`; the doc becomes `status: done`, then moves to `archive/`.
 
 ## 4. ADRs
@@ -49,8 +47,7 @@ Suggestion-mode: the tree is a default. Adopt the folders a project actually nee
 - One decision per ADR, one page: Context, Options considered, Decision, Consequences.
 - Numbering is sequential and never reused. Take the next number by scanning `adr/`.
 - Whether something deserves an ADR is decided by the three-part test in [ADR_FORMAT.md](../grill-with-docs/ADR_FORMAT.md) (hard to reverse, surprising, real trade-off). This skill adds the mandatory frontmatter and the supersede mechanics on top of it.
-- Changing a decision: write a new ADR with `supersedes: N`, then set the old one to `status: superseded` and fill its `superseded_by`. That is the only edit an accepted ADR gets.
-- ADRs are cross-cutting: a decision spanning projects uses `project: global`. Keep `adr/` flat — the number already orders it.
+- Changing a decision: write a new ADR with `supersedes: N`, then set the old one to `status: superseded` and fill its `superseded_by`.- ADRs are cross-cutting: a decision spanning projects uses `project: global`. Keep `adr/` flat — the number already orders it.
 - Designs link ADRs (`[ADR 0002](../adr/0002-slug.md)`) instead of restating the reasoning.
 
 ## 5. Links and frontmatter
@@ -66,9 +63,9 @@ Every doc except `README.md`, `inbox.md` and `templates/` carries frontmatter ([
 |---|---|---|
 | Daily | Capture in `inbox.md` | 0 |
 | Weekly | Triage the inbox; review what is next (`Next` or `pending/`) | 10 min |
-| Monthly | Prune what has not moved, close to `done/`, archive obsolete, resolve drafts older than 2 months | 15 min |
+| Monthly | Prune what has not moved, close to `done/`, archive obsolete, promote or delete drafts older than 2 months | 15 min |
 
-A draft older than 2 months is promoted or deleted. A backlog item that has not moved for 2–3 months is deleted or demoted (`Later` → `Someday` in the queue layout, `archive/` with `resolution: dropped` in the item layout) — prune, don't archive. If the project tracks work in GitHub Issues, the backlog lives there and only the docs stay here.
+A backlog item that has not moved for 2–3 months is deleted or demoted (`Later` → `Someday` in the queue layout, `archive/` with `resolution: dropped` in the item layout) — prune, don't archive. If the project tracks work in GitHub Issues, the backlog lives there and only the docs stay here.
 
 ## 7. Scale rules
 

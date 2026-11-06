@@ -94,7 +94,7 @@ func RequestID(next http.Handler) http.Handler {
 }
 
 handler := Chain(mux,
-    Recover, RequestID, SLog, CORS(cfg.CORS), GZip,
+    RequestID, SLog, Recover, CORS(cfg.CORS), GZip,
 )
 ```
 
@@ -186,4 +186,18 @@ func TestCreateUser(t *testing.T) {
 
     require.Equal(t, http.StatusCreated, w.Code)
 }
+```
+
+## Concurrency — detached work
+
+Go has no `BackgroundTasks`; detach with `context.Background()`, log errors, set timeouts.
+
+```go
+ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+go func() {
+    defer cancel()
+    if err := h.svc.SendWelcomeEmail(ctx, user.ID); err != nil {
+        slog.ErrorContext(ctx, "welcome email failed", "user_id", user.ID, "err", err)
+    }
+}()
 ```

@@ -113,7 +113,7 @@ func init() {
 
 ## Python — typer (+ rich)
 
-Canonical per [python-architect §10](../../languages/python-architect/SKILL.md#10-tooling).
+Canonical per [python-architect §10](../../languages/python-architect/SKILL.md#11-tooling).
 
 ```python
 import typer

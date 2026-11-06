@@ -234,3 +234,36 @@ func TestUserServiceConformance(t *testing.T) {
     }
 }
 ```
+
+## Connect code reference
+
+| Code | HTTP | Use for |
+|---|---|---|
+| `CodeInvalidArgument` | 400 | request fails schema or business validation |
+| `CodeFailedPrecondition` | 412 | request valid but system state forbids it (e.g. delete a non-empty resource) |
+| `CodeOutOfRange` | 400 | numeric / range-specific violation distinct from `InvalidArgument` |
+| `CodeUnauthenticated` | 401 | missing or invalid credentials |
+| `CodePermissionDenied` | 403 | authenticated but not authorized |
+| `CodeNotFound` | 404 | resource doesn't exist |
+| `CodeAlreadyExists` | 409 | unique-constraint or idempotency-key collision |
+| `CodeAborted` | 409 | concurrency conflict (ETag-equivalent) — re-fetch and retry |
+| `CodeResourceExhausted` | 429 | rate limit; per-tenant quota |
+| `CodeDeadlineExceeded` | 504 | the request didn't complete in time — set by the runtime |
+| `CodeUnavailable` | 503 | transient — load-balancer drained, restart in progress; client retries |
+| `CodeUnimplemented` | 404 | method exists in proto but server doesn't handle it (rollout) |
+| `CodeInternal` | 500 | unexpected server-side failure |
+| `CodeDataLoss` | 500 | corrupted or lost data |
+| `CodeCanceled` | 499 | the client went away |
+| `CodeUnknown` | 500 | fallback when nothing else fits |
+
+## Connect vs vanilla gRPC vs REST comparison
+
+| Dimension | Connect | vanilla gRPC | REST / OpenAPI |
+|---|---|---|---|
+| Browser callers | ✅ no proxy | ❌ needs a gRPC-Web proxy | ✅ |
+| Client/bidi streaming to browsers | ❌ (gRPC-Web: server-stream only) | ❌ | n/a |
+| Streaming (backend) | ✅ all four, HTTP/2 | ✅ all four | ❌ (SSE/long-poll only) |
+| Contract | `.proto` | `.proto` | OpenAPI |
+| `curl` / manual testing | ✅ JSON mode | ❌ (grpcurl) | ✅ |
+| HTTP caching (ETag/Cache-Control) | ❌ | ❌ | ✅ |
+| Public API discoverability | ❌ | ❌ | ✅ |

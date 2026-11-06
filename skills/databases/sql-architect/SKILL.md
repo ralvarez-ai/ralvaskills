@@ -39,7 +39,7 @@ Targets **PostgreSQL 18** as the primary engine; MySQL 9 and SQLite 3.53 noted w
 
 ## 4. Query patterns
 
-- **Parameter binding always.** `WHERE id = $1` — never string-concatenate user input.
+- **Parameter binding always.** `WHERE id = $1` — never string-concatenate user input. It is the most common SQL injection vector.
 - **Explicit columns.** `SELECT id, email, created_at FROM users` — never `SELECT *` in production code (breaks on schema additions, returns extra bytes).
 - **`RETURNING` on writes.** `INSERT ... RETURNING id, created_at` saves a round-trip and surfaces server defaults.
 - **`ON CONFLICT` for upserts.** `INSERT ... ON CONFLICT (email) DO UPDATE SET ...` — atomic, no race.
@@ -73,7 +73,6 @@ Targets **PostgreSQL 18** as the primary engine; MySQL 9 and SQLite 3.53 noted w
 
 ## 8. Security
 
-- **Parameter binding always.** Restated because it's the single most common SQL injection vector.
 - **Least-privilege roles.** The app's runtime role can `SELECT/INSERT/UPDATE/DELETE` but should not `CREATE/DROP/ALTER`. Migrations run as a separate, elevated role.
 - **Row-Level Security (PG)** for multi-tenant: `ENABLE ROW LEVEL SECURITY` + policies keyed on a session variable holding `tenant_id`. Defense in depth against app-layer mistakes.
 - **No secrets in connection strings stored in repo.** Pull from env / secret manager. PG supports `~/.pgpass` for local dev.
@@ -95,7 +94,7 @@ Targets **PostgreSQL 18** as the primary engine; MySQL 9 and SQLite 3.53 noted w
 
 ## 11. Engine-specific guidance
 
-PostgreSQL 18 is the primary target. Per-engine references are split out to keep this skill focused:
+Per-engine references are split out to keep this skill focused:
 
 - **PostgreSQL-specific types and features** (timestamptz, text, citext, generated columns, partitioning, RLS, native `uuidv7()`, etc.) — see [POSTGRES.md](POSTGRES.md).
 - **MySQL 9 and SQLite 3.53 notes** (charset, primary key strategies, JSON support, concurrency caveats) — see [ENGINES.md](ENGINES.md).

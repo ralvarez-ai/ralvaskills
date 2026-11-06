@@ -72,7 +72,7 @@ Go has `iter.Seq[T]` (1.23+). Python has generators. **Don't reach for an Iterat
 
 ### Singleton
 
-**Never.** Globals are anti-patterns per [go-architect §11](../../languages/go-architect/SKILL.md#11-dependencies--logging) and [python-architect §3](../../languages/python-architect/SKILL.md#3-interfaces--di). Use dependency injection — pass the instance to constructors. The "convenience" of `Singleton.getInstance()` makes tests painful and hides the dependency graph.
+**Never.** Globals are anti-patterns per [go-architect §11](../../languages/go-architect/SKILL.md#11-dependencies--logging) and [python-architect §3](../../languages/python-architect/SKILL.md#4-interfaces--di). Use dependency injection — pass the instance to constructors. The "convenience" of `Singleton.getInstance()` makes tests painful and hides the dependency graph.
 
 **Exceptions:** language-runtime singletons you don't control (`os.Stdout`, `logging.getLogger()`). Even those are usually accessed via a small DI-friendly wrapper.
 

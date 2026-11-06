@@ -47,26 +47,7 @@ Collections are defined in **`src/content.config.ts`** (note: *content* config,
 not the legacy per-directory `config.ts`). Each collection needs a **loader**
 (required) and a **schema** (optional but load-bearing).
 
-```ts
-import { defineCollection } from 'astro:content';
-import { glob, file } from 'astro/loaders';
-import { z } from 'astro/zod';
-
-const projects = defineCollection({
-  loader: glob({ base: './src/content/projects', pattern: '**/*.md' }),
-  schema: z.object({
-    name: z.string(),
-    lang: z.string(),
-    summary: z.string(),
-    status: z.enum(['active', 'wip', 'archived']),
-    category: z.enum(['tooling', 'robotics']),
-    updated: z.coerce.date(),
-    pinned: z.boolean().default(false),
-  }),
-});
-
-export const collections = { projects };
-```
+Skeleton: [RECIPES § Collection with schema + dynamic route](RECIPES.md#collection-with-schema--dynamic-route).
 
 **Import Zod from `astro/zod`, not `zod`.** The bundled version is pinned to
 match Astro's schema resolution. A bare `zod` import can produce duplicate
@@ -92,22 +73,13 @@ Full patterns and remote loaders: [RECIPES § Content collections](RECIPES.md#co
 - **`getEntry('projects', id)`** fetches one entry; use it for lookup-by-id rather than filtering the whole collection.
 - **`getStaticPaths()`** is only required in `[slug]` routes — and in a static build it must return every path you want generated.
 
-Skeleton: [RECIPES § Collection with schema + dynamic route](RECIPES.md#collection-with-schema--dynamic-route).
-
 ## 3. Scripts
 
 - **Processed `<script>`** — bundled, deduped, hoisted, TypeScript-aware. The default.
-- **`is:inline`** — left completely alone. No bundling, no TS, no processing. Required for the pre-paint theme flash guard (below) and for anything that must run before CSS applies.
-- **A theme flash guard must be `is:inline` in `<head>`.** An external or bundled script may run after first paint, which defeats the purpose:
+- **`is:inline`** — left completely alone. No bundling, no TS, no processing. Required for the pre-paint theme flash guard (next bullet) and for anything that must run before CSS applies.
+- **A theme flash guard must be `is:inline` in `<head>`.** An external or bundled script may run after first paint, which defeats the purpose.
 
-```astro
-<script is:inline>
-  (function () {
-    var t = localStorage.getItem('theme') || 'tokyo-night';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-</script>
-```
+Example: [RECIPES § Script processing](RECIPES.md#script-processing).
 
 - **`define:vars`** passes server values into an inline script; the script is then treated as `is:inline` and cannot import anything.
 - **A `<script>` in `src/components/` is hoisted and rendered once per page**, regardless of how many times the component is used. Do not rely on per-instance initialization — that's what islands are for.
@@ -128,22 +100,7 @@ Skeleton: [RECIPES § Dynamic route with getStaticPaths](RECIPES.md#collection-w
 **Actions** are Astro's typed RPC layer. They replace hand-written API routes
 for form handling.
 
-```ts
-// src/actions/index.ts
-import { defineAction } from 'astro:actions';
-import { z } from 'astro/zod';
-
-export const server = {
-  subscribe: defineAction({
-    input: z.object({ email: z.string().email() }),
-    handler: async (input) => {
-      // server-only: never leak this into the bundle
-      await subscribeToList(input.email);
-      return { ok: true };
-    },
-  }),
-};
-```
+Example: [RECIPES § Actions](RECIPES.md#actions).
 
 - **Actions require an on-demand rendering route.** They don't work in a fully static build without an adapter.
 - **Validate at the boundary with Zod**, same discipline as [rest-api-architect §7](../../protocols/rest-api-architect/SKILL.md#7-error-contracts--rfc-9457-problem-details).
@@ -230,9 +187,7 @@ Skeleton: [RECIPES § Hybrid rendering config](RECIPES.md#hybrid-rendering-confi
   for rendering a component to a string without a browser.
 - **Playwright** for end-to-end against `astro preview` (built output), not
   `astro dev` — dev-only behavior can mask real hydration bugs.
-- **Content collection schemas are tested by the build.** If the schema is
-  strict, a malformed entry fails CI before any test runs. That's most of the
-  value a test would add for a content site.
+- **Content collection schemas are tested by the build** (§2): a malformed entry fails CI before any test runs.
 
 ## 12. Deployment
 

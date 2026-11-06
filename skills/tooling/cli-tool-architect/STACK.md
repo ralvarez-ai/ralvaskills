@@ -16,13 +16,11 @@ This skill pins **CLI-specific additions** beyond the core language stacks. Core
 
 ## Notes
 
-- **Config file format:** **TOML** by default (`config.toml` in XDG location). Use the stdlib `tomllib` (Python 3.11+) or `viper.SetConfigType("toml")` (Go).
+- **TOML parsing:** stdlib `tomllib` (Python 3.11+) or `viper.SetConfigType("toml")` (Go). Format and locations: SKILL.md §4.
 - **XDG paths:** use `github.com/adrg/xdg` (Go) or `platformdirs` (Python) — both handle Windows / macOS / Linux paths correctly. Don't hand-roll.
-- **Discovery order for config:** `--config <path>` flag → `TOOL_CONFIG` env var → `./<tool>.toml` → `$XDG_CONFIG_HOME/<tool>/config.toml`. Wire via viper / typer-config.
-- **Output formats:** every list/get subcommand supports `--output text|json|yaml` (`-o` short form). JSON is JSONL for list outputs (one record per line).
+- **Discovery order for config:** see SKILL.md §4. Wire via viper / typer-config.
+- **Output formats:** every list/get subcommand supports `--output text|json|yaml` (`-o` short form).
 - **Color & TTY:** auto-detect TTY; respect `NO_COLOR` and `FORCE_COLOR` env vars; expose `--color=auto|always|never` flag.
 - **Distribution:** ship multi-arch static binaries (linux/macOS/windows × amd64/arm64) — `goreleaser` for Go, `uv tool install` for Python.
-- **`rsk` uses JSON** for its config file (legacy); TOML is the recommended default for new CLIs authored under this skill.
-
 _Last reviewed: 2026-05-21_
 _Skill version at last review: 1.0.0_

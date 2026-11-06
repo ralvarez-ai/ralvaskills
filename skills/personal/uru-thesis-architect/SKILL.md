@@ -25,8 +25,6 @@ Do **not** use for:
 
 **Never draft the whole thesis at once.** Quality per section beats coverage. The unit of work is a **single section** (or a single subsection when a chapter is large). Draft it, iterate with the user until it holds up against the rubric, then move to the next. A full chapter is reached **step by step** — subsection by subsection — never dumped in one generation (§8).
 
-This is the headline difference from a generic "write my thesis" prompt: the architect produces a small, defensible piece the author can read, correct, and own — then continues.
-
 ## 2. Scope & output
 
 - **Output is kebab-case `.md` files**, one per thesis section, numbered in thesis order (`05-cap-i-problema.md`, `06-cap-ii-marco-teorico.md`, …). Lowercase, dash-separated, no accents (filesystem safety). Full layout in [RECIPES § 4](RECIPES.md#4-output-file-layout).
@@ -50,12 +48,7 @@ If the material for a required element is missing, do **not** invent it — see 
 
 ## 5. Write to the rubric
 
-Every drafted section must be written to survive the reviewer's checks, not just to read well. Before handing a section back, self-check it against the **write-to-the-rubric checklist** in [RECIPES § 2](RECIPES.md#2-write-to-the-rubric-checklist) — the [uru-thesis-reviewer](../uru-thesis-reviewer/SKILL.md) §6 dimensions restated as drafting targets. The high-value ones:
-
-- **Objetivos**: general singular y medible; específicos con verbos accionables (`analizar`, `diseñar`, `evaluar`) — nunca vagos (`conocer`, `estudiar`).
-- **Coherencia en cadena**: cada sección enlaza `problema → objetivos → metodología → resultados → conclusiones`. Al redactar, no rompas un eslabón.
-- **Claims proporcionales**: no afirmes más de lo que la evidencia del autor sostiene ("se demuestra" solo con prueba real).
-- **Conclusiones**: una por objetivo específico, sin introducir material nuevo.
+Every drafted section must be written to survive the reviewer's checks, not just to read well. Before handing a section back, self-check it against the **write-to-the-rubric checklist** in [RECIPES § 2](RECIPES.md#2-write-to-the-rubric-checklist) — the [uru-thesis-reviewer](../uru-thesis-reviewer/SKILL.md) §6 dimensions restated as drafting targets. Key targets: objetivos, coherencia en cadena, claims proporcionales, conclusiones — all in that checklist.
 
 ## 6. Anti-fabrication rule
 
@@ -65,12 +58,7 @@ The architect **phrases and structures the author's content; it never manufactur
 
 Draft within the fixed URU order; each chapter's required subsections and input checklist are in [RECIPES § 1](RECIPES.md#1-per-chapter-input--structure-templates):
 
-- **Cap. I — El Problema** (planteamiento, objetivos, justificación, delimitación)
-- **Cap. II — Marco Teórico** (antecedentes, bases teóricas, definición de variables)
-- **Cap. III — Marco Metodológico** (tipo, diseño, población/muestra, técnicas/instrumentos, procedimiento)
-- **Cap. IV — Resultados** (por objetivo específico; análisis y discusión)
-- **Cap. V — Propuesta** (opcional; derivada de resultados, factibilidad, validación)
-- **Conclusiones y Recomendaciones** (una conclusión por objetivo específico)
+Order: I Problema → II Marco Teórico → III Marco Metodológico → IV Resultados → V Propuesta (opcional) → Conclusiones y Recomendaciones. Subsections per chapter: RECIPES § 1.
 
 ## 8. Workflow — incremental, step by step
 
@@ -90,7 +78,4 @@ Draft within the fixed URU order; each chapter's required subsections and input 
 
 ## 10. Out of scope
 
-- Drafting the entire thesis in one pass (§1 — section-focused only).
-- Editing the `.docx` directly — the author pastes prose in themselves.
-- Fabricating data, results, citations, or instrument validation (§6).
-- Reviewing/grading an existing draft — use [uru-thesis-reviewer](../uru-thesis-reviewer/SKILL.md).
+Whole-thesis one-shot drafting (§1), editing the `.docx` (§2), fabrication (§6); reviewing/grading an existing draft → [uru-thesis-reviewer](../uru-thesis-reviewer/SKILL.md).

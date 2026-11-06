@@ -6,7 +6,7 @@ description: Operator's guide for the rsk CLI — manage ralvaskills via the .rs
 
 # RSK Guide
 
-> **Draft (v0.3.0).** The `rsk` CLI is in progress. Verify against `rsk --help` once shipped. For creating *new* skills (vs managing existing ones), use [`skill-builder`](../skill-builder/SKILL.md). For designing CLIs in general, see [`cli-tool-architect`](../../tooling/cli-tool-architect/SKILL.md).
+> **Draft.** The `rsk` CLI is in progress. Verify against `rsk --help` once shipped. For creating *new* skills (vs managing existing ones), use [`skill-builder`](../skill-builder/SKILL.md). For designing CLIs in general, see [`cli-tool-architect`](../../tooling/cli-tool-architect/SKILL.md).
 
 ## Always ask the user before taking action
 
@@ -59,7 +59,7 @@ rsk install <name> --dry-run                       # preview without writing
 
 Names are auto-resolved against the catalog: a name that matches a bundle expands to that bundle's skills; otherwise the name is treated as a single skill. Bundles win on name collisions.
 
-> Project installs land in `.claude/skills/` (shared by Claude Code and OpenCode) and always update `rsk.mod`. Use `--global` if you want the skill linked system-wide without manifest tracking.
+Project installs land in `.claude/skills/` (shared by Claude Code and OpenCode) and always update `rsk.mod`. Use `--global` for a system-wide link without manifest tracking.
 
 ## Quick reference
 
@@ -133,35 +133,15 @@ Per the spec this is opt-in with a 24h cache; the current build returns an expli
 1. `cd <project>` then `rsk new`
 2. `rsk install <stack-bundle>` — e.g. `rsk install go-grpc`
 
-**Bring an existing manifest project up to date after `git clone`** — `rsk install` (no args)
-
 **Add a single skill mid-project**
 - Tracked: `rsk install <name>` (+ `--pin` if it should auto-load)
 - Untracked, system-wide: `rsk install <name> --global`
 
-**Update everything** — `rsk update` (local clone) or `rsk update --include official` (also refresh Anthropic cache)
-
-**Upgrade a single manifest skill** — `rsk update <name>`
+After `git clone` of a manifest project, bare `rsk install` and `rsk update` / `rsk update <name>` / `--include official` are covered in workflow A and Update above.
 
 ## Bundle quick map
 
-| Bundle | Source | Use for |
-|---|---|---|
-| `global` | local | Every machine — universal workflow + meta skills |
-| `docs` | official | Document creation (docx/xlsx/pdf/pptx/find-docs) |
-| `design` | mixed | Frontend / UI projects |
-| `go-grpc` | local | Go gRPC services |
-| `gin` | local | Go REST services (Gin) |
-| `nethttp` | local | Go REST services (stdlib net/http) |
-| `go-cli` | local | Go command-line tools |
-| `fastapi` | local | Python REST services (FastAPI) |
-| `python-grpc` | local | Python gRPC services |
-| `python-cli` | local | Python command-line tools |
-| `llm-app` | local | LLM apps / RAG pipelines |
-| `ros2` | local | ROS2 robotics |
-| `event-driven` | local | Schema-first messaging (NATS/Kafka/RabbitMQ) |
-| `observability` | local | Signals + dashboards/alerts |
-| `code-review` | local | Reviewer triad: security, contracts, performance |
+The bundle table (name, source, use for) is in [REFERENCE.md](REFERENCE.md#bundle-quick-map); the live list is `rsk catalog bundles`.
 
 ## What's in `.rsk/`
 

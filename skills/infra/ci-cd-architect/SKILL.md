@@ -60,7 +60,7 @@ SHA-pinning + Renovate config snippet in [RECIPES.md §4](RECIPES.md#4-action-pi
 - **When long-lived secrets are unavoidable**, scope them to GitHub `environments:` with required reviewers — not to the repo.
 - **Never echo a secret** in logs. Masking catches direct prints; derivative leaks (a token shaped into a URL, a hash printed for "debugging") happen anyway. Treat any code path that reads `${{ secrets.X }}` as opaque.
 - **Rotate scheduled secrets** via a dedicated workflow; track rotation cadence in an ADR.
-- **Private deps need scoped tokens, and the scopes differ.** A build that fetches private Go modules needs `contents:read`; one that fetches private `@scope/*` npm packages needs `read:packages`. With *fine-grained* tokens that means two, passed as distinct build secrets (`--secret id=github_token,env=GH_PRIVATE_MODULES_TOKEN`, `--secret id=packages_token,env=NODE_AUTH_TOKEN`); a *classic* token carrying `repo` + `read:packages` covers both scopes in one — simpler to wire into every job, at the cost of read/write on every repo the owner can reach. Either way the runner's `GITHUB_TOKEN` grants neither for *other* repos, so a secret is unavoidable. Confirm a token's scopes with `curl -sI -H "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit | grep -i x-oauth-scopes`.
+- **Private deps need scoped tokens, and the scopes differ** (`contents:read` for private Go modules, `read:packages` for private npm packages; `GITHUB_TOKEN` grants neither for other repos) — token choice and scope check in [RECIPES.md §5](RECIPES.md#private-dependency-tokens).
 
 OIDC trust-policy snippets (AWS + GCP) in [RECIPES.md §5](RECIPES.md#5-oidc-cloud-auth).
 
@@ -96,8 +96,6 @@ Fan out only when the dimension genuinely matters:
 - **Flaky tests** — quarantine fast (mark `skip` with a tracking issue), don't normalize retry. Retry-as-default trains the team to ignore real flakiness.
 
 ## 9. Build & artifact publishing
-
-This skill covers the **workflow shape**, not the Dockerfile — see [docker-architect](../docker-architect/SKILL.md) for image rules.
 
 - **Multi-arch images** — `docker/setup-qemu-action` + `docker/setup-buildx-action` + `docker/build-push-action` with `platforms: linux/amd64,linux/arm64`.
 - **Build once, push many** — build the image once, push with multiple tags (`:<short-sha>`, `:<semver>`, `:latest`) in one action. Parallel rebuilds for tags are an antipattern.

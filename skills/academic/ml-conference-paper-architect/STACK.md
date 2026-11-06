@@ -16,7 +16,6 @@ Base LaTeX toolchain (TeX Live, latexmk, biber, chktex) is inherited from
 
 ## Notes
 
-- **These style files change every year and the page limits change with them.** Treat this table as a staleness marker, not as authority — the current CFP is authoritative, per [SKILL.md §1](SKILL.md#1-the-one-rule-that-overrides-everything).
 - **`natbib`, not `biblatex`** — this is the explicit carve-out from [latex-architect §8](../../languages/latex-architect/SKILL.md#8-bibliography). Venue templates ship `natbib` plus a matching `.bst`; converting them breaks the venue's citation rendering.
 - All four venues assume **pdfLaTeX**. AAAI additionally requires Type 1 fonts and enforces embedding mechanically.
 - Style files are **not vendored into this skill** — download them per submission from the official sources in [assets/VENUE_TEMPLATES.md](assets/VENUE_TEMPLATES.md).

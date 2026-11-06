@@ -13,7 +13,7 @@ Targets **Python 3.14**. See [STACK.md](STACK.md) for pinned dependency versions
 - **Modern syntax:** Built-in generics (`list[str]`, `dict[K, V]`, `X | None`). Never the legacy `typing.List` / `typing.Optional`.
 - **Deferred annotations (PEP 649, 3.14):** Annotations are no longer eagerly evaluated — forward references no longer need quotes (`def f(arg: NotYetDefined)` works). Inspect via `annotationlib.get_annotations()`, not `__annotations__` directly.
 - **Domain types:** `typing.NewType` to separate distinct concepts (`UserId` vs `OrderId`).
-- **Enums:** Default to `Enum` (with `__str__` overridden) for closed sets of domain states — members are distinct identities, not interchangeable with raw primitives, which catches accidental comparisons against arbitrary strings/ints. Reach for `StrEnum` (3.11+) when members must interoperate directly with strings — JSON payloads, query params, f-strings — without a `.value` call at every site. Reach for `IntEnum` when members must support arithmetic or ordering against plain integers (HTTP status codes, priority levels, wire values from an external system). Both trade `Enum`'s identity-safety for primitive compatibility — reach for them only when that interop is a real requirement, not by default.
+- **Enums:** Default to `Enum` (with `__str__` overridden) for closed sets of domain states — members are distinct identities, not interchangeable with raw primitives, which catches accidental comparisons against arbitrary strings/ints. `StrEnum` (3.11+) when members must interoperate directly with strings (JSON payloads, query params, f-strings) without `.value` at every site. `IntEnum` when members must support arithmetic or ordering against plain integers (HTTP status codes, priority levels, external wire values). Both trade `Enum`'s identity-safety for primitive compatibility — use them only when that interop is a real requirement, not by default.
 - **Constraints:** `Literal` for a narrow, function-local set of string flags that doesn't warrant a full `Enum`.
 - **Structured payloads:** `TypedDict` over `dict[str, Any]` for known-shape mappings (see §3 for the broader dict/tuple-avoidance principle).
 - **Subclassing safety:** `typing.override` decorator (3.12+) on every overriding method — mypy flags broken overrides.
@@ -87,34 +87,7 @@ Prefer stdlib when it covers the use case.
 
 **Recommended pattern, not mandatory.** Mirrors the Go `sqlx + //go:embed` philosophy: raw SQL in `.sql` files, loaded once at module import, executed via `psycopg 3`. No ORM by default — keeps queries auditable in git and gives editors full SQL syntax highlighting and linting.
 
-```python
-from importlib.resources import files
-import psycopg
-from psycopg.rows import class_row
-
-GET_USER_BY_ID = files(__package__).joinpath("queries/get_user_by_id.sql").read_text()
-
-class UserRepo:
-    def __init__(self, conn: psycopg.AsyncConnection) -> None:
-        self._conn = conn
-
-    async def get_by_id(self, user_id: int) -> User | None:
-        async with self._conn.cursor(row_factory=class_row(User)) as cur:
-            await cur.execute(GET_USER_BY_ID, (user_id,))
-            return await cur.fetchone()
-```
-
-Layout:
-
-```
-src/myapp/userrepo/
-├── __init__.py
-├── repo.py
-└── queries/
-    ├── get_user_by_id.sql
-    ├── insert_user.sql
-    └── list_users.sql
-```
+Code sample and file layout: [RECIPES.md](RECIPES.md#database-access-sql-files--importlibresources-10).
 
 - **Driver:** `psycopg 3` — sync + async, server-side cursors, COPY, prepared statements.
 - **Migrations:** `alembic` — versioned, works with raw SQL (no SQLAlchemy ORM required).
@@ -124,7 +97,7 @@ src/myapp/userrepo/
 ## 11. Tooling
 
 - **Environment + packaging:** `uv` — replaces `pip`, `pip-tools`, `virtualenv`, `pyenv`. Single binary, fast. Commit `uv.lock`; run `uv sync --frozen` in CI.
-- **Lint + format:** `ruff` — replaces `black`, `isort`, `flake8`, `pyupgrade`. One config, one tool. Drop-in template: [`assets/ruff.toml`](assets/ruff.toml) — copy to your project root as `ruff.toml` (or fold into `pyproject.toml` under `[tool.ruff]`) and set `known-first-party` to your package name. Run `ruff check` and `ruff format --check` on every commit and in CI; treat warnings as errors.
+- **Lint + format:** `ruff` — replaces `black`, `isort`, `flake8`, `pyupgrade`. One config, one tool. Drop-in template: [`assets/ruff.toml`](assets/ruff.toml) — copy to your project root as `ruff.toml` (or fold into `pyproject.toml` under `[tool.ruff]`) and set `known-first-party` to your package name. Run `ruff check` and `ruff format --check` on every commit; treat warnings as errors.
   - **Correctness & bugs:** `F` (pyflakes), `B` (bugbear, incl. `B006`/`B008` mutable defaults — see §3, and `B904` exception chaining — see §7), `ASYNC` (asyncio anti-patterns — see §5), `RUF` (ruff-specific, e.g. `RUF012` mutable class defaults).
   - **Security:** `S` (flake8-bandit) — SQL/command injection, hardcoded secrets, weak crypto. Test files relax `S101`/`S105`-`S107` via `per-file-ignores` since asserts and fixture creds are expected there.
   - **Typing discipline:** `ANN` (typed signatures — the mypy `--strict` baseline), `TC` (`TYPE_CHECKING` guards, with `runtime-evaluated-base-classes` carved out for Pydantic/Settings — see §3), `PYI` (stub-file quality).
@@ -139,7 +112,7 @@ src/myapp/userrepo/
   - **Beyond `--strict`:** `warn_unreachable`, `warn_redundant_casts`, `warn_unused_ignores`, `strict_equality`, `extra_checks` — catch dead branches, stale `# type: ignore` comments, and cross-type equality bugs that `--strict` alone misses.
   - **Per-module overrides:** relax `disallow_untyped_defs` under `tests.*` (fixtures and `@pytest.mark.parametrize` routinely defeat full inference); `ignore_errors` under `migrations.*` (Alembic-generated, not hand-typed); scope `ignore_missing_imports` to named untyped dependencies instead of a blanket override, which would silently swallow first-party import typos too.
   - **CI parity:** run `ruff check`, `ruff format --check`, and `mypy` as three separate, mandatory CI gates — a formatting fix should never ride along with a type fix in the same commit.
-- **Test:** `pytest 9` + `pytest-asyncio` for async paths. `pytest-cov` for coverage gating in CI.
+- **Test:** `pytest-cov` coverage gate in CI (pytest 9 + `pytest-asyncio`: see §7).
 
 ## Canonical libraries
 

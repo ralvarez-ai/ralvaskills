@@ -153,3 +153,18 @@ func TestCreateUser(t *testing.T) {
     require.Equal(t, http.StatusCreated, w.Code)
 }
 ```
+
+## Middleware order
+
+Outermost first; order matters.
+
+```go
+r := gin.New()  // not gin.Default — we set logging ourselves
+r.Use(
+    middleware.RequestID(),             // 1. assign correlation_id
+    middleware.SLog(),                  // 2. structured access log
+    gin.Recovery(),                     // 3. convert panics → 500 problem
+    middleware.CORS(cfg.CORS),          // 4. preflight handling
+    gzip.Gzip(gzip.DefaultCompression), // 5. response compression
+)
+```

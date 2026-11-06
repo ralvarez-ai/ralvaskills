@@ -87,7 +87,7 @@ LoadCredential=ddns-token:%h/Secrets/cloudflare/api/ddns-token
 
 1. **Inventory the consumer** — `git grep` the token/var; classify: container file / env app / systemd / shell / writable state / CI.
 2. **Place the secret** under `<kind>/<owner>/<name>`, `600`.
-3. **Decide the mechanism** from §3. For a container, check the reader's uid (`docker inspect <ctr> --format '{{.Config.User}}'`) → choose `600` or `644`. For a *build* secret, never `file:` outside the context — source from the environment.
+3. **Decide the mechanism** from §3. For a container, check the reader's uid (§2) → choose `600` or `644`. For a *build* secret, never `file:` outside the context — source from the environment.
 4. **Wire the consumer** to `${SECRETS_DIR}/…` (Compose secret / `LoadCredential` / `*_FILE`).
 5. **Remove the value** from `.env` / repo; leave only the path (or nothing, if compose has the default).
 6. **Verify** (§6). **Document** in the repo's Secrets section. **Commit** per repo.
@@ -111,11 +111,11 @@ LoadCredential=ddns-token:%h/Secrets/cloudflare/api/ddns-token
 5. **Moving a bind-mounted file doesn't affect a running container** — it keeps the pinned inode until recreated, so "it still works" is not proof.
 6. **Don't blanket `chmod 600`.** One non-root reader (cloudflared `65532`) breaks.
 7. **`.env` interpolation is inconsistent.** Compose expands `${VAR}` (and nested defaults); go-task supports `{{.HOME}}`; systemd does not expand at all.
-8. **Verify secret content** — a public key saved as the private key silently breaks push.
+8. **Verify secret content**, not the filename (§2).
 9. **CI ≠ local.** CI uses `docker/build-push-action`/`buildx`, not Compose; changing a Compose `file:` doesn't touch CI.
 10. **Editing discipline.** Exact-match edits + `git diff` verification; never edit the same file in parallel; re-read after every structural edit.
-11. **Build secrets and the fs.read sandbox.** A `file:` build secret (Compose `build.secrets`) whose path is outside the build context fails on `docker compose build` — Bake wants `--allow=fs.read=…`. Source it from the environment (`environment: VAR`) instead; runtime `file:` secrets are unaffected.
-12. **Go modules and npm packages are different tokens.** `contents:read` for the Go module fetch, `read:packages` for `@scope/*` npm packages; one token can't serve both. Wire `github_token` and `packages_token` separately.
+11. **Build secrets and the fs.read sandbox.** A `file:` build secret outside the build context fails on `docker compose build`; source it from the environment (`environment: VAR`) instead. Runtime `file:` secrets are unaffected (§3).
+12. **Go modules and npm packages are different tokens** (scopes in §3); one token can't serve both. Wire `github_token` and `packages_token` separately.
 13. **A Dockerfile's `go build` step needs the token too.** The `go mod download` cache mount isn't shared with a later `go build` run, so mount the secret on both or the build fetches anonymously and fails.
 14. **An `environment:`-sourced secret needs the caller to export the var.** chezmoi's shell exports `GH_PRIVATE_MODULES_TOKEN` / `NODE_AUTH_TOKEN`; a bare `docker compose build` outside that shell needs them set.
 

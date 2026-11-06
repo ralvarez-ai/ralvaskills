@@ -40,8 +40,8 @@ Mirrors [fastapi-architect](../fastapi-architect/SKILL.md#1-project-structure--f
 Skeleton: [RECIPES.md § Component skeleton — `Props` type + loading/error guard](RECIPES.md#component-skeleton--props-type--loadingerror-guard).
 
 - **`Props` type colocated**, named `<Component>Props`.
-- **Loading / error / empty states are real components**, not inline ternaries with cryptic JSX. Per [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md).
-- **`aria-*` attributes** when the role isn't implicit. Per [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md).
+- **Loading / error / empty states are real components**, not inline ternaries with cryptic JSX.
+- **`aria-*` attributes** when the role isn't implicit.
 - **Event handlers passed as props**, not constructed inside the component (which would change identity every render and break `memo`).
 
 ### Composition over configuration
@@ -64,8 +64,7 @@ Reach for the composition shape first; a 20-prop `<DataTable>` is a smell. Compa
 
 ### Built-in hooks
 
-Full table of when to use each (`useState`, `useReducer`, `useContext`, `useEffect`, `useLayoutEffect`, `useId`, `useTransition`, `useDeferredValue`, `use`) in [RECIPES § Built-in hooks reference](RECIPES.md#built-in-hooks-reference). Key rule: **`useEffect` is for synchronization with non-React systems, not for fetching** — TanStack Query handles fetching.
-
+Full table of when to use each (`useState`, `useReducer`, `useContext`, `useEffect`, `useLayoutEffect`, `useId`, `useTransition`, `useDeferredValue`, `use`) in [RECIPES § Built-in hooks reference](RECIPES.md#built-in-hooks-reference).
 ### Custom hooks
 
 - **Encapsulate stateful behavior** that's reused or that doesn't fit in a component. `useUser(id)`, `useDebounce(value, ms)`, `useEscapeKey(handler)`.
@@ -75,6 +74,7 @@ Full table of when to use each (`useState`, `useReducer`, `useContext`, `useEffe
 
 ### Don't fetch in `useEffect`
 
+- **`useEffect` is for synchronization with non-React systems**, not for fetching. TanStack Query handles fetching.
 - **Server state lives in TanStack Query**, not `useState` + `useEffect`. The fetch-in-effect pattern is correct for ~zero apps.
 - The query handles loading, error, retry, dedup, caching, refetch on focus, invalidation — none of which you want to reimplement.
 
@@ -157,7 +157,7 @@ Route components live in `src/routes/` (or framework-specific path); they orches
 
 ## 12. Cross-skill ties
 
-- [nextjs-architect](../nextjs-architect/SKILL.md) — Next-specific server-side concerns (RSC, server actions, app router) live there; this skill covers client React universally.
+- [nextjs-architect](../nextjs-architect/SKILL.md) — RSC, server actions, app router.
 - [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md) — accessibility, component primitives (Radix), design tokens, loading/error/empty state design.
 - [rest-api-architect](../../protocols/rest-api-architect/SKILL.md) — API contracts the frontend consumes. `snake_case` ↔ `camelCase` translation happens at the boundary if needed.
 - [fastapi-architect](../fastapi-architect/SKILL.md) / [gin-architect](../gin-architect/SKILL.md) / [nethttp-architect](../nethttp-architect/SKILL.md) — backend counterparts; feature-folder structure mirrors them.

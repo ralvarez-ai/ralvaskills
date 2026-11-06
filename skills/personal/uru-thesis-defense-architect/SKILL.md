@@ -12,7 +12,7 @@ Design **thesis defense presentation specifications** for Universidad Real (URU)
 
 - **Output is always one `.md` file.** No HTML, PDF, PPTX, image generation, or styling code. If asked for a rendered deck, refuse and offer the `.md` instead.
 - **This skill is personal and self-contained.** It encodes one institution's fixed defense structure; it is not a general-purpose deck tool and does not chain with other presentation skills.
-- **The university logo is a user-supplied asset**, expected at `assets/uru-logo.png` inside this skill folder. Every slide spec references it by that path — never regenerate or describe the logo's visual content.
+- **The university logo is a user-supplied asset**, expected at `assets/uru-logo.png` inside this skill folder. Every slide spec references it by that path.
 
 ## 2. Interview-first protocol
 
@@ -62,7 +62,7 @@ Each section has a specific emphasis the slide content must honor — these are 
 - **Definición de las Variables** → strict three-column table (`VARIABLE | AUTOR | DEFINICIÓN`); every technical/engineering variable needs a cited author backing its definition.
 - **Metodología** → four fixed fields only: Tipo, Diseño, Población-Muestra (o Unidad de Análisis), Técnicas e Instrumentos.
 - **Metodología de Desarrollo** → table or process map crossing FASES × ACTIVIDADES; this table is the anchor Resultados must reference back to.
-- **Resultados** → per-phase explanation of what was built, correlated to §5's phase list; the visually richest, most extensible section.
+- **Resultados** → per-phase explanation, correlated to §5's phase list; the visually richest, most extensible section.
 - **Conclusiones y Recomendaciones** → closes with an explicit handoff line to the live product demonstration — this is the culminating moment of the defense, state it as such.
 
 ## 7. Output specification format

@@ -45,17 +45,16 @@ Buf-style hierarchical packages — `<org>.<product>.<resource>.<version>`. Mirr
 
 Buf's `protovalidate` is the modern, declarative replacement for the older `protoc-gen-validate` (PGV). Constraints are CEL expressions attached as field options; validation runs at runtime via per-language `protovalidate` libraries. Field-level and cross-field examples in [RECIPES.md](RECIPES.md).
 
-- **Validate at the boundary** — server-side, in the gRPC interceptor (see [grpc-architect §4](../../protocols/grpc-architect/SKILL.md#4-interceptors)). Don't rely on clients to validate.
+- **Validate at the boundary** — server-side, in the gRPC interceptor (see [grpc-architect §4](../../protocols/grpc-architect/SKILL.md#4-interceptors--mandatory-chain)). Don't rely on clients to validate.
 - **CEL allows cross-field rules** via `(buf.validate.message).cel`.
 - **Skip the old `protoc-gen-validate` (PGV).** It's deprecated; protovalidate's CEL is more expressive and the runtime is maintained.
 
 ## 6. Code generation — `buf generate` + `buf.gen.yaml`
 
-One config file at the repo root drives all generators. Versions of the plugins are pinned in `buf.gen.yaml` itself; no `protoc` invocation by hand. Full config in [RECIPES.md](RECIPES.md).
+One config file at the repo root drives all generators. Versions of the plugins are pinned in `buf.gen.yaml` itself (never `:latest`); no `protoc` invocation by hand. Full config in [RECIPES.md](RECIPES.md).
 
 - **Generated code is committed** in monorepos and in any repo whose consumers don't run `buf` themselves. Commit it under `gen/<lang>/...` clearly separated from hand-written source.
 - **Generated code is never edited** by hand. If you need to add helpers, write them in sibling hand-written files.
-- **Generator plugin versions are pinned** in `buf.gen.yaml` — never `:latest`.
 
 ## 7. Linting — `buf lint`
 
@@ -80,16 +79,7 @@ Common lint catches:
 
 Use the Google-provided well-known types instead of inventing equivalents.
 
-| Use case | Type |
-|---|---|
-| Point-in-time timestamp | `google.protobuf.Timestamp` (RFC 3339, nanosecond precision) |
-| Duration | `google.protobuf.Duration` |
-| Wall-clock date (no time) | `google.type.Date` (from `googleapis`) |
-| Money | `google.type.Money` (from `googleapis`) — currency code + amount |
-| Unstructured JSON | `google.protobuf.Struct` (only for genuinely schemaless payloads) |
-| Empty response | `google.protobuf.Empty` |
-| Optional field marker | proto3 `optional` keyword (no wrapper needed) |
-| Field mask for partial updates | `google.protobuf.FieldMask` |
+Table of types by use case (Timestamp, Duration, Date, Money, Struct, Empty, optional, FieldMask): [RECIPES.md](RECIPES.md#well-known-types).
 
 - **Always import via the canonical path.** Don't copy these into your own packages.
 - **`Timestamp` over `int64 unix_ts`** for any human-relevant time. Wire size is similar; human readability wins.

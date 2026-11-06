@@ -6,7 +6,7 @@ description: Scaffold a new ralvaskills skill per SPECS.md — SKILL.md skeleton
 
 # Skill Builder
 
-Meta-skill that scaffolds new skills under `skills/<category>/<skill-name>/` following [SPECS.md](../../../docs/SPECS.md). Generates structure; hands off content authoring. Templates and the full validation checklist live in [RECIPES.md](RECIPES.md).
+Meta-skill that scaffolds new skills under `skills/<category>/<skill-name>/` following [SPECS.md](../../../docs/designs/2026-05-20-technical-specification.md). Generates structure; hands off content authoring. Templates and the full validation checklist live in [RECIPES.md](RECIPES.md).
 
 ## 1. When to invoke
 
@@ -41,9 +41,6 @@ If a question isn't answered here, **read SPECS.md before guessing.**
 ## 4. Naming + placement
 
 Validate against the SPECS naming convention ([RECIPES §5](RECIPES.md#5-naming-suffix-table)). Path follows category placement and the discovery rule: `skills/<category>/<name>/SKILL.md`. Never nest a `SKILL.md` inside another skill folder.
-
-If the topic doesn't fit any suffix, propose a new one and update SPECS — don't shoehorn.
-
 ## 5. Frontmatter generation
 
 One-line description in YAML scalar form. The description sits in Claude's always-loaded skill index — every line costs tokens on every turn, forever.
@@ -57,7 +54,7 @@ Template + good/bad examples in [RECIPES §1](RECIPES.md#1-frontmatter-template)
 
 ## 6. Body skeleton
 
-Generate placeholders, not content. **Body discipline (per [SPECS — SKILL.md Format](../../../docs/SPECS.md#skillmd-format)):**
+Generate placeholders, not content. **Body discipline (per [SPECS — SKILL.md Format](../../../docs/designs/2026-05-20-technical-specification.md#skillmd-format)):**
 
 - **Rules first, code second.** Each section explains the rule and the *why*; code is illustrative, not exhaustive.
 - **Code block ceiling: ~15 lines.** If it grows larger or appears as a full reference implementation (Dockerfile, auth middleware, project tree, test scaffold), move it to `RECIPES.md` and link with one line: *"Skeleton in [RECIPES.md](RECIPES.md)."*
@@ -108,7 +105,5 @@ The scaffold is ready. Content authoring is the next step:
 
 - Each section heading needs its bullets / paragraphs / illustrative snippets.
 - Each architectural opinion needs to be stated explicitly (default + alternative + when-to-switch).
-- Each `STACK.md` row needs a real pinned version (fetch live — don't guess).
-- Long code recipes go in `RECIPES.md`, not in `SKILL.md`. As content lands, audit any code block past ~15 lines and factor it out.
-
+- Each `STACK.md` row needs a real pinned version (§7).
 Surface the scaffold to the user, summarise what was generated and where, and ask: *"Want me to fill in the section content now, or would you prefer to author it yourself?"*

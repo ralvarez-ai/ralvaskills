@@ -47,7 +47,7 @@ Targets **reveal.js 6.0.1** (vanilla) with an extension for **@revealjs/react 0.
 - **Start from a built-in theme** (`black`, `white`, `league`, `sky`, `night`, `serif`, `simple`, `solarized`, `moon`, `beige`, `blood`, `dracula`) — never build from scratch unless brand requirements demand it.
 - **Custom overrides go in a separate stylesheet loaded after the theme**, not by editing the theme file in place — keeps upgrades painless.
 - **Images and media live alongside the deck**, referenced with relative paths; large video/audio should be lazy-loaded via `data-src` and `data-lazy-load` conventions to keep initial load fast.
-- **Watch compounding `em` on nested elements that each set their own `font-size`.** If a dense region (a wide table, a sidebar) shrinks via `font-size: 0.4em` and a generic deck-wide rule sets a child element's `font-size` in `em` too (e.g. `p { font-size: 0.55em }`), the two multiply rather than add — `0.4 × 0.55 ≈ 0.22em`, far smaller than either value alone suggests. When nesting a shrunk region inside deck-wide `em` typography, size the inner region in `rem` or a fixed unit, or explicitly reset the child's `font-size` to `1em`.
+- **Watch compounding `em` on nested elements that each set their own `font-size`.** If a dense region (a wide table, a sidebar) shrinks via `font-size: 0.4em` and a generic deck-wide rule sets a child element's `font-size` in `em` too (e.g. `p { font-size: 0.55em }`), the two multiply, not add: `0.4 × 0.55 ≈ 0.22em`. When nesting a shrunk region inside deck-wide `em` typography, size the inner region in `rem` or a fixed unit, or explicitly reset the child's `font-size` to `1em`.
 
 ## 6. Plugins
 
@@ -84,16 +84,7 @@ CDN link for a single-file deck, or an npm + Vite project for anything version-c
 
 ## 10. Anti-patterns & review checklist
 
-- Wall-of-text slides (no fragment/split discipline) — same failure mode as [demo-presentation-architect](../../personal/demo-presentation-architect/SKILL.md) flags for spec decks.
-- Mixing HTML and Markdown-mode within one deck without a reason.
-- Registering plugins that aren't used anywhere in the deck.
+- Rules already stated above, checked on review: wall-of-text slides and mixed HTML/Markdown modes (§3, §4); unused plugins (§6); hardcoded pixel layouts, `height: 100%` wrappers and a missing `.reveal-viewport` override (§7); `position`/`overflow`/`display` on `<section>` and `overflow-y: auto` as the main fix (§3); nested `em` multiplication (§5); React by habit (§1, §9).
 - Speaker notes that duplicate on-slide text instead of adding presenter-only context.
-- Hardcoded pixel layouts fighting reveal.js's auto-scaling instead of using its centering/sizing config.
-- Custom CSS setting `position`, `overflow`, or `display` on `<section>` — silently breaks the stacking/transition system (blank slides on advance, no console error).
-- An inner wrapper using `height: 100%` (or `flex: 1` inside it) to fill the slide — `<section>` never has a set height, so this collapses to content size instead of the canvas. Use a fixed px height matching `Reveal.initialize({ height })`.
-- `overflow-y: auto` used as the primary fix for a slide that doesn't fit, instead of tightening typography/spacing or splitting the slide — forces the presenter to scroll mid-talk.
-- Nested `em` font-sizing where a shrunk region (table, sidebar) and a deck-wide child rule both use `em` — the values multiply, producing unexpectedly tiny text.
-- Non-white theme with no `.reveal-viewport` background override — letterboxing shows the default white viewport background instead of the theme's.
-- React extension reached for out of habit when a static vanilla deck would do.
 
 Before handing off: every slide has a clear single idea, plugins list matches what's actually used, transitions are consistent unless a specific slide has a stated reason to diverge, and speaker notes (if any) are present only where they add value.

@@ -97,8 +97,7 @@ The rule underneath all of these: **write meaning, let packages render it.** Any
 
 ## 7. Math
 
-- **`\[ ... \]` or `equation`/`align`. Never `$$`** — plain-TeX `$$` breaks `amsmath` spacing and `fleqn`.
-- **`eqnarray` is banned** — broken spacing, known bug. Use `align`.
+- **`\[ ... \]` or `equation`/`align`. Never `$$`; `eqnarray` is banned (use `align`)** — reasons in the §10 table.
 - `align` for multi-line, `split` inside `equation` for one numbered equation across lines, `gather` for unrelated centered lines.
 - **Don't number equations you never reference.** Use the starred forms (`align*`, `equation*`).
 - `\text{}` (amsmath) for words inside math, not `\mbox` or bare italics.
@@ -113,7 +112,7 @@ The rule underneath all of these: **write meaning, let packages render it.** Any
 - **Protect capitals with braces** in titles: `{B}ayesian`, `{L}aTeX`. Style files that lowercase titles will mangle proper nouns otherwise.
 - `\autocite` for the common case; `\textcite` when the author is part of the sentence.
 
-**natbib carve-out.** Conference and journal templates ship their own `.sty` with `natbib` wired in and a matching `.bst`. **Do not convert them to biblatex** — you break the venue's citation rendering and risk desk rejection. In that case: keep `natbib`, use `\citep`/`\citet`, and run `bibtex` (set `$bibtex_use = 2` in `.latexmkrc`). The rule is scoped by ownership: your document, biblatex; their template, whatever it ships. See [ml-conference-paper-architect](../../academic/ml-conference-paper-architect/SKILL.md) for the venue side.
+**natbib carve-out.** Conference and journal templates ship their own `.sty` with `natbib` wired in and a matching `.bst`. **Do not convert them to biblatex** — you break the venue's citation rendering and risk desk rejection. In that case: keep `natbib`, use `\citep`/`\citet`, and run `bibtex` (set `$bibtex_use = 2` in `.latexmkrc`). The rule is scoped by ownership: your document, biblatex; their template, whatever it ships.
 
 biblatex config and both `.latexmkrc` variants in [RECIPES §4](RECIPES.md#4-bibliography-configuration).
 
@@ -121,7 +120,7 @@ biblatex config and both `.latexmkrc` variants in [RECIPES §4](RECIPES.md#4-bib
 
 - **`chktex`** — lints for the mechanical errors above (missing `~`, `$$`, bad quotes, space after abbreviations). Run it in CI; suppress specific warnings with a committed `.chktexrc`, never by disabling the tool.
 - **`latexindent`** — deterministic formatting. Commit `.latexindent.yaml` and run in pre-commit so diffs stay reviewable.
-- **Zero tolerance for `Overfull \hbox` over ~5pt** in the final pass. Fix by rewording, not by `\sloppy`.
+- **Zero tolerance for `Overfull \hbox` over ~5pt** in the final pass.
 - **`\usepackage[l2tabu, orthodox]{nag}`** while drafting — warns on obsolete commands directly during compilation. Remove before submission.
 - **CI builds the PDF on every push** and uploads it as an artifact. A LaTeX repo where `main` doesn't compile is worse than useless, and it's a 20-line workflow.
 - **One sentence per line** in source. Line-level diffs become sentence-level diffs, making review and merges tractable. Never reflow paragraphs — it produces diffs nobody can read.
@@ -135,7 +134,7 @@ Each of these has a correct replacement and no legitimate use in a new document:
 | Never | Instead | Why |
 |---|---|---|
 | `\\` to end a paragraph | blank line | `\\` breaks the line without paragraph spacing or indentation logic |
-| `$$ ... $$` | `\[ ... \]` | Breaks amsmath spacing |
+| `$$ ... $$` | `\[ ... \]` | Plain-TeX; breaks amsmath spacing and fleqn |
 | `eqnarray` | `align` | Known-broken spacing |
 | `\hline` in tables | `booktabs` rules | Cramped, no vertical padding control |
 | `subfigure` | `subcaption` | Deprecated, conflicts with `caption` |

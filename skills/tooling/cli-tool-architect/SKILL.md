@@ -6,7 +6,7 @@ description: Cross-language CLI standards — subcommand structure, flag/env/con
 
 # CLI Tool Architecture
 
-Language-agnostic conventions for command-line tools. Go-specific recipes use `spf13/cobra` + `spf13/pflag` + `spf13/viper`; Python-specific recipes use `typer`. Per-language stacks are canonical in [go-architect](../../languages/go-architect/SKILL.md) and [python-architect](../../languages/python-architect/SKILL.md). See [STACK.md](STACK.md) for additional CLI-specific libraries (output styling, alternative loggers).
+Language-agnostic conventions for command-line tools. Go-specific recipes use `spf13/cobra` + `spf13/pflag` + `spf13/viper`; Python-specific recipes use `typer`. See [STACK.md](STACK.md) for additional CLI-specific libraries (output styling, alternative loggers).
 
 ## 1. Command structure
 
@@ -112,8 +112,6 @@ CLI logging is for the user's terminal, not log aggregation. Different style fro
 - **Log to stderr always.** No exceptions.
 - **Structured output** even for human reading — key=value pairs are scannable. Use `log/slog` (Go) or `structlog` (Python). `charmbracelet/log` (Go) and `rich` (Python) add pretty-printing while preserving structure.
 - **Errors include the operation** that failed, the inputs that mattered, and any correlation id if cross-service. Format example in [RECIPES § Error message format](RECIPES.md#error-message-format).
-- **No stack traces in user-facing errors** (see §15).
-
 ## 11. Progress feedback
 
 For long-running operations only — anything that takes more than ~2 seconds.
@@ -159,4 +157,4 @@ Tell the user what failed, why, and what to try next. Three-line format + struct
 
 ## 16. Language-specific recipes
 
-Implementation skeletons for **Go (cobra + pflag + viper)** and **Python (typer + rich)** live in [RECIPES.md](RECIPES.md). Canonical per [go-architect §11](../../languages/go-architect/SKILL.md#11-dependencies--logging) and [python-architect §10](../../languages/python-architect/SKILL.md#10-tooling).
+Implementation skeletons for **Go (cobra + pflag + viper)** and **Python (typer + rich)** live in [RECIPES.md](RECIPES.md). Canonical per [go-architect §11](../../languages/go-architect/SKILL.md#11-dependencies--logging) and [python-architect §10](../../languages/python-architect/SKILL.md#11-tooling).

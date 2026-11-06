@@ -52,6 +52,7 @@ resp, err := client.CallUnary(ctx, connect.NewRequest(&GetPoolRequest{Id: id}))
 - **Validation is `func(proto.Message) error`** (adapt protovalidate); its error text is returned to the client in a `CodeInvalidArgument` (`validation failed: ...`), so it must be safe to expose. Nil disables it; non-proto messages are skipped.
 - **Health is the standard `grpc.health.v1.Health` service** over Connect: `NewHealthHandle(names...)` starts them SERVING and composes with `NewServeMux`; call `SetServing`/`Shutdown` as dependencies come up or drain.
 - **The kit never imports `svckit` or a concrete service.** It returns a plain `http.Handler`; the deployable owns the lifecycle ([SVCKIT](SVCKIT.md)).
+- **A Connect service depends on both `connectrpckit` (transport) and `contracts` (contract types), and keeps its port protocol-agnostic** so a `grpckit` adapter can replace the Connect one without a rewrite. Both `grpckit` and `connectrpckit` map a handler's `*corekit.Error` to their own code through `corekit.Kind`, so a service returns `*corekit.Error` and stays transport-agnostic.
 
 ## Not here
 

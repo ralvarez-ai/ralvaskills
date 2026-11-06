@@ -46,15 +46,15 @@ Use gRPC standard codes, return errors via `status.Error(code, msg)`. Map domain
 
 ## 3. Request / response shape
 
-- **Always typed messages.** Don't define a method as `rpc Ping(StringValue) returns (StringValue)` — wrap in `PingRequest` / `PingResponse`.
-- **Validation at the boundary** via `protovalidate` (see [protobuf-architect §5](../../encoding/protobuf-architect/SKILL.md#5-validation--protovalidate-cel)). Enforced server-side via an interceptor (§4).
+- **Always typed messages** (see §1; `Ping` example in [RECIPES.md](RECIPES.md#service-definition)).
+- **Validation at the boundary** via `protovalidate` (see [protobuf-architect §5](../../encoding/protobuf-architect/SKILL.md#5-validation--protovalidate-cel)).
 - **No business logic in generated handler files.** Generated handlers are thin shims that call into service-layer code (same discipline as REST routers per [fastapi-architect](../../frameworks/fastapi-architect/SKILL.md) / [gin-architect](../../frameworks/gin-architect/SKILL.md)).
 
 ## 4. Interceptors — mandatory chain
 
 Interceptors are gRPC's middleware. **Order matters** — outermost first: recovery → request-id → log → auth → validation → metrics. Full chain in [RECIPES.md](RECIPES.md).
 
-- **Recovery first** — catches panics anywhere downstream and converts to `INTERNAL` with correlation id (never a stack trace).
+- **Recovery first** — catches panics anywhere downstream and converts to `INTERNAL` with correlation id, never a stack trace (§2).
 - **Auth before validation** — no point validating an unauthenticated request's body. Per-method authorization (scopes/roles) happens inside the handler or via a small `WithAuthFunc` interceptor.
 - **Validation is centralized via `protovalidate`** — don't hand-write validation in every handler. The interceptor calls `validator.Validate(req)` and returns `INVALID_ARGUMENT` with `google.rpc.BadRequest` details on failure.
 - **Same interceptor chain for streaming RPCs** via `ChainStreamInterceptor`. Streaming validation requires handling per-message in client/bidi streams.
@@ -120,7 +120,7 @@ gRPC's wins are real but specific:
 
 REST is the better default when:
 
-- **Browser callers** — vanilla gRPC isn't browser-callable without a gateway. Connect-RPC fixes this; consider it (or a separate REST facade) if browser is in scope.
+- **Browser callers** — vanilla gRPC isn't browser-callable without a gateway. Connect-RPC fixes this (see below); consider it (or a separate REST facade) if browser is in scope.
 - **Public APIs** — external consumers expect REST; `curl` works without tooling; OpenAPI is the universal documentation format.
 - **Cache-friendly reads** — HTTP caching (ETag, Cache-Control) is built-in; gRPC has no equivalent.
 - **Small scope** — for one CRUD service, a Gin/FastAPI REST API is shorter to build.

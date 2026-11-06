@@ -46,4 +46,4 @@ screen -S work
 <commands>
 ```
 
-Detach with `Ctrl+A` `D` once the process is running — it keeps going on the Pi independent of the SSH connection. Reattach later with `screen -d -r work`.
+Detach with `Ctrl+A` `D` (not `Ctrl+C`) once the process is running — it keeps going on the Pi independent of the SSH connection. Reattach later with `screen -d -r work` (the `-d` force-detaches a stale "Attached" state a plain `-r` would refuse).

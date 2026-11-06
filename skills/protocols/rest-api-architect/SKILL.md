@@ -40,7 +40,7 @@ Use the right code for the situation. The full table — every code, when to use
 
 - **Path prefix only:** `/v1/users`, `/v2/users`. No header-based versioning, no query-param versioning.
 - **Bump the version when a breaking change ships.** Additive changes (new optional field, new endpoint) stay in the same version.
-- **Run versions side-by-side** until clients migrate. Deprecate with `Deprecation` and `Sunset` response headers (RFC 8594) before removing.
+- **Run versions side-by-side** until clients migrate. Deprecate with `Deprecation` and `Sunset` response headers (RFC 9745 / RFC 8594) before removing.
 - **Internal microservices** can skip versioning until an external consumer appears — but it's cheap to start with `/v1/` from day one.
 
 ## 5. Pagination — cursor, not offset
@@ -79,7 +79,7 @@ Full implementation reference — where the ETag value comes from (default: mono
 ## 10. Auth & security headers
 
 - **Authentication via `Authorization: Bearer <token>`.** No tokens in query params (they leak into logs and referrer headers).
-- **`401`** for missing/invalid credentials; **`403`** for valid credentials lacking permission. Mixing these confuses clients debugging access issues.
+- **`401`** for missing/invalid credentials; **`403`** for valid credentials lacking permission.
 - **HTTPS always.** Reject plaintext in production at the load balancer; redirect at the edge.
 - **CORS:** explicit allow-list of origins; never `Access-Control-Allow-Origin: *` for authenticated endpoints.
 - **Security headers** (added at the gateway or app layer): `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Content-Security-Policy` (if serving HTML), `Referrer-Policy: no-referrer`.
@@ -89,11 +89,7 @@ Full implementation reference — where the ETag value comes from (default: mono
 
 Two patterns cover almost every API: **in-house OAuth2 + JWT** for single-service deployments, **external IdP** (Keycloak / Auth0 / Cognito / Entra) for multi-service, MFA, social login, or SSO/compliance needs. Full reference — Argon2id, HS256→RS256 switching, refresh-token rotation + reuse detection, JWKS verification with cached keys, mandatory `aud`/`iss` checks, when to switch A→B, per-endpoint authorization — in [AUTH_PATTERNS.md](AUTH_PATTERNS.md).
 
-Framework-specific implementation:
-
-- [fastapi-architect §6](../../frameworks/fastapi-architect/SKILL.md#6-authentication--authorization) — `OAuth2PasswordBearer` + `pyjwt` + `argon2-cffi`
-- [gin-architect §7](../../frameworks/gin-architect/SKILL.md#7-authentication--authorization) — `golang-jwt/jwt/v5` + `argon2`
-- [nethttp-architect §8](../../frameworks/nethttp-architect/SKILL.md#8-authentication--authorization) — same Go libs, stdlib middleware shape
+Framework-specific implementation: [fastapi-architect §6](../../frameworks/fastapi-architect/SKILL.md#6-authentication--authorization) (`OAuth2PasswordBearer` + `pyjwt` + `argon2-cffi`); [gin-architect §7](../../frameworks/gin-architect/SKILL.md#7-authentication--authorization) (`golang-jwt/jwt/v5` + `argon2`); [nethttp-architect §8](../../frameworks/nethttp-architect/SKILL.md#8-authentication--authorization) (same Go libs, stdlib middleware shape).
 
 ## 12. Content negotiation & encoding
 

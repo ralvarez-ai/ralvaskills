@@ -88,7 +88,7 @@ Sprawl, unactionable alerts, raw-label dashboards, unit mixups, static threshold
 Every service has exactly one **SLO dashboard** showing:
 
 - **Current SLO compliance** — percentage over the rolling window (last 30 days).
-- **Error budget remaining** — `(SLO_target - current_failure_rate) * total_requests` as a budget number.
+- **Error budget remaining** — `(1 - SLO_target) * total_requests` is the budget (allowed bad requests in the window); remaining = budget - bad requests so far, shown as a count and as a percentage of the budget.
 - **Burn rate** — instantaneous burn rate, with fast/slow window thresholds visible as red lines.
 - **Top contributors** — table of endpoints/operations driving the failure rate.
 

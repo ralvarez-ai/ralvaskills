@@ -58,7 +58,7 @@ Report LOC, files per package, files over ~400 lines, functions over ~60 lines, 
 
 ## 7. Output
 
-One report per run, written to the OS temp dir (`$TMPDIR` or `/tmp`) as `hygiene-report-<timestamp>.md`, not into the repo unless asked. Sections: repo table, dead code with evidence, unused exports with consumer search, duplication, split candidates with their seam, quick wins, **do not touch**, and a priority split of `now / later / won't do`. Template in [RECIPES § 6](RECIPES.md#6-report-template).
+One report per run, written to the OS temp dir (`$TMPDIR` or `/tmp`) as `hygiene-report-<timestamp>.md`, not into the repo unless asked. Sections (repo table through **do not touch** and a `now / later / won't do` priority split) are in the template: [RECIPES § 6](RECIPES.md#6-report-template).
 
 ## 8. Guardrails
 
@@ -68,8 +68,6 @@ One report per run, written to the OS temp dir (`$TMPDIR` or `/tmp`) as `hygiene
 
 ## 9. Cross-skill ties
 
-- [code-design-refactor](../../refactoring/code-design-refactor/SKILL.md) — executes approved splits.
-- [improve-codebase-architecture](../../refactoring/improve-codebase-architecture/SKILL.md) — consumes this report as exploration evidence.
 - [logic-cleaner](../../refactoring/logic-cleaner/SKILL.md) — expression-level duplication inside a function.
 - [go-architect](../../languages/go-architect/SKILL.md), [react-architect](../../frameworks/react-architect/SKILL.md) — language standards the findings are judged against.
 - [performance-reviewer](../performance-reviewer/SKILL.md) — sibling reviewer; same "no finding without evidence" rule.

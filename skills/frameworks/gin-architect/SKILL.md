@@ -77,19 +77,9 @@ A central `problem` package emits `application/problem+json` (per [rest-api-arch
 
 Outermost first; order matters.
 
-```go
-r := gin.New()  // not gin.Default — we set logging ourselves
-r.Use(
-    middleware.RequestID(),             // 1. assign correlation_id
-    middleware.SLog(),                  // 2. structured access log
-    gin.Recovery(),                     // 3. convert panics → 500 problem
-    middleware.CORS(cfg.CORS),          // 4. preflight handling
-    gzip.Gzip(gzip.DefaultCompression), // 5. response compression
-)
-```
+Skeleton (`gin.New()` + `RequestID`, `SLog`, `Recovery`, `CORS`, `gzip`) in [RECIPES.md](RECIPES.md#middleware-order).
 
 - **Never `gin.Default()`** in production — its logger writes unstructured text to stdout. Use `slog` (per go-architect).
-- **Auth is per-route middleware**, never global (see §7).
 - **Recovery before CORS** — a panic that bypasses CORS handler returns no headers; the browser shows a misleading CORS error.
 
 ## 10. Concurrency, not "background tasks"

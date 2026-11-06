@@ -15,13 +15,9 @@
 
 ## Notes
 
-- **App Router only.** Pages Router is legacy; no new code there.
-- **Server components default; `"use client"` opts out.** Hoist the directive to the smallest leaf component that needs it.
 - **Server actions are the canonical mutation mechanism.** API routes earn their place for webhooks, external clients, streaming.
-- **Hybrid data access** (per the project's choice): direct DB from RSC for reads, API routes for writes — but `react-architect` and project conventions can override per project.
+- **Hybrid data access** (per the project's choice): direct DB from RSC for reads, server actions for UI-driven writes (route handlers for webhooks and external clients) — but `react-architect` and project conventions can override per project.
 - **Runtime: node default; edge** only when latency justifies it (auth checks, redirects, A/B routing).
-- **`next/image` and `next/font` are mandatory** — never `<img>` or `@import` for fonts.
-- **Standalone output** (`output: "standalone"`) for Docker deploys per [docker-architect](../../infra/docker-architect/SKILL.md).
 - **Inherits the `react-architect` stack** for client-side patterns; this file pins only what's Next-specific.
 
 _Last reviewed: 2026-05-21_

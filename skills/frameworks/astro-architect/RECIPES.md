@@ -383,9 +383,7 @@ const errors = result?.error?.fields;
 </form>
 ```
 
-- **Actions require on-demand rendering.** A fully static build cannot run them.
-- **For a static site, prefer a plain `<form>` to a form service.** Adding a
-  server runtime to collect one form is a bad trade.
+- Static-build and plain-`<form>` rules: SKILL.md §5.
 - **Discriminated-union returns** (`{ ok: true } | { ok: false }`) so the page
   can branch in the template.
 

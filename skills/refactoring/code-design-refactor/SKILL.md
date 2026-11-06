@@ -32,7 +32,7 @@ Three rules that govern *every* refactor, regardless of which specific move:
 
 1. **Tests first.** Don't refactor without coverage of the behavior being preserved. If tests are missing, write them — *characterization tests* that capture current behavior, even if behavior is "wrong" — before changing structure.
 2. **One move at a time.** A refactor is a sequence of small, mechanical, behavior-preserving edits. Each edit leaves the tree green. Compound moves (rename + extract + reorder + delete) are bug factories.
-3. **Commit each successful move.** Commits are cheap; rebuilding context after a bad merge is expensive. Per [commit-author](../commit-author/SKILL.md): `refactor(scope): <move>`.
+3. **Commit each successful move.** Commits are cheap; rebuilding context after a bad merge is expensive. Per [commit-author](../../workflows/commit-author/SKILL.md): `refactor(scope): <move>`.
 
 ## 4. Extract
 
@@ -86,25 +86,7 @@ Symptoms:
 
 The fix is a tiny immutable type:
 
-```python
-@dataclass(frozen=True, slots=True)
-class Email:
-    value: str
-    def __post_init__(self) -> None:
-        if "@" not in self.value:
-            raise ValueError(f"invalid email: {self.value!r}")
-```
-
-```go
-type Email string
-
-func NewEmail(s string) (Email, error) {
-    if !strings.Contains(s, "@") {
-        return "", fmt.Errorf("invalid email: %q", s)
-    }
-    return Email(s), nil
-}
-```
+Examples (Python `Email` dataclass, Go `NewEmail`): [REFERENCE.md](REFERENCE.md).
 
 The validation now lives at construction; every call site receives an `Email` that's been validated; type confusion (`Email` passed where `Username` is expected) is a compile error in Go, a clear runtime error in Python.
 
@@ -112,7 +94,7 @@ The validation now lives at construction; every call site receives an `Email` th
 
 Not every refactor is worth doing.
 
-- **No coverage.** Don't restructure code that has no tests; you can't verify behavior is preserved. Write characterization tests first, then refactor.
+- **No coverage.** Don't restructure code that has no tests; you can't verify behavior is preserved. Write characterization tests first (§3).
 - **The "improvement" is ambiguous.** If two reviewers would each pick a different shape, the current shape is fine. Refactor when the win is clear.
 - **The code is about to be deleted.** Don't polish code that's leaving in a week.
 - **Behavior is about to change.** If a feature next sprint will restructure the area anyway, wait. Refactoring + feature in the same diff is a review nightmare.
@@ -134,7 +116,7 @@ When a refactor reveals a deeper structural problem (port belongs in a different
 
 - [logic-cleaner](../logic-cleaner/SKILL.md) — expression-level companion; surface upward when a finding requires structural change.
 - [improve-codebase-architecture](../improve-codebase-architecture/SKILL.md) — system-level companion; promote when scope crosses module boundaries.
-- [tdd](../tdd/SKILL.md) — refactor phase of the red-green-refactor loop.
+- [tdd](../../workflows/tdd/SKILL.md) — refactor phase of the red-green-refactor loop.
 - [ddd-architect](../../design/ddd-architect/SKILL.md) — value objects, aggregates, encapsulation in the domain context.
 - [hexagonal-arch](../../design/hexagonal-arch/SKILL.md) — decoupling through ports; dependency direction.
-- [commit-author](../commit-author/SKILL.md) — every successful move gets its own `refactor(scope):` commit.
+- [commit-author](../../workflows/commit-author/SKILL.md) — every successful move gets its own `refactor(scope):` commit.

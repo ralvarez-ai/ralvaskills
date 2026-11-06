@@ -6,7 +6,7 @@ description: Cross-language security review — injection, auth/authz, secrets, 
 
 # Security Reviewer
 
-Reviews code for security issues before they reach production. **Not** a deep penetration test — that's a different discipline. This skill catches the issues that architect skills already encode rules against; it's the safety net. Findings table, severity rubric, and tooling reference in [RECIPES.md](RECIPES.md).
+Reviews code for security issues before they reach production. This skill catches the issues that architect skills already encode rules against; it's the safety net. Findings table, severity rubric, and tooling reference in [RECIPES.md](RECIPES.md).
 
 ## 1. When to invoke
 
@@ -24,9 +24,7 @@ Structured findings report — one row per finding with severity, rule, location
 Two passes:
 
 1. **Tool pass** — run static analyzers, then read their output. They catch low-hanging fruit fast.
-2. **Read pass** — read the actual diff (or files in scope), checking the categories in §4. Tools miss intent.
-
-The read pass is where most real findings come from. Tools surface patterns; humans understand context.
+2. **Read pass** — read the actual diff (or files in scope), checking the categories in §4. Tools miss intent; the read pass finds most real issues.
 
 ## 4. What to check — by category
 
@@ -46,7 +44,7 @@ The read pass is where most real findings come from. Tools surface patterns; hum
 - **Tokens not in URLs**, only in `Authorization: Bearer` headers.
 - **401 vs 403** distinction maintained.
 - **No tenant-id from request body**; derive from authenticated context. `customer_id` in a JSON payload is a take-over vector.
-- **Authorization checked per endpoint**, not assumed by middleware. Per [fastapi-architect §6](../../frameworks/fastapi-architect/SKILL.md#6-authentication--authorization--fastapi-implementation) / [gin-architect §7](../../frameworks/gin-architect/SKILL.md#7-authentication--authorization--gin-implementation) / [nethttp-architect §8](../../frameworks/nethttp-architect/SKILL.md#8-authentication--authorization--stdlib-implementation): scopes/roles enforced per-route.
+- **Authorization checked per endpoint**, not assumed by middleware. Per [fastapi-architect §6](../../frameworks/fastapi-architect/SKILL.md#6-authentication--authorization) / [gin-architect §7](../../frameworks/gin-architect/SKILL.md#7-authentication--authorization) / [nethttp-architect §8](../../frameworks/nethttp-architect/SKILL.md#8-authentication--authorization): scopes/roles enforced per-route.
 
 ### Secrets
 

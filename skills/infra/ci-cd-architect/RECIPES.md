@@ -206,6 +206,10 @@ Tighten the `sub` claim — `repo:owner/repo:ref:refs/heads/main` is broader tha
     service_account: gha-deploy@my-project.iam.gserviceaccount.com
 ```
 
+### Private dependency tokens
+
+**Private deps need scoped tokens, and the scopes differ.** A build that fetches private Go modules needs `contents:read`; one that fetches private `@scope/*` npm packages needs `read:packages`. With *fine-grained* tokens that means two, passed as distinct build secrets (`--secret id=github_token,env=GH_PRIVATE_MODULES_TOKEN`, `--secret id=packages_token,env=NODE_AUTH_TOKEN`); a *classic* token carrying `repo` + `read:packages` covers both scopes in one — simpler to wire into every job, at the cost of read/write on every repo the owner can reach. Either way the runner's `GITHUB_TOKEN` grants neither for *other* repos, so a secret is unavoidable. Confirm a token's scopes with `curl -sI -H "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit | grep -i x-oauth-scopes`.
+
 ---
 
 ## 6. Language caching

@@ -479,3 +479,66 @@ Notes:
 - Enforce the direction with a test that fails if anything outside the adapter imports it.
 - Decide *where a verdict is made* separately: store facts from the tool, derive the verdict at
   read. Introduce a grader port only when a second grader exists.
+
+## Database access examples (§12)
+
+### sqlc (default)
+
+```sql
+-- query.sql
+-- name: GetUserByID :one
+SELECT * FROM users WHERE id = $1;
+```
+
+```yaml
+# sqlc.yaml
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "query.sql"
+    schema: "migrations"
+    gen:
+      go:
+        package: "db"
+        out: "db"
+```
+
+```go
+func (r *UserRepo) GetByID(ctx context.Context, id int64) (db.User, error) {
+    return r.queries.GetUserByID(ctx, id)
+}
+```
+
+Layout:
+
+```
+internal/userrepo/
+├── repo.go
+├── sqlc.yaml
+├── query.sql
+└── db/              # generated: models.go, query.sql.go, db.go — never hand-edit
+```
+
+### sqlx + `//go:embed` (alternative)
+
+```go
+//go:embed queries/get_user_by_id.sql
+var getUserByIDSQL string
+
+func (r *UserRepo) GetByID(ctx context.Context, id int64) (User, error) {
+    var u User
+    err := r.db.GetContext(ctx, &u, getUserByIDSQL, id)
+    return u, err
+}
+```
+
+Layout:
+
+```
+internal/userrepo/
+├── repo.go
+└── queries/
+    ├── get_user_by_id.sql
+    ├── insert_user.sql
+    └── list_users.sql
+```

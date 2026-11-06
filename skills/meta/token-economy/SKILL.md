@@ -86,7 +86,7 @@ with its own system prompt and tool schemas, so a lookup of 1-3 tool calls is ch
 
 - **Brief it like a peer:** goal, what is ruled out, where to look, output shape, word cap.
 - **Reports come back in caveman style.** Only a model reads them; fragments with exact paths,
-  symbols and `file:line` refs lose nothing. Never for commits, docs, code or user replies.
+  symbols and `file:line` refs lose nothing. Never for commits, docs or code, and not for user replies unless the user asked for caveman mode.
 - **Fan out only for independent questions**, in one turn; don't redo the agent's work.
 - **Claude Code:** built-in Explore runs on the *main* model; a user agent named `Explore`
   with `model: haiku` overrides it ([RECIPES §2](RECIPES.md#2-claude-code-agents)).
@@ -195,15 +195,10 @@ command and `check` doubles as the audit.
 
 ## 10. Anti-patterns
 
-- Reading a whole file to find one function; re-reading after an edit; pasting long logs.
-- A subagent for a single grep; a fork of a deep context; five calls that could be one turn.
-- The strong model applying the same edit file after file; a model loop where a script would do.
-- Opus or high effort on renames and mechanical edits.
-- Polling every 10-30 minutes on a 5-minute cache; resuming a huge context after lunch.
-- One long session across unrelated tasks, relying on compaction to forget.
+Each habit above (sections 3-9) is also its own anti-pattern: long reads and pastes, subagents for one grep,
+forks at depth, strong models on mechanical loops, idle polling in the cache TTL, mixed-task sessions,
+unasked hook output (and `prompt`/`agent` hook handlers, which spend tokens on every fire), caveman style outside model-only text (unless the user asked for caveman mode). Also:
+
 - Importing whole `SKILL.md` bodies at start; every skill installed in every project.
-- Hooks that paste content nobody asked for; `prompt`/`agent` hook handlers that spend tokens
-  on every fire.
 - Adding or removing MCP servers mid-session.
-- Caveman style in commits, docs or code comments.
 - Quoting a tool's savings percentage without measuring it here.

@@ -13,7 +13,7 @@ Targets **Go 1.27.1**. See [STACK.md](STACK.md) for pinned dependency versions.
 - **Enums:** Custom types with `iota` and an implemented `String()` method. Avoid bare primitives. Use `1 << iota` for bitmasks.
 - **Errors:** Export package-level sentinel errors (`var ErrNotFound = ...`) for `errors.Is()`. Use `errors.Join` to aggregate multiple errors.
 - **Grouping:** When a file declares multiple `type`, `const`, or `var` at package level, consolidate each kind into a single parenthesized block (`type (...)`, `const (...)`, `var (...)`) rather than repeating the keyword. Keep unrelated groups separated by a blank line inside the block.
-- **File-level ordering:** type → const → var → func (decorder's default order). Enforced via code review; linter checking disabled to avoid friction with tooling defaults.
+- **File-level ordering:** type → const → var → func (decorder's default order). Enforced by the `decorder` linter (see §14).
 - **Magic values:** a bare numeric or string literal used more than once becomes a named constant. Enforced by `mnd` (numbers) and `goconst` (strings) (see §14).
 
 ## 2. Structures & Memory
@@ -93,73 +93,18 @@ Prefer stdlib over hand-rolled or third-party when stdlib now covers it.
 - **The container lives at the composition root, never in a library.** A library exposes `New(deps...)` and never imports `fx`/`wire` — doing so drags the container into every consumer. When a graph is large, the *deployable* owns the container (`app/`, `internal/bootstrap`, `cmd/`); libraries stay constructor-only. Optional courtesy for `fx` users: ship an `fx.Module` in a dedicated subpackage (`<pkg>/fxmod`) that groups the `fx.Provide`s for the library's constructors — whoever uses `fx` includes it, whoever doesn't calls `New` by hand, and the library stays DI-agnostic.
 - **Ports and constructors live in the packages; the container lives at the edge.** The rest of the code sees only interfaces — the DI framework never leaks past the composition root (see [hexagonal-arch §2](../../design/hexagonal-arch/SKILL.md#2-dependency-direction--always-inward)).
 - **Config:** `spf13/viper` for layered env + file + flag configuration.
-- **Logging:** `log/slog` (stdlib). Structured, context-aware. `zap`/`zerolog` only when slog is provably the bottleneck — start with slog.
+- **Logging:** `log/slog` (stdlib), see §5. Structured, context-aware.
 
 ## 12. Database access — sqlc (default), sqlx + `//go:embed` (alternative)
 
 **Default: `sqlc`.** Schema-first, code-generated queries — write named queries in `.sql` files against your real migrated schema, run `sqlc generate`, get back typed Go row structs and query methods, checked at generate-time against the actual database. No ORM magic, no hand-written scanning code, queries stay plain auditable SQL in git.
 
-```sql
--- query.sql
--- name: GetUserByID :one
-SELECT * FROM users WHERE id = $1;
-```
-
-```yaml
-# sqlc.yaml
-version: "2"
-sql:
-  - engine: "postgresql"
-    queries: "query.sql"
-    schema: "migrations"
-    gen:
-      go:
-        package: "db"
-        out: "db"
-```
-
-```go
-func (r *UserRepo) GetByID(ctx context.Context, id int64) (db.User, error) {
-    return r.queries.GetUserByID(ctx, id)
-}
-```
-
-Layout:
-
-```
-internal/userrepo/
-├── repo.go
-├── sqlc.yaml
-├── query.sql
-└── db/              # generated: models.go, query.sql.go, db.go — never hand-edit
-```
+Examples (query file, `sqlc.yaml`, repo method, layout): [RECIPES.md](RECIPES.md#sqlc-default).
 
 - **Migrations:** `goose` or `golang-migrate` — versioned up/down pairs in `migrations/`. `sqlc`'s `schema:` reads the same migration files, so schema drift between the two is impossible by construction.
 - **Regeneration:** run `sqlc generate` in CI (or a pre-commit hook) and fail the build if the generated tree differs from what's committed — generated code is committed, not built on the fly.
 
-**Alternative: `jmoiron/sqlx` + `//go:embed`.** Reach for this when a query needs genuine runtime composition sqlc's static named-query model can't express (e.g. an arbitrary number of optional filter clauses), or when a package deliberately avoids a codegen step. Write raw SQL in `.sql` files, embed at compile time, execute via `sqlx`'s struct-tag scanning:
-
-```go
-//go:embed queries/get_user_by_id.sql
-var getUserByIDSQL string
-
-func (r *UserRepo) GetByID(ctx context.Context, id int64) (User, error) {
-    var u User
-    err := r.db.GetContext(ctx, &u, getUserByIDSQL, id)
-    return u, err
-}
-```
-
-Layout:
-
-```
-internal/userrepo/
-├── repo.go
-└── queries/
-    ├── get_user_by_id.sql
-    ├── insert_user.sql
-    └── list_users.sql
-```
+**Alternative: `jmoiron/sqlx` + `//go:embed`.** Reach for this when a query needs genuine runtime composition sqlc's static named-query model can't express (e.g. an arbitrary number of optional filter clauses), or when a package deliberately avoids a codegen step. Write raw SQL in `.sql` files, embed at compile time, execute via `sqlx`'s struct-tag scanning. Example and layout: [RECIPES.md](RECIPES.md#sqlx--goembed-alternative).
 
 - **Dynamic queries:** even here, write the static fragments in `.sql` files and join them in Go rather than building SQL by string concatenation against user input — always use parameter binding.
 - Don't mix the two within one repository package — pick per-package, not per-query, so a reader knows which scanning convention to expect from the file layout alone.
@@ -184,26 +129,10 @@ internal/userrepo/
   - **intrange** (standalone linter): explicitly enabled — flags `for i := 0; i < n; i++` where `range n` is cleaner. Lightweight alternative to the `modernize` coverage.
   - **copyloopvar** / **perfsprint**: modernization nudges — `copyloopvar` flags now-redundant `x := x` loop-variable copies (Go 1.22+ semantics), `perfsprint` suggests faster alternatives to `fmt.Sprintf`/`fmt.Errorf` (e.g. `strconv`, `err.Error()`). Both low-noise, safe to enable by default.
   - **Optional: Scoped Linters** (enable when appropriate for your project):
-    - `exhaustruct`: Flags incomplete struct literals; scoped to config/DTO structs to manage noise. Enable once you've migrated to fully-typed structs (see §2).
-    - `tagliatelle`: Enforces struct-tag casing consistency (`json`/`yaml` naming). Scope to new code since legacy tags often can't be renamed without breaking changes; useful when refactoring APIs (see §2).
     - `depguard`: Controls allowed imports (e.g., no test frameworks in prod code). Requires careful allowlist configuration per project structure — enable after establishing import boundaries.
-  - **Testing linters:**
-    - `paralleltest`: Detects tests missing `t.Parallel()` — encourages test suite parallelization for faster feedback.
-    - `tparallel`: Catches inappropriate `t.Parallel()` usage in subtests, preventing race conditions and serialization bugs.
-    - `thelper`: Ensures test helper functions call `t.Helper()` — prevents test output pollution and clarifies stack traces.
-    - `testifylint`: Best practices for testify assertions — flags incorrect `assert` vs `require` usage and other testify pitfalls (see §9).
-    - `usetesting`: Replaces deprecated testing helpers (e.g., `ioutil.TempDir` → `t.TempDir()`) with modern stdlib equivalents.
-  - **Correctness & safety patterns:**
-    - `containedctx`: Detects `context.Context` embedded in structs — pass as parameter instead (see §7).
-    - `durationcheck`: Prevents duration multiplication bugs (e.g., `time.Second * 60` vs `time.Minute`).
-    - `forcetypeassert`: Flags forced type assertions without `ok` check — use `errors.As` or check the boolean (see §8).
-    - `fatcontext`: Detects nested contexts in loops/closures — anti-pattern that escapes context cancellation.
-    - `mirror`: Catches bytes/strings type mismatches; encourages idiomatic type usage.
-    - `exptostd`: Flags `golang.org/x/exp` packages — use stdlib equivalents instead (core idiom).
-    - `wrapcheck`: Ensures external package errors are wrapped with context; prevents "swallowing" errors (see §8).
+  - **Cleanup & ordering:**
     - `unparam`: Reports unused function parameters — aids cleanup (can be noisy during refactoring).
     - `funcorder`: Enforces consistent function/method/constructor ordering within types.
-    - `modernize`: Suggests modern Go simplifications (range-over-int, slices API, maps functions, etc.) — complement to `copyloopvar` + `perfsprint`.
   - **Template:** The [`assets/golangci.yml`](assets/golangci.yml) template includes sane defaults for all recommended linters with tested configuration values for `linters.settings`. Copy it to `.golangci.yml` and customize thresholds (e.g., `gocognit.max` for cognitive complexity) to match your project's complexity profile.
 - **Dead code (`deadcode`, opt-in, not golangci-lint):** `unused` only flags unused *unexported* symbols, so an exported function no `main` reaches passes the lint gate forever. Run `deadcode -test ./...` (`golang.org/x/tools/cmd/deadcode`) so tests count as roots — without `-test` every test helper looks dead. It does not follow dynamic dispatch (cobra `RunE`, handler funcs stored in maps), so confirm each hit before deleting. Re-run after a deletion pass: removing one function can be the last use of another. Wire it into its own task target rather than the lint gate, since it needs a `main` to root from. For a shared library with several consumers, run it per consumer with `-filter` and cross-check with `go list -deps`; see [codebase-hygiene-reviewer](../../quality/codebase-hygiene-reviewer/SKILL.md).
 
@@ -227,7 +156,7 @@ For repos where `go.work` ties together independently-versioned modules — one 
 - **`pkg/*`** — each subdirectory its own module, for code genuinely shared by 2+ service modules (validation, observability, an RFC 9457 problem-detail mapper). Don't default to creating `pkg/`; per [hexagonal-arch §7](../../design/hexagonal-arch/SKILL.md#7-when-not-to-use-it), a shared seam is only real once two consumers need it.
 - **Root-level `domain`** — only for value objects/types genuinely shared *across* bounded contexts (e.g. a `Money` type used by both Order and Payment). Most contexts should keep their domain private inside their own service module. A shared root `domain` module is a deliberate Shared Kernel (see [ddd-architect's context-mapping table](../../design/ddd-architect/PATTERNS.md#1-context-mapping-patterns)), not a default.
 - **`internal/<service>`** — one bounded context = one module. Internally structured per [hexagonal-arch](../../design/hexagonal-arch/SKILL.md): `domain/`, `app/`, `adapters/{primary,secondary}` — or flatter, since hexagonal-arch mandates the dependency direction, not the folder split. "Service" here means the deployable module itself, not [ddd-architect's Domain/Application Service patterns](../../design/ddd-architect/SKILL.md#7-domain-vs-application-services) — a single `internal/<service>` module typically contains several Application Services inside its `app/` layer (e.g. `PlaceOrderService`).
-- **`cmd/<service>` vs `app/<service>`** — keep distinct rather than merging composition into `cmd`. `cmd/<service>/main.go` stays minimal: parse flags/env, wire `signal.NotifyContext`, call into `app`, handle the exit code. `app/<service>` is the actual composition root — DI graph, adapter wiring, server lifecycle — so it's exercisable independently of process-level concerns.
+- **`cmd/<service>` vs `internal/<service>`** — keep distinct rather than merging composition into `cmd`. `cmd/<service>/main.go` stays minimal: parse flags/env, wire `signal.NotifyContext`, call into `internal/<service>`, handle the exit code. `internal/<service>` is the actual composition root — DI graph, adapter wiring, server lifecycle — so it's exercisable independently of process-level concerns.
 - **Cross-context calls never reach into another context's `domain/` or `adapters/`.** They go through that context's public API (HTTP/gRPC, since each service is a separate deployable in a multi-module workspace). The calling context defines its *own* ports shaped for what it needs (`OrderCreator`, not `order.Repository`) — the same "define interfaces where used" rule from §4, applied across a context boundary. This is the Go-flavored version of [ddd-architect's Customer/Supplier or Open Host Service patterns](../../design/ddd-architect/PATTERNS.md#1-context-mapping-patterns).
 - **Scaling past a handful of contexts** — grouping, flat-by-default features, the rank rule and what large Go projects do: see §17.
 - **Full worked example** — an order-owning service plus a checkout orchestrator service, with code — lives in [RECIPES.md](RECIPES.md).
@@ -240,7 +169,7 @@ Principles that hold across them:
 
 - **Default to the lightest layout that fits.** Feature/context first, flat by default; escalate to `core/` + use cases + `adapters/<tech>/` only when a feature is domain-heavy.
 - **Implementations are sibling subpackages named by technology**; interfaces are declared next to their consumer.
-- **Enforce the dependency direction with a test**, not prose — rank the layers, use `**/` path patterns, record exceptions.
+- **Enforce the dependency direction with a test**, not prose — see [LAYOUTS.md cross-cutting rules](LAYOUTS.md#cross-cutting-rules-all-layouts).
 - **Group contexts at the root by area** (not a generic `contexts/`) past ~7; extract a group as a module past ~8–10 or with its own team.
 - **No infrastructure in the model; wire schemas in `contracts/`; no stutter; name the composition root for what it is, not `app`.**
 - **Layer-first (`core/<ctx>`, `services/<ctx>`, `adapters/<ctx>`) is a valid but suggestive option** — it trades context extractability for a trivial rank rule.

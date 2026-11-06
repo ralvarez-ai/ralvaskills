@@ -13,7 +13,7 @@ Fast loop for editing `platform/robot` code on Windows and testing it live on re
 - **Prefer `rpi-5-direct`** (`192.168.250.2`, direct Ethernet) over WiFi aliases or the Cloudflare tunnel — the tunnel is often broken/unauthenticated and shouldn't be relied on. Full alias table in [RECIPES.md](RECIPES.md#host-access-table).
 - **Account is `ralvarezdev`, not `pi`**, on both boards. Identity file: `D:\Secrets\ssh\raspberrypi\id_ed25519_ralvarezdev`.
 - **Pi 5 has passwordless sudo; the Pi Zero does not.** Any `sudo` command touching the Pi Zero needs an interactive password — run those in the user's own terminal, never through a non-interactive tool call.
-- **mDNS (`.local`) resolution flakes** on this network. Fall back to the raw IP with an explicit `-i` — the raw IP doesn't match the `~/.ssh/config` `Host` pattern, so the identity file isn't picked up automatically.
+- **mDNS (`.local`) resolution flakes** on this network. Fall back to the raw IP with an explicit `-i` (why: RECIPES.md host table).
 
 ## 2. The edit-test loop
 
@@ -31,7 +31,7 @@ Fast loop for editing `platform/robot` code on Windows and testing it live on re
 
 ## 4. Surviving a flaky connection
 
-WiFi/mDNS on this network drops mid-session often enough that anything long-running (`pixi install` fetching packages, a `colcon build`) must run inside `screen`, not foreground SSH — the process then survives the disconnect independent of the SSH session. Detach with `Ctrl+A` `D` (not `Ctrl+C`); reattach with `screen -d -r work` (the `-d` force-detaches a stale "Attached" state a plain `-r` would refuse). `/tmp` is wiped on every reboot, so anything staged there needs re-copying after one. Command sequence in [RECIPES.md](RECIPES.md#long-running-commands-over-screen).
+WiFi/mDNS on this network drops mid-session often enough that anything long-running (`pixi install` fetching packages, a `colcon build`) must run inside `screen`, not foreground SSH — the process then survives the disconnect independent of the SSH session. Detach with `Ctrl+A` `D` (not `Ctrl+C`); reattach command and `-d` rationale in RECIPES. `/tmp` is wiped on every reboot, so anything staged there needs re-copying after one. Command sequence in [RECIPES.md](RECIPES.md#long-running-commands-over-screen).
 
 ## 5. PowerShell SSH gotcha
 

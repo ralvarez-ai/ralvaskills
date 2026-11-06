@@ -22,7 +22,6 @@ The *design goal* is **correlation**: from any signal you can pivot to the other
 
 **Correlation mechanism: trace_id everywhere.**
 
-- Every log line carries the current `trace_id` and `span_id`.
 - Every metric exposes the current `trace_id` as an exemplar (Prometheus exemplars).
 - Every trace span carries the operation name, attributes, and status.
 
@@ -30,7 +29,7 @@ If you skip the correlation, you have three independent data lakes — useful in
 
 ## 2. Metrics: Prometheus
 
-**Why Prometheus over OTel metrics in 2026:** Prom client libs are mature in every language, the exposition format is universal, ops engineers already know `rate()` / `histogram_quantile()`. OTel metrics are catching up but not yet at parity for ergonomics.
+**Why Prometheus over OTel metrics in 2026:** Client libs are mature in every language, the exposition format is universal, and ops engineers already know `rate()` / `histogram_quantile()`. OTel metrics are catching up, not yet at parity on ergonomics.
 
 ### Naming
 
@@ -68,7 +67,7 @@ The single most expensive observability mistake: high-cardinality labels.
 - **Structured JSON** to stderr (per [cli-tool-architect §6](../../tooling/cli-tool-architect/SKILL.md#6-output-discipline--stdout-for-data-stderr-for-logs)). One log line = one JSON object.
 - **Stdlib first:**
   - Go: `log/slog` per [go-architect §5](../../languages/go-architect/SKILL.md#5-stdlib-defaults). `slog.JSONHandler` in production.
-  - Python: `structlog` configured to emit JSON.
+  - Python: [python-architect](../../languages/python-architect/SKILL.md) `structlog` configured to emit JSON.
 - **Mandatory fields:** `timestamp` (RFC 3339 UTC), `level`, `msg` (fixed string), `trace_id`/`span_id` (when in a traced request), `service`.
 - **Don't log full payloads.** A request body field can be PII; the bytes are dead weight even when it isn't. Log the **shape**: `request_size_bytes`, `field_count`, `customer_id`.
 - **`msg` is a fixed string** for grep-ability: `msg="user created"` with `user_id` and `email_domain` as separate fields, not `msg=f"created user {email}"`.
@@ -89,7 +88,7 @@ OTel for traces is unambiguously the right choice — vendor-neutral, well-instr
 
 Three rules to make signals jump between each other:
 
-1. **`trace_id` in every log line.** Pull from the OTel SDK's current context — every modern logging integration supports this.
+1. **`trace_id` and `span_id` in every log line.** Pull from the OTel SDK's current context — every modern logging integration supports this.
 2. **Prometheus exemplars** on histograms (especially latency). When a slow bucket increments, the exemplar records the `trace_id`. Grafana lets you click from a histogram bucket directly to the trace.
 3. **`service.name` and `service.version`** as resource attributes on traces + as labels on metrics + as fields on logs. Ties signals across deploys and versions.
 
@@ -151,8 +150,6 @@ Full instrumentation stacks (metrics + tracing + logging together) in [RECIPES](
 ## 10. Cross-skill ties
 
 - [grafana-architect](../grafana-architect/SKILL.md) — consumes everything this skill produces. Dashboards query Prometheus metrics; explorations follow trace_id from logs to traces.
-- [go-architect §5](../../languages/go-architect/SKILL.md#5-stdlib-defaults) — `log/slog` as the logging default.
-- [python-architect](../../languages/python-architect/SKILL.md) — `structlog` for structured logging.
 - [fastapi-architect](../../frameworks/fastapi-architect/SKILL.md) / [gin-architect](../../frameworks/gin-architect/SKILL.md) / [nethttp-architect](../../frameworks/nethttp-architect/SKILL.md) — OTel auto-instrumentation libs cover the framework HTTP boundary.
 - [rest-api-architect §10](../../protocols/rest-api-architect/SKILL.md#10-auth--security-headers) — `correlation_id` ties to `trace_id`; expose it in error responses for support workflows.
 - [docker-architect §7](../docker-architect/SKILL.md#7-runtime-defaults) — logging driver routes structured logs to stderr → aggregator.

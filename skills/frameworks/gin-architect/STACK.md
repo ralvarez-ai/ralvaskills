@@ -18,7 +18,7 @@
   - Pattern A (in-house JWT): `golang-jwt/jwt/v5` + `golang.org/x/crypto/argon2`
   - Pattern B (external IdP): `golang-jwt/jwt/v5` only — keys come from JWKS
 - **OpenAPI library choice:** `swaggo/swag` is the default for speed; switch to `getkin/kin-openapi` once you need OpenAPI 3.1 features (oneOf, discriminators, runtime validation).
-- **Data access:** `sqlx + //go:embed` per [go-architect §12](../../languages/go-architect/SKILL.md#12-database-access--sql-files--goembed). No ORM.
+- **Data access:** `sqlx + //go:embed` per [go-architect §12](../../languages/go-architect/SKILL.md#12-database-access--sqlc-default-sqlx--goembed-alternative). No ORM.
 
 _Last reviewed: 2026-05-21_
 _Skill version at last review: 1.0.0_

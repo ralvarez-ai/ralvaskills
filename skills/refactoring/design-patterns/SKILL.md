@@ -72,7 +72,7 @@ Don't restate them here — load the owner skill when the topic comes up.
 
 When asked "should we apply pattern X?":
 
-1. **Is the problem actually there yet?** Has it appeared at least three times (rule of three)? If not — wait. Premature patterns are the most expensive kind of debt because they make existing code more confusing without solving a real problem.
+1. **Is the problem actually there yet?** Has it appeared at least three times? If not — wait. Premature patterns are the most expensive kind of debt because they make existing code more confusing without solving a real problem.
 2. **Would a simpler language feature do?** A function value usually beats Strategy. `match` beats Visitor. A goroutine + channel beats Producer-Consumer-with-buffer-class. Reach for patterns *after* you've exhausted what the language gives you for free.
 3. **Will there be a second implementation?** Patterns that introduce interfaces (Adapter, Strategy, Repository) only pay back if at least two implementations exist. One adapter is a hypothetical seam — and hypothetical seams are pure cost.
 4. **Does it make the code easier to delete?** Good patterns concentrate change — touch one place when the rule evolves. Bad patterns spread change — every variation needs N synchronized files updated.
@@ -82,9 +82,7 @@ If the answer to (1) is "no" or to (3) is "no", **skip the pattern** and revisit
 
 ## 6. Code-smell → pattern map
 
-Quick lookup; see [PATTERNS §3](PATTERNS.md#3-code-smell--pattern-map) for the full table.
-
-The pattern is the *option*, not the answer. Always check the decision rules in §5 first.
+Quick lookup; see [PATTERNS §3](PATTERNS.md#3-code-smell--pattern-map) for the full table. The pattern is the *option*, not the answer. Always check the decision rules in §5 first.
 
 ## 7. Language-specific anti-patterns
 
@@ -96,5 +94,3 @@ Go and Python each have their own list of "looks like a pattern, is actually a s
 ## 8. When a pattern hardens into a convention
 
 If a pattern appears across many skills and projects in this repo (Repository everywhere, Middleware in every HTTP framework), it stops being a "design pattern" decision and becomes a **convention** encoded in the architect skill for that area. Read the architect skill first; this catalog is for when you're in genuinely new territory.
-
-The architect skills already enforce the patterns we use universally. This skill exists for the edge cases where the architect skills don't pre-decide, and for pushing back when someone wants to add a pattern without a real reason.

@@ -20,7 +20,7 @@ description: Expression-level code cleanup — guard clauses, naming, magic valu
 * **Immutability:** Treat function parameters as strictly read-only. Never reassign them; assign results to new variables instead.
 
 ## 4. Naming
-* **Rules:** Avoid abbreviations (`req`, `idx`) unless they are universal language standards (e.g., `ctx` in Go). Use symmetric pairs for related concepts (`start`/`stop`, `open`/`close`).
+* **Rules:** Avoid abbreviations (`req`, `idx`) unless universal (e.g., `ctx` in Go). Use symmetric pairs for related concepts (`start`/`stop`, `open`/`close`).
 * **Verbs:** Function names must begin with strong, specific action verbs (e.g., `CalculateTotal`, not `ProcessData` or `Handle`).
 
 ## 5. Magic Values & Hardcoding
@@ -32,7 +32,7 @@ description: Expression-level code cleanup — guard clauses, naming, magic valu
 
 ## 7. Out of Scope
 
-This skill is **expression-level only** — intentionally narrow. Anything broader belongs to a different skill:
+This skill is **expression-level only**. Anything broader belongs to a different skill:
 
 - **Module decomposition, class hierarchies, dependency direction** → `code-design-refactor`
 - **Architecture-level friction, deepening opportunities** → `improve-codebase-architecture`

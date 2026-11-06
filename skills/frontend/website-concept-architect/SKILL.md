@@ -120,33 +120,7 @@ Produce **2-3 distinct concept directions**, not one. Even if the user is decide
 
 For each direction, write a markdown doc with these sections:
 
-```markdown
-# Concept: <name>
-
-## One-line pitch
-<the site in 15 words or fewer>
-
-## Brief
-- Purpose: <stage 1 picks>
-- Audience: <stage 2 picks, primary first>
-- Tone: <stage 3 adjectives>
-- Visual archetype: <stage 5 pick>
-
-## Information architecture
-<tree of pages/sections, max 2 levels deep>
-
-## Homepage strategy
-<what the homepage does in 2-3 sentences — first impression, primary action, what the visitor leaves knowing>
-
-## Sample copy voice
-<2-3 sentences in the chosen voice — about section opener, or homepage tagline + subhead>
-
-## What this concept sacrifices
-<honest list of what's deprioritized vs. the other concepts — every concept trades something>
-
-## Ascii homepage wireframe
-<see §9>
-```
+Template: [REFERENCE.md](REFERENCE.md#concept-doc-template-8).
 
 The three directions should differ on **a real axis**, not be cosmetic variants:
 - **Concept A** = the obvious read of the user's picks
@@ -159,31 +133,7 @@ If two of the three end up nearly identical, drop one and explain why.
 
 One per concept. Keep it **80 cols wide**, label regions in `[BRACKETS]`. Show hierarchy with box-drawing or simple dashes.
 
-Example for a terminal/CLI portfolio:
-
-```
-+------------------------------------------------------------------------------+
-| ~ example.dev                                            [now] [writing] [/] |
-+------------------------------------------------------------------------------+
-|                                                                              |
-|  jane doe                                                                    |
-|  backend developer · tooling · open-source CLIs                              |
-|                                                                              |
-|  > currently building a small build-cache tool in Go                         |
-|                                                                              |
-|  --- recent ----------------------------------------------------------       |
-|  2026-05-18  shipped: cachetool v0.3                                         |
-|  2026-05-02  essay:   why I keep my tools in one repo                        |
-|  2026-04-21  project: build-cache internals                                  |
-|                                                                              |
-|  --- projects --------------------------------------------------------       |
-|  cachetool           incremental build cache               [→]               |
-|  notes               short write-ups on tooling            [→]               |
-|                                                                              |
-+------------------------------------------------------------------------------+
-| email · github · rss                                                         |
-+------------------------------------------------------------------------------+
-```
+See the terminal/CLI portfolio example in [REFERENCE.md](REFERENCE.md#ascii-homepage-wireframe-example-9).
 
 Wireframes are about **proportion and hierarchy**, not pixel layout. No colors, no fonts, no icons beyond ASCII. If a section needs explanation, add a one-line note *below* the wireframe, not inside it.
 

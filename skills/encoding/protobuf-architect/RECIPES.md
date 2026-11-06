@@ -145,3 +145,16 @@ proto/
         ├── users/v1/
         └── orders/v1/
 ```
+
+## Well-known types
+
+| Use case | Type |
+|---|---|
+| Point-in-time timestamp | `google.protobuf.Timestamp` (RFC 3339, nanosecond precision) |
+| Duration | `google.protobuf.Duration` |
+| Wall-clock date (no time) | `google.type.Date` (from `googleapis`) |
+| Money | `google.type.Money` (from `googleapis`) — currency code + amount |
+| Unstructured JSON | `google.protobuf.Struct` (only for genuinely schemaless payloads) |
+| Empty response | `google.protobuf.Empty` |
+| Optional field marker | proto3 `optional` keyword (no wrapper needed) |
+| Field mask for partial updates | `google.protobuf.FieldMask` |

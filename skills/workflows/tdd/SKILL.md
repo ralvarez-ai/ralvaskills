@@ -31,18 +31,6 @@ This produces **crap tests**:
 
 **Correct approach**: Vertical slices via tracer bullets. One test → one implementation → repeat. Each test responds to what you learned from the previous cycle. Because you just wrote the code, you know exactly what behavior matters and how to verify it.
 
-```
-WRONG (horizontal):
-  RED:   test1, test2, test3, test4, test5
-  GREEN: impl1, impl2, impl3, impl4, impl5
-
-RIGHT (vertical):
-  RED→GREEN: test1→impl1
-  RED→GREEN: test2→impl2
-  RED→GREEN: test3→impl3
-  ...
-```
-
 ## Workflow
 
 ### 1. Planning
@@ -91,10 +79,8 @@ Rules:
 
 After all tests pass, look for [refactor candidates](REFACTORING.md):
 
-- [ ] Extract duplication
-- [ ] Deepen modules (move complexity behind simple interfaces)
+- [ ] Work through the candidates in [REFACTORING.md](REFACTORING.md) (duplication, deepening modules behind simple interfaces, what the new code reveals about existing code)
 - [ ] Apply SOLID principles where natural
-- [ ] Consider what new code reveals about existing code
 - [ ] Run tests after each refactor step
 
 **Never refactor while RED.** Get to GREEN first.

@@ -14,10 +14,8 @@
 
 ## Notes
 
-- **WCAG 2.2 AA is the mandatory floor** — `axe-core` enforces in CI; Lighthouse a11y ≥ 95 also required.
 - **Radix primitives + Tailwind + shadcn/ui recipes** — components live in your repo, not as a dependency tree.
 - **Design tokens in `@theme` (Tailwind 4)** with OKLCH colors, semantic naming (`--color-primary`, not `--color-blue-500`), dark mode via `prefers-color-scheme`.
-- **`prefers-reduced-motion`** respected everywhere; Tailwind `motion-safe:` / `motion-reduce:` variants.
 - **One icon set per project** (Lucide default). Never icon fonts.
 - **Container queries (`@container`)** for components that adapt to their parent, not the viewport.
 - **No MUI/Mantine/Chakra** — they ship more JS and constrain visual design; headless + Tailwind is the better trade in 2026.

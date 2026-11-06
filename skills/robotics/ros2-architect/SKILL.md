@@ -48,7 +48,7 @@ The build type is declared in `package.xml`. Use `ament_cmake` for C++ (and for 
 - **`format="3"`** for `package.xml`. Older formats still work but lack features.
 - **Every dep declared.** Implicit dependencies (`std_msgs` showing up because something else pulled it) is a latent bug.
 - **`depend`** vs `build_depend` / `exec_depend`: prefer the unified `<depend>` tag when the dependency is needed at both build and runtime. Split only when they differ.
-- **Tests declared as `test_depend`.** Linters (`ament_lint_*`) are part of every package's test suite.
+- **Tests declared as `test_depend`.**
 
 ## 4. Nodes — lifecycle, executors, single-responsibility
 

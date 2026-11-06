@@ -1,7 +1,7 @@
 ---
 name: mcp-architect
 version: 2.3.0
-description: MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations (readOnly/destructive/idempotent), structured output, JSON-RPC error mapping, prompt-injection and SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — authoring JSON Schemas as the source of truth for tool inputs and outputs, and generating Go types with atombender/go-jsonschema, sharing enums through $defs, and the two traps (the SDK resolves OutputSchema with no loader; go-jsonschema does not follow $ref) that silently produce a wrong contract. MCP Apps panels as an addition to a complete text result — never the only path — with capability detection on stateless servers.
+description: MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations, structured output, JSON-RPC error mapping, prompt-injection/SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — JSON Schemas as the source of truth for tool inputs/outputs, Go types generated with atombender/go-jsonschema, enums shared via $defs, and the two traps (SDK resolves OutputSchema with no loader; go-jsonschema ignores $ref) that silently yield a wrong contract. MCP Apps panels only as an addition to a complete text result, with capability detection on stateless servers.
 ---
 
 # MCP Architecture
@@ -55,21 +55,13 @@ Tools are the primary surface and the primary risk. Treat them like API endpoint
 - **The schema describes the wire, not the Go type.** In Go the SDK reflects over your struct, so a `Decimal = string` alias or an `omitempty` field means the JSON key and the Go field differ from the name you'd guess. Read the actual struct's tags before writing a schema that validates against it.
 - **A tool schema is a curated surface, not an endpoint mirror.** It may omit fields the API has and add ones the API has no place for. Author MCP enums separately from API enums — a schema listing values the tool rejects is worse than useless to the model. Past ~10 tools, author JSON Schema and generate the Go types; [RECIPES §12](RECIPES.md#12-schema-driven-tool-contracts-go) has the pipeline and the three SDK/generator traps.
 - **Tool annotations are hints, not guarantees** (see [§4](#4-tool-annotations-and-safety-hints)). They drive client UX (confirm vs auto-approve) but never enforce policy server-side. Validate on the server regardless of what the client claims.
-- **Return errors via `isError: true` in the tool result**, not as JSON-RPC errors. JSON-RPC errors mean *protocol* failures; tool-level failures (bad input, downstream API said 404) belong inside the result so the model can read and adapt. See [§10](#10-error-handling).
+- **Tool-level failures return `isError: true` in the result**, not as JSON-RPC errors (protocol failures only) — so the model can read and adapt. See [§10](#10-error-handling).
 
 ### 3a. Tool output — unstructured `content[]` vs `structuredContent`
 
 Every tool result carries `content[]` (always — the "unstructured" channel the model reads as text/media). Tools that declare `outputSchema` ALSO carry `structuredContent` (the typed channel the *client app* parses programmatically). The two are not alternatives; they coexist.
 
-**Unstructured — `content[]`** is an ordered list of content blocks. The model reads these directly into its context. Block types:
-
-| Type | Use for | Notes |
-|---|---|---|
-| `text` | The default — prose, JSON dumps, tables | Always safe; every client renders it |
-| `image` | Inline images (`data` base64 + `mimeType`) | For diagrams, screenshots, chart renders; not all clients display |
-| `audio` | Inline audio clips (since 2025-03-26) | Rare; transcribe to `text` for broader client support |
-| `resource_link` | Pointer to a resource by URI (no body) | Client decides whether to follow and fetch via `resources/read`. Cheaper than embedding |
-| `embedded_resource` | Full resource contents inlined (`uri` + `mimeType` + `text`/`blob`) | When the model needs the content *right now* without a round trip |
+**Unstructured — `content[]`** is an ordered list of content blocks. The model reads these directly into its context. Block types (`text`, `image`, `audio`, `resource_link`, `embedded_resource`): table in [RECIPES §3](RECIPES.md#content-block-types).
 
 - **Default to one `text` block.** Reach for the others only when a specific client capability earns its place.
 - **Mixed blocks are fine.** A search tool might return a one-line summary as `text` plus N `resource_link` blocks for the hits.
@@ -145,25 +137,15 @@ Two transports matter in practice. **stdio** for local subprocess servers; **Str
 
 A single endpoint (conventionally `/mcp`) handles both directions. As of spec 2026-07-28 the protocol has **no handshake and no session** ([SEP-2567](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2567), [SEP-2575](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575)) — every request is self-contained and can land on any server instance behind a plain round-robin load balancer:
 
-```http
-POST /mcp HTTP/1.1
-MCP-Protocol-Version: 2026-07-28
-Mcp-Method: tools/call
-Mcp-Name: search
-Content-Type: application/json
-
-{"jsonrpc":"2.0","id":1,"method":"tools/call",
- "params":{"name":"search","arguments":{"q":"otters"},
- "_meta":{"io.modelcontextprotocol/clientInfo":{"name":"my-app","version":"1.0"}}}}
-```
+Wire example (headers + body) in [RECIPES §10](RECIPES.md#wire-example-streamable-http-post).
 
 - **`MCP-Protocol-Version` header** on every request — pin the version you speak; mismatches return `UnsupportedProtocolVersionError`.
 - **`Mcp-Method` and `Mcp-Name` headers are mandatory on Streamable HTTP POST** ([SEP-2243](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2243)) — mirror the JSON-RPC `method` and the tool/prompt/resource name so gateways, rate limiters, and WAFs can route and meter without parsing the body. The same SEP adds `x-mcp-header` for exposing custom headers from tool parameters.
 - **Client identity travels in `_meta`**, not a session header — keys `io.modelcontextprotocol/clientInfo`, `/clientCapabilities`, `/protocolVersion`.
 - **`server/discover` RPC** — servers MUST implement it; it returns supported protocol versions, capabilities, and server identity. Clients MAY call it up front for version selection, but nothing requires it before the first real call.
-- **Session termination and `DELETE /mcp` are gone** along with `Mcp-Session-Id` — there's no session to terminate.
+- **`DELETE /mcp` session termination is gone** along with `Mcp-Session-Id` — there's no session to terminate.
 
-Server skeleton in [RECIPES §5 (Python)](RECIPES.md#5-streamable-http-server-python) and [§6 (Go)](RECIPES.md#6-streamable-http-server-go).
+Server skeleton in [RECIPES §5 (Python)](RECIPES.md#5-streamable-http-server--python) and [§6 (Go)](RECIPES.md#6-streamable-http-server--go).
 
 ### stdio (for local subprocess servers)
 
@@ -171,7 +153,7 @@ The client spawns your server; JSON-RPC frames flow over stdin/stdout, newline-d
 
 - Use stdio when the server is bundled with the client (Claude Desktop config, `npx`-launched tools, `uvx`-launched Python tools).
 - Single-process, single-client by definition. Don't bolt concurrency on; spawn another process.
-- Per [§10](#10-error-handling): structured logs go to stderr in NDJSON; never write debug prints to stdout (corrupts the frame stream). Note `Logging` (the JSON-RPC `notifications/message` primitive) is deprecated as of 2026-07-28 — stderr is the forward-compatible answer either way. See [§12](#12-versioning--deprecation).
+- Per [§10](#10-error-handling): structured logs go to stderr in NDJSON; never write debug prints to stdout (corrupts the frame stream). `Logging` (`notifications/message`) is deprecated — stderr is the forward-compatible answer ([§12](#12-versioning--deprecation)).
 
 ## 8. Request model — the stateless core
 
@@ -187,7 +169,7 @@ MCP moved from a bidirectional stateful protocol to request/response stateless (
   - One `InputRequiredResult` can batch an elicitation and a sampling request in a single round trip.
   - Sampling stays human-in-the-loop by design: the client picks the model, can edit the prompt, and can deny. Your server never sees API keys.
 
-Sample skeleton in [RECIPES §5](RECIPES.md#5-streamable-http-server-python)/[§6](RECIPES.md#6-streamable-http-server-go). Roots, Sampling (as a *server-initiated push*, superseded by MRTR for the request/response shape), and Logging are formally deprecated primitives — see [§12](#12-versioning--deprecation) for the replacement guidance and grace period.
+Sample skeleton in [RECIPES §5](RECIPES.md#5-streamable-http-server--python)/[§6](RECIPES.md#6-streamable-http-server--go). Deprecated primitives (Roots, server-initiated Sampling, Logging): see [§12](#12-versioning--deprecation) for replacements and grace period.
 
 ## 9. Authorization — OAuth 2.1 + RFC 8707
 
@@ -264,7 +246,7 @@ Per [§9](#9-authorization--oauth-21--rfc-8707): missing audience validation, ig
 ## 12. Versioning + deprecation
 
 - **Spec revisions are dated** (`2024-11-05`, `2025-03-26`, `2025-06-18`, `2025-11-25`, `2026-07-28`). Servers declare the version they support via the `MCP-Protocol-Version` header (per-request, since there's no `initialize` response to declare it in anymore — see [§8](#8-request-model--the-stateless-core)) and via the mandatory `server/discover` RPC.
-- **SDKs lag the spec.** Pin your SDK and pin the spec target in [STACK.md](STACK.md); don't claim a spec version you haven't tested against. All four Tier-1 SDKs (TypeScript, Python, Go, C#) speak 2026-07-28 as of the stable release. For Go specifically, the official SDK's first 2026-07-28 tag is **v1.7.0** (the module stayed on the v1 major — there is no v2); pin v1.7.0+ accordingly.
+- **SDKs lag the spec.** Pin your SDK and pin the spec target in [STACK.md](STACK.md); don't claim a spec version you haven't tested against. All four Tier-1 SDKs (TypeScript, Python, Go, C#) speak 2026-07-28 as of the stable release. For Go, pin the official SDK at v1.7.0+ (first 2026-07-28 tag; the module stayed on v1, no v2) — see [STACK.md](STACK.md).
 - **Feature Lifecycle Policy is now formal** ([SEP-2596](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596)): three states — Active → Deprecated → Removed — with a minimum **twelve-month** window in Deprecated before a feature is eligible for removal (an expedited path exists for published security advisories, minimum ninety days). Check the deprecation registry before assuming a "removed" feature is actually gone.
 - **What's Deprecated as of 2026-07-28** (still works; twelve-month clock started at this release — [SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577)):
 
@@ -285,9 +267,8 @@ Per [§9](#9-authorization--oauth-21--rfc-8707): missing audience validation, ig
 ## 13. Testing
 
 - **MCP Inspector** (`npx @modelcontextprotocol/inspector`) is the canonical interactive tester. Visual UI for tools/resources/prompts; CLI mode via `--cli` for scripted assertions. Pin to ≥0.10 to avoid CVE-2025-49596 (RCE in older versions); use a spec-2026-07-28-aware release when testing header-based routing and MRTR.
-- **Per-language testing in [RECIPES §9](RECIPES.md#9-testing).** Both SDKs ship in-process test transports (Python: `mcp.shared.memory`; Go: in-process pipe pair) — use them for unit/integration tests; spin a real HTTP server only for transport-level checks (auth, header routing).
+- **Per-language testing in [RECIPES §9](RECIPES.md#9-testing--in-process--mcp-inspector).** Both SDKs ship in-process test transports (Python: `mcp.shared.memory`; Go: in-process pipe pair) — use them for unit/integration tests; spin a real HTTP server only for transport-level checks (auth, header routing).
 - **Test the explicit-handle pattern, not session state.** Since there's no protocol session ([§8](#8-request-model--the-stateless-core)), a stateful workflow test should call your server as if each request could land on a different instance — pass the handle explicitly, don't rely on in-memory state surviving between test calls.
 - **Test MRTR round trips.** For any tool that can return `InputRequiredResult`, assert the retry-with-`inputResponses`-and-echoed-`requestState` path actually resumes correctly, including when the two calls are dispatched against separate server instances in a multi-replica test setup.
 - **Adversarial test cases mandatory** for tools that take URLs (SSRF), file paths (traversal), or user-controlled SQL/shell fragments (injection). At least one negative test per attack class.
 - **Schema fuzzing:** feed `tools/call` random payloads against each tool's input schema. The server should always return a tool error or JSON-RPC `-32602`, never crash.
-- **Grep for `-32002`** if you're migrating a server built against 2025-11-25 — "resource not found" moved to `-32602` (see [§10](#10-error-handling)).

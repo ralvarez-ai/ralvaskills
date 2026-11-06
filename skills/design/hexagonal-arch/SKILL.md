@@ -43,7 +43,7 @@ If you can't draw an arrow from any file in your codebase inward without crossin
 Idioms differ; the rule is the same.
 
 - **Go** — define the interface in the **consuming** package per [go-architect §4](../../languages/go-architect/SKILL.md#4-interfaces). The domain package declares `UserRepo`; the adapter package (`postgres`) implements it. Adapter imports domain; domain has no idea about adapter. Idiomatic and clean.
-- **Python** — define `typing.Protocol` (structural typing) in the domain module per [python-architect §3](../../languages/python-architect/SKILL.md#3-interfaces--di). Same direction; no inheritance required. Adapters happen to satisfy the Protocol.
+- **Python** — define `typing.Protocol` (structural typing) in the domain module per [python-architect §3](../../languages/python-architect/SKILL.md#4-interfaces--di). Same direction; no inheritance required. Adapters happen to satisfy the Protocol.
 - **Other languages** — same principle: interface declared by the consumer (the domain); implementation lives with the adapter.
 
 This is the inverted direction from what frameworks usually suggest ("define interfaces in their own `interfaces/` package"). The domain owns its contracts.
@@ -76,7 +76,7 @@ This is where hexagonal pays back. The cost (defining ports, separating layers) 
 - **Single-adapter ports.** A port introduced "for future flexibility" with one implementation and no second adapter justified. Per [improve-codebase-architecture's DEEPENING.md](../../refactoring/improve-codebase-architecture/DEEPENING.md): *one adapter = hypothetical seam; two adapters = real seam*. If you only ever need one, the port is indirection without payoff. Inline it.
 - **Reaching into infrastructure from the domain.** `User.save()` calling the DB. Fix: `User` is the data + behavior; `UserRepo.save(user)` does the persistence. The aggregate doesn't know how it gets persisted.
 - **Treating "hexagonal" as a folder convention.** Renaming packages `domain/`, `application/`, `infrastructure/`, `interfaces/` doesn't make a codebase hexagonal. The dependency direction does. A flat folder structure can be hexagonal if the imports flow correctly; a deeply layered structure can be a mess if they don't.
-- **Naming an adapter directory "ports."** A port is always an interface; an adapter is always a concrete implementation. If you split adapters into their own directories, name them after direction (`primary`/`secondary`, or `driving`/`driven`) — never reuse "ports" for an adapter folder just because that's where the outside world plugs in. An explicit primary port, when one is warranted (see §7 — usually only once a second caller needs to swap it), belongs with the layer that offers it (the application service), not with the adapter that calls into it.
+- **Naming an adapter directory "ports."** A port is always an interface; an adapter is always a concrete implementation. If you split adapters into their own directories, name them after direction (`primary`/`secondary`, or `driving`/`driven`) — never reuse "ports" for an adapter folder just because that's where the outside world plugs in. An explicit primary port, when one is warranted (usually only once a second caller needs to swap it), belongs with the layer that offers it (the application service), not with the adapter that calls into it.
 
 ## 7. When NOT to use it
 
@@ -85,7 +85,7 @@ This is where hexagonal pays back. The cost (defining ports, separating layers) 
 - **Pure transformation services.** ETL, file converters, anything where "the domain" is data shapes and the application is wiring inputs to outputs. Functional decomposition is the right tool.
 - **A facade over a single adapter.** If you'd write `UserRepo` and `PostgresUserRepo` and never have a second implementation (no fake, no test double — because you'll use a real test DB), the port is pointless. Use the concrete repo directly.
 
-The rule from [improve-codebase-architecture](../../refactoring/improve-codebase-architecture/SKILL.md): *two adapters justify the seam; one adapter is hypothetical*. The `InMemoryUserRepo` you use in tests usually counts as the second.
+The `InMemoryUserRepo` you use in tests usually counts as the second adapter (the *two adapters justify the seam* rule, see §6).
 
 ## 8. Reference implementations
 
@@ -93,8 +93,8 @@ Go and Python examples — showing the domain core, port interface, application 
 
 ## 9. Cross-skill ties
 
-- **[ddd-architect](../ddd-architect/SKILL.md)** — what's in the domain (aggregates, value objects). Hexagonal is the container; DDD is the contents.
-- **[go-architect §4](../../languages/go-architect/SKILL.md#4-interfaces)** / **[python-architect §3](../../languages/python-architect/SKILL.md#3-interfaces--di)** — the language idiom for defining ports.
+- **[ddd-architect](../ddd-architect/SKILL.md)** — what's in the domain (aggregates, value objects).
+- **[go-architect §4](../../languages/go-architect/SKILL.md#4-interfaces)** / **[python-architect §3](../../languages/python-architect/SKILL.md#4-interfaces--di)** — the language idiom for defining ports.
 - **[sql-architect](../../databases/sql-architect/SKILL.md)** — how secondary DB adapters are typically implemented (raw SQL via psycopg / sqlx).
 - **[tdd](../../workflows/tdd/SKILL.md)** — testing benefits compound when adapters are swappable.
 - **[improve-codebase-architecture](../../refactoring/improve-codebase-architecture/SKILL.md)** — uses the same vocabulary (modules, interfaces, seams); the "one adapter = hypothetical, two = real" rule applies to port introduction.

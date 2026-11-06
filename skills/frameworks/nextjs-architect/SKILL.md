@@ -51,7 +51,7 @@ Skeleton: [RECIPES § Server / client boundary](RECIPES.md#server--client-bounda
 
 ### Reads — direct from server components (hybrid default)
 
-Per the project choice: **direct DB access from RSC for reads**, API routes for writes. Cleaner UX (single round-trip), type-safe end-to-end.
+Per the project choice: **direct DB access from RSC for reads**, server actions for UI-driven writes (route handlers only for webhooks and external clients, see §7). Cleaner UX (single round-trip), type-safe end-to-end.
 
 - **`getUser` lives in a server-only module** (`@/lib/users.server.ts` or marked with the `"server-only"` import). Prevents accidental bundling of DB code into the client.
 - **Use [sql-architect](../../databases/sql-architect/SKILL.md)'s `psycopg + .sql` pattern** when the project's backend convention matches; otherwise use the project's existing data layer.
@@ -176,7 +176,6 @@ Same approach as [react-architect §10](../react-architect/SKILL.md#10-testing) 
 
 - [react-architect](../react-architect/SKILL.md) — client patterns inside `"use client"` components.
 - [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md) — Radix + Tailwind + a11y; design system tokens.
-- [rest-api-architect](../../protocols/rest-api-architect/SKILL.md) — API routes follow the same conventions as backend REST services.
 - [sql-architect](../../databases/sql-architect/SKILL.md) — direct DB access from RSC uses the same pattern (raw SQL + parameter binding).
 - [security-reviewer](../../quality/security-reviewer/SKILL.md) — server actions and API routes are the new attack surface; same audit list applies.
 - [observability-architect](../../infra/observability-architect/SKILL.md) — OpenTelemetry instrumentation via `@vercel/otel` or generic OTel SDK; trace_id propagated through RSC boundaries.

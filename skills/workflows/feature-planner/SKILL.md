@@ -50,7 +50,7 @@ Ask the user (and check the code):
 - **Compatibility** — clients on old versions, public API stability, backwards-compatible DB migrations.
 - **Security & compliance** — auth requirements, audit trails, PII handling, regulatory rules.
 - **Cost** — anything that bills per call (cloud APIs, LLM tokens, queue messages).
-- **Existing architecture** — what does this feature have to fit into? Read [CONTEXT.md](../grill-with-docs/CONTEXT.md) for the domain language, check `docs/adr/` for prior decisions ([improve-codebase-architecture §1](../../refactoring/improve-codebase-architecture/SKILL.md#1-glossary)).
+- **Existing architecture** — what does this feature have to fit into? Read the project's `CONTEXT.md` for the domain language (format: [CONTEXT_FORMAT.md](../grill-with-docs/CONTEXT_FORMAT.md)), check `docs/adr/` for prior decisions ([improve-codebase-architecture §1](../../refactoring/improve-codebase-architecture/SKILL.md#glossary)).
 - **Team & timeline** — who owns the work, what's the deadline, what's the cost of being late.
 
 Record constraints in the plan, even if they're "no constraint" — explicit nothing beats implicit nothing.
@@ -77,21 +77,7 @@ Slice properties:
 - **Ordered by risk, not by layer.** The first slice tackles the *most uncertain* part of the design — proving the riskiest assumption first. If the riskiest part can't be made to work, you want to know on day one, not at integration.
 - **Ends in a real assertion.** Each slice's success criterion is a test that fails before the slice starts and passes when it's done.
 
-**Wrong (horizontal slicing — common, painful):**
-
-1. Add the database migration.
-2. Add the repository code.
-3. Add the service code.
-4. Add the HTTP handler.
-5. Add the tests.
-
-**Right (vertical slicing):**
-
-1. **Tracer bullet:** a stub endpoint returns a hardcoded response; one test passes end-to-end (proves the wire works).
-2. **Riskiest assumption:** a single happy-path slice runs the real logic, hits the real DB, returns real data; one test.
-3. **Edge case A** — one more test, the smallest amount of code to make it pass.
-4. **Edge case B** — same.
-5. **N. Refactor the now-duplicated bits** as the third occurrence appears ([logic-cleaner §6](../../refactoring/logic-cleaner/SKILL.md#6-duplication-rule-of-three)).
+Wrong (horizontal) vs right (vertical) slicing example: [RECIPES.md](RECIPES.md#horizontal-vs-vertical-slicing).
 
 ## 7. Output — the plan deliverable
 

@@ -20,7 +20,7 @@ Full Conventional Commits v1.0.0 type set (Angular convention):
 | `refactor` | Code change that neither fixes a bug nor adds a feature |
 | `perf` | Code change that improves performance |
 | `docs` | Documentation-only changes |
-| `style` | Formatting, whitespace, semicolons — no code-meaning change |
+| `style` | Formatting only, no code-meaning change |
 | `test` | Adding or correcting tests; no production code change |
 | `build` | Build system or external dependency changes (e.g. npm, go.mod, Dockerfile) |
 | `ci` | CI configuration changes (GitHub Actions, pipelines) |
@@ -35,7 +35,7 @@ Full Conventional Commits v1.0.0 type set (Angular convention):
 * **Formatting:** Hard wrap lines at 72 characters.
 
 ## 4.1 Merge Commits
-* **Body content:** A bare `Merge branch '...'` message is not enough when the merge brings in meaningful changes. Use the body to summarize all the changes the merge introduces — group them by type or area, and note the key behavioral changes, so the merge commit is a useful record on its own.
+* **Body content:** A bare `Merge branch '...'` message is not enough when the merge brings in meaningful changes. Use the body to summarize all the changes the merge introduces — group them by type or area, and note the key behavioral changes.
 * **Format:** Keep the conventional `<type>(<scope>): <subject>` form (commonly `chore(merge): ...` or `feat: ...`), then list the aggregated changes in the body, hard wrapped at 72 characters.
 * **Footers:** Reference the merged branch or PR and any issues resolved by the combined work.
 
@@ -45,10 +45,11 @@ Full Conventional Commits v1.0.0 type set (Angular convention):
 
 ## 6. Attribution
 * **Do not add AI co-authorship.** Never include `Co-Authored-By: Claude` or any other AI-attribution footer. Commits belong to the human author who reviewed and approved the change.
+* **Harness-added trailers are outside this skill.** Some tools append an attribution line on their own; this skill never writes one, and the message it drafts has none. If a project does not want the tool's line either, that is the tool's setting to change, not something to strip by hand.
 
 ## 7. Execution Protocol
 
 * **User-initiated only.** This skill activates *only* when the user explicitly asks to commit — phrases like "commit this", "write the commit message", "let's commit", or invoking `/commit`. **Never volunteer to commit unprompted.** Don't propose commits at the end of a task, don't pre-emptively stage files, and don't run `git add` / `git commit` as cleanup after other work.
 * **Consent to execute.** When asked to draft a commit message: ask whether the user will run the commit themselves or wants you to. **Never run `git commit` without explicit go-ahead** for the specific commit being created.
-* **Scope per ask.** Permission to commit one set of changes is not blanket permission for future commits in the same session. Each commit needs its own confirmation.
+* **Scope per ask.** Permission to commit one set of changes is not blanket permission for future commits in the same session.
 * **Signing:** Delegated commits must be GPG signed if configured, unless the user explicitly opts out.

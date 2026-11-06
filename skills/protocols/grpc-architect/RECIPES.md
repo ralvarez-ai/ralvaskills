@@ -16,6 +16,8 @@ service UserService {
 }
 ```
 
+Typed messages only: don't define `rpc Ping(StringValue) returns (StringValue)` — wrap in `PingRequest` / `PingResponse`.
+
 ## Domain → code mapping
 
 ```go

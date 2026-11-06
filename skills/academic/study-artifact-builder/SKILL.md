@@ -94,9 +94,7 @@ Template and a worked skeleton in [PIPELINES.md §10](PIPELINES.md#10-the-explan
 - **Show sample size where it limits the claim.** With few tasks, one task is a large step; say so next to the table.
 - **Flag anomalies** instead of smoothing them: identical cells in different rows, a metric that improves when a component is removed, a category that gets worse.
 - **Separate the paper's explanation from its measurement.** An error-type table comparing the full system to a baseline does not measure per-component effects.
-- **Check each rate is k over n.** Percentages of a count must be a fraction of the stated sample size. A value that is not, for the nominal n, means a different denominator, averaged runs or a typo. Report it, do not fix it.
-- **Recompute every percentage the text cites** from the table, and name the base. Mixed bases (the same difference over each side) are common and change the number.
-- **Check the same label across papers.** A metric called the same thing in two papers ("pass rate") is often a different condition. Compare the definitions in code before comparing the numbers.
+- **Audit the numbers.** Check each rate is k over n, recompute every percentage the text cites from the table and name the base (mixed bases, the same difference over each side, are common and change the number), and compare the definitions of a same-named metric in the code of both papers before comparing numbers. Report non-fitting cells, do not fix them; steps in [DATASETS.md §11](DATASETS.md#11-numeric-audit-of-a-results-table).
 
 ## 8. Verify before handing over
 
@@ -111,18 +109,7 @@ Commands in [RECIPES.md](RECIPES.md#5-headless-verification).
 
 ## 9. Failure modes to watch
 
-| Symptom | Cause | Guard |
-|---|---|---|
-| A number that matches nothing | Taken from a snippet or from memory | Extract from the source table |
-| "The system does X" with no witness | Paper and code conflated | Three-block notes per component |
-| A cap that is "3" and "5" in different places | Different defaults per language or config | List every config with its value |
-| Rank flips between benchmarks | A mean hides the per-benchmark story | Show mean and per-benchmark max |
-| A diagram nobody can defend | Components with no source | Source locator on every component |
-| Retrieval looks decisive | The corpus overlaps the benchmark | See [DATASETS.md](DATASETS.md) leakage section |
-| A threshold nobody can justify | A score threshold applied to a sum that grows with query length | Sweep it on real data and report the distribution |
-| A type or keyword lookup returns everything | Substring match against the whole record, including its own field names | Probe it and count matches per query |
-| A derived reference set is mostly noise | The generating script matched substrings | Whole-word check against the source and a look at the most frequent entries |
-| An explanation that reads fine and cannot be checked | Mechanics summarized instead of listed | The fixed form of [§6](#6-explain-each-component) |
+Failure-mode table (symptom, cause, guard) in [RECIPES.md](RECIPES.md#10-failure-modes).
 
 ## 10. Delivery
 

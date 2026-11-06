@@ -12,7 +12,7 @@ Design and refine **slide-deck specifications** as a markdown document. Each sli
 
 - **Output is always one `.md` file.** No HTML, PDF, PPTX, image generation, or styling code. If the user asks for a rendered deck, refuse and offer the `.md` instead.
 - **Pairs with — but is distinct from — [[demo-script-architect]].** This skill defines what the audience *sees on each slide*; the script skill defines what the presenter *says*. Both can be produced for the same demo, but they are separate deliverables.
-- **Visual exemplar.** A reference HTML deck in this skill folder demonstrates how the layouts look when rendered. The skill never reproduces or regenerates that HTML — it only mines layout *shapes* from it. The full layout catalog and design conventions live in [LAYOUTS.md](LAYOUTS.md).
+- **Visual exemplar.** If the user supplies a reference HTML deck, it shows how the layouts look when rendered. The skill never reproduces or regenerates that HTML — it only mines layout *shapes* from it. The full layout catalog and design conventions live in [LAYOUTS.md](LAYOUTS.md).
 
 ## 2. Interview-first protocol
 
@@ -31,7 +31,7 @@ Only after both answers are collected, propose the **deck outline** (one line pe
 - **Text is final copy, not placeholder.** Write the actual headline, bullets, captions, and speaker notes — never `[insert title here]` or lorem ipsum.
 - **Visual hierarchy is explicit.** Each slide spec states what the eye should land on *first*, *second*, *third*.
 - **Progressive disclosure across slides.** Concepts build: define → illustrate → apply → summarize. Don't introduce a term on a slide without defining it first (or marking it as assumed knowledge).
-- **Speaker notes are optional and short.** Reminders for the presenter — not a script. Use [[demo-script-architect]] for the full narrative.
+- **Speaker notes are optional and short.** Reminders for the presenter — not a script.
 - **Accessibility-aware copy.** Headlines under ~10 words. Bullets parallel in structure. No text-only color cues ("the red ones"). Image fields always include `alt:` text.
 
 ## 4. Content distribution across slides
@@ -95,7 +95,7 @@ Different layouts have different ordering principles (importance, salience, chro
 
 ### 5.5 Body word budget
 
-Each layout has a sweet spot — `cover`/`quote` ≤40 words, `title-bullets`/`card-grid` ≤120, hub-spoke / showcase-split ≤140, recap/stat-row ≤80. Full per-layout table in [RECIPES § 5](RECIPES.md#5-body-word-budget-per-layout). Over budget → move detail to speaker notes or split the slide.
+Each layout has a word-budget sweet spot (e.g. `cover`/`quote` ≤40, `title-bullets`/`card-grid` ≤120). Full per-layout table in [RECIPES § 5](RECIPES.md#5-body-word-budget-per-layout). Over budget → move detail to speaker notes or split the slide.
 
 ### 5.6 Speaker notes scope
 
@@ -123,7 +123,7 @@ Pick layouts from §2; never invent. If none fits, follow §5.
 
 ## 8. Anti-patterns + review checklist
 
-Common anti-patterns (placeholder text, multi-idea slides, invented layouts, wall of text, mixed languages, missing transitions, decorative-only images, multiple `featured` cards) in [RECIPES § 6](RECIPES.md#6-anti-patterns). Pre-handoff review checklist (17 items covering language, accent, layout legitimacy, footer/numbering, hierarchy, transitions, slide count, required slides, card-count caps, placeholders, alt text, takeaway titles, word budgets, arc consistency, repetition) in [RECIPES § 7](RECIPES.md#7-review-checklist).
+Anti-patterns in [RECIPES § 6](RECIPES.md#6-anti-patterns); pre-handoff review checklist (17 items) in [RECIPES § 7](RECIPES.md#7-review-checklist).
 
 ## 9. Output deliverables
 

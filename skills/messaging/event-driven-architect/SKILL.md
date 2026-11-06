@@ -23,7 +23,7 @@ Patterns for services that communicate via asynchronous events. **Broker-agnosti
 
 ## 2. Schema — Protobuf
 
-Per [protobuf-architect](../../encoding/protobuf-architect/SKILL.md): events are `.proto` messages, code-generated, validated by `protovalidate`, and protected from breaking changes by `buf breaking` in CI.
+Per [protobuf-architect](../../encoding/protobuf-architect/SKILL.md): events are `.proto` messages, code-generated, and validated by `protovalidate`.
 
 **Envelope contract** (every event):
 
@@ -99,7 +99,7 @@ Some events can't be processed — schema mismatch, downstream service down too 
 - **Every consumer has a DLQ.** A topic / subject named `<original>.dlq` receives messages the consumer gave up on.
 - **Retry policy first, DLQ second.** N attempts with exponential backoff (typical: 3 attempts), then DLQ.
 - **DLQs are monitored.** Per [observability-architect](../../infra/observability-architect/SKILL.md): a Prometheus counter `<svc>_dlq_messages_total` with an alert on any non-zero value. A DLQ that quietly fills is a silent outage.
-- **DLQ tooling** — operator scripts to inspect, replay, or discard. Both audited.
+- **DLQ tooling** — operator scripts to inspect, replay, or discard.
 
 Retry policy + tool CLI shape in [RECIPES §4](RECIPES.md#4-dlq-topic--replay-tooling).
 
@@ -112,7 +112,7 @@ When the consumer can't keep up with the producer, the system needs to slow down
 - **Reject upstream** when persistently overloaded — return `503 Service Unavailable` with `Retry-After` per [rest-api-architect §3](../../protocols/rest-api-architect/SKILL.md#3-status-codes). Better than building a backlog you can't drain.
 - **No unbounded queues in memory.** A handler that reads from one topic and writes to another needs bounded size + a timeout.
 
-Per-broker tuning knobs in [RECIPES §6](RECIPES.md#6-backpressure-tuning-per-broker).
+Per-broker tuning knobs in [RECIPES §6](RECIPES.md#8-backpressure-tuning-per-broker).
 
 ## 9. Schema evolution
 
@@ -130,16 +130,11 @@ For multi-step workflows that span services. Two opposing patterns — compariso
 - **Start with choreography** — events flowing service-to-service, each subscriber reacts. Simpler.
 - **Promote to orchestration** (Temporal, Camunda, AWS Step Functions) when the flow is genuinely complex — 5+ services, branching, retries, compensation.
 - **Compensation actions** for partial failures: `OrderCancelled` undoes `PaymentCaptured` via `RefundIssued`. Domain-level, not technical rollback.
-- **Correlation ID** propagated through every event in a saga — ties the chain together ([observability-architect §5](../../infra/observability-architect/SKILL.md#5-correlation)).
+- **Correlation ID** propagated through every event in a saga — ties the chain together ([observability-architect §5](../../infra/observability-architect/SKILL.md#5-correlation-rules)).
 
 ## 11. Broker selection — when each fits
 
-The pattern in §1–10 works on any modern broker. Full strengths/best-for table in [RECIPES § 7](RECIPES.md#7-broker-selection-reference). Defaults:
-
-- **Lightweight: NATS JetStream** — single binary, conf-driven, easy to operate.
-- **Log-based: Kafka** — when replay, retention, and analytics consumers matter.
-- **Command queues / legacy fit: RabbitMQ** — when integration with non-Kafka non-NATS systems forces the choice.
-- **Cloud-managed (SNS+SQS, Pub/Sub, Service Bus)** — when ops cost matters more than feature parity.
+The pattern in §1–10 works on any modern broker. Per-broker defaults and the strengths/best-for table are in [RECIPES § 7](RECIPES.md#7-broker-selection-reference).
 
 Pick once per system; switching mid-flight is expensive.
 

@@ -52,13 +52,13 @@ For each chapter: the **inputs to gather** before drafting (never invent them �
 Run before returning any section. These are the [uru-thesis-reviewer](../uru-thesis-reviewer/SKILL.md) §6 dimensions as drafting targets — writing to pass them is the whole point.
 
 - [ ] **Objetivo general** singular, medible, alcanzable dentro del alcance.
-- [ ] **Objetivos específicos** con verbos accionables (`analizar`, `diseñar`, `evaluar`); descomponen el general en pasos verificables.
+- [ ] **Objetivos específicos** con verbos accionables (`analizar`, `diseñar`, `evaluar`); descomponen el general en pasos verificables; nunca vagos (`conocer`, `estudiar`).
 - [ ] **Justificación** específica y con evidencia — no "este tema es muy importante".
 - [ ] **Antecedentes** conectan explícitamente con este problema; columna de aporte es aporte concreto, no resumen.
 - [ ] **Variables** definidas con autor de respaldo.
 - [ ] **Tipo/diseño metodológico** corresponde a los objetivos.
 - [ ] **Instrumentos** con validación/confiabilidad descrita (o marcada `[falta: …]`).
-- [ ] **Resultados** responden a cada objetivo específico; claims proporcionales a la evidencia.
+- [ ] **Resultados** responden a cada objetivo específico; claims proporcionales a la evidencia ("se demuestra" solo con prueba real).
 - [ ] **Conclusiones**: una por objetivo específico; sin material nuevo; sin sobre-alcance.
 - [ ] **Coherencia en cadena** intacta: `problema → objetivos → metodología → resultados → conclusiones` — la sección no rompe ningún eslabón ni contradice capítulos previos.
 - [ ] **Idioma** 100% español en la prosa; tags/metadata en inglés.

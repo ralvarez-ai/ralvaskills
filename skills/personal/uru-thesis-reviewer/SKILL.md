@@ -16,7 +16,6 @@ Iterative feedback skill for URU theses. Each invocation produces a **review ses
 
 Do **not** use for:
 
-- Editing the source document directly (this skill never touches the `.docx`).
 - Evaluation / grading (this is improvement feedback, not a verdict).
 - Non-URU theses (use a generic editor — URU norms are baked in).
 
@@ -85,12 +84,12 @@ For substantive issues, the `+` side is a **prompt** for the author, not rewritt
 
 ## 6. Review dimensions (what to check, in order)
 
-For each section, walk these dimensions in order. Stop reading prose once a `[blocking]` structural issue makes downstream feedback premature (note it in INDEX and move on).
+For each section, walk these dimensions in order. Stop reading prose once a `[blocking]` structural issue makes downstream feedback premature (note "prose review deferred pending substantive revision" in INDEX and move on).
 
 Dimensions split into two groups:
 
 - **Substantive** (§6.1–6.2 below): does the research itself hold up? This is the headline value of the review.
-- **Formal & linguistic** ([CHECKS.md](CHECKS.md)): URU norms, prose quality, citation hygiene. Six checklists — formal aspects, redacción, grammar, semantics, citations, bibliography.
+- **Formal & linguistic** ([CHECKS.md](CHECKS.md)): URU norms, prose quality, citation hygiene. Six checklists — formal aspects (URU §IV), redacción (URU §III), grammar/RAE, semantics & clarity, citations (URU §V), bibliography (URU §VI).
 
 ### 6.1 Structural compliance (URU §II)
 
@@ -160,18 +159,18 @@ Evaluate the thesis on its own merits as a piece of research, independent of URU
 
 ### 6.3 Formal & linguistic dimensions
 
-Formal aspects (URU §IV), redacción (URU §III), grammar/RAE, semantics & clarity, citations (URU §V), bibliography (URU §VI) — full per-dimension checklists in [CHECKS.md](CHECKS.md).
+Full per-dimension checklists: [CHECKS.md](CHECKS.md) (six, listed above).
 
 ## 7. Workflow
 
-1. **Carry forward.** If a prior session exists, read its `01-index.md` Seguimiento de issues table (§4.2) before doing anything else. This seeds the current session's tracking table.
+1. **Carry forward (§4.2).** If a prior session exists, first read its `01-index.md` Seguimiento table; it seeds this session's table.
 2. **Ingest.** `.docx` → reviewable text via §3. Identify section boundaries.
 3. **Inventory.** List every section found. Compare against URU expected structure (§6.1). Flag missing/extra sections as `[blocking]`.
 4. **Scope.** If the user specified a filter, restrict to those sections.
 5. **Substantive pass first.** Walk §6.1 then §6.2 across all chapters before touching prose. Substantive `[blocking]` issues reshape downstream work — surface them early.
-6. **Per-section formal/linguistic pass.** Walk [CHECKS.md](CHECKS.md) §1–5 in order. Skip deep prose review on any section flagged with a substantive `[blocking]` — note "prose review deferred pending substantive revision" in INDEX.
+6. **Per-section formal/linguistic pass.** Walk [CHECKS.md](CHECKS.md) §1–5 in order. Skip deep prose review on any section flagged with a substantive `[blocking]` (see §6).
 7. **Bibliography pass.** Run [CHECKS § 6](CHECKS.md#6-bibliography-uru-vi) at the end — needs the full source list and may require web searches.
-8. **Write files.** Create `YYYY-MM-DD/` folder. Write section files in order. Write `01-index.md` last, including the carried-forward + updated Seguimiento de issues table. The `Resumen ejecutivo` leads with substantive impression before formal observations. If the session hands off open work, write it as `00-handoff.md` — always that name, never a variant.
+8. **Write files.** Create `YYYY-MM-DD/` folder. Write section files in order. Write `01-index.md` last, including the carried-forward + updated Seguimiento de issues table. The `Resumen ejecutivo` leads with substantive impression before formal observations. If the session hands off open work, write it as `00-handoff.md`.
 9. **Report.** Brief message to user: session path, severity totals, recommended starting point. Do NOT dump the diffs into chat — point to the files.
 
 ## 8. Reference

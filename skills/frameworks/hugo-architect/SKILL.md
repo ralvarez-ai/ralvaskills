@@ -6,7 +6,7 @@ description: Hugo 0.161 static-site architectural standards — project layout, 
 
 # Hugo Architecture
 
-Targets **Hugo Extended 0.161** (Go-templated static-site generator). Theme styling integrates with [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md); Go template syntax overlaps with [go-architect](../../languages/go-architect/SKILL.md); deploy pipelines follow [ci-cd-architect](../../infra/ci-cd-architect/SKILL.md). Concrete skeletons in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md).
+Targets **Hugo Extended 0.161** (Go-templated static-site generator). Cross-skill ties in [§12](#12-cross-skill-ties). Concrete skeletons in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md).
 
 ## 1. Project layout & content organization
 
@@ -58,7 +58,7 @@ Skeleton in [RECIPES § Hugo Module setup](RECIPES.md#hugo-module-setup).
 
 ## 6. Asset pipeline (Hugo Pipes)
 
-Hugo Pipes is the built-in asset pipeline — no Webpack, no Vite. Extended edition required for Sass/SCSS.
+Hugo Pipes is the built-in asset pipeline — no Webpack, no Vite.
 
 - **Source files in `assets/`** — invoke via `resources.Get "css/app.scss"`.
 - **Standard chain** — `toCSS` (or `js.Build`) → `postCSS` (optional, for Tailwind/autoprefixer) → `minify` → `fingerprint` → render `<link>` / `<script>` with `Permalink` + `Data.Integrity` (SRI).
@@ -98,10 +98,10 @@ Skeleton in [RECIPES § Render hook examples](RECIPES.md#render-hook-examples).
 
 - **Static-host CDN is the default** — Cloudflare Pages, Netlify, GitHub Pages, S3 + CloudFront. Build in CI, push the `public/` folder.
 - **Cloudflare Pages** — first-class Hugo support, native integration with `wrangler.toml`. Free tier is generous.
-- **GitHub Pages** — fine for personal sites and docs. `peaceiris/actions-hugo` is the standard workflow action. Custom domains require a CNAME file in `static/`.
+- **GitHub Pages** — fine for personal sites and docs. Custom domains require a CNAME file in `static/`.
 - **S3 + CloudFront** — when you need infrastructure control or are inside an AWS-only org. Pair with OAI/OAC for private bucket + CloudFront-only access.
 - **`baseURL` must match the deploy domain** — relative URLs break otherwise. Use `--baseURL` in CI to inject per-environment.
-- **CI pipeline** — see [ci-cd-architect](../../infra/ci-cd-architect/SKILL.md). Standard stages: install Hugo Extended → `hugo --minify` → upload `public/`.
+- **CI pipeline** — see [ci-cd-architect](../../infra/ci-cd-architect/SKILL.md).
 
 Skeleton in [RECIPES § GitHub Pages deploy workflow](RECIPES.md#github-pages-deploy-workflow).
 

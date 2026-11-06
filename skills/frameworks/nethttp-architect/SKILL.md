@@ -65,14 +65,14 @@ Explicit constructors. Dependencies wired in `main.go`; `*Deps` is passed where 
 
 ## 6. Lifespan & graceful shutdown
 
-Identical pattern to gin-architect — the server abstraction is `http.Server`, not `*gin.Engine`. `signal.NotifyContext` for shutdown trigger; the cause records which signal (Go 1.26). All four timeouts (`ReadHeaderTimeout`, `ReadTimeout`, `WriteTimeout`, `IdleTimeout`) are **mandatory in production** — defaults are "unlimited," which is a DoS vector. Full skeleton in [RECIPES.md](RECIPES.md).
+Same as gin-architect §6; the server is `http.Server`, not `*gin.Engine`. `signal.NotifyContext` for shutdown trigger; the cause records which signal (Go 1.26). All four timeouts (`ReadHeaderTimeout`, `ReadTimeout`, `WriteTimeout`, `IdleTimeout`) are **mandatory in production** — defaults are "unlimited," which is a DoS vector. Full skeleton in [RECIPES.md](RECIPES.md).
 
 ## 7. Middleware — function wrapping
 
 stdlib has no middleware abstraction. The standard pattern: a function that takes `http.Handler` and returns `http.Handler`. Compose with a tiny `Chain` helper (in [RECIPES.md](RECIPES.md)).
 
-- **Outermost first** in `Chain` — Recover wraps everything so even middleware panics are caught.
-- **Standard chain order:** Recover → RequestID → SLog → CORS → GZip.
+- **Outermost first** in `Chain` — request id first so every response and log line carries it; logger outside Recover so panics are logged as 500s.
+- **Standard chain order:** RequestID → SLog → Recover → CORS → GZip.
 - **Auth is per-route, not global** — apply `AuthRequired` only where needed (see §8).
 - **Never write your own logger middleware that calls `log.Printf`** — use `slog` (per go-architect).
 
@@ -92,15 +92,7 @@ Same `problem` package shape as `gin-architect`. Helpers take `http.ResponseWrit
 
 Same guidance as gin-architect — Go has no FastAPI-style `BackgroundTasks`. Detach with `context.Background()`, log errors, set timeouts.
 
-```go
-ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-go func() {
-    defer cancel()
-    if err := h.svc.SendWelcomeEmail(ctx, user.ID); err != nil {
-        slog.ErrorContext(ctx, "welcome email failed", "user_id", user.ID, "err", err)
-    }
-}()
-```
+Snippet in [RECIPES.md](RECIPES.md#concurrency--detached-work).
 
 ## 11. Testing
 
@@ -111,12 +103,10 @@ go func() {
 
 ## 12. OpenAPI generation
 
-stdlib `net/http` has no annotation-based generator like `swaggo/swag` (which is Gin-coupled). Two practical options:
+stdlib `net/http` has no annotation-based generator like `swaggo/swag` (which is Gin-coupled). Two practical options (CI snapshot-tests the spec either way):
 
 - **`getkin/kin-openapi`** — write the OpenAPI 3.1 spec in code, serve it at `/v1/openapi.json`, optionally use it for runtime request validation. The intended choice for stdlib.
 - **Hand-written `openapi.yaml`** committed to the repo, served as a static file. Cheapest, but drifts; pair with the OpenAPI snapshot test from [rest-api-architect §15](../../protocols/rest-api-architect/SKILL.md#15-openapi-as-the-source-of-truth).
-
-CI snapshot-tests the spec either way.
 
 ## When to pick `net/http` over Gin
 
