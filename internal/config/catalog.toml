@@ -13,6 +13,7 @@ skills = [
   { name = "tdd",                           source = "local" },
   { name = "grill-with-docs",               source = "local" },
   { name = "caveman",                       source = "local" },
+  { name = "token-economy",                 source = "local" },
   { name = "feature-planner",               source = "local" },
   { name = "security-reviewer",             source = "local" },
   { name = "ddd-architect",                 source = "local" },

@@ -195,8 +195,9 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   ├── meta/                         # ✅ category — ralvaskills-ecosystem skills (no library stack)
 │   │   ├── skill-builder/            # ✅ exists (v1.0.0 — meta-skill: scaffolds new skills following ralvaskills standards; no STACK.md)
 │   │   ├── rsk-guide/                # ✅ exists (v0.2.0 — covers .rsk/ project manifest + bundle install; no STACK.md)
-│   │   └── caveman/                  # ✅ exists (communication mode, language-agnostic)
-git add│
+│   │   ├── caveman/                  # ✅ exists (communication mode, language-agnostic)
+│   │   └── token-economy/            # ✅ exists (v1.0.0 — context, model routing and token-tool audit for Claude Code + OpenCode; no STACK.md)
+│   │
 │   └── personal/                     # 📋 new category — personal skills, never auto-bundled
 │       ├── demo-script-architect/    # ✅ exists (moved from workflows/)
 │       ├── demo-presentation-architect/  # ✅ exists (v1.1.0 — slide-deck spec authoring; content distribution + within-slide organization + layout catalog in LAYOUTS.md)
@@ -926,6 +927,7 @@ Universal skills installed machine-wide. Apply to every project regardless of st
 | `skill-builder` | meta | Scaffolds new skills following ralvaskills naming, format, and STACK.md standards |
 | `rsk-guide` | meta | How to use the `rsk` CLI — discover, install, update, status, uninstall, bundle catalog |
 | `caveman` | meta | ~75% token reduction mode, preserves technical accuracy |
+| `token-economy` | meta | Token-saving habits, model routing and an audit of context-mode / RTK / CodeGraph for Claude Code and OpenCode |
 
 ---
 
@@ -1103,7 +1105,7 @@ rsk install global docs --global
 
 ### Workflow Pipelines
 
-Skills chain into engineering pipelines. There are two canonical flows — pick the one that matches the work you're doing. Skills that don't appear in either pipeline (`caveman`, `skill-builder`) are utilities used independently as needed.
+Skills chain into engineering pipelines. There are two canonical flows — pick the one that matches the work you're doing. Skills that don't appear in either pipeline (`caveman`, `token-economy`, `skill-builder`) are utilities used independently as needed.
 
 #### New-feature pipeline
 
@@ -1279,6 +1281,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `skill-builder` | ✅ | v1.0.0 — interview-first scaffolder. References SPECS.md as source of truth; generates frontmatter, body skeleton, STACK.md if needed, atomic SPECS updates (folder structure + roadmap + bundles + convention table); validation checklist before hand-off. **Exempt from STACK.md** (meta-skill, no library stack) |
 | `rsk-guide` | ✅ | v0.3.0 draft — operator's quick-reference for the `rsk` CLI. Two workflows (`.rsk/` project manifest via `rsk new` + `rsk install` + `rsk pin`, or bundle install), CLAUDE.md pinning contract, registry vs local-clone mode. Tracks the in-progress CLI; promote to 1.0 once `rsk` ships. **Exempt from STACK.md** (meta-skill mirroring SPECS.md) |
 | `caveman` | ✅ | Communication mode — ~75% token reduction while preserving technical accuracy. Language-agnostic; no STACK.md |
+| `token-economy` | ✅ | v1.0.0 — where tokens go, always-on rules block for AGENTS.md, subagent exploration and model escalation, cheap-model guidance, context-mode/RTK/CodeGraph audit (scripts/audit.sh) for Claude Code and OpenCode. **Exempt from STACK.md** (meta-skill; tools are detected, not pinned) |
 
 #### Personal
 | Skill | Status | Notes |
