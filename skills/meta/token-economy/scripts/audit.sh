@@ -58,6 +58,9 @@ if has codegraph; then
   if grep -qs '"codegraph"' "$HOME/.claude.json" && ! grep -qs 'alwaysLoad' "$HOME/.claude.json"; then
     say WARN "codegraph/claude" "no alwaysLoad: tool may be deferred behind tool search"
   fi
+  if grep_any 'codegraph prompt-hook' "${cc_files[@]}"; then
+    say WARN "codegraph/prompt-hook" "pastes source into prompts in indexed repos; remove the hook, keep the MCP tool"
+  fi
   if has opencode; then
     if grep_any 'codegraph' "${oc_files[@]}"; then say OK "codegraph/opencode" "MCP entry found"
     else say GAP "codegraph/opencode" "run: codegraph install"; fi

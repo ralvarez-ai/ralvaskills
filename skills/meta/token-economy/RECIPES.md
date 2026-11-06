@@ -14,7 +14,12 @@ and by OpenCode natively). Keep it this short; every line is paid every turn.
 - Never re-read a file after editing it.
 - Ask tools for the smallest useful output: `git diff --stat` first, quiet flags, failing
   tests only, errors only from builds, tail/grep for logs.
-- Put independent tool calls in one turn.
+- Put independent tool calls in one turn. Prefer targeted edits to full-file rewrites.
+- Ask one question (or show a short plan) before building on an ambiguous request.
+- Never ask the user to paste long logs; run the command, or write output to a file and read
+  a range.
+- Delegate repetitive edits and checklist audits: a script first, else a cheap worker with one
+  worked example and an acceptance command.
 - When an answer needs many files, delegate the reading to a subagent and keep its summary.
 - End every subagent brief with: "Report in caveman style: fragments, no filler; keep paths,
   symbols and code exact; `file:line` refs; under N words." Same for notes meant only for
@@ -58,6 +63,20 @@ effort: high
 ---
 Work only from the brief and the files it names. Return one recommendation with its reason,
 the risks, and the exact next steps. No survey of options you would not pick.
+```
+
+Worker for delegated mechanical work, `.claude/agents/worker.md`:
+
+```markdown
+---
+name: worker
+description: Applies a decided pattern across files, runs checklist audits and repetitive edits. Needs a spec, one worked example and an acceptance command.
+model: haiku
+effort: low
+---
+Apply the spec exactly as the worked example shows; never redesign. After each batch run the
+acceptance command. Report in caveman style: files changed, items that failed with the error,
+nothing else. An item that fails twice is reported, not retried.
 ```
 
 Raise `effort` to `medium` on Explore for "how does X work" questions, or add a second agent.

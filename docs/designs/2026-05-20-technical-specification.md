@@ -1281,7 +1281,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `skill-builder` | ✅ | v1.0.0 — interview-first scaffolder. References SPECS.md as source of truth; generates frontmatter, body skeleton, STACK.md if needed, atomic SPECS updates (folder structure + roadmap + bundles + convention table); validation checklist before hand-off. **Exempt from STACK.md** (meta-skill, no library stack) |
 | `rsk-guide` | ✅ | v0.3.0 draft — operator's quick-reference for the `rsk` CLI. Two workflows (`.rsk/` project manifest via `rsk new` + `rsk install` + `rsk pin`, or bundle install), CLAUDE.md pinning contract, registry vs local-clone mode. Tracks the in-progress CLI; promote to 1.0 once `rsk` ships. **Exempt from STACK.md** (meta-skill mirroring SPECS.md) |
 | `caveman` | ✅ | Communication mode — ~75% token reduction while preserving technical accuracy. Language-agnostic; no STACK.md |
-| `token-economy` | ✅ | v1.0.0 — where tokens go, always-on rules block for AGENTS.md, subagent exploration and model escalation, cheap-model guidance, context-mode/RTK/CodeGraph audit (scripts/audit.sh) for Claude Code and OpenCode. **Exempt from STACK.md** (meta-skill; tools are detected, not pinned) |
+| `token-economy` | ✅ | v1.0.0 — where tokens go, always-on rules block for AGENTS.md, subagent exploration and model escalation, cheap-model guidance, context-mode/RTK/CodeGraph audit (scripts/audit.sh), session measurement (scripts/session-usage.py), cache/fork/ceiling guardrails (GUARDRAILS.md) and delegation of mechanical work to cheaper workers, for Claude Code and OpenCode. **Exempt from STACK.md** (meta-skill; tools are detected, not pinned) |
 
 #### Personal
 | Skill | Status | Notes |
