@@ -595,3 +595,5 @@ stops the build rather than the harness.
   sibling pages do; the system stacks render close but not identically off Fedora.
 - The family tokens and scroll kit now exist in five places: the four sibling landing pages and this
   `family.py`. If they ever get a shared CSS file, `family.py` is the source to compare against.
+- The family credit, the shared chrome and the mockup preview bar are designed in
+  [designs/2026-11-05-family-chrome-and-mockup-bar.md](2026-11-05-family-chrome-and-mockup-bar.md).

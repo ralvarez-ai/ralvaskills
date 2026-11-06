@@ -60,6 +60,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 - **`ui-ux-architect`** — WCAG 2.2 AA, Radix + Tailwind 4 + shadcn/ui, design-token theming, mandatory loading/error/empty/success states, mobile-first responsive, keyboard parity, contrast checked in CI.
 - **`website-concept-architect`** — Pre-code website concepting: purpose, audience, content inventory, tone, visual archetype, structure; outputs 2-3 concept directions plus an ASCII homepage wireframe. Hands off to `ui-ux-architect` / `frontend-design`.
 - **`landing-page-designer`** — Landing-page proposals as self-contained HTML grounded in the product's code, real captures and brand: one memorable device per page, a choreographed hero film, accessibility.
+- **`mockup-architect`** — Mockups as self-contained HTML in dated folders, with the fixed preview bar (palette, corners, accent, mark) driven by data attributes and `?query` so variants are reproducible.
 
 ### `design/` — architectural patterns
 
