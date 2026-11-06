@@ -125,5 +125,5 @@ Run all of these before uploading; the list in [RECIPES §4](RECIPES.md#4-pre-su
 ## 11. Out of scope
 
 - **Journal and institutional formats** → [uru-scientific-paper-architect](../../personal/uru-scientific-paper-architect/SKILL.md), [uru-thesis-architect](../../personal/uru-thesis-architect/SKILL.md)
-- **Talk and poster design** → [demo-presentation-architect](../../personal/demo-presentation-architect/SKILL.md)
+- **Talk and poster design** → [demo-presentation-architect](../../frontend/demo-presentation-architect/SKILL.md)
 - **Research content** — this skill formats and structures a paper; it does not generate claims, results, or citations. Never fabricate a number, a baseline, or a reference.

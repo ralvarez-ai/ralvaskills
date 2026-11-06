@@ -6,7 +6,7 @@ description: Design URU-style thesis defense presentation specs — fixed instit
 
 # URU Thesis Defense Architect
 
-Design **thesis defense presentation specifications** for Universidad Real (URU) as a single markdown document. Every slide is described by its section role, its logo placement, and its exact Spanish-language text content. This skill is self-contained — it does not delegate to [demo-presentation-architect](../demo-presentation-architect/SKILL.md), which targets general demo decks with a different layout system and audience. Full structure table, per-slide template, and review checklist live in [RECIPES.md](RECIPES.md).
+Design **thesis defense presentation specifications** for Universidad Real (URU) as a single markdown document. Every slide is described by its section role, its logo placement, and its exact Spanish-language text content. This skill is self-contained — it does not delegate to [demo-presentation-architect](../../frontend/demo-presentation-architect/SKILL.md), which targets general demo decks with a different layout system and audience. Full structure table, per-slide template, and review checklist live in [RECIPES.md](RECIPES.md).
 
 ## 1. Scope & output
 

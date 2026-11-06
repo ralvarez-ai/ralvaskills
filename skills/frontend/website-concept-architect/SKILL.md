@@ -157,5 +157,5 @@ The concept doc should be saved to the project repo (e.g. `docs/concept.md`) so 
 ## 12. Cross-skill ties
 
 - [ui-ux-architect](../ui-ux-architect/SKILL.md) — implementation-level standards; this skill feeds it the brief.
-- [demo-presentation-architect](../../personal/demo-presentation-architect/SKILL.md) — similar interactive walk-through structure, different domain.
-- [demo-script-architect](../../personal/demo-script-architect/SKILL.md) — narrative principles (audience-first, progressive reveal) apply to homepage copy too.
+- [demo-presentation-architect](../demo-presentation-architect/SKILL.md) — similar interactive walk-through structure, different domain.
+- [demo-script-architect](../demo-script-architect/SKILL.md) — narrative principles (audience-first, progressive reveal) apply to homepage copy too.

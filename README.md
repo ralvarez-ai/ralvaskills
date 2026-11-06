@@ -61,6 +61,8 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 - **`website-concept-architect`** — Pre-code website concepting: purpose, audience, content inventory, tone, visual archetype, structure; outputs 2-3 concept directions plus an ASCII homepage wireframe. Hands off to `ui-ux-architect` / `frontend-design`.
 - **`landing-page-designer`** — Landing-page proposals as self-contained HTML grounded in the product's code, real captures and brand: one memorable device per page, a choreographed hero film, accessibility.
 - **`mockup-architect`** — Mockups as self-contained HTML in dated folders, with the fixed preview bar (palette, corners, accent, mark) driven by data attributes and `?query` so variants are reproducible.
+- **`demo-presentation-architect`** — Slide-deck specifications in markdown: content distribution across slides, within-slide organization, layout from a fixed catalog. Outputs `.md` only.
+- **`demo-script-architect`** — Presenter-centric demo scripts with narrative flow, visual-cue mapping, progressive capability reveals.
 
 ### `design/` — architectural patterns
 
@@ -121,8 +123,6 @@ Skills about authoring/operating the toolkit itself, plus communication modes th
 
 These are personal to me and excluded from bundle installs. Listed here for transparency; not intended for reuse.
 
-- **`demo-presentation-architect`** — Slide-deck specifications in markdown: content distribution across slides, within-slide organization, layout from a fixed catalog. Outputs `.md` only.
-- **`demo-script-architect`** — Presenter-centric demo scripts with narrative flow, visual-cue mapping, progressive capability reveals.
 - **`pi-iteration-workflow`** — Windows-to-Pi SSH edit-test loop for the `voldemorbot` robot codebase: pixi/ROS2 rebuild triggers, `screen` for flaky-WiFi survival, PowerShell SSH quoting pitfalls, Pi Zero sudo caching.
 - **`uru-thesis-architect`** — Interview-first, section-by-section drafter for URU thesis (TEG) chapters, Spanish output, URU chapter order, never fabricates data. Complements `uru-thesis-reviewer`.
 - **`uru-thesis-reviewer`** — Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) Trabajos Especiales de Grado. Produces ordered `.md` diff files; never edits the source `.docx`.

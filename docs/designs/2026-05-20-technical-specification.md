@@ -178,7 +178,9 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   ├── performance-reviewer/     # ✅ exists (v1.0.0 — N+1, blocking I/O, allocation hot paths; measurement-grounded)
 │   │   └── codebase-hygiene-reviewer/ # ✅ exists (v1.0.0 — dead code, unused exports, duplication, size; propose-only, evidence-based)
 │   ├── frontend/
-│   │   └── ui-ux-architect/          # ✅ exists (v1.0.0 — WCAG 2.2 AA, Radix + Tailwind 4, design tokens, four-state UI discipline)
+│   │   ├── ui-ux-architect/          # ✅ exists (v1.0.0 — WCAG 2.2 AA, Radix + Tailwind 4, design tokens, four-state UI discipline)
+│   │   ├── demo-script-architect/    # ✅ exists (moved from workflows/, then out of personal/ once generic)
+│   │   └── demo-presentation-architect/  # ✅ exists (v1.1.0 — slide-deck spec authoring; content distribution + within-slide organization + layout catalog in LAYOUTS.md)
 │   ├── academic/                     # ✅ category — research-publication formats (venue-specific, not institution-specific)
 │   │   └── ml-conference-paper-architect/  # ✅ exists (v1.0.0 — NeurIPS/ICML/ICLR/AAAI; style-file usage, anonymization, page-limit accounting, natbib, reproducibility checklists; layers on latex-architect); has STACK.md + assets/
 │   ├── workflows/
@@ -199,8 +201,6 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   └── token-economy/            # ✅ exists (v1.0.0 — context, model routing and token-tool audit for Claude Code + OpenCode; no STACK.md)
 │   │
 │   └── personal/                     # 📋 new category — personal skills, never auto-bundled
-│       ├── demo-script-architect/    # ✅ exists (moved from workflows/)
-│       ├── demo-presentation-architect/  # ✅ exists (v1.1.0 — slide-deck spec authoring; content distribution + within-slide organization + layout catalog in LAYOUTS.md)
 │       ├── pi-iteration-workflow/    # ✅ exists (v1.0.0 — Windows-to-Pi SSH deploy loop for the voldemorbot robot codebase; pixi/ROS2 rebuild triggers, screen for flaky WiFi, PowerShell SSH quoting, Pi Zero sudo caching; no STACK.md)
 │       ├── uru-thesis-defense-architect/  # ✅ exists (v1.0.1 — URU thesis defense deck spec authoring; fixed 9-section institutional structure, Spanish-only content, logo placement rules, user-supplied logo asset; no STACK.md)
 │       ├── uru-scientific-paper-architect/  # ✅ exists (v1.0.0 — Revista Tecnocientífica URU manuscript spec authoring; article-type structures, typography rules, citation/reference formats by source type; no STACK.md)
@@ -684,7 +684,7 @@ rsk install go-grpc                               # stack bundle for current pro
 rsk install design docs                           # multiple bundles at once
 rsk install go-architect                          # single skill (no matching bundle)
 rsk install go-architect --pin                    # install + pin for auto-load in this project
-rsk install demo-script-architect --include personal  # personal skill, explicit opt-in
+rsk install uru-thesis-architect --include personal  # personal skill, explicit opt-in
 rsk install go-grpc --dry-run                     # preview without writing
 ```
 
@@ -1252,6 +1252,8 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | Skill | Status | Notes |
 |---|---|---|
 | `ui-ux-architect` | ✅ | v1.0.0 — WCAG 2.2 AA mandatory, Radix primitives + Tailwind 4 + shadcn/ui recipes, OKLCH-based design tokens with semantic naming + dark mode, mobile-first + container queries, **four required states** (loading/error/empty/success) on every async surface, `prefers-reduced-motion` respected, `axe-core` + Lighthouse a11y ≥ 95 in CI |
+| `demo-script-architect` | ✅ | Presenter-centric demo scripts; no longer personal (moved to frontend/) |
+| `demo-presentation-architect` | ✅ | v1.1.0 — slide-deck spec authoring (`.md` output only). Interview-first (language → main info). Cross-slide content distribution (slide budget, fixed slots, 5 narrative arcs, splitting + repetition discipline) and within-slide organization (takeaway-led titles, ordering by layout family, body word budgets). 14-layout catalog in `LAYOUTS.md` with primitive blocks, decision flow, and deck-wide design conventions; reference HTML exemplar in the skill folder. Presenter-centric demo scripts; no longer personal (moved to frontend/) |
 
 #### Academic
 | Skill | Status | Notes |
@@ -1286,8 +1288,6 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 #### Personal
 | Skill | Status | Notes |
 |---|---|---|
-| `demo-script-architect` | ✅ | Personal use only — not bundled, requires `--personal` flag |
-| `demo-presentation-architect` | ✅ | v1.1.0 — slide-deck spec authoring (`.md` output only). Interview-first (language → main info). Cross-slide content distribution (slide budget, fixed slots, 5 narrative arcs, splitting + repetition discipline) and within-slide organization (takeaway-led titles, ordering by layout family, body word budgets). 14-layout catalog in `LAYOUTS.md` with primitive blocks, decision flow, and deck-wide design conventions; reference HTML exemplar in the skill folder. Personal use only — not bundled, requires `--personal` flag |
 | `pi-iteration-workflow` | ✅ | v1.0.0 — Windows-to-Pi SSH edit-test loop for the `voldemorbot` robot codebase. Host access table (prefer `rpi-5-direct` over WiFi/tunnel aliases), pixi/ROS2 rebuild triggers, `screen` for flaky-WiFi survival, PowerShell SSH quoting pitfall, Pi Zero sudo credential caching. Companion to `ros2-architect` for workspace conventions. Personal use only — not bundled, requires `--personal` flag; exempt from `STACK.md` (operational, not library-version-sensitive) |
 | `go-library-builder` | ✅ | v1.1.0 — scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD + hexagonal house style (derived from `identity`, `ratelimit`, `email`). Domain-pure root package (stdlib + uuid only), narrow composed ports, technology-named adapter subpackages (prod/dev/test), config structs over functional options, testcontainers over mocks, mise + Task + golangci tooling. Two scales: flat single-port lib and vertical-slice lib with `app/` + `internal/acl/`. Composes `go-architect`, `hexagonal-arch`, `ddd-architect`; has `STACK.md` + `assets/`. Personal use only — not bundled, requires `--personal` flag |
 | `go-house-libs` | ✅ | v0.3.0 — router over ten shared Go modules with a `references/<NAME>.md` per module (layout, recipe, gotchas) and a `STACK.md` of tags, pins and consumers. Renamed from `house-kits`. |

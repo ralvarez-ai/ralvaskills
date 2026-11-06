@@ -147,7 +147,7 @@ Each of these has a correct replacement and no legitimate use in a new document:
 ## 11. Out of scope
 
 - **Venue formatting** (page limits, anonymization, camera-ready toggles, conference `.sty` files) → [ml-conference-paper-architect](../../academic/ml-conference-paper-architect/SKILL.md)
-- **Presentations / beamer** → [demo-presentation-architect](../../personal/demo-presentation-architect/SKILL.md) for deck content design, [reveal-js-architect](../../frameworks/reveal-js-architect/SKILL.md) for HTML decks
+- **Presentations / beamer** → [demo-presentation-architect](../../frontend/demo-presentation-architect/SKILL.md) for deck content design, [reveal-js-architect](../../frameworks/reveal-js-architect/SKILL.md) for HTML decks
 - **URU institutional formats** (Word-targeted `.md` specs) → [uru-thesis-architect](../../personal/uru-thesis-architect/SKILL.md), [uru-scientific-paper-architect](../../personal/uru-scientific-paper-architect/SKILL.md)
 - **Repo tooling** (task runner, pre-commit wiring, version pinning) → [repo-tooling-architect](../../tooling/repo-tooling-architect/SKILL.md)
 - **CI pipeline design** beyond the build job → [ci-cd-architect](../../infra/ci-cd-architect/SKILL.md)
