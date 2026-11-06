@@ -4,6 +4,7 @@ export { CodeRegion } from './CodeRegion';
 export { CopyBlock } from './CopyBlock';
 export { cx } from './cx';
 export { Eyebrow } from './Eyebrow';
+export { FamilyMark } from './FamilyMark';
 export { FilmControl } from './FilmControl';
 export { Panel } from './Panel';
 export type { SectionTone } from './Section';

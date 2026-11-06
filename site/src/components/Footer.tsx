@@ -1,6 +1,6 @@
 import { sources } from '../data/facts';
 import { data } from '../data/types';
-import { Tag, Wordmark } from './ui';
+import { FamilyMark, Tag, Wordmark } from './ui';
 
 export function Footer() {
   return (
@@ -12,6 +12,10 @@ export function Footer() {
             rsk {data.version} · GPL-3.0 ·{' '}
             <a href="https://github.com/ralvarezdev/ralvaskills">github.com/ralvarezdev/ralvaskills</a>
           </p>
+          <a className="family-credit" href="https://github.com/ralvarez-ai">
+            <FamilyMark />
+            <span>A ralvarez-ai product</span>
+          </a>
         </div>
         <details>
           <summary>Where every number on this page comes from</summary>

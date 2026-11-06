@@ -173,7 +173,7 @@ export const quickStart: { cmd: string; note: string }[] = [
 ];
 
 export const sources: { what: string; where: string }[] = [
-  { what: '59 skills', where: 'registry/index.json · skills/*/*/SKILL.md' },
+  { what: '60 skills', where: 'registry/index.json · skills/*/*/SKILL.md' },
   { what: '17 domains', where: 'skills/<domain>/' },
   { what: '15 bundles', where: 'internal/config/catalog.toml' },
   { what: '13 commands', where: 'cmd/rsk/setup.go (+ cobra completion)' },

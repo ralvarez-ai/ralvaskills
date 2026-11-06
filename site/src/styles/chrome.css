@@ -33,3 +33,7 @@
 .wordmark__row-3{fill:var(--wordmark-3)}
 .wordmark__row-4{fill:var(--wordmark-4)}
 .wordmark__row-5{fill:var(--wordmark-5)}
+/* family credit: the hexagon mark and "A ralvarez-ai product", same as the ralvarez-apps sites */
+.family-credit{display:inline-flex;align-items:center;gap:10px;min-height:44px;margin-top:14px;color:var(--text-muted);text-decoration:none}
+.family-credit:hover{color:var(--text-strong)}
+.family-credit svg{width:22px;height:22px}
