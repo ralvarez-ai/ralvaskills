@@ -44,3 +44,8 @@ version = 1
   name = "landing-page-designer"
   version = "1.0.0"
   source = "registry"
+
+[[skills]]
+  name = "token-economy"
+  version = "1.0.0"
+  source = "registry"
