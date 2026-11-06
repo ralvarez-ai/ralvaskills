@@ -18,17 +18,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - **Palette:** Ember (warm paper, vermilion for rsk, amber for what is typed) with a teal `--human` role for what the person approves. It deviates from `@ralvarez-ts/tokens` on purpose, in a documented layer at the end of `tokens.css`. Four proposals (Ember, Aurora, Signal, Ember with a counterpoint) were generated with a WCAG-validating script (`mockups/.../_tools/palettes.py`) and a viewer; all pass axe in 20 combinations.
   - **Tooling and CI:** Biome lints and formats the sources. The `Check site` workflow runs install, lint, build and the gate on pull requests and on `main` (paths `site/**`, the registry, `skills/**` and the Go sources it reads), and `task ci:local` runs it locally with `act`. Tasks are `site:install`, `site:dev`, `site:build` and `site:check`.
   - **Not done yet:** `Check site` fails at install until the `NODE_AUTH_TOKEN` secret (read access to GitHub Packages) exists, so the rename is unproven in CI; the page is not deployed; the sample content is not yet real captures. The open items are in `docs/backlog/`.
-- `rsk new` bootstraps the `CLAUDE.md` → `@AGENTS.md` pattern: it writes a short `AGENTS.md` skeleton when the project has none, keeps `@AGENTS.md` as the first line of `CLAUDE.md` above `@.rsk/CLAUDE.md`, and leaves an existing `AGENTS.md` and later imports untouched. `uninstall`/`destroy` keep the import, since other tools read `AGENTS.md` directly.
 - **codebase-hygiene-reviewer:** new skill (1.0.0) for evidence-based declutter audits: dead code, unused exports per consumer, duplication and oversized files. It only proposes changes and writes its report outside the repo.
 
 ### Changed
 - **Go skills and this repo target Go 1.27.3.** `go-architect`, `gin-architect`, `nethttp-architect`, `hugo-architect`, `mcp-architect`, `go-library-builder` (its `go.mod` line, `STACK.md` and `assets/mise.toml`, previously 1.26) and the examples in `docker-architect`, `ci-cd-architect`, `cli-tool-architect`, `repo-tooling-architect` and `skill-builder` now say 1.27.3; `go.mod`, `mise.toml` and `.golangci.doccheck.yml` of this repo too. Statements about when a Go feature arrived (1.26 `goroutineleak`, `go fix`) are unchanged, and the per-module table in `go-house-libs` still records what each released module declares (1.27.1 or 1.27.2).
 - **`demo-script-architect` and `demo-presentation-architect` move from `personal/` to `frontend/`.** They are generic, other published skills (`website-concept-architect`, `latex-architect`, `ml-conference-paper-architect`, `reveal-js-architect`) link to them, and those links dangled for anyone without `--include personal`. They are now installable like any other skill; links, the README and the specification are updated.
-- **Pinned skills reach the agent through a generated `.rsk/SKILLS.md`.** Claude Code expands an `@` import only when it resolves inside the project, so the old `.rsk/CLAUDE.md` lines (`@../.claude/skills/<name>/SKILL.md`, symlinks into `~/.config/rsk/cache/`) loaded nothing, and pinning delivered no instructions. `internal/digest` now writes `.rsk/SKILLS.md` on `rsk new`, `pin`, `install` and `update` from each pinned skill's `DIGEST.md` (a skill without one contributes `- name: description`; a pin that is not installed says so), `.rsk/CLAUDE.md` holds the single line `@SKILLS.md`, and `opencode.json` `instructions` lists `.rsk/SKILLS.md`, replacing the per-skill entries (stale ones are removed on the next sync). Nothing pinned removes the file. Checked end to end with `claude -p`: the digest text reaches the model. Not done: warning when the file passes the 2000-token budget, and the `DIGEST.md` entries in `SPECS.md`, `skill-builder` and the lint.
 - **All 59 published skills get a minor version bump** (`mockup-architect` is new and keeps 1.0.0). Each gains a `DIGEST.md` (at most 40 lines of always-on rules, drafted extract-only and audited on a sample) that nothing consumes until `rsk` generates `.rsk/SKILLS.md` from the pinned skills, see `docs/designs/2026-11-06-skill-digests-and-skills-md.md`. Most skills also lost duplicated or verbose text, and several moved bulk examples and tables into `RECIPES.md` or `REFERENCE.md` with a pointer left behind (largest: `repo-tooling-architect` 403 to 245 lines, `go-architect` 252 to 181, `website-concept-architect` 211 to 161); the findings and the leftover content bugs are in `docs/reviews/2026-11-06-skill-digests-and-compaction.md`. `registry/index.json` is not regenerated yet.
 - **go-architect** (1.15.0): adds the external program behind a port (a subprocess CLI or vendor SDK): the domain owns the request and result types and a one-method port, the adapter reports through an event sink, a fake is the second adapter, and `RECIPES.md` has the worked code.
-- `rsk.lock` no longer records the cache `path` of each skill. It is machine state that `rsk install` and `rsk update` resolve again anyway, and it made every committed lock carry `/home/<user>/...` and churn on each machine. Locks written before this change still decode; the field disappears on the next write.
-- `rsk new` does not touch `.gitignore`: with the path gone the lock is portable, so it belongs in git like `go.sum`. A clone runs `rsk install` and gets the same versions.
+- **rsk-guide** (0.5.1): describes the generated `.rsk/SKILLS.md`: pinning loads a skill's digest, not its body, `.rsk/SKILLS.md` is committed with the rest of `.rsk/`, and the pinned set should stay small.
 - **rsk-guide** (0.4.2): the `.rsk/` tree no longer shows a `skills/` folder that the CLI never creates (installed skills are symlinks in `.claude/skills/`, shared with OpenCode), and the commit guidance says to track `rsk.mod`, `rsk.lock` and `.rsk/CLAUDE.md`. The stale `.rsk/skills/` mentions in the `install`, `uninstall` and `pin` help and in the OpenCode tool comments are gone, along with the unused `ProjectSkillsPrefix` constant.
 
 ### Changed
@@ -52,6 +49,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The docs now live in typed folders with frontmatter, and `AGENTS.md` is imported from `CLAUDE.md`.
 
 # CLI releases
+
+## v3.5.0 (2026-11-06)
+### Fixed
+- Pinned skills reached the agent through a generated `.rsk/SKILLS.md` instead of the per-skill `SKILL.md` imports, which loaded nothing. Claude Code expands an `@` import only when it resolves inside the project, and the old `.rsk/CLAUDE.md` lines (`@../.claude/skills/<name>/SKILL.md`) went through symlinks into `~/.config/rsk/cache/`, so pinning delivered no instructions. `rsk new`, `pin`, `install`, `uninstall` and `update` now write `.rsk/SKILLS.md` from each pinned skill's `DIGEST.md` (a skill without one contributes `- name: description`; a pin that is not installed says so, and nothing pinned removes the file). `.rsk/CLAUDE.md` holds the single line `@SKILLS.md` and `opencode.json` `instructions` lists `.rsk/SKILLS.md`, replacing the per-skill entries, which are removed on the next sync. Commit `.rsk/SKILLS.md` with the rest of `.rsk/`; it is generated, do not edit it. Checked end to end with `claude -p`. Not in this release: a warning when the file passes its 2000-token budget (`digest.BudgetTokens` is defined, nothing reads it yet).
+
+### Changed
+- Built with Go 1.27.3 (`go.mod`, `mise.toml`).
+- Skills: every skill now carries a `DIGEST.md` and a minor version bump; see Unreleased above for the catalogue changes.
+
+## v3.4.1 (2026-11-02)
+### Changed
+- `rsk new` does not touch `.gitignore`: with the path gone the lock is portable, so it belongs in git like `go.sum`. A clone runs `rsk install` and gets the same versions.
+
+## v3.4.0 (2026-11-02)
+### Added
+- `rsk new` bootstraps the `CLAUDE.md` → `@AGENTS.md` pattern: it writes a short `AGENTS.md` skeleton when the project has none, keeps `@AGENTS.md` as the first line of `CLAUDE.md` above `@.rsk/CLAUDE.md`, and leaves an existing `AGENTS.md` and later imports untouched. `uninstall`/`destroy` keep the import, since other tools read `AGENTS.md` directly.
+
+### Changed
+- `rsk.lock` no longer records the cache `path` of each skill. It is machine state that `rsk install` and `rsk update` resolve again anyway, and it made every committed lock carry `/home/<user>/...` and churn on each machine. Locks written before this change still decode; the field disappears on the next write.
 
 ## v3.3.0 (2026-10-02)
 ### Added
