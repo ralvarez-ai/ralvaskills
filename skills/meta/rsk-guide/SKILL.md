@@ -1,6 +1,6 @@
 ---
 name: rsk-guide
-version: 0.5.0
+version: 0.5.1
 description: Operator's guide for the rsk CLI — manage ralvaskills via the .rsk/ project manifest (rsk new, rsk install, rsk pin), bundle/global installs and the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards. Use when the user mentions rsk, asks how to install/pin/update skills, wants to add a skill to a project, is starting work in a new project or scaffolding (to learn which standards apply), or wants to set up ralvaskills on a new machine. Companion to cli-tool-architect (CLI design), mcp-architect (server design) and skill-builder (authoring new skills).
 ---
 
@@ -29,12 +29,12 @@ Pick the one that matches the user's intent.
 
 ### A. Project manifest (`.rsk/`) — preferred for per-project skill sets
 
-Mirrors `go.mod`: a declarative `rsk.mod` lists the skills this project depends on, `rsk.lock` records the versions this machine resolved, and pinned skills are auto-imported into `./CLAUDE.md` via `@.rsk/CLAUDE.md`. Lives in `<project>/.rsk/`.
+Mirrors `go.mod`: a declarative `rsk.mod` lists the skills this project depends on, `rsk.lock` records the versions this machine resolved, and pinned skills are loaded into `./CLAUDE.md` via `@.rsk/CLAUDE.md`, which imports the generated `.rsk/SKILLS.md` (each pinned skill's short `DIGEST.md`, not its whole body). Lives in `<project>/.rsk/`.
 
 ```bash
 rsk new                                # creates .rsk/rsk.mod + .rsk/CLAUDE.md + appends import to ./CLAUDE.md
 rsk install <name[@version]>           # adds to manifest, symlinks into .claude/skills/, updates rsk.lock
-rsk install <name> --pin               # also imports skill into .rsk/CLAUDE.md (auto-loaded in this project)
+rsk install <name> --pin               # also pins it: its digest goes into .rsk/SKILLS.md (loaded in this project)
 rsk pin <name>                         # pin an already-installed skill
 rsk pin <name> --remove                 # remove the import (skill stays installed; `rsk unpin` still works)
 rsk list                               # show manifest entries with pinned/installed marks
@@ -43,7 +43,7 @@ rsk install                            # (no args) re-installs everything in rsk
 rsk destroy                            # delete .rsk/ and remove @.rsk/CLAUDE.md import
 ```
 
-**Pin vs install** — installed skills are present on disk but not auto-loaded; pinned skills are imported in `.rsk/CLAUDE.md` and load every turn in that project. Pin only what truly needs auto-loading.
+**Pin vs install** — installed skills are present on disk but not auto-loaded; pinned skills contribute their digest (a short list of always-on rules) to `.rsk/SKILLS.md`, which `.rsk/CLAUDE.md` imports, so it loads every turn in that project; the full skill still loads only when invoked. Pin only what truly needs auto-loading, and keep the pinned set small: every digest is paid on every turn (about 2000 tokens is the budget for the whole file).
 
 ### B. Bundle / global install — fastest path for stack-standard setups
 
@@ -127,7 +127,7 @@ Per the spec this is opt-in with a 24h cache; the current build returns an expli
 **Set up a new project with tracked manifest**
 1. `cd <project>` then `rsk new`
 2. `rsk install <name>` per skill (use `--pin` for ones that should always auto-load)
-3. Commit `.rsk/rsk.mod`, `.rsk/rsk.lock`, `.rsk/CLAUDE.md` and the `@.rsk/CLAUDE.md` import line in `./CLAUDE.md`. The lock holds no machine paths (since rsk 3.4.0), only the resolved versions and their source, so a clone installs exactly what the project had. A `"*"` constraint means "whatever the last `rsk install` resolved"; pin it (`docs-architect = "1.1.0"`) when the version itself matters
+3. Commit `.rsk/rsk.mod`, `.rsk/rsk.lock`, `.rsk/CLAUDE.md`, `.rsk/SKILLS.md` (generated, do not edit) and the `@.rsk/CLAUDE.md` import line in `./CLAUDE.md`. The lock holds no machine paths (since rsk 3.4.0), only the resolved versions and their source, so a clone installs exactly what the project had. A `"*"` constraint means "whatever the last `rsk install` resolved"; pin it (`docs-architect = "1.1.0"`) when the version itself matters
 
 **Set up a new project with a stack bundle**
 1. `cd <project>` then `rsk new`
@@ -149,7 +149,8 @@ The bundle table (name, source, use for) is in [REFERENCE.md](REFERENCE.md#bundl
 .rsk/
 ├── rsk.mod         # TOML: version, pinned[], skills{name = version-constraint}
 ├── rsk.lock        # TOML: resolved {name, version, source} per skill (machine state)
-└── CLAUDE.md       # one `@skills/<name>/SKILL.md` line per pinned skill
+├── CLAUDE.md       # one line: @SKILLS.md (empty when nothing is pinned)
+└── SKILLS.md       # generated: each pinned skill's DIGEST.md (or its description when it ships none)
 ```
 
 The installed skills are not stored under `.rsk/`: they are symlinks in `.claude/skills/<name>` pointing at the local clone or the registry cache. That directory is shared, because OpenCode discovers skills from the same path as Claude Code. `.rsk/skills/` does not exist.
