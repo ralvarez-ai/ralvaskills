@@ -1,6 +1,6 @@
 ---
 name: react-architect
-version: 1.1.0
+version: 1.2.0
 description: React 19 standards — TypeScript strict, feature-based components, hooks-first composition, TanStack Query for server state, zustand for cross-tree client state, Suspense + ErrorBoundary at every async boundary, Radix for a11y. Use when writing or reviewing React components, hooks, or client-side state.
 ---
 

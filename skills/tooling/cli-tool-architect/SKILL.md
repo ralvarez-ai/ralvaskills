@@ -1,6 +1,6 @@
 ---
 name: cli-tool-architect
-version: 1.0.0
+version: 1.1.0
 description: Cross-language CLI standards — subcommand structure, flag/env/config/default precedence, TOML in XDG, stdout-data/stderr-logs split, --output json|yaml, exit codes, NO_COLOR, completions. Go (cobra+pflag+viper) and Python (typer) recipes. Use when designing or reviewing a CLI.
 ---
 

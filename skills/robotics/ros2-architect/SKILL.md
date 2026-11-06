@@ -1,6 +1,6 @@
 ---
 name: ros2-architect
-version: 1.0.0
+version: 1.1.0
 description: ROS2 standards across Jazzy/Kilted/Lyrical — colcon + ament_cmake/ament_python layout, lifecycle nodes, explicit QoS, services/actions, parameters, Python launch DSL. Cross-platform dev env via Pixi + RoboStack. C++ (rclcpp) and Python (rclpy) equal first-class. Use when scaffolding or reviewing a ROS2 workspace.
 ---
 

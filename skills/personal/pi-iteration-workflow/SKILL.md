@@ -1,6 +1,6 @@
 ---
 name: pi-iteration-workflow
-version: 1.0.0
+version: 1.1.0
 description: Edit-test workflow for the voldemorbot robot codebase — Windows-to-Pi SSH deploy loop, pixi/ROS2 rebuild triggers, flaky-WiFi survival via screen, PowerShell SSH quoting pitfalls, sudo caching on the Pi Zero. Use when pushing platform/robot changes to hardware, restarting the robot service, or a Pi SSH session misbehaves.
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: website-concept-architect
-version: 1.0.1
+version: 1.1.0
 description: Walk the user through designing a website concept before any code — purpose, audience, content inventory, tone, visual archetype, structure — and output 2-3 distinct concept directions plus an ASCII homepage wireframe. Use when planning a new personal site, portfolio, or marketing page upstream of implementation. Hands off to ui-ux-architect / frontend-design.
 ---
 

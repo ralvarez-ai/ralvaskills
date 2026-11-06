@@ -1,6 +1,6 @@
 ---
 name: uru-thesis-reviewer
-version: 0.2.0
+version: 0.3.0
 description: Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) theses. Emits ordered `.md` diff files (- old / + new) the author applies manually — never edits the `.docx`. Covers substance, structure, prose, citations vs `NORMAS_URU_2020`. Tracks issues across sessions via stable IDs and carry-forward. Use when the user shares a thesis or chapter.
 ---
 

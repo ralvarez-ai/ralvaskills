@@ -1,6 +1,6 @@
 ---
 name: uru-thesis-architect
-version: 0.1.0
+version: 0.2.0
 description: Interview-first drafter for URU (Universidad Rafael Urdaneta) thesis (TEG) chapters — writes one section at a time toward the evaluation rubric the jury grades against, Spanish output, URU chapter order (I. Problema → V. Propuesta), never fabricates data. Complements uru-thesis-reviewer. Use when drafting or iterating a thesis section.
 ---
 

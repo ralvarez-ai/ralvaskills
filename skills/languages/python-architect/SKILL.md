@@ -1,6 +1,6 @@
 ---
 name: python-architect
-version: 1.4.2
+version: 1.5.0
 description: Python 3.14 enterprise standards — modern typing (PEP 649), immutable dataclasses, Protocol-based DI, asyncio discipline, pytest 9, psycopg + .sql files via importlib.resources. Use when writing, reviewing, or scaffolding Python code.
 ---
 

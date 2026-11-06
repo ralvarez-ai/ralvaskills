@@ -1,6 +1,6 @@
 ---
 name: ml-conference-paper-architect
-version: 1.0.0
+version: 1.1.0
 description: ML conference paper formatting for NeurIPS, ICML, ICLR, and AAAI — official style-file usage, anonymization and camera-ready toggles, page-limit accounting, natbib citations, standard paper skeleton, reproducibility checklists, appendix and supplementary rules, desk-reject checks. Use when writing, formatting, or submitting a machine-learning conference paper.
 ---
 

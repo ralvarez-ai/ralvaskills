@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-version: 1.0.0
+version: 1.1.0
 description: Cross-language security review — injection, auth/authz, secrets, insecure defaults, deserialization, CSRF/SSRF/IDOR, dep vulns. Emits a Critical/High/Medium/Low report with file:line + fixes. Use when auditing a PR or pre-release.
 ---
 

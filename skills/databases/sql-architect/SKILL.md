@@ -1,6 +1,6 @@
 ---
 name: sql-architect
-version: 1.0.1
+version: 1.1.0
 description: SQL standards — UUID v7 PKs, snake_case, soft delete, forward-only migrations, parameter binding, N+1 prevention, EXPLAIN-driven indexing. PostgreSQL 18 primary; MySQL 9 and SQLite 3.53 noted. Use when designing schemas, writing queries, or auditing a database layer.
 ---
 

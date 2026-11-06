@@ -1,6 +1,6 @@
 ---
 name: performance-reviewer
-version: 1.0.0
+version: 1.1.0
 description: Cross-language perf review — N+1, missing indexes, blocking I/O in async, allocation hot paths, unbounded memory, slow algorithms. Findings grounded in EXPLAIN / pprof / py-spy / metrics. Use when reviewing for perf or investigating a slow endpoint.
 ---
 

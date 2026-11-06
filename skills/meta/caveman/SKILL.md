@@ -1,6 +1,6 @@
 ---
 name: caveman
-version: 1.0.0
+version: 1.1.0
 description: Ultra-compressed communication mode — drops filler, articles, pleasantries while keeping technical accuracy. Use when user says "caveman mode", "talk like caveman", "less tokens", "be brief", or invokes /caveman.
 ---
 

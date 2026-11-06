@@ -1,6 +1,6 @@
 ---
 name: secrets-architect
-version: 1.1.1
+version: 1.2.0
 description: Secret-handling standards for one external store consumed by reference — consumer decision matrix (Compose secrets, *_FILE, systemd LoadCredential, plain bind mount, CI), permission/uid rules, naming, migration workflow, live verification, pitfalls. Use when wiring a credential into a repo, container, systemd unit or CI job, migrating secrets out of .env or git, or auditing a secrets store.
 ---
 

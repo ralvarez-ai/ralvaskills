@@ -1,6 +1,6 @@
 ---
 name: ci-cd-architect
-version: 1.2.0
+version: 1.3.0
 description: CI/CD principles — pipeline taxonomy, trigger design, supply-chain hygiene (SHA-pinned actions), OIDC cloud auth, caching (and the setup-* cache-key pitfalls that silently disable it), matrix strategy, test gates, release automation, deployment strategies, and running CI locally with act. Suggestion-mode (trade-offs over mandates). GitHub Actions recipes in RECIPES.md. Use when designing, reviewing, or scaffolding CI/CD workflows.
 ---
 

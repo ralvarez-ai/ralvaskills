@@ -1,6 +1,6 @@
 ---
 name: protobuf-architect
-version: 1.0.0
+version: 1.1.0
 description: Protocol Buffers (proto3) standards — Buf-style package naming, protovalidate (CEL), buf toolchain for lint/breaking/generation, field-number reservation, well-known types. Language-agnostic schema design. Use when designing or evolving .proto files.
 ---
 

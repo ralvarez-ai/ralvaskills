@@ -1,6 +1,6 @@
 ---
 name: skill-builder
-version: 1.0.0
+version: 1.1.0
 description: Scaffold a new ralvaskills skill per SPECS.md — SKILL.md skeleton, optional STACK/RECIPES, folder placement, SPECS updates. Interview-first; never guesses. Use when authoring a new skill or invoking /skill-builder.
 ---
 

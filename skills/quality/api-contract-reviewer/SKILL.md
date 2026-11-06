@@ -1,6 +1,6 @@
 ---
 name: api-contract-reviewer
-version: 1.0.1
+version: 1.1.0
 description: Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. References rest-api-architect / protobuf-architect / grpc-architect for rules; runs `buf breaking` / `openapi-diff`. Severity-keyed findings. Use when reviewing a new endpoint, proto change, or before a breaking-change release.
 ---
 

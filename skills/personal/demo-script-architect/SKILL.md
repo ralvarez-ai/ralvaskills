@@ -1,6 +1,6 @@
 ---
 name: demo-script-architect
-version: 1.0.0
+version: 1.1.0
 description: Design and refine presenter-centric demo scripts — narrative flow over feature lists, visual-cue mapping, progressive capability reveals, query-to-explanation alignment, redundancy audits. Use when creating live demos, structured walkthroughs, or turning specs into engaging narratives.
 ---
 

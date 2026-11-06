@@ -1,6 +1,6 @@
 ---
 name: token-economy
-version: 1.0.0
+version: 1.1.0
 description: Token-saving habits and setup for coding agents — context and cache hygiene, batched tool calls, subagent exploration and delegation of mechanical work (refactors, checklist audits, repetitive loops) to cheaper models, escalation and session handoff, cheap-model (DeepSeek Flash) guidance, Claude Code guardrail settings and hooks, measuring sessions from transcripts, and an audit of context-mode, RTK and CodeGraph for Claude Code and OpenCode. Use when the user wants to save tokens or cost, shrink context, find where a session's tokens went, choose models or subagents for a task, hand repetitive work to a cheaper model, set up RTK/CodeGraph/context-mode, or invokes /token-economy.
 ---
 

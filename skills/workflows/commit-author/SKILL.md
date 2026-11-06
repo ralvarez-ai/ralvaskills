@@ -1,6 +1,6 @@
 ---
 name: commit-author
-version: 1.11.0
+version: 1.12.0
 description: Generate concise Conventional Commits messages from a staged diff. Enforces full type set, imperative subject lines, no AI co-author attribution. Use when user wants to commit, asks for a commit message, mentions "commit", or invokes /commit.
 ---
 

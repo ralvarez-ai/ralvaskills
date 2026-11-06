@@ -1,6 +1,6 @@
 ---
 name: hexagonal-arch
-version: 1.1.0
+version: 1.2.0
 description: Hexagonal architecture (ports & adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.
 ---
 

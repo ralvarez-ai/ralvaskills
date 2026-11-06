@@ -1,6 +1,6 @@
 ---
 name: ddd-architect
-version: 1.0.0
+version: 1.1.0
 description: Domain-Driven Design — strategic-first (bounded contexts, context mapping) with aggregates, value objects, domain events, repositories. Event sourcing out of scope. Use when shaping a domain model or designing aggregate boundaries.
 ---
 

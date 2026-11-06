@@ -1,6 +1,6 @@
 ---
 name: observability-architect
-version: 1.0.0
+version: 1.1.0
 description: Application-side observability — structured logs, Prometheus metrics, OTel traces, signal correlation, head sampling, PII discipline, RED+USE. Use when instrumenting code, naming metrics, or auditing what a service emits.
 ---
 

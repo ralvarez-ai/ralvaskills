@@ -1,6 +1,6 @@
 ---
 name: landing-page-designer
-version: 1.0.0
+version: 1.1.0
 description: Design landing-page proposals for a product as self-contained HTML grounded in its code, real captures and brand — one memorable device per page, a choreographed hero film, an accessibility and verification bar (axe x8, parser check, smoke test). Use when asked to draw, propose or improve a product's public/landing page, compare directions, or "make it more attractive / more dynamic". Not for porting a chosen design into the app (later job); upstream concept work is website-concept-architect.
 ---
 

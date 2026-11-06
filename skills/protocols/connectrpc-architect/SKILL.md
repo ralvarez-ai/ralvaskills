@@ -1,6 +1,6 @@
 ---
 name: connectrpc-architect
-version: 1.0.0
+version: 1.1.0
 description: ConnectRPC standards — one .proto serving Connect, gRPC and gRPC-Web from a single http.Handler via protoc-gen-connect-go, connect.Code error mapping, the mandatory interceptor chain, streaming caveats (HTTP/2 for client/bidi, gRPC-Web server-stream only), browser callers with no proxy, generic typed clients and conformance testing. Use when designing or reviewing a Connect handler, choosing Connect over vanilla gRPC, or serving proto to browser callers.
 ---
 

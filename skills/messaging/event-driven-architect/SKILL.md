@@ -1,6 +1,6 @@
 ---
 name: event-driven-architect
-version: 1.0.0
+version: 1.1.0
 description: Event-driven architecture — event/command taxonomy, Protobuf schemas, topic naming, mandatory outbox, partitioning, idempotency, DLQs, schema evolution. Broker-agnostic (NATS/Kafka/RabbitMQ). Use when designing event flows or auditing consistency.
 ---
 

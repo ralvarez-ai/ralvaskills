@@ -1,6 +1,6 @@
 ---
 name: reveal-js-architect
-version: 1.0.2
+version: 1.1.0
 description: reveal.js 6.0.1 presentation architecture — section/fragment structure, HTML vs Markdown-mode authoring, theming, plugin config, Reveal.initialize() options, vanilla setup, React extension via @revealjs/react 0.2.1. Use when building, structuring, or reviewing a reveal.js deck.
 ---
 
