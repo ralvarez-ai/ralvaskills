@@ -3,22 +3,12 @@ name: Check site
 # The landing page in site/. It reads the registry, skills/**, the Go sources and
 # the git tags to generate its data (site/scripts/gen-data.mjs), so changes to any
 # of those can break it as well.
+# Manual-dispatch only, deliberately: push/PR/tag triggers are off so nothing
+# runs on a billed GitHub-hosted runner. The same workflow runs locally instead
+# (`task ci:local`), and workflow_dispatch stays so it can still be run by hand
+# from the Actions tab when needed.
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - "site/**"
-      - "registry/index.json"
-      - "skills/**"
-      - "internal/mcp/**"
-      - "internal/tool/**"
-      - "cmd/rsk/**"
-      - ".github/workflows/check-site.yml"
-  push:
-    branches: [main]
-    paths:
-      - "site/**"
-      - ".github/workflows/check-site.yml"
 
 permissions:
   contents: read

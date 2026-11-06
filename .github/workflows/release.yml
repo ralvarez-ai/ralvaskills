@@ -1,11 +1,10 @@
 name: Release CLI
 
+# Manual-dispatch only, deliberately: push/PR/tag triggers are off so nothing
+# runs on a billed GitHub-hosted runner. The same workflow runs locally instead
+# (`task ci:local`), and workflow_dispatch stays so it can still be run by hand
+# from the Actions tab when needed.
 on:
-  push:
-    tags:
-      # Only bare semver tags (the rsk CLI). Skill tags like
-      # `work-report-generator@v1.1.0` start with letters and are ignored.
-      - "v[0-9]*"
   workflow_dispatch:
     inputs:
       tag:
