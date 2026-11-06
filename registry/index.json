@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-05T01:55:48Z",
+  "generated_at": "2026-11-06T22:11:56Z",
   "skills": {
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
@@ -1008,6 +1008,18 @@
           "version": "1.0.0",
           "published_at": "2026-05-23T03:34:08Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/tdd@v1.0.0/tdd-v1.0.0.tar.gz"
+        }
+      }
+    },
+    "token-economy": {
+      "name": "token-economy",
+      "description": "Token-saving habits and setup for coding agents — context and cache hygiene, batched tool calls, subagent exploration and delegation of mechanical work (refactors, checklist audits, repetitive loops) to cheaper models, escalation and session handoff, cheap-model (DeepSeek Flash) guidance, Claude Code guardrail settings and hooks, measuring sessions from transcripts, and an audit of context-mode, RTK and CodeGraph for Claude Code and OpenCode. Use when the user wants to save tokens or cost, shrink context, find where a session's tokens went, choose models or subagents for a task, hand repetitive work to a cheaper model, set up RTK/CodeGraph/context-mode, or invokes /token-economy.",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-06T22:11:56Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/token-economy@v1.0.0/token-economy-v1.0.0.tar.gz"
         }
       }
     },
