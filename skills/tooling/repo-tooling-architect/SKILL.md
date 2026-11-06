@@ -61,7 +61,7 @@ The problem: "works on my machine" because each dev has different Go / Python / 
 ```toml
 # mise.toml
 [tools]
-go = "1.26"
+go = "1.27"
 python = "3.14"
 node = "22"
 task = "3.51"

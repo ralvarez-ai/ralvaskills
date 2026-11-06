@@ -3,7 +3,7 @@
 | Dependency | Pinned version | Purpose |
 |---|---|---|
 | hugo | 0.161.1 | Static-site generator (Extended edition mandatory) |
-| go | 1.26 | Required for Hugo Modules — see [go-architect](../../languages/go-architect/STACK.md) |
+| go | 1.27.3 | Required for Hugo Modules — see [go-architect](../../languages/go-architect/STACK.md) |
 | dart-sass | bundled | SCSS compilation — ships inside Hugo Extended since 0.121 |
 | postcss | 8.5 | Optional — Tailwind / autoprefixer chain invoked from Hugo Pipes |
 | tailwindcss | 4.1 | Optional — production builds purge via `content` globbing |

@@ -28,7 +28,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 ### `frameworks/` — framework-specific patterns
 
 - **`fastapi-architect`** — FastAPI 0.136 on Python 3.14: feature layout, Pydantic v2 request/response separation, async DI with lifespan, URL-prefix versioning, RFC 9457 errors, OAuth2+JWT.
-- **`gin-architect`** — Gin 1.12 on Go 1.26: feature layout, struct-tag validation, RFC 9457 errors, JWT/IdP auth, route groups for versioning, OpenAPI.
+- **`gin-architect`** — Gin 1.12 on Go 1.27.3: feature layout, struct-tag validation, RFC 9457 errors, JWT/IdP auth, route groups for versioning, OpenAPI.
 - **`nethttp-architect`** — Go stdlib `net/http` (1.22+ ServeMux, no router): feature layout, struct-tag validation, RFC 9457, JWT, graceful shutdown, OpenAPI via kin-openapi.
 - **`nextjs-architect`** — Next.js 16 with React 19, App Router only: server components by default with explicit `"use client"` boundaries, server actions, streaming Suspense, edge vs node runtime.
 - **`react-architect`** — React 19 + TypeScript strict: feature-based components, hooks-first composition, TanStack Query for server state, zustand for cross-tree client state, Suspense + ErrorBoundary, Radix for a11y.
@@ -128,7 +128,7 @@ These are personal to me and excluded from bundle installs. Listed here for tran
 - **`uru-thesis-reviewer`** — Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) Trabajos Especiales de Grado. Produces ordered `.md` diff files; never edits the source `.docx`.
 - **`uru-thesis-defense-architect`** — URU-style thesis defense deck specs: fixed institutional slide structure, Spanish-only content, logo placement rules. Outputs `.md` only.
 - **`uru-scientific-paper-architect`** — Manuscript formatting for Revista Tecnocientífica URU: typography rules, IMRyD-derived structure by article type, citation/reference formats. Outputs one `.md` manuscript spec.
-- **`go-library-builder`** — Scaffolds reusable Go 1.26 library modules in the ralvarezdev house style (flat, vertical-slice, toolkit or framework-adapter shapes): domain-pure root package, narrow ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter.
+- **`go-library-builder`** — Scaffolds reusable Go 1.27.3 library modules in the ralvarezdev house style (flat, vertical-slice, toolkit or framework-adapter shapes): domain-pure root package, narrow ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter.
 - **`go-house-libs`** — Maps a need to the ralvarezdev shared Go modules (restkit, ginkit, pgkit, mcpkit, contracts, connectrpckit, identity, identitygin, ratelimit, email, webpush, termkit, svckit, tick, sqlitekit, resilience): a router plus one `references/` file per module with its package layout, a recipe and the gotchas; the consumer-side companion of `go-library-builder`.
 
 ---

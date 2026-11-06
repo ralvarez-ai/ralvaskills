@@ -2,7 +2,7 @@
 
 | Dependency | Pinned version | Purpose |
 |---|---|---|
-| go | 1.27.1 | Language |
+| go | 1.27.3 | Language |
 | log/slog | stdlib (tracks Go) | Structured logging — **default** for new code |
 | spf13/viper | 1.21 | Layered config (env + file + flag) |
 | go-playground/validator | 10.30 | Struct-tag validation |

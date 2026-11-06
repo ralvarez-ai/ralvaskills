@@ -2,7 +2,7 @@
 
 | Dependency | Pinned version | Purpose |
 |---|---|---|
-| go | 1.26 | Language — relies on the Go 1.22+ enhanced `ServeMux` |
+| go | 1.27.3 | Language — relies on the Go 1.22+ enhanced `ServeMux` |
 | go-playground/validator | 10.30 | Struct-tag request validation |
 | jmoiron/sqlx | 1.4 | DB access — see [sql-architect](../../databases/sql-architect/STACK.md) and [go-architect](../../languages/go-architect/STACK.md) |
 | golang-jwt/jwt/v5 | 5.3 | JWT issuance + verification (auth pattern A) |

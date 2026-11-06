@@ -2,7 +2,7 @@
 
 | Dependency | Pinned version | Purpose |
 |---|---|---|
-| go | 1.26 | Language |
+| go | 1.27.3 | Language |
 | gin-gonic/gin | 1.12 | HTTP framework |
 | go-playground/validator | 10.30 | Struct-tag request validation |
 | jmoiron/sqlx | 1.4 | DB access — see [sql-architect](../../databases/sql-architect/STACK.md) and [go-architect](../../languages/go-architect/STACK.md) |

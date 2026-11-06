@@ -268,7 +268,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, macos-14, windows-2022]
-        go: ['1.25', '1.26']
+        go: ['1.26', '1.27']
         exclude:
           - os: windows-2022
             go: '1.25'           # narrow the matrix; not every cell earns it

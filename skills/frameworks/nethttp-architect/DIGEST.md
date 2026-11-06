@@ -1,6 +1,6 @@
 # net/http Architecture (digest)
 
-Go stdlib net/http on Go 1.26: enhanced ServeMux, no router framework, feature layout, RFC 9457 errors, JWT or IdP auth, graceful shutdown.
+Go stdlib net/http on Go 1.27.3: enhanced ServeMux, no router framework, feature layout, RFC 9457 errors, JWT or IdP auth, graceful shutdown.
 
 ## Always-on rules
 - Feature folder under `internal/` with handlers.go, service.go, repo.go, dto.go, queries/.

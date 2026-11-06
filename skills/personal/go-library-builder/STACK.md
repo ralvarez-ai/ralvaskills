@@ -6,7 +6,7 @@ Inherits the full Go stack from [go-architect/STACK.md](../../languages/go-archi
 
 | Dependency | Pinned version | Purpose |
 |---|---|---|
-| go | 1.26 (go.mod); toolchain 1.26.5 | Language; `.golangci.yml` targets 1.26.3 |
+| go | 1.27.3 (go.mod and toolchain) | Language; `.golangci.yml` targets 1.27.3 |
 | task | 3.52.0 | Task runner (`Taskfile.yml`) |
 | golangci-lint | 2.12.2 | Aggregated lint gate (v2 config schema) |
 | goimports | 0.48.0 | Formatting with `-local` module prefix |

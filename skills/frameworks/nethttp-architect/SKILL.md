@@ -1,12 +1,12 @@
 ---
 name: nethttp-architect
 version: 1.1.0
-description: Framework-specific delta on rest-api-architect — Go stdlib net/http (Go 1.22+ ServeMux, no router) on Go 1.26. Feature layout, struct-tag validation, RFC 9457 errors, JWT or IdP auth, graceful shutdown, OpenAPI via kin-openapi. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a stdlib net/http service.
+description: Framework-specific delta on rest-api-architect — Go stdlib net/http (Go 1.22+ ServeMux, no router) on Go 1.27.3. Feature layout, struct-tag validation, RFC 9457 errors, JWT or IdP auth, graceful shutdown, OpenAPI via kin-openapi. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a stdlib net/http service.
 ---
 
 # net/http Architecture
 
-Targets the stdlib **`net/http`** on **Go 1.26**, using the Go 1.22+ enhanced `ServeMux` (method matching, path variables, host matching) — no router framework. Companion to [go-architect](../../languages/go-architect/SKILL.md), [rest-api-architect](../../protocols/rest-api-architect/SKILL.md), and [sql-architect](../../databases/sql-architect/SKILL.md). Implementation skeletons in [RECIPES.md](RECIPES.md); pinned deps in [STACK.md](STACK.md).
+Targets the stdlib **`net/http`** on **Go 1.27.3**, using the Go 1.22+ enhanced `ServeMux` (method matching, path variables, host matching) — no router framework. Companion to [go-architect](../../languages/go-architect/SKILL.md), [rest-api-architect](../../protocols/rest-api-architect/SKILL.md), and [sql-architect](../../databases/sql-architect/SKILL.md). Implementation skeletons in [RECIPES.md](RECIPES.md); pinned deps in [STACK.md](STACK.md).
 
 ## 1. Project structure — feature-based
 

@@ -13,7 +13,7 @@ This skill pins **protocol-level** spec revisions and the **Python + Go** SDK ru
 | Python — `pytest` + `pytest-asyncio` | 9.x / 0.24+ | Test framework |
 | Go — `github.com/modelcontextprotocol/go-sdk` | ≥1.7.0 (first tag targeting 2026-07-28; latest is v1.8.0 — the module stayed on the v1 major, **there is no v2**) | Official Go SDK (maintained with Google); Tier-1 SDK for spec 2026-07-28; packages: `mcp`, `jsonrpc`, `auth`, `oauthex` |
 | Go — `github.com/atombender/go-jsonschema` | ≥0.24.0 | Generates Go types from JSON Schema (the `jsonschemagen` tool, invoked as the module root, not `cmd/jsonschemagen`). For servers with >10 tools — see [RECIPES §12](RECIPES.md#12-schema-driven-tool-contracts-go) |
-| Go runtime | 1.26 | Matches [go-architect](../../languages/go-architect/STACK.md) |
+| Go runtime | 1.27.3 | Matches [go-architect](../../languages/go-architect/STACK.md) |
 | MCP Inspector | 0.10+, spec-2026-07-28-aware build | Visual + CLI tester. **Pin ≥0.10** — older versions have CVE-2025-49596 (RCE). Use a release that understands header-based routing and MRTR when testing against this spec target |
 | OAuth 2.1 | draft-ietf-oauth-v2-1 | Authorization spec for remote servers |
 | RFC 8707 | published | Resource Indicators — MANDATORY for MCP clients and servers |

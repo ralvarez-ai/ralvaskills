@@ -1,12 +1,12 @@
 ---
 name: gin-architect
 version: 1.1.0
-description: Framework-specific delta on rest-api-architect — Gin 1.12 on Go 1.26. Feature layout, struct-tag validation, RFC 9457 errors, in-house JWT or external IdP, route groups for URL-prefix versioning, OpenAPI. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a Gin service.
+description: Framework-specific delta on rest-api-architect — Gin 1.12 on Go 1.27.3. Feature layout, struct-tag validation, RFC 9457 errors, in-house JWT or external IdP, route groups for URL-prefix versioning, OpenAPI. Read rest-api-architect first for the cross-cutting REST conventions. Use when scaffolding or reviewing a Gin service.
 ---
 
 # Gin Architecture
 
-Targets **Gin 1.12** on **Go 1.26**. Companion to [go-architect](../../languages/go-architect/SKILL.md), [rest-api-architect](../../protocols/rest-api-architect/SKILL.md), and [sql-architect](../../databases/sql-architect/SKILL.md). Implementation skeletons in [RECIPES.md](RECIPES.md); pinned deps in [STACK.md](STACK.md).
+Targets **Gin 1.12** on **Go 1.27.3**. Companion to [go-architect](../../languages/go-architect/SKILL.md), [rest-api-architect](../../protocols/rest-api-architect/SKILL.md), and [sql-architect](../../databases/sql-architect/SKILL.md). Implementation skeletons in [RECIPES.md](RECIPES.md); pinned deps in [STACK.md](STACK.md).
 
 ## 1. Project structure — feature-based
 

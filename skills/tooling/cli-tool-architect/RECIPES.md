@@ -66,7 +66,7 @@ ERR  apply: deploy refused  reason="dirty working tree"  files=3  hint="commit o
 ## Version output
 
 ```
-tool 1.2.3 (rev abc1234, built 2026-05-21, go1.26)
+tool 1.2.3 (rev abc1234, built 2026-05-21, go1.27.3)
 ```
 
 Version + git short SHA + build date + runtime version. The SHA is critical for dev builds. `tool version --output json` for scripting.

@@ -1,6 +1,6 @@
 # go-architect (digest)
 
-Go 1.27.1 standards: enums, struct layout, interfaces, concurrency, errors, DB access, packages, linting, go.work and app-repo layout.
+Go 1.27.3 standards: enums, struct layout, interfaces, concurrency, errors, DB access, packages, linting, go.work and app-repo layout.
 
 ## Always-on rules
 - Enums: named type, `iota`, `String()`; `1 << iota` for bitmasks.

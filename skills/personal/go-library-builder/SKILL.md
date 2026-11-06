@@ -1,7 +1,7 @@
 ---
 name: go-library-builder
 version: 1.2.0
-description: Scaffolds reusable Go 1.26 library modules in the ralvarezdev house style — flat, vertical-slice, toolkit or framework-adapter shapes; domain-pure root package, ports as narrow interfaces, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter (default github.com/ralvarezdev). Use when bootstrapping a new Go library, adding an adapter, or auditing one against the house style.
+description: Scaffolds reusable Go 1.27.3 library modules in the ralvarezdev house style — flat, vertical-slice, toolkit or framework-adapter shapes; domain-pure root package, ports as narrow interfaces, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter (default github.com/ralvarezdev). Use when bootstrapping a new Go library, adding an adapter, or auditing one against the house style.
 ---
 
 # Go Library Builder
@@ -118,7 +118,7 @@ Copy from [assets/](assets); details in [repo-tooling-architect](../../tooling/r
 ## 13. Bootstrap procedure
 
 1. Check [go-house-libs](../go-house-libs/SKILL.md) first, as above. Then ask for `<name>`, `<namespace>` (default `github.com/ralvarezdev`), the shape (§1; §9 for flat vs slice) and the port(s) the library exposes.
-2. `git init`; write `go.mod` (`module <namespace>/<name>`, `go 1.26`).
+2. `git init`; write `go.mod` (`module <namespace>/<name>`, `go 1.27.3`).
 3. Copy the [assets/](assets) tooling set (§12); `mise install`; set `Taskfile.yml`'s `MODULE` var and `goimports` `local-prefixes` to `<namespace>/<name>`. Add `.rsk/` and `CLAUDE.md` (§12).
 4. Write the domain: value objects, entities, sentinel errors, the port interface(s) — stdlib + uuid only (§3–§7). For a toolkit or framework adapter, write the framework-free core first and give each heavy dependency its own subpackage or module (§1).
 5. Write the in-memory adapter first (it doubles as the test double), then the production adapter(s) (§8).

@@ -1,6 +1,6 @@
 # Gin Architecture (digest)
 
-Gin 1.12 on Go 1.26: feature layout, struct-tag validation, RFC 9457 errors, JWT or external IdP auth, route-group versioning, OpenAPI.
+Gin 1.12 on Go 1.27.3: feature layout, struct-tag validation, RFC 9457 errors, JWT or external IdP auth, route-group versioning, OpenAPI.
 
 ## Always-on rules
 - One folder per bounded context: handlers.go, service.go, repo.go, dto.go, SQL files.

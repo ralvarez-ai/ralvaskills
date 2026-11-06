@@ -16,11 +16,11 @@ description: <WHAT — short, comma-separated topics> — <version target if app
 
 - WHAT first, comma-separated, no marketing prose.
 - WHEN last — trigger phrases / commands the user might invoke.
-- Version-sensitive skills: include version target inline (e.g. "Go 1.26").
+- Version-sensitive skills: include version target inline (e.g. "Go 1.27.3").
 - Drop filler ("Enforces strict", "Comprehensive guide to").
 - One line, YAML scalar form (no `>` or `|`).
 - **Bad:** `description: Go best practices skill.` — no when.
-- **Good:** `description: Go 1.26 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors. Use when writing, reviewing, or scaffolding Go code.`
+- **Good:** `description: Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors. Use when writing, reviewing, or scaffolding Go code.`
 
 ## 2. Body skeleton
 
