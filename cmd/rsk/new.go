@@ -17,6 +17,7 @@ import (
 	"github.com/ralvarezdev/ralvaskills/v3/internal"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
+	"github.com/ralvarezdev/ralvaskills/v3/internal/digest"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/install"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
@@ -181,6 +182,9 @@ func loadOrCreateManifest(
 // project config (CLAUDE.md / opencode.json), skipping any ID that isn't a
 // registered tool.
 func syncToolConfigs(tools []tool.ID, cwd string, pinned []string) error {
+	if _, err := digest.Sync(cwd, pinned); err != nil {
+		return err
+	}
 	for _, id := range tools {
 		t, ok := tool.Get(id)
 		if !ok {

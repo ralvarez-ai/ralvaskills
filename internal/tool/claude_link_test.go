@@ -186,8 +186,8 @@ func TestSyncPinned_regularFileEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read pinned: %v", err)
 	}
-	if !strings.Contains(string(data), "go-architect") {
-		t.Errorf("pinned file missing skill: %q", data)
+	if !strings.Contains(string(data), "@SKILLS.md") {
+		t.Errorf("pinned file missing the SKILLS.md import: %q", data)
 	}
 
 	root, err := os.ReadFile(filepath.Join(dir, ClaudeFileName))

@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/ralvarezdev/ralvaskills/v3/internal"
+	"github.com/ralvarezdev/ralvaskills/v3/internal/digest"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/fsx"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
 )
@@ -30,11 +31,15 @@ const (
 	// of paths to SKILL.md files that OpenCode should import as instructions.
 	OpenCodeInstructionsKey = "instructions"
 
-	// OpenCodeSkillsPrefix is the forward-slash path prefix for skill entries in
-	// opencode.json. Points at .claude/skills/ because OpenCode discovers skills
-	// from the same directory as Claude Code. Uses "/" rather than filepath.Separator
-	// because opencode.json stores Unix-style paths regardless of the host OS.
+	// OpenCodeSkillsPrefix is the forward-slash path prefix of the per-skill
+	// entries earlier versions wrote to opencode.json. They are no longer
+	// written, only recognized so a re-sync removes them. Uses "/" rather than
+	// filepath.Separator because opencode.json stores Unix-style paths.
 	OpenCodeSkillsPrefix = ClaudeFolderName + "/" + skill.SkillsFolderName + "/"
+
+	// OpenCodeSkillsIndexEntry is the one rsk-managed entry in the instructions
+	// list: the generated .rsk/SKILLS.md, relative to the project root.
+	OpenCodeSkillsIndexEntry = internal.ProjectFolderName + "/" + digest.IndexFileName
 )
 
 // openCodeTool implements Tool for OpenCode.
@@ -81,8 +86,8 @@ func updateOCInstructions(path string, pinnedNames []string) error {
 	}
 
 	kept := filterOCEntries(cfg[OpenCodeInstructionsKey])
-	for _, name := range pinnedNames {
-		kept = append(kept, OpenCodeSkillsPrefix+name+"/"+skill.SkillFileName)
+	if len(pinnedNames) > 0 {
+		kept = append(kept, OpenCodeSkillsIndexEntry)
 	}
 
 	if len(kept) == 0 {
@@ -94,8 +99,9 @@ func updateOCInstructions(path string, pinnedNames []string) error {
 	return writeOCConfig(path, cfg)
 }
 
-// filterOCEntries returns the subset of raw that are not rsk-managed
-// (.claude/skills/ prefix). raw must be cfg[openCodeInstructionsKey].
+// filterOCEntries returns the subset of raw that are not rsk-managed: neither
+// the generated SKILLS.md entry nor the per-skill .claude/skills/ entries that
+// earlier versions wrote. raw must be cfg[openCodeInstructionsKey].
 func filterOCEntries(raw any) []any {
 	existing, ok := raw.([]any)
 	if !ok {
@@ -103,7 +109,8 @@ func filterOCEntries(raw any) []any {
 	}
 	kept := make([]any, 0, len(existing))
 	for _, e := range existing {
-		if s, isStr := e.(string); isStr && strings.HasPrefix(s, OpenCodeSkillsPrefix) {
+		if s, isStr := e.(string); isStr &&
+			(strings.HasPrefix(s, OpenCodeSkillsPrefix) || s == OpenCodeSkillsIndexEntry) {
 			continue
 		}
 		kept = append(kept, e)

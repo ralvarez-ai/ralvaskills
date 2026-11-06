@@ -12,6 +12,7 @@ import (
 
 	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
+	"github.com/ralvarezdev/ralvaskills/v3/internal/digest"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
@@ -234,6 +235,9 @@ func ProjectSkillsDirs(projectRoot string, m manifest.Mod) []string {
 // pinned list.
 func SyncPinnedAllTools(rskDir string, m manifest.Mod) error {
 	projectDir := filepath.Dir(rskDir)
+	if _, err := digest.Sync(projectDir, m.Pinned); err != nil {
+		return err
+	}
 	for _, id := range m.Tools {
 		t, ok := tool.Get(id)
 		if !ok {

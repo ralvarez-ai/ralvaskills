@@ -68,10 +68,13 @@ runtime, only at build.
   (`docs/guides/registry-flow.md`).
 - **`.rsk/` per project:** `rsk.mod` (version, `tools` scope, skills, pinned) and `rsk.lock`
   (resolved versions + cache paths). `rsk new`/`pin` regenerate the adapter files; a second run is
-  idempotent. The Claude adapter writes `.rsk/CLAUDE.md` (skill imports), keeps `@AGENTS.md` as the
-  first line of the project's `CLAUDE.md` (creating a skeleton `AGENTS.md` when the project has
-  none, never editing an existing one) and appends `@.rsk/CLAUDE.md`; the OpenCode adapter writes
-  `opencode.json`'s `instructions` array. `AGENTS.md` stays the human-written source of truth — rsk
+  idempotent. `internal/digest` generates `.rsk/SKILLS.md` from each pinned skill's `DIGEST.md`
+  (a skill without one contributes its description). The Claude adapter writes `.rsk/CLAUDE.md`
+  with the single import `@SKILLS.md` (Claude Code only expands `@` imports that resolve inside
+  the project, so importing the symlinked `SKILL.md` files loaded nothing), keeps `@AGENTS.md` as
+  the first line of the project's `CLAUDE.md` (creating a skeleton `AGENTS.md` when the project
+  has none, never editing an existing one) and appends `@.rsk/CLAUDE.md`; the OpenCode adapter
+  puts `.rsk/SKILLS.md` in `opencode.json`'s `instructions` array. `AGENTS.md` stays the human-written source of truth — rsk
   only seeds it once and imports it, and `destroy`/`uninstall` leave it in place. The broader
   generated-block design (`.rsk/AGENTS.md`, skills index) is still just a proposal, see the
   rsk↔AGENTS.md design in the finance-platform repo's

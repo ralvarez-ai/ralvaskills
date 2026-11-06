@@ -12,6 +12,7 @@ import (
 	"github.com/adrg/xdg"
 
 	"github.com/ralvarezdev/ralvaskills/v3/internal"
+	"github.com/ralvarezdev/ralvaskills/v3/internal/digest"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/fsx"
 	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
@@ -39,11 +40,12 @@ const (
 	claudeFileOpenFlags = os.O_APPEND | os.O_CREATE | os.O_WRONLY
 	rskTempPattern      = ".rsk-*.tmp"
 
-	// claudeSkillPathReference is the format string for one skill import line in
-	// .rsk/CLAUDE.md. Path is relative to .rsk/, so ../.claude/skills/<name>/SKILL.md
-	// resolves to the project-local .claude/skills/ directory.
-	// Uses "/" (not filepath.Separator) because CLAUDE.md imports use Unix-style paths.
-	claudeSkillPathReference = "@../" + ClaudeFolderName + "/" + skill.SkillsFolderName + "/%s/" + skill.SkillFileName + "\n"
+	// claudeSkillsIndexReference is the single import line in .rsk/CLAUDE.md. The
+	// path is relative to .rsk/ and points at the generated SKILLS.md, which
+	// lives inside the project: Claude Code expands an @-import only when its
+	// target resolves inside the project, and the old per-skill SKILL.md imports
+	// went through symlinks into the machine cache, so they were skipped.
+	claudeSkillsIndexReference = "@" + digest.IndexFileName + "\n"
 )
 
 var (
@@ -72,8 +74,9 @@ func (*ClaudeTool) ProjectSkillsDir(projectRoot string) string {
 	return filepath.Join(projectRoot, ClaudeFolderName, skill.SkillsFolderName)
 }
 
-// SyncPinned writes .rsk/CLAUDE.md atomically with one import line per pinned
-// skill, bootstraps the project's AGENTS.md, and imports it from CLAUDE.md
+// SyncPinned writes .rsk/CLAUDE.md atomically with a single import of the
+// generated .rsk/SKILLS.md (empty when nothing is pinned; the callers write
+// SKILLS.md itself), bootstraps the project's AGENTS.md, and imports it from CLAUDE.md
 // ahead of the generated pin file (idempotent). projectDir is the project root
 // (parent of .rsk/).
 func (*ClaudeTool) SyncPinned(projectDir string, pinnedNames []string) error {
@@ -108,12 +111,11 @@ func writePinnedClaude(rskDir string, pinnedNames []string) error {
 		return err
 	}
 	return fsx.WriteAtomic(path, rskTempPattern, func(w io.Writer) error {
-		for _, name := range pinnedNames {
-			if _, err := fmt.Fprintf(w, claudeSkillPathReference, name); err != nil {
-				return err
-			}
+		if len(pinnedNames) == 0 {
+			return nil
 		}
-		return nil
+		_, err := io.WriteString(w, claudeSkillsIndexReference)
+		return err
 	})
 }
 
