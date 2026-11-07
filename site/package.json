@@ -17,6 +17,7 @@
     "preview": "vite preview",
     "check": "pnpm lint && node scripts/verify.mjs",
     "lint": "biome check .",
+    "test": "node --test worker/index.test.js",
     "format": "biome check --write ."
   },
   "dependencies": {

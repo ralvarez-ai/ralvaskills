@@ -27,7 +27,14 @@ const strip = (text) =>
     .replace(/,(\s*[}\]])/g, '$1');
 
 const base = JSON.parse(strip(readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8')));
-const config = host ? { ...base, routes: [{ pattern: host, custom_domain: true }] } : base;
+// The registry the /registry/* route proxies: REGISTRY_HOST, a bare hostname, bound as REGISTRY_ORIGIN.
+const registryHost = (process.env.REGISTRY_HOST ?? '').trim().toLowerCase();
+if (registryHost && !/^(?=.{4,253}$)([a-z0-9-]+\.)+[a-z]{2,}$/.test(registryHost)) {
+  console.error(`REGISTRY_HOST must be a bare hostname, got "${registryHost}"`);
+  process.exit(2);
+}
+const withVars = registryHost ? { ...base, vars: { ...base.vars, REGISTRY_ORIGIN: `https://${registryHost}` } } : base;
+const config = host ? { ...withVars, routes: [{ pattern: host, custom_domain: true }] } : withVars;
 const out = new URL('../wrangler.deploy.jsonc', import.meta.url);
 writeFileSync(out, `${JSON.stringify(config, null, 2)}\n`);
 console.error(
