@@ -122,7 +122,7 @@ func promptSkillSource(out io.Writer) (repoPath, registryURL string, err error) 
 	}
 
 	if modeIdx == 1 {
-		registryURL, err = ui.Ask(out, "Registry URL", config.DefaultRegistryURL)
+		registryURL, err = ui.Ask(out, "Registry URL", registryDefault())
 		return "", registryURL, err
 	}
 
@@ -209,4 +209,13 @@ func expandPath(p string) (string, error) {
 		return "", err
 	}
 	return filepath.Join(home, p[1:]), nil
+}
+
+// registryDefault is the registry URL offered by init: RSK_REGISTRY_URL when set,
+// else the compiled-in default.
+func registryDefault() string {
+	if v := strings.TrimSpace(os.Getenv(config.EnvRegistryURL)); v != "" {
+		return strings.TrimRight(v, "/")
+	}
+	return config.DefaultRegistryURL
 }

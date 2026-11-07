@@ -27,7 +27,7 @@ func LocalSource(cfg config.Config) source.Resolver {
 	if cfg.LocalMode() {
 		return source.NewLocal(cfg.RepoPath)
 	}
-	return source.NewRegistry(cfg.RegistryURL, cfg.RegistryCache())
+	return source.NewRegistry(cfg.EffectiveRegistryURL(), cfg.RegistryCache())
 }
 
 // FindSkill returns the skill named name, trying the local source first and the

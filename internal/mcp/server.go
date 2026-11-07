@@ -52,7 +52,7 @@ func (d Deps) catalog(ctx context.Context) ([]catalog.Entry, error) {
 		return catalog.Build(ctx, source.NewLocal(d.Cfg.RepoPath))
 	}
 
-	reg := source.NewRegistry(d.Cfg.RegistryURL, d.Cfg.RegistryCache())
+	reg := source.NewRegistry(d.Cfg.EffectiveRegistryURL(), d.Cfg.RegistryCache())
 	snap, err := NewIndexCache(d.Cfg.RegistryCache(), DefaultIndexTTL, reg.Index).Load(ctx)
 	if err != nil {
 		return nil, err

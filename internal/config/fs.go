@@ -17,6 +17,11 @@ const (
 	// automated testing without touching the real machine config.
 	EnvConfigHome = "RSK_CONFIG_HOME"
 
+	// EnvRegistryURL overrides the registry base URL for this process, ahead of
+	// registry_url in config.json and DefaultRegistryURL. It is never written back
+	// to config.json, so a different host needs neither a release nor an edit.
+	EnvRegistryURL = "RSK_REGISTRY_URL"
+
 	// ConfigFolderName is the name of the folder under ~/.config/ where rsk
 	// stores its configuration.
 	ConfigFolderName = "rsk"
@@ -32,7 +37,9 @@ const (
 	RegistryFolderName = "registry"
 
 	// DefaultRegistryURL is the base URL of the hosted skill registry used when
-	// no local repo clone is configured.
+	// no local repo clone is configured and neither RSK_REGISTRY_URL nor
+	// registry_url is set. Released binaries carry it, so the host it names is
+	// never retired.
 	DefaultRegistryURL = "https://skills.ralvarez.dev"
 )
 

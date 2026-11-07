@@ -343,9 +343,9 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		return err
 	}
 
-	reg := source.NewRegistry(cfg.RegistryURL, cfg.RegistryCache())
+	reg := source.NewRegistry(cfg.EffectiveRegistryURL(), cfg.RegistryCache())
 
-	ui.Info(out, fmt.Sprintf("Fetching index from %s …", cfg.RegistryURL))
+	ui.Info(out, fmt.Sprintf("Fetching index from %s …", cfg.EffectiveRegistryURL()))
 	index, err := reg.Index(ctx)
 	if err != nil {
 		return fmt.Errorf("fetch registry index: %w", err)

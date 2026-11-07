@@ -129,7 +129,7 @@ func checkLocal(ctx context.Context, cfg config.Config) (Result, error) {
 // registry's published latest, mirroring the exact comparison
 // cmd/rsk/update.go's runUpdateRegistry performs — see InstalledVersionFromTargets.
 func checkRegistry(ctx context.Context, cfg config.Config) (Result, error) {
-	reg := source.NewRegistry(cfg.RegistryURL, cfg.RegistryCache())
+	reg := source.NewRegistry(cfg.EffectiveRegistryURL(), cfg.RegistryCache())
 
 	index, err := reg.Index(ctx)
 	if err != nil {

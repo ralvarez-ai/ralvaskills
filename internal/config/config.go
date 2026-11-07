@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 
@@ -50,6 +51,20 @@ func (c Config) LocalMode() bool {
 	return c.RepoPath != ""
 }
 
+// EffectiveRegistryURL returns the registry base URL in use: RSK_REGISTRY_URL
+// when set, else registry_url from the file. Read this, not RegistryURL, to
+// fetch; RegistryURL stays the stored value so saving never persists the override.
+func (c Config) EffectiveRegistryURL() string {
+	if v := strings.TrimSpace(os.Getenv(EnvRegistryURL)); v != "" {
+		return strings.TrimRight(v, "/")
+	}
+	return c.RegistryURL
+}
+
+func isHTTPURL(v string) bool {
+	return strings.HasPrefix(v, "https://") || strings.HasPrefix(v, "http://")
+}
+
 // RegistryCache returns the directory used to cache skill downloads from the
 // hosted registry. It is derived from OfficialCache so both caches share the
 // same parent directory.
@@ -84,6 +99,9 @@ func LoadFrom(path string) (Config, error) {
 	v := validator.New()
 	if err = v.Struct(cfg); err != nil {
 		return Config{}, fmt.Errorf("invalid config: %w", err)
+	}
+	if v := strings.TrimSpace(os.Getenv(EnvRegistryURL)); v != "" && !isHTTPURL(v) {
+		return Config{}, fmt.Errorf("invalid %s: %q must start with http:// or https://", EnvRegistryURL, v)
 	}
 	if cfg.RepoPath == "" && cfg.RegistryURL == "" {
 		return Config{}, errors.New("invalid config: one of repo_path or registry_url is required")
