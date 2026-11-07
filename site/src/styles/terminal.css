@@ -1,6 +1,6 @@
 /* Split from base.css; routed by component. Edit this file for its component. */
-.surface-terminal{color-scheme:dark;--surface-page:#1c1711;--surface-sunken:#14100c;--surface-raised:#221c15;--border-subtle:#372e23;--border-control:#76684f;--text-strong:#f4ede0;--text-muted:#b8ab93;--fill-accent:#ff7a45;--text-accent:#ff7a45;--on-accent:#1a0b04;--status-ok:#7fd49a;--status-warn:#f2c94c;--status-danger:#ff918c;--status-info:#ffb48a;--surface-selected:rgba(255,122,69,.15);--human:#5fd6c8;--shadow-device:0 18px 44px -30px rgba(0,0,0,.9);background:var(--surface-page);color:var(--text-strong)}
-/* terminal surface: the Ember dark palette, fixed in both themes (termkit's TokyoNight
-   no longer fits the page: its blue-violet clashed with the vermilion) */
+.surface-terminal{color-scheme:dark;--surface-page:#121d1b;--surface-sunken:#0d1514;--surface-raised:#172523;--border-subtle:#243735;--border-control:#5f7d78;--text-strong:#e8f1ee;--text-muted:#9fb8b2;--fill-accent:#4fd1c0;--text-accent:#4fd1c0;--on-accent:#062320;--status-ok:#7fd49a;--status-warn:#f2c94c;--status-danger:#ff918c;--status-info:#8cc4ee;--surface-selected:rgba(79,209,192,.15);--human:#ff9b73;--shadow-device:0 18px 44px -30px rgba(0,0,0,.9);background:var(--surface-page);color:var(--text-strong)}
+/* terminal surface: the Teal & Sand dark palette, fixed in both themes (termkit's TokyoNight
+   no longer fits the page: its blue-violet clashed with the teal) */
 
 .surface-terminal .panel__header{background:color-mix(in srgb,var(--surface-raised) 80%,#000);border-color:var(--border-subtle)}
