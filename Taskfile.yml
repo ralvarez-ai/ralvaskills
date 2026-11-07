@@ -258,7 +258,7 @@ tasks:
       - node scripts/verify.mjs
 
   site:deploy:
-    desc: Gate, then deploy site/dist as the Cloudflare Worker `ralvaskills` (static assets; needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID)
+    desc: Gate, then deploy site/dist as the Cloudflare Worker `ralvaskills` on $SITE_HOST (static assets; needs CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, SITE_HOST in site/.env)
     dir: site
     dotenv: ['site/.env']
     preconditions:
@@ -266,7 +266,7 @@ tasks:
         msg: set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID first (see site/.env.example)
     cmds:
       - pnpm lint
-      - pnpm build
-      - node scripts/verify.mjs
-      - pnpm dlx wrangler@4 deploy
+      - SITE_URL="${SITE_HOST:+https://$SITE_HOST}" pnpm build
+      - SITE_URL="${SITE_HOST:+https://$SITE_HOST}" node scripts/verify.mjs
+      - node scripts/deploy.mjs
 

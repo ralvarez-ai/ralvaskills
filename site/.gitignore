@@ -6,3 +6,4 @@ src/data/catalog.json
 
 # wrangler
 .wrangler/
+wrangler.deploy.jsonc

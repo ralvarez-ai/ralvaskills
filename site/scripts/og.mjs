@@ -1,5 +1,5 @@
 // Renders public/og.png (1200x630), the social card, in the Teal & Sand palette.
-// Run by hand when the palette or the tagline changes: `node scripts/og.mjs`.
+// Run by hand when the palette or the tagline changes: `SITE_HOST=<host> node scripts/og.mjs`.
 // Uses the same Chrome lookup as verify.mjs (CHROME, then Playwright's cache).
 import { readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -25,7 +25,7 @@ h1{font-size:76px;letter-spacing:-.02em;max-width:980px}
 p{font:400 30px/1.4 system-ui,sans-serif;color:#4f564e}
 </style><div class="mark">rsk</div>
 <h1>Your agent asks.<br><span class="you">You approve.</span><br>rsk installs.</h1>
-<p>Versioned skills for Claude Code and OpenCode · rsk.ralva.dev</p>`;
+<p>Versioned skills for Claude Code and OpenCode${process.env.SITE_HOST ? ` · ${process.env.SITE_HOST}` : ''}</p>`;
 
 const browser = await chromium.launch({ executablePath: chromePath() });
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
