@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/ralvarezdev/termkit"
+	"go.ralva.dev/termkit"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )

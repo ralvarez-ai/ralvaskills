@@ -11,7 +11,7 @@ import (
 
 	"github.com/charmbracelet/huh"
 
-	"github.com/ralvarezdev/termkit/huhform"
+	"go.ralva.dev/termkit/huhform"
 )
 
 // stdinReader is shared across all plain-text prompt calls so that buffered

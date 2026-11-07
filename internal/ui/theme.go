@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 
-	"github.com/ralvarezdev/termkit"
+	"go.ralva.dev/termkit"
 )
 
 // Theme is the termkit theme every rsk style, mark and view renders with.

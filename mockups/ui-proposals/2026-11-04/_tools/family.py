@@ -13,7 +13,7 @@ Two palettes, on purpose:
   runtime. ``python3 tokens_extract.py <pkg> --check`` fails when the package
   moves, so the page cannot drift into a hand-copied palette.
 - **Terminal surfaces** (``.tn``) keep rsk's real termkit TokyoNight theme
-  (github.com/ralvarezdev/termkit theme.go via internal/ui/theme.go), so the
+  (go.ralva.dev/termkit theme.go via internal/ui/theme.go), so the
   product inside the frame still looks like the product.
 
 Text contrast of every page token against every page background is asserted

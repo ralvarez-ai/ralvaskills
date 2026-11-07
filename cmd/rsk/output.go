@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/ralvarezdev/termkit"
-	"github.com/ralvarezdev/termkit/cli"
-	"github.com/ralvarezdev/termkit/output"
+	"go.ralva.dev/termkit"
+	"go.ralva.dev/termkit/cli"
+	"go.ralva.dev/termkit/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"

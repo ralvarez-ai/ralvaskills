@@ -185,7 +185,7 @@ Sin resolver esto, `search_skills` (que busca en `description`) y `rsk://catalog
 
 ### mcpkit (helpers reutilizados)
 
-`github.com/ralvarezdev/mcpkit` (local, publicado `v0.5.0`) es un módulo v0.x de helpers sobre el mismo go-sdk. PR 3 lo añade y usa dos piezas:
+`go.ralva.dev/mcpkit` (local, publicado `v0.5.0`) es un módulo v0.x de helpers sobre el mismo go-sdk. PR 3 lo añade y usa dos piezas:
 
 | Helper | Uso en el MCP |
 |---|---|
@@ -582,7 +582,7 @@ Sin transporte. Es la capa que §2.6 y §8 añaden, testeable en aislamiento.
 | `cmd/rsk/resolve.go` | Helpers convertidos en delegaciones finas a `internal/install` |
 | `cmd/rsk/install.go` | Pasa a ser cliente de `install.Resolve`/`Apply` |
 | `cmd/rsk/root.go`, `cmd/rsk/setup.go` | Registro de `mcp` (y exclusión del picker TUI) |
-| `go.mod` | `github.com/modelcontextprotocol/go-sdk` v1.8.0 + `github.com/ralvarezdev/mcpkit` v0.5.0 |
+| `go.mod` | `github.com/modelcontextprotocol/go-sdk` v1.8.0 + `go.ralva.dev/mcpkit` v0.5.0 |
 
 - `internal/skill`, `internal/manifest` y `internal/source` solo se consumen (los cambios de `internal/skill` fueron en PR 2). La verificación de que **Claude Code muestra el prompt** ante `destructiveHint: true` queda como paso manual pendiente; los tests solo afirman la annotation.
 - **Criterio de aceptación:** arranca con Claude Code vía `claude mcp add`; las cuatro primitivas responden; `install_skills` produce el mismo efecto que `rsk install` **sin tocar stdout/stdin del protocolo**; se verifica que Claude Code pide aprobación ante `destructiveHint: true` (§6.1); un install falla con `isError: true`, no con error JSON-RPC.
@@ -718,4 +718,4 @@ Tests **in-process**, no HTTP real — el SDK Go trae transporte en memoria (`mc
 - [`skills/meta/rsk-guide/`](../../skills/meta/rsk-guide/SKILL.md) — política de consentimiento y workflows del CLI
 - `internal/source/registry.go` — `Index()`, `All()`, `Find()`, `ensureCached()`
 - `internal/tool/` — escritura de config de Claude Code y opencode
-- `github.com/ralvarezdev/mcpkit` — `RecoverWith`, `ErrorMsg.ToolError`; helpers genéricos sobre el go-sdk
+- `go.ralva.dev/mcpkit` — `RecoverWith`, `ErrorMsg.ToolError`; helpers genéricos sobre el go-sdk

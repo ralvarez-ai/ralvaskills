@@ -1,9 +1,9 @@
 package ui
 
 import (
-	"github.com/ralvarezdev/termkit/history"
-	"github.com/ralvarezdev/termkit/prefs"
-	"github.com/ralvarezdev/termkit/session"
+	"go.ralva.dev/termkit/history"
+	"go.ralva.dev/termkit/prefs"
+	"go.ralva.dev/termkit/session"
 )
 
 // defaultStorePaths returns termkit's conventional history and prefs file

@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/ralvarezdev/mcpkit"
+	"go.ralva.dev/mcpkit"
 
 	"go.ralva.dev/ralvaskills/v3/internal/catalog"
 	"go.ralva.dev/ralvaskills/v3/internal/config"

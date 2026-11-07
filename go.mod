@@ -11,10 +11,10 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.4.1
 	github.com/mattn/go-isatty v0.0.24
 	github.com/modelcontextprotocol/go-sdk v1.8.0
-	github.com/ralvarezdev/mcpkit v0.9.0
-	github.com/ralvarezdev/svckit v0.3.1
-	github.com/ralvarezdev/termkit v0.65.4
 	github.com/spf13/cobra v1.10.2
+	go.ralva.dev/mcpkit v0.12.0
+	go.ralva.dev/svckit v0.5.0
+	go.ralva.dev/termkit v0.67.0
 )
 
 require (

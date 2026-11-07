@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/ralvarezdev/termkit"
+	"go.ralva.dev/termkit"
 )
 
 // newTestTree builds root -> {view (table view), say (plain output), fail,

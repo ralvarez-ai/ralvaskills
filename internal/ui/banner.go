@@ -3,7 +3,7 @@ package ui
 import (
 	"os"
 
-	"github.com/ralvarezdev/termkit"
+	"go.ralva.dev/termkit"
 )
 
 // rskBannerSpec is rsk's BannerSpec: the wordmark art, its gradient, copy,

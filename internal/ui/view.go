@@ -3,7 +3,7 @@ package ui
 import (
 	"context"
 
-	"github.com/ralvarezdev/termkit"
+	"go.ralva.dev/termkit"
 )
 
 // InSession reports whether ctx belongs to an interactive session run: the

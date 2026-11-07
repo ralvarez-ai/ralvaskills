@@ -3,8 +3,8 @@ package ui
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/ralvarezdev/termkit"
-	"github.com/ralvarezdev/termkit/session"
+	"go.ralva.dev/termkit"
+	"go.ralva.dev/termkit/session"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )

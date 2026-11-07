@@ -10,7 +10,7 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/ralvarezdev/svckit"
+	"go.ralva.dev/svckit"
 	"github.com/spf13/cobra"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
