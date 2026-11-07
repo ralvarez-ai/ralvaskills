@@ -16,7 +16,10 @@ Left after the landings went live on Workers (2026-11-07):
 - **Pages leftovers:** remove the custom domains and, once happy, the Pages projects `kaucrow-dev` and `ralvarez-dev`; enable Web Analytics for `kaucrow.dev` and `ralvarez.dev` if used (Pages injected its beacon, Workers does not). Their READMEs still describe the migration as pending.
 - **Workflows:** to deploy from GitHub, set the repository variable `SITE_HOST` (a variable, not a secret) and the secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `NODE_AUTH_TOKEN` per repo; the `deploy-site.yml` files read the token, not `CLOUDFLARE_API_TOKEN_FILE`. Not proven with `act` (this repo's `task ci:local`).
 - **Tokens:** `ralva-dev-workers`, `ralvarez-dev-workers`, `kaucrow-dev-workers` (in `~/Secrets/cloudflare/workers`, mode 0600) still carry Pages permissions from before; trim to Workers Scripts, Workers Routes and DNS on their zone. The DDNS token can drop `ralvarez.dev`.
-- **Hard-coded app hosts:** `ralvagym` `site/scripts/verify.mjs:505` asserts `https://gym.ralvarez.app/`; `ralvafi` `spikes/wails-desktop/main.go:23` defaults to `https://fi.ralvarez.app`. Make both read configuration when the apps move.
+- **Hard-coded app hosts:** done for ralvagym on 2026-11-07 (`VITE_APP_ORIGIN`, required by the build, `verify.mjs` reads it). Left: `ralvafi` `spikes/wails-desktop/main.go:23` defaults to `https://fi.ralvarez.app`, and its `web/index.html` has the host in `og:url` and `og:image` (see `homelab#hhndfy`).
 - **Cleanup in `ralvarez.dev`:** the profile path fix touched eight scripts; its own `docs/` and skills still say `profile.md` in prose.
+
+- **Registry host on the page:** `VITE_REGISTRY_HOST` (CI: the repository variable `REGISTRY_HOST`, now `skills.ralva.dev`) is required by the rsk build. Set the same variable wherever the landing is built outside this machine.
+- **Local commits not pushed:** `1798c8d` (the refreshed `rsk.lock`) is committed here and not pushed; v3.6.0 and everything before it is on `origin`.
 
 Done when each bullet is closed or consciously dropped.
