@@ -40,7 +40,7 @@ const (
 	// no local repo clone is configured and neither RSK_REGISTRY_URL nor
 	// registry_url is set. Released binaries carry it, so the host it names is
 	// never retired.
-	DefaultRegistryURL = "https://skills.ralvarez.dev"
+	DefaultRegistryURL = "https://skills.ralva.dev"
 )
 
 // configHomeOverride is set by the --config flag; it wins over the environment.

@@ -29,7 +29,7 @@ type Config struct {
 	RepoPath string `json:"repo_path"`
 
 	// RegistryURL is the base URL of the hosted skill registry
-	// (e.g. https://skills.ralvarez.dev). Used when RepoPath is not set.
+	// (e.g. https://skills.ralva.dev). Used when RepoPath is not set.
 	RegistryURL string `json:"registry_url"`
 
 	// GlobalTargets maps tool IDs to their global skills directory paths.

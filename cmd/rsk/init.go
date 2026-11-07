@@ -115,7 +115,7 @@ func promptSkillSource(out io.Writer) (repoPath, registryURL string, err error) 
 	modeIdx, err := ui.Select(out, "How do you want to fetch skills?",
 		[]string{
 			"Local clone  (repo already on disk)",
-			"Registry     (download from skills.ralvarez.dev)",
+			"Registry     (download from " + strings.TrimPrefix(registryDefault(), "https://") + ")",
 		}, 0)
 	if err != nil {
 		return "", "", err
