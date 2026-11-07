@@ -3,3 +3,6 @@ dist/
 
 # Generated from the repository by scripts/gen-data.mjs.
 src/data/catalog.json
+
+# wrangler
+.wrangler/

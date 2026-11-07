@@ -1,11 +1,11 @@
 name: Deploy site
 
-# The landing page in site/ to Cloudflare Pages (project `rsk`, Direct Upload,
-# https://rsk.ralvarez.dev/). Manual-dispatch only, like check-site.yml: nothing
+# The landing page in site/ as the Cloudflare Worker `rsk` (static assets, see
+# site/wrangler.jsonc; https://rsk.ralvarez.dev/). Manual-dispatch only, like check-site.yml: nothing
 # runs on a billed runner unless started by hand. It does not touch the registry
 # workflow, and the registry workflow does not touch it.
-# Secrets: CLOUDFLARE_API_TOKEN (Account > Cloudflare Pages > Edit, nothing
-# else), CLOUDFLARE_ACCOUNT_ID, NODE_AUTH_TOKEN (packages:read).
+# Secrets: CLOUDFLARE_API_TOKEN (Account > Workers Scripts > Edit, plus the
+# ralvarez.dev zone for the custom domain), CLOUDFLARE_ACCOUNT_ID, NODE_AUTH_TOKEN (packages:read).
 on:
   workflow_dispatch:
 
@@ -20,7 +20,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    environment: cloudflare-pages
+    environment: cloudflare
     defaults:
       run:
         working-directory: site
@@ -66,7 +66,7 @@ jobs:
         run: node scripts/verify.mjs
 
       - name: Deploy
-        run: pnpm dlx wrangler@4 pages deploy dist --project-name rsk --branch main --commit-dirty=true
+        run: pnpm dlx wrangler@4 deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

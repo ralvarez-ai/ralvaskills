@@ -258,14 +258,15 @@ tasks:
       - node scripts/verify.mjs
 
   site:deploy:
-    desc: Gate, then deploy site/dist to Cloudflare Pages project rsk (needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID)
+    desc: Gate, then deploy site/dist as the Cloudflare Worker `rsk` (static assets; needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID)
     dir: site
+    dotenv: ['site/.env']
     preconditions:
       - sh: test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID"
-        msg: set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID first
+        msg: set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID first (see site/.env.example)
     cmds:
       - pnpm lint
       - pnpm build
       - node scripts/verify.mjs
-      - pnpm dlx wrangler@4 pages deploy dist --project-name rsk --branch main
+      - pnpm dlx wrangler@4 deploy
 
