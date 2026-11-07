@@ -1,4 +1,4 @@
-module github.com/ralvarezdev/ralvaskills/v3
+module go.ralva.dev/ralvaskills/v3
 
 go 1.27.3
 

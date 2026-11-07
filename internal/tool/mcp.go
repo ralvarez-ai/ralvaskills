@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsx"
+	"go.ralva.dev/ralvaskills/v3/internal/fsx"
 )
 
 const (

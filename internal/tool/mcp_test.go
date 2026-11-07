@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
 func TestClaudeMCPRegisterIsIdempotentAndPreservesOthers(t *testing.T) {

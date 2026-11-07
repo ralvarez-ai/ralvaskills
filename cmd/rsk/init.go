@@ -10,10 +10,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/tool"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/ui"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
 var initCmd = &cobra.Command{

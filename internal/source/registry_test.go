@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 // buildTarball creates an in-memory .tar.gz from the given entries.

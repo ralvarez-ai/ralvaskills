@@ -3,7 +3,7 @@ package cmdx
 import (
 	"fmt"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
 // ParseTargetScope converts raw into a TargetScope: a registered tool ID, the

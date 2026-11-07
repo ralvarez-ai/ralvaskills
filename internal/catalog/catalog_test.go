@@ -5,9 +5,9 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/catalog"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/catalog"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/source"
 )
 
 func TestFromSkillsAndFromIndexAgree(t *testing.T) {

@@ -11,8 +11,8 @@ import (
 	"github.com/ralvarezdev/termkit"
 	"github.com/ralvarezdev/termkit/output"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/config"
 )
 
 // TestRunStatusGlobalDoesNotRequireProject guards against the regression where

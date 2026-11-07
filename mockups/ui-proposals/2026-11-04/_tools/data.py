@@ -176,7 +176,7 @@ TOOLS = [
 ]
 
 QUICK_START = [
-    ("go install github.com/ralvarezdev/ralvaskills/v3/cmd/rsk@latest", "or a binary from Releases"),
+    ("go install go.ralva.dev/ralvaskills/v3/cmd/rsk@latest", "or a binary from Releases"),
     ("rsk init", "once per machine"),
     ("rsk new", "in a project: writes .rsk/ and registers rsk mcp"),
     ("rsk install go-grpc", "a bundle or a skill"),

@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/source"
 )
 
 // Entry is one skill as the catalog exposes it. Latest is the version a fresh

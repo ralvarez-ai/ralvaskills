@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 func TestUpdatePairNames(t *testing.T) {

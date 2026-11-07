@@ -9,9 +9,9 @@ import (
 
 	"github.com/ralvarezdev/mcpkit"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/catalog"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/catalog"
+	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/source"
 )
 
 // Deps is the environment the MCP server needs, injected so the server is

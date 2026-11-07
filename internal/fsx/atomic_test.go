@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 )
 
 const testTempPattern = ".fsxtest-*.tmp"

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsx"
+	"go.ralva.dev/ralvaskills/v3/internal/fsx"
 )
 
 // AgentsFileName is the tool-neutral agent guide at the project root. Claude

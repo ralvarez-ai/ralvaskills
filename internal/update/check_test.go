@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/config"
 )
 
 func testConfig(t *testing.T) config.Config {

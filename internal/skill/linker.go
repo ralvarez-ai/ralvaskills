@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 )
 
 // Link creates a link at targetDir/<skill.Name> pointing to skill.Path,

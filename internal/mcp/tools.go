@@ -12,9 +12,9 @@ import (
 
 	"github.com/ralvarezdev/mcpkit"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/catalog"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal"
+	"go.ralva.dev/ralvaskills/v3/internal/catalog"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 )
 
 const (

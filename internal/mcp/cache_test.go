@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/catalog"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/mcp"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/catalog"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/mcp"
+	"go.ralva.dev/ralvaskills/v3/internal/source"
 )
 
 func TestIndexCacheFreshSkipsFetch(t *testing.T) {

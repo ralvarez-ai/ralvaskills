@@ -11,8 +11,8 @@ import (
 	"github.com/ralvarezdev/termkit"
 	"github.com/ralvarezdev/termkit/output"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 )
 
 // TestRunClaudeToolsListJSONOutput checks that -o json on `rsk claude tools

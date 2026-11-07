@@ -165,7 +165,7 @@ export const tools: Tool[] = [
 ];
 
 export const quickStart: { cmd: string; note: string }[] = [
-  { cmd: 'go install github.com/ralvarezdev/ralvaskills/v3/cmd/rsk@latest', note: 'or a binary from Releases' },
+  { cmd: 'go install go.ralva.dev/ralvaskills/v3/cmd/rsk@latest', note: 'or a binary from Releases' },
   { cmd: 'rsk init', note: 'once per machine' },
   { cmd: 'rsk new', note: 'in a project: writes .rsk/ and registers rsk mcp' },
   { cmd: 'rsk install go-grpc', note: 'a bundle or a skill' },

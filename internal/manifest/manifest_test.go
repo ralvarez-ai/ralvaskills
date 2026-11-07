@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/schema"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/schema"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
 func TestWriteReadMod_roundtrip(t *testing.T) {

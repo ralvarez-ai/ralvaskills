@@ -6,9 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/ui"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
 var (

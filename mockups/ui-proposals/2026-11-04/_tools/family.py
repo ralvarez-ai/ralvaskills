@@ -516,7 +516,7 @@ def footer(sources: list[tuple[str, str]], version: str) -> str:
         f"<li><span>{esc(c)}</span><code>{esc(s)}</code></li>" for c, s in sources
     )
     return f"""<footer class="k-foot"><div class="wrap">
-<div>{wordmark_svg()}<p style="margin-top:14px">rsk {esc(version)} · GPL-3.0 · <a href="https://github.com/ralvarezdev/ralvaskills">github.com/ralvarezdev/ralvaskills</a></p></div>
+<div>{wordmark_svg()}<p style="margin-top:14px">rsk {esc(version)} · GPL-3.0 · <a href="https://github.com/ralvarezdev/ralvaskills">go.ralva.dev/ralvaskills</a></p></div>
 <details><summary>Where every number on this page comes from</summary>
 <p>Counted in the repository on 2026-11-04. Anything marked <span class="k-badge sa">sample</span> is illustrative.</p>
 <ul class="k-src">{items}</ul></details>

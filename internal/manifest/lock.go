@@ -9,10 +9,10 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/schema"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/fsx"
+	"go.ralva.dev/ralvaskills/v3/internal/schema"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 type (

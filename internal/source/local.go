@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 // Local resolves skills from the local ralvaskills repo clone.

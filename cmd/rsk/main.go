@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
-	updatecheck "github.com/ralvarezdev/ralvaskills/v3/internal/update"
+	"go.ralva.dev/ralvaskills/v3/internal/config"
+	updatecheck "go.ralva.dev/ralvaskills/v3/internal/update"
 )
 
 func main() {

@@ -6,11 +6,11 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/install"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/install"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
 func TestApplyProjectWritesManifestLockAndPin(t *testing.T) {

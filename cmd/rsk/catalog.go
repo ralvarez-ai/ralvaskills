@@ -11,11 +11,11 @@ import (
 	"github.com/ralvarezdev/termkit"
 	"github.com/ralvarezdev/termkit/output"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/ui"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
 var catalogCmd = &cobra.Command{

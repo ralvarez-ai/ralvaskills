@@ -10,12 +10,12 @@ import (
 
 	"github.com/ralvarezdev/termkit"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/tool"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/ui"
+	"go.ralva.dev/ralvaskills/v3/internal"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
 var destroyCmd = &cobra.Command{

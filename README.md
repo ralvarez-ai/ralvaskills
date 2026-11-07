@@ -138,7 +138,7 @@ These are personal to me and excluded from bundle installs. Listed here for tran
 A Go CLI that manages skill installation across projects without copy-pasting folders. Tracked in [`docs/designs/2026-05-20-technical-specification.md`](docs/designs/2026-05-20-technical-specification.md). Latest release: [`v3.3.0`](https://github.com/ralvarezdev/ralvaskills/releases/tag/v3.3.0).
 
 ```
-go install github.com/ralvarezdev/ralvaskills/v3/cmd/rsk@latest
+go install go.ralva.dev/ralvaskills/v3/cmd/rsk@latest
 # or grab a prebuilt binary from the Releases page
 
 # Machine setup (once)

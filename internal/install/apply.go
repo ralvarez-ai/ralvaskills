@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 // Scope is where an install writes its skills.

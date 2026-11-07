@@ -10,7 +10,7 @@ export function Footer() {
           <Wordmark />
           <p style={{ marginTop: 14 }}>
             rsk {data.version} · GPL-3.0 ·{' '}
-            <a href="https://github.com/ralvarezdev/ralvaskills">github.com/ralvarezdev/ralvaskills</a>
+            <a href="https://github.com/ralvarezdev/ralvaskills">go.ralva.dev/ralvaskills</a>
           </p>
           <a className="family-credit" href="https://github.com/ralvarez-ai">
             <FamilyMark />

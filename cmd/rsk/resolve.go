@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/config"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/install"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/manifest"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/source"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/install"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
 // newLocalSource returns the appropriate source.Resolver for local skills.

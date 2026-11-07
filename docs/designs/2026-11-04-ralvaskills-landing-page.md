@@ -420,7 +420,7 @@ no longer blue) is the owner's call.
 | Machine config | `~/.config/rsk/config.json` | `internal/config/config.go:20` |
 | Version | 3.4.1 | `git tag v3.4.1`; `bin/rsk --version` |
 | License | GPL-3.0 | `LICENSE` |
-| Quick start | `go install github.com/ralvarezdev/ralvaskills/v3/cmd/rsk@latest`, `rsk init`, `rsk new`, `rsk install <name>`, `rsk pin <name>` | `README.md:139-160` |
+| Quick start | `go install go.ralva.dev/ralvaskills/v3/cmd/rsk@latest`, `rsk init`, `rsk new`, `rsk install <name>`, `rsk pin <name>` | `README.md:139-160` |
 | Brand mark | the six-row block wordmark, `◆` glyph, row gradient = accent darkened 0 / .18 / .34 / .48 in Lab, cycled over 6 rows | `internal/ui/theme.go`; termkit `banner.go` |
 | Page palette | Ralvarez brand kit: ink `#0c0e11`, cyan `#2bbbd6`, paper `#f4f5f7`, light cyan text `#00758c` | `mockups/claude-design/2026-11-04/landing-page.html` in ralvagym / finance / identity / notifier |
 | Terminal palette | termkit TokyoNight: accent `#2E7DE9`/`#7AA2F7`, danger, warning, success, info, muted; terminal bg `#16161e` | termkit v0.65.4 `theme.go` via `internal/ui/theme.go` |

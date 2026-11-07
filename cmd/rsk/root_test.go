@@ -9,7 +9,7 @@ import (
 
 	"github.com/ralvarezdev/termkit"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )
 
 // The five tests marked paralleltest below are deliberately sequential. They

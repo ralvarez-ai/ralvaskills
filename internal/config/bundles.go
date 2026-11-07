@@ -7,8 +7,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/schema"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/schema"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 //go:embed catalog.toml

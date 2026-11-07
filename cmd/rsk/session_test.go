@@ -9,7 +9,7 @@ import (
 
 	"github.com/ralvarezdev/termkit"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )
 
 // sessionCmd returns a command whose context marks it as running inside the

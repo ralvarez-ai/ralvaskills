@@ -11,11 +11,11 @@ import (
 
 	"github.com/adrg/xdg"
 
-	"github.com/ralvarezdev/ralvaskills/v3/internal"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/digest"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsperm"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/fsx"
-	"github.com/ralvarezdev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal"
+	"go.ralva.dev/ralvaskills/v3/internal/digest"
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/fsx"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 const (
