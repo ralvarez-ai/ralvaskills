@@ -1,7 +1,7 @@
 name: Deploy site
 
 # The landing page in site/ as the Cloudflare Worker `ralvaskills` (static assets, see
-# site/wrangler.jsonc; https://rsk.ralvarez.dev/). Manual-dispatch only, like check-site.yml: nothing
+# site/wrangler.jsonc; https://rsk.ralva.dev/). Manual-dispatch only, like check-site.yml: nothing
 # runs on a billed runner unless started by hand. It does not touch the registry
 # workflow, and the registry workflow does not touch it.
 # Secrets: CLOUDFLARE_API_TOKEN (Account > Workers Scripts > Edit, plus the

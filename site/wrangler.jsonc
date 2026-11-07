@@ -5,5 +5,5 @@
   "name": "ralvaskills",
   "compatibility_date": "2026-11-06",
   "assets": { "directory": "./dist" },
-  "routes": [{ "pattern": "rsk.ralvarez.dev", "custom_domain": true }],
+  "routes": [{ "pattern": "rsk.ralva.dev", "custom_domain": true }],
 }
