@@ -256,3 +256,16 @@ tasks:
       - pnpm typecheck
       - pnpm build
       - node scripts/verify.mjs
+
+  site:deploy:
+    desc: Gate, then deploy site/dist to Cloudflare Pages project rsk (needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID)
+    dir: site
+    preconditions:
+      - sh: test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID"
+        msg: set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID first
+    cmds:
+      - pnpm lint
+      - pnpm build
+      - node scripts/verify.mjs
+      - pnpm dlx wrangler@4 pages deploy dist --project-name rsk --branch main
+
