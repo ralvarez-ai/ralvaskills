@@ -59,6 +59,8 @@ jobs:
       # drifts from 58 skills / 15 bundles / 13 commands / 3 tools.
       - name: Build
         run: pnpm build
+        env:
+          VITE_REGISTRY_HOST: ${{ vars.REGISTRY_HOST }}
 
       # verify.mjs drives a Chrome. Hosted runners ship one; the act image does
       # not, so fall back to Playwright's Chromium (verify.mjs finds it in

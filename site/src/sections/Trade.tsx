@@ -1,4 +1,5 @@
 import { Eyebrow, Section } from '../components/ui';
+import { registryHost } from '../data/facts';
 export function Trade() {
   return (
     <Section id="trade" labelledBy="a-trade-h" tone="sunken">
@@ -27,8 +28,8 @@ export function Trade() {
             <h3>What you accept</h3>
             <ul>
               <li>
-                <b>The registry at skills.ralvarez.dev has to be reachable</b> when you install or update, or you point
-                rsk at a local clone of the repository.
+                <b>The registry at {registryHost} has to be reachable</b> when you install or update, or you point rsk
+                at a local clone of the repository.
               </li>
               <li>
                 The MCP server needs <code>rsk</code> on PATH on every machine that opens the project.

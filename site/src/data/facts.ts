@@ -189,3 +189,13 @@ export const sources: { what: string; where: string }[] = [
   { what: 'Colours', where: 'termkit TokyoNight via internal/ui/theme.go' },
   { what: 'Wordmark', where: 'internal/ui/theme.go' },
 ];
+
+/** Host of the skills registry the CLI reads. Configuration (VITE_REGISTRY_HOST in site/.env or the build
+ * environment), never a literal: the registry may move without a release of this page. */
+export const registryHost = (() => {
+  const host = (import.meta.env.VITE_REGISTRY_HOST ?? '').trim().toLowerCase();
+  if (!/^([a-z0-9-]+\.)+[a-z]{2,}$/.test(host)) {
+    throw new Error('VITE_REGISTRY_HOST must be a bare hostname (see site/.env.example)');
+  }
+  return host;
+})();

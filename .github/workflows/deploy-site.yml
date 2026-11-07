@@ -2,7 +2,8 @@ name: Deploy site
 
 # The landing page in site/ as the Cloudflare Worker `ralvaskills` (static assets, see
 # site/wrangler.jsonc). The hostname is the repository variable SITE_HOST (Settings >
-# Variables), not a secret and not in the code: scripts/deploy.mjs binds it.
+# Variables), not a secret and not in the code: scripts/deploy.mjs binds it. The registry host the
+# page names is the variable REGISTRY_HOST (passed to the build as VITE_REGISTRY_HOST).
 # Manual-dispatch only, like check-site.yml: nothing
 # runs on a billed runner unless started by hand. It does not touch the registry
 # workflow, and the registry workflow does not touch it.
@@ -56,6 +57,7 @@ jobs:
       - name: Build
         run: pnpm build
         env:
+          VITE_REGISTRY_HOST: ${{ vars.REGISTRY_HOST }}
           SITE_URL: ${{ vars.SITE_HOST && format('https://{0}', vars.SITE_HOST) || '' }}
 
       - name: Browser
