@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## Unreleased
 
 ### Changed
+- **Breaking:** the module path is `go.ralva.dev/ralvaskills/v3` (was `github.com/ralvarezdev/ralvaskills/v3`); every import changes, and so does the `go install` path. The Go libraries it requires moved to `go.ralva.dev` too. Releases up to v3.x keep the old path.
 - **The skill registry moves to `skills.ralva.dev`:** GitHub Pages serves the index under that host (the publish workflow is unchanged, so every skill version still appears on its own) and `skills.ralvarez.dev` stays alive as a 301 Redirect Rule to it. No Worker is involved in the registry path. The CLI side is in v3.6.0 below.
 
 ### Added
