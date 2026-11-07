@@ -16,3 +16,5 @@ Everything is committed on `main` and not pushed. The order matters:
 5. In this repo run `rsk update` (or `pin`) so `.rsk/CLAUDE.md`, `.rsk/SKILLS.md` and `opencode.json` use the new format, and confirm with `claude -p` that a digest line reaches the model.
 
 Done when the index lists 60 skills, an `rsk` release carries the adapter, and this repo's `.rsk/SKILLS.md` is generated from published digests. Supersedes the push step of `sykdrq` and the ralvaskills part of `z7ckmp`. Design: `docs/designs/2026-11-06-skill-digests-and-skills-md.md`.
+
+Resolved 2026-11-06: main pushed (publish run green, index lists 60 skills), rsk v3.5.0 tagged and released (Release CLI run green, binaries attached) and installed locally with `go install ...@v3.5.0`; this repo and 86 other projects were re-synced with `rsk install commit-author docs-architect rsk-guide token-economy --pin`, so their `.rsk/` files use the SKILLS.md format. Those project changes are uncommitted in each repo. Left over from this item: the SKILLS.md size warning (jefdb1) and committing the regenerated `.rsk/` files.
