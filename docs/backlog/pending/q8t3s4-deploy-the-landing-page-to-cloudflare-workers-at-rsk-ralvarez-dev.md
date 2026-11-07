@@ -8,7 +8,7 @@ topics:
 blocked_by:
     - 6azjzw
 ---
-Decided 2026-11-06 (supersedes the Pages decision below): a Cloudflare Worker `rsk` with static assets (`site/wrangler.jsonc`), deployed with `wrangler deploy`, separate from any application and not embedded in one. The registry stays on GitHub Pages at skills.ralvarez.dev (`internal/config/fs.go` hardcodes that URL).
+Decided 2026-11-06 (supersedes the Pages decision below): a Cloudflare Worker `ralvaskills` with static assets (`site/wrangler.jsonc`), deployed with `wrangler deploy`, separate from any application and not embedded in one. The registry stays on GitHub Pages at skills.ralvarez.dev (`internal/config/fs.go` hardcodes that URL).
 
 To do: create the project and the `rsk` CNAME; secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (least privilege, only for this workflow); `deploy-site.yml` (install, lint, build, gate, `wrangler pages deploy dist`) with path filters for the landing only; `public/_headers`; an `og:image`. `index.html` already points canonical and OG at https://rsk.ralvarez.dev/. Prove the workflow with `act` first. Deploying is outward-facing: confirm with the owner before running it.
 

@@ -2,7 +2,7 @@
 // Deploy with `task site:deploy` (gate first) or the manual `deploy-site.yml`.
 // `_headers` in dist/ is applied by the platform. Static requests are free.
 {
-  "name": "rsk",
+  "name": "ralvaskills",
   "compatibility_date": "2026-11-06",
   "assets": { "directory": "./dist" },
   "routes": [{ "pattern": "rsk.ralvarez.dev", "custom_domain": true }],

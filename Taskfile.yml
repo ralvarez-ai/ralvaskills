@@ -258,7 +258,7 @@ tasks:
       - node scripts/verify.mjs
 
   site:deploy:
-    desc: Gate, then deploy site/dist as the Cloudflare Worker `rsk` (static assets; needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID)
+    desc: Gate, then deploy site/dist as the Cloudflare Worker `ralvaskills` (static assets; needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID)
     dir: site
     dotenv: ['site/.env']
     preconditions:
