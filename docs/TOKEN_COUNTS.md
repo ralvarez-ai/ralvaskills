@@ -4,7 +4,7 @@
 >
 > Estimate: ~4 bytes/token for bodies, ~3 bytes/token for descriptions (Claude tokenizer). Actual range ±15%.
 
-_Last updated: 2026-11-06 · 60 skills · 15 bundles_
+_Last updated: 2026-11-08 · 61 skills · 15 bundles_
 
 ## Load model
 
@@ -12,15 +12,15 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 | What | When loaded | Estimated tokens |
 |---|---|---:|
-| All `SKILL.md` bodies | Only when invoked | ~141110 |
-| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~166815 |
-| All `description:` fields (every skill) | Every turn, if all installed | ~7113 |
+| All `SKILL.md` bodies | Only when invoked | ~144660 |
+| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~170341 |
+| All `description:` fields (every skill) | Every turn, if all installed | ~7317 |
 
 ## Session profiles
 
 Budgets: **global ≤ 1500** desc tokens (paid by every project), **session ≤ 2200** desc tokens (global + one project bundle). Status: `ok` < 90% · `warn` ≥ 90% · `OVER` ≥ 100%.
 
-**Global baseline** (`rsk install global --global`): 16 skills · ~1740 / 1500 desc tokens every turn (`OVER`) · ~29080 body tokens if all invoked.
+**Global baseline** (`rsk install global --global`): 16 skills · ~1740 / 1500 desc tokens every turn (`OVER`) · ~29217 body tokens if all invoked.
 
 Per-project bundle additions on top of the global baseline:
 
@@ -49,6 +49,7 @@ These skills are not part of any bundle. They are installed individually with `r
 |---|---|---:|---:|---:|
 | `mcp-architect` | protocols | ~7795 | ~334 | ~10985 |
 | `go-house-libs` | personal | ~2197 | ~265 | ~2071 |
+| `backend-performance-architect` | quality | ~3413 | ~204 | ~3526 |
 | `go-library-builder` | personal | ~4008 | ~167 | ~4056 |
 | `landing-page-designer` | frontend | ~3057 | ~166 | ~1133 |
 | `connectrpc-architect` | protocols | ~3046 | ~153 | ~3750 |
@@ -57,9 +58,9 @@ These skills are not part of any bundle. They are installed individually with `r
 | `docs-architect` | workflows | ~1643 | ~144 | ~5790 |
 | `uru-scientific-paper-architect` | personal | ~2118 | ~141 | ~2572 |
 | `mockup-architect` | frontend | ~885 | ~136 | ~439 |
+| `uru-thesis-defense-architect` | personal | ~1782 | ~132 | ~2026 |
 | `secrets-architect` | infra | ~2555 | ~132 | ~558 |
 | `astro-architect` | frameworks | ~2889 | ~132 | ~4442 |
-| `uru-thesis-defense-architect` | personal | ~1782 | ~132 | ~2026 |
 | `website-concept-architect` | frontend | ~2299 | ~122 | ~1199 |
 | `ml-conference-paper-architect` | academic | ~2568 | ~121 | ~2219 |
 | `uru-thesis-reviewer` | personal | ~3299 | ~119 | ~8215 |
@@ -82,8 +83,8 @@ These skills are not part of any bundle. They are installed individually with `r
 | languages | 3 | ~12639 | ~348 | ~15102 |
 | infra | 5 | ~11698 | ~517 | ~11921 |
 | frontend | 6 | ~11627 | ~724 | ~11937 |
-| meta | 4 | ~8029 | ~572 | ~7287 |
-| quality | 4 | ~7780 | ~359 | ~4226 |
+| quality | 5 | ~11193 | ~563 | ~7752 |
+| meta | 4 | ~8166 | ~572 | ~7287 |
 | workflows | 5 | ~6510 | ~512 | ~10500 |
 | refactoring | 4 | ~6476 | ~408 | ~8121 |
 | tooling | 2 | ~6155 | ~229 | ~7186 |
@@ -100,7 +101,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 
 | Bundle | Local | External | Missing | ~Body tkns (local) | ~Desc tkns (local) |
 |---|---:|---:|---:|---:|---:|
-| `global` | 16 | 0 | 0 | ~29080 | ~1740 |
+| `global` | 16 | 0 | 0 | ~29217 | ~1740 |
 | `docs` | 0 | 5 | 0 | ~0 | ~0 |
 | `design` | 3 | 1 | 0 | ~8155 | ~313 |
 | `go-grpc` | 5 | 0 | 0 | ~14656 | ~522 |
@@ -123,65 +124,66 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 1 | `mcp-architect` | protocols | 31177 | ~7795 | ~334 | ~1521 | ~8783 | ~681 |
 | 2 | `go-architect` | languages | 25495 | ~6374 | ~153 | ~473 | ~4425 | ~6105 |
 | 3 | `go-library-builder` | personal | 16030 | ~4008 | ~167 | ~628 | ~2725 | ~703 |
-| 4 | `repo-tooling-architect` | tooling | 13230 | ~3371 | ~136 | ~685 | ~1334 | ~2699 |
-| 5 | `uru-thesis-reviewer` | personal | 13195 | ~3299 | ~119 | ~0 | ~0 | ~8215 |
-| 6 | `python-architect` | languages | 12848 | ~3212 | ~79 | ~443 | ~203 | ~733 |
-| 7 | `ci-cd-architect` | infra | 12339 | ~3085 | ~145 | ~624 | ~3520 | ~529 |
-| 8 | `token-economy` | meta | 12249 | ~3063 | ~230 | ~0 | ~2033 | ~2150 |
-| 9 | `landing-page-designer` | frontend | 12179 | ~3057 | ~166 | ~0 | ~0 | ~1133 |
-| 10 | `latex-architect` | languages | 12209 | ~3053 | ~116 | ~339 | ~1841 | ~540 |
-| 11 | `connectrpc-architect` | protocols | 12182 | ~3046 | ~153 | ~777 | ~2421 | ~552 |
-| 12 | `nextjs-architect` | frameworks | 11890 | ~2973 | ~108 | ~367 | ~1824 | ~545 |
-| 13 | `react-architect` | frameworks | 11872 | ~2968 | ~102 | ~415 | ~1426 | ~535 |
-| 14 | `astro-architect` | frameworks | 11496 | ~2889 | ~132 | ~604 | ~3298 | ~540 |
-| 15 | `rsk-guide` | meta | 10632 | ~2830 | ~199 | ~0 | ~0 | ~713 |
-| 16 | `cli-tool-architect` | tooling | 11119 | ~2784 | ~93 | ~515 | ~1436 | ~517 |
-| 17 | `event-driven-architect` | messaging | 11059 | ~2770 | ~83 | ~514 | ~2148 | ~507 |
-| 18 | `hugo-architect` | frameworks | 10877 | ~2720 | ~107 | ~403 | ~973 | ~441 |
-| 19 | `ros2-architect` | robotics | 10802 | ~2701 | ~105 | ~579 | ~1714 | ~523 |
-| 20 | `rest-api-architect` | protocols | 10358 | ~2590 | ~102 | ~506 | ~0 | ~4702 |
-| 21 | `ml-conference-paper-architect` | academic | 10270 | ~2568 | ~121 | ~395 | ~1305 | ~519 |
-| 22 | `secrets-architect` | infra | 9940 | ~2555 | ~132 | ~0 | ~0 | ~558 |
-| 23 | `study-artifact-builder` | academic | 10184 | ~2546 | ~149 | ~0 | ~2611 | ~4569 |
-| 24 | `observability-architect` | infra | 10025 | ~2523 | ~74 | ~546 | ~874 | ~498 |
-| 25 | `api-contract-reviewer` | quality | 9798 | ~2511 | ~108 | ~0 | ~0 | ~616 |
-| 26 | `reveal-js-architect` | frameworks | 9901 | ~2476 | ~93 | ~147 | ~1056 | ~526 |
-| 27 | `grpc-architect` | protocols | 9860 | ~2465 | ~106 | ~521 | ~864 | ~652 |
-| 28 | `hexagonal-arch` | design | 9369 | ~2377 | ~101 | ~0 | ~768 | ~416 |
-| 29 | `code-design-refactor` | refactoring | 9400 | ~2350 | ~96 | ~0 | ~0 | ~582 |
-| 30 | `website-concept-architect` | frontend | 9196 | ~2299 | ~122 | ~0 | ~0 | ~1199 |
-| 31 | `demo-presentation-architect` | frontend | 8932 | ~2233 | ~101 | ~0 | ~1776 | ~4269 |
-| 32 | `feature-planner` | workflows | 8630 | ~2226 | ~114 | ~0 | ~200 | ~394 |
-| 33 | `ui-ux-architect` | frontend | 8855 | ~2214 | ~103 | ~412 | ~1387 | ~527 |
-| 34 | `go-house-libs` | personal | 8785 | ~2197 | ~265 | ~1479 | ~0 | ~592 |
-| 35 | `sql-architect` | databases | 8594 | ~2149 | ~90 | ~295 | ~0 | ~1528 |
-| 36 | `uru-scientific-paper-architect` | personal | 8472 | ~2118 | ~141 | ~0 | ~2021 | ~551 |
-| 37 | `security-reviewer` | quality | 8273 | ~2069 | ~77 | ~0 | ~539 | ~544 |
-| 38 | `performance-reviewer` | quality | 8052 | ~2013 | ~84 | ~0 | ~612 | ~473 |
-| 39 | `nethttp-architect` | frameworks | 7581 | ~1927 | ~121 | ~403 | ~1609 | ~607 |
-| 40 | `ddd-architect` | design | 7561 | ~1891 | ~78 | ~0 | ~0 | ~1283 |
-| 41 | `fastapi-architect` | frameworks | 7481 | ~1871 | ~120 | ~420 | ~1016 | ~695 |
-| 42 | `docker-architect` | infra | 7397 | ~1850 | ~89 | ~333 | ~786 | ~1480 |
-| 43 | `protobuf-architect` | encoding | 7271 | ~1818 | ~84 | ~474 | ~914 | ~479 |
-| 44 | `uru-thesis-defense-architect` | personal | 7126 | ~1782 | ~132 | ~0 | ~1525 | ~501 |
-| 45 | `improve-codebase-architecture` | refactoring | 7070 | ~1768 | ~97 | ~0 | ~0 | ~4488 |
-| 46 | `design-patterns` | refactoring | 7049 | ~1763 | ~122 | ~0 | ~0 | ~2646 |
-| 47 | `skill-builder` | meta | 6854 | ~1714 | ~72 | ~0 | ~1728 | ~391 |
-| 48 | `gin-architect` | frameworks | 6769 | ~1705 | ~109 | ~419 | ~1266 | ~594 |
-| 49 | `grafana-architect` | infra | 6739 | ~1685 | ~77 | ~407 | ~1149 | ~617 |
-| 50 | `uru-thesis-architect` | personal | 6676 | ~1669 | ~114 | ~0 | ~1698 | ~5466 |
-| 51 | `docs-architect` | workflows | 6570 | ~1643 | ~144 | ~0 | ~0 | ~5790 |
-| 52 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~410 |
-| 53 | `tdd` | workflows | 4080 | ~1051 | ~69 | ~0 | ~0 | ~1771 |
-| 54 | `demo-script-architect` | frontend | 3636 | ~939 | ~96 | ~0 | ~0 | ~795 |
-| 55 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~439 |
-| 56 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
-| 57 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~380 |
-| 58 | `grill-with-docs` | workflows | 2972 | ~743 | ~104 | ~0 | ~0 | ~1965 |
-| 59 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
-| 60 | `caveman` | meta | 1687 | ~422 | ~71 | ~0 | ~0 | ~272 |
+| 4 | `backend-performance-architect` | quality | 13650 | ~3413 | ~204 | ~0 | ~2747 | ~779 |
+| 5 | `repo-tooling-architect` | tooling | 13230 | ~3371 | ~136 | ~685 | ~1334 | ~2699 |
+| 6 | `uru-thesis-reviewer` | personal | 13195 | ~3299 | ~119 | ~0 | ~0 | ~8215 |
+| 7 | `python-architect` | languages | 12848 | ~3212 | ~79 | ~443 | ~203 | ~733 |
+| 8 | `ci-cd-architect` | infra | 12339 | ~3085 | ~145 | ~624 | ~3520 | ~529 |
+| 9 | `token-economy` | meta | 12249 | ~3063 | ~230 | ~0 | ~2033 | ~2150 |
+| 10 | `landing-page-designer` | frontend | 12179 | ~3057 | ~166 | ~0 | ~0 | ~1133 |
+| 11 | `latex-architect` | languages | 12209 | ~3053 | ~116 | ~339 | ~1841 | ~540 |
+| 12 | `connectrpc-architect` | protocols | 12182 | ~3046 | ~153 | ~777 | ~2421 | ~552 |
+| 13 | `nextjs-architect` | frameworks | 11890 | ~2973 | ~108 | ~367 | ~1824 | ~545 |
+| 14 | `react-architect` | frameworks | 11872 | ~2968 | ~102 | ~415 | ~1426 | ~535 |
+| 15 | `rsk-guide` | meta | 11136 | ~2967 | ~199 | ~0 | ~0 | ~713 |
+| 16 | `astro-architect` | frameworks | 11496 | ~2889 | ~132 | ~604 | ~3298 | ~540 |
+| 17 | `cli-tool-architect` | tooling | 11119 | ~2784 | ~93 | ~515 | ~1436 | ~517 |
+| 18 | `event-driven-architect` | messaging | 11059 | ~2770 | ~83 | ~514 | ~2148 | ~507 |
+| 19 | `hugo-architect` | frameworks | 10877 | ~2720 | ~107 | ~403 | ~973 | ~441 |
+| 20 | `ros2-architect` | robotics | 10802 | ~2701 | ~105 | ~579 | ~1714 | ~523 |
+| 21 | `rest-api-architect` | protocols | 10358 | ~2590 | ~102 | ~506 | ~0 | ~4702 |
+| 22 | `ml-conference-paper-architect` | academic | 10270 | ~2568 | ~121 | ~395 | ~1305 | ~519 |
+| 23 | `secrets-architect` | infra | 9940 | ~2555 | ~132 | ~0 | ~0 | ~558 |
+| 24 | `study-artifact-builder` | academic | 10184 | ~2546 | ~149 | ~0 | ~2611 | ~4569 |
+| 25 | `observability-architect` | infra | 10025 | ~2523 | ~74 | ~546 | ~874 | ~498 |
+| 26 | `api-contract-reviewer` | quality | 9798 | ~2511 | ~108 | ~0 | ~0 | ~616 |
+| 27 | `reveal-js-architect` | frameworks | 9901 | ~2476 | ~93 | ~147 | ~1056 | ~526 |
+| 28 | `grpc-architect` | protocols | 9860 | ~2465 | ~106 | ~521 | ~864 | ~652 |
+| 29 | `hexagonal-arch` | design | 9369 | ~2377 | ~101 | ~0 | ~768 | ~416 |
+| 30 | `code-design-refactor` | refactoring | 9400 | ~2350 | ~96 | ~0 | ~0 | ~582 |
+| 31 | `website-concept-architect` | frontend | 9196 | ~2299 | ~122 | ~0 | ~0 | ~1199 |
+| 32 | `demo-presentation-architect` | frontend | 8932 | ~2233 | ~101 | ~0 | ~1776 | ~4269 |
+| 33 | `feature-planner` | workflows | 8630 | ~2226 | ~114 | ~0 | ~200 | ~394 |
+| 34 | `ui-ux-architect` | frontend | 8855 | ~2214 | ~103 | ~412 | ~1387 | ~527 |
+| 35 | `go-house-libs` | personal | 8785 | ~2197 | ~265 | ~1479 | ~0 | ~592 |
+| 36 | `sql-architect` | databases | 8594 | ~2149 | ~90 | ~295 | ~0 | ~1528 |
+| 37 | `uru-scientific-paper-architect` | personal | 8472 | ~2118 | ~141 | ~0 | ~2021 | ~551 |
+| 38 | `security-reviewer` | quality | 8273 | ~2069 | ~77 | ~0 | ~539 | ~544 |
+| 39 | `performance-reviewer` | quality | 8052 | ~2013 | ~84 | ~0 | ~612 | ~473 |
+| 40 | `nethttp-architect` | frameworks | 7581 | ~1927 | ~121 | ~403 | ~1609 | ~607 |
+| 41 | `ddd-architect` | design | 7561 | ~1891 | ~78 | ~0 | ~0 | ~1283 |
+| 42 | `fastapi-architect` | frameworks | 7481 | ~1871 | ~120 | ~420 | ~1016 | ~695 |
+| 43 | `docker-architect` | infra | 7397 | ~1850 | ~89 | ~333 | ~786 | ~1480 |
+| 44 | `protobuf-architect` | encoding | 7271 | ~1818 | ~84 | ~474 | ~914 | ~479 |
+| 45 | `uru-thesis-defense-architect` | personal | 7126 | ~1782 | ~132 | ~0 | ~1525 | ~501 |
+| 46 | `improve-codebase-architecture` | refactoring | 7070 | ~1768 | ~97 | ~0 | ~0 | ~4488 |
+| 47 | `design-patterns` | refactoring | 7049 | ~1763 | ~122 | ~0 | ~0 | ~2646 |
+| 48 | `skill-builder` | meta | 6854 | ~1714 | ~72 | ~0 | ~1728 | ~391 |
+| 49 | `gin-architect` | frameworks | 6769 | ~1705 | ~109 | ~419 | ~1266 | ~594 |
+| 50 | `grafana-architect` | infra | 6739 | ~1685 | ~77 | ~407 | ~1149 | ~617 |
+| 51 | `uru-thesis-architect` | personal | 6676 | ~1669 | ~114 | ~0 | ~1698 | ~5466 |
+| 52 | `docs-architect` | workflows | 6570 | ~1643 | ~144 | ~0 | ~0 | ~5790 |
+| 53 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~410 |
+| 54 | `tdd` | workflows | 4080 | ~1051 | ~69 | ~0 | ~0 | ~1771 |
+| 55 | `demo-script-architect` | frontend | 3636 | ~939 | ~96 | ~0 | ~0 | ~795 |
+| 56 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~439 |
+| 57 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
+| 58 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~380 |
+| 59 | `grill-with-docs` | workflows | 2972 | ~743 | ~104 | ~0 | ~0 | ~1965 |
+| 60 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
+| 61 | `caveman` | meta | 1687 | ~422 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 561854 body bytes · ~141110 body tokens · ~7113 desc tokens · ~166815 side tokens
+**Totals:** 576008 body bytes · ~144660 body tokens · ~7317 desc tokens · ~170341 side tokens
 
 ## Topic files
 
@@ -264,6 +266,8 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
 - `demo-script-architect` (~795 tokens total):
   - `REFERENCE.md` — ~417 tokens
   - `DIGEST.md` — ~378 tokens
+- `backend-performance-architect` (~779 tokens total):
+  - `DIGEST.md` — ~779 tokens
 - `python-architect` (~733 tokens total):
   - `DIGEST.md` — ~733 tokens
 - `rsk-guide` (~713 tokens total):
@@ -300,9 +304,9 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `DIGEST.md` — ~545 tokens
 - `security-reviewer` (~544 tokens total):
   - `DIGEST.md` — ~544 tokens
-- `astro-architect` (~540 tokens total):
-  - `DIGEST.md` — ~540 tokens
 - `latex-architect` (~540 tokens total):
+  - `DIGEST.md` — ~540 tokens
+- `astro-architect` (~540 tokens total):
   - `DIGEST.md` — ~540 tokens
 - `react-architect` (~535 tokens total):
   - `DIGEST.md` — ~535 tokens
@@ -338,9 +342,9 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `DIGEST.md` — ~410 tokens
 - `logic-cleaner` (~405 tokens total):
   - `DIGEST.md` — ~405 tokens
-- `feature-planner` (~394 tokens total):
-  - `DIGEST.md` — ~394 tokens
 - `pi-iteration-workflow` (~394 tokens total):
+  - `DIGEST.md` — ~394 tokens
+- `feature-planner` (~394 tokens total):
   - `DIGEST.md` — ~394 tokens
 - `skill-builder` (~391 tokens total):
   - `DIGEST.md` — ~391 tokens
@@ -356,6 +360,7 @@ Body > 2500 tokens — consider moving examples to `RECIPES.md` or topic files:
 - `mcp-architect` (~7795 body tokens)
 - `go-architect` (~6374 body tokens)
 - `go-library-builder` (~4008 body tokens)
+- `backend-performance-architect` (~3413 body tokens)
 - `repo-tooling-architect` (~3371 body tokens)
 - `uru-thesis-reviewer` (~3299 body tokens)
 - `python-architect` (~3212 body tokens)
@@ -366,8 +371,8 @@ Body > 2500 tokens — consider moving examples to `RECIPES.md` or topic files:
 - `connectrpc-architect` (~3046 body tokens)
 - `nextjs-architect` (~2973 body tokens)
 - `react-architect` (~2968 body tokens)
+- `rsk-guide` (~2967 body tokens)
 - `astro-architect` (~2889 body tokens)
-- `rsk-guide` (~2830 body tokens)
 - `cli-tool-architect` (~2784 body tokens)
 - `event-driven-architect` (~2770 body tokens)
 - `hugo-architect` (~2720 body tokens)
@@ -384,13 +389,13 @@ Heaviest 10 descriptions — each desc token is paid every turn for any session 
 - `mcp-architect` (~334 desc tokens)
 - `go-house-libs` (~265 desc tokens)
 - `token-economy` (~230 desc tokens)
+- `backend-performance-architect` (~204 desc tokens)
 - `rsk-guide` (~199 desc tokens)
 - `go-library-builder` (~167 desc tokens)
 - `landing-page-designer` (~166 desc tokens)
-- `go-architect` (~153 desc tokens)
 - `connectrpc-architect` (~153 desc tokens)
+- `go-architect` (~153 desc tokens)
 - `study-artifact-builder` (~149 desc tokens)
-- `ci-cd-architect` (~145 desc tokens)
 
 ## Notes
 
