@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-06T23:35:03Z",
+  "generated_at": "2026-11-08T17:13:31Z",
   "skills": {
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
@@ -38,6 +38,18 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/astro-architect@v1.1.0/astro-architect-v1.1.0.tar.gz"
+        }
+      }
+    },
+    "backend-performance-architect": {
+      "name": "backend-performance-architect",
+      "description": "Backend latency and throughput design — an impact-ordered playbook: query and index shape, cache layers and invalidation, moving work off the hot path (queues, outbox, precompute), fewer and parallel network hops, tail-latency controls (deadlines, retries, backpressure, load shedding, single-flight), then serialization and lock contention. Covers Go transport choices — unary RPC vs streaming/bidi gRPC, and when a fasthttp server is worth it. Use whenever a service feels slow, an endpoint misses its p99, a load test is coming, or someone asks whether a faster transport, framework or server would help.",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-08T17:13:31Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/backend-performance-architect@v1.0.0/backend-performance-architect-v1.0.0.tar.gz"
         }
       }
     },
