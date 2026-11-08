@@ -25,3 +25,5 @@ Done when each repo has one commit that `git status` shows clean for, and ralvas
 regeneration.
 
 Update 2026-11-06: the ralvaskills tree is committed (family credit, `mockup-architect`, design doc, count 60, the digests and the compaction pass, one commit per concern, no trailer); only the push is left, tracked in the release item. The other five repos are unchanged.
+
+Update 2026-11-08: the ralvaskills push is out (`e3e812d`, `backend-performance-architect` 1.0.0); its publish run and the 61-skill count gate are tracked in `b8p4rw`. The other five repos are still unchanged, so this item stays open for them.
