@@ -145,7 +145,8 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   ├── react-architect/          # ✅ exists (v1.0.0 — React 19, TS strict, TanStack Query for server state, zustand when justified)
 │   │   ├── nextjs-architect/         # ✅ exists (v1.0.0 — Next 16, App Router only, RSC defaults, server actions, hybrid data access)
 │   │   ├── hugo-architect/           # ✅ exists (v1.0.0 — Hugo Extended 0.161, Hugo Modules over submodules, Page Bundles, TOML front matter, Hugo Pipes, static-host CDN deploys)
-│   │   └── reveal-js-architect/      # ✅ exists (v1.0.0 — reveal.js 6.0.1 vanilla + @revealjs/react 0.2.1 extension, section/fragment structure, HTML vs Markdown-mode, plugin config)
+│   │   ├── reveal-js-architect/      # ✅ exists (v1.0.0 — reveal.js 6.0.1 vanilla + @revealjs/react 0.2.1 extension, section/fragment structure, HTML vs Markdown-mode, plugin config)
+│   │   └── wails-architect/          # ✅ exists (v1.0.0 — Wails v3.1 shell around an existing SPA; same-origin proxy, server-held cookies, per-OS chrome, Android fetch shim/insets, packaging and Play signing); has STACK.md
 │   ├── protocols/
 │   │   ├── rest-api-architect/       # ✅ exists (v1.0.0 — snake_case JSON, ISO 8601, RFC 9457 errors, mandatory Idempotency-Key & ETag)
 │   │   ├── grpc-architect/           # ✅ exists (v1.0.0 — vanilla gRPC, status codes, interceptor chain, deadlines, bufconn testing)
@@ -1189,6 +1190,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `nextjs-architect` | ✅ | v1.0.0 — Next.js 16, App Router only. Server components default + explicit `"use client"` boundaries, server actions for mutations, hybrid data access (RSC direct for reads, API routes for writes), streaming Suspense, edge vs node runtime, `next/image`/`next/font`/Metadata APIs, `output: "standalone"` Docker deploys |
 | `hugo-architect` | ✅ | v1.0.0 — Hugo Extended 0.161 (Go-templated SSG). Standard project layout, TOML front matter, template hierarchy (`baseof` → `single`/`list` → partials → shortcodes), **Hugo Modules over git submodules** for themes, **Page Bundles** over flat content, Hugo Pipes asset chain with mandatory fingerprinting, i18n strategies, Goldmark render hooks, static-host CDN deploys (Cloudflare Pages / GitHub Pages / S3+CloudFront). Standalone — not bundled |
 | `reveal-js-architect` | ✅ | v1.0.0 — reveal.js 6.0.1 (vanilla default) with `@revealjs/react` 0.2.1 opt-in extension. Section/fragment structure, HTML vs Markdown-mode authoring trade-off, built-in theme + override discipline, standard plugin set (highlight/notes/markdown/math/zoom/search), `Reveal.initialize()` config conventions, vanilla CDN/Vite skeleton and React component skeleton in `RECIPES.md`. Produces real deck source, not a slide spec — distinct from `demo-presentation-architect`. Standalone — not bundled |
+| `wails-architect` | ✅ | v1.0.0 — Wails v3.1.0 on Go 1.27.x, a thin shell around an existing SPA. Own `go.mod`, one asset handler (SPA fallback + same-origin API proxy, 502 on failure), **server-held session cookies** because WebKit drops `Set-Cookie` on custom-scheme responses, per-OS window chrome (`--wails-draggable`, injected Linux controls), Android fetch shim for the bodiless-GET webview plus system-bar insets, build/package and signed Play AAB. `RECIPES.md` has the jar, proxy, SPA handler, shim, insets patch, version-from-tag script and Taskfile. `STACK.md` pinned. Standalone — not bundled |
 
 #### Protocols
 | Skill | Status | Notes |

@@ -35,6 +35,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 - **`hugo-architect`** — Hugo 0.161 Extended static sites: project layout, front matter conventions, template hierarchy, Hugo Modules over submodules, Page Bundles, Hugo Pipes asset pipeline, i18n, render hooks.
 - **`reveal-js-architect`** — reveal.js 6.0.1 presentations: section/fragment structure, HTML vs Markdown-mode authoring, theming, plugin config, vanilla setup or the `@revealjs/react` extension.
 - **`astro-architect`** — Astro 6+: islands architecture with zero JS by default, Content Layer collections with loader + Zod validation, `<script>` processing, `getStaticPaths`, Actions.
+- **`wails-architect`** — Wails v3.1 desktop/mobile shell around an existing SPA: embedded build, same-origin API proxy with server-held session cookies (WebKit drops `Set-Cookie` on custom schemes), per-OS window chrome, Android fetch shim and system-bar insets, packaging and signed Play AAB.
 
 ### `protocols/` — wire-level conventions
 
