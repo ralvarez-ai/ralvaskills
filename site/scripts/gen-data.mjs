@@ -5,7 +5,7 @@
  * never typed by hand. This runs before `dev` and `build` (see package.json) and
  * fails — not warns — when the tree drifts from the anchors the copy relies on:
  *
- *   63 skills · 15 bundles · 12 cobra AddCommand (+ `completion` = 13)
+ *   64 skills · 15 bundles · 12 cobra AddCommand (+ `completion` = 13)
  *   3 MCP tools, exactly one mutating · rsk://catalog present
  *
  * Hand-checked constants that cannot be derived (a real `rsk new` run, the real
@@ -72,8 +72,8 @@ function main() {
     };
   });
   assert(
-    skills.length === 63 && skills.length === Object.keys(index).length,
-    `expected 63 skills, found ${skills.length}`,
+    skills.length === 64 && skills.length === Object.keys(index).length,
+    `expected 64 skills, found ${skills.length}`,
   );
 
   const domains = {};

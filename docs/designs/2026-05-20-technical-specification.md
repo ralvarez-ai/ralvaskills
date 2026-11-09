@@ -182,6 +182,7 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   ├── frontend/
 │   │   ├── ui-ux-architect/          # ✅ exists (v1.0.0 — WCAG 2.2 AA, Radix + Tailwind 4, design tokens, four-state UI discipline)
 │   │   ├── demo-script-architect/    # ✅ exists (moved from workflows/, then out of personal/ once generic)
+│   │   ├── narration-architect/      # ✅ exists (v1.0.0 — explainer-video narration in a controlled STE-style English: sentence limits, glossary and spoken forms, per-scene word budgets, audio-length gate, stdlib lint script in scripts/; no STACK.md)
 │   │   └── demo-presentation-architect/  # ✅ exists (v1.1.0 — slide-deck spec authoring; content distribution + within-slide organization + layout catalog in LAYOUTS.md)
 │   ├── academic/                     # ✅ category — research-publication formats (venue-specific, not institution-specific)
 │   │   └── ml-conference-paper-architect/  # ✅ exists (v1.0.0 — NeurIPS/ICML/ICLR/AAAI; style-file usage, anonymization, page-limit accounting, natbib, reproducibility checklists; layers on latex-architect); has STACK.md + assets/
@@ -1257,6 +1258,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 |---|---|---|
 | `ui-ux-architect` | ✅ | v1.0.0 — WCAG 2.2 AA mandatory, Radix primitives + Tailwind 4 + shadcn/ui recipes, OKLCH-based design tokens with semantic naming + dark mode, mobile-first + container queries, **four required states** (loading/error/empty/success) on every async surface, `prefers-reduced-motion` respected, `axe-core` + Lighthouse a11y ≥ 95 in CI |
 | `demo-script-architect` | ✅ | Presenter-centric demo scripts; no longer personal (moved to frontend/) |
+| `narration-architect` | ✅ | v1.0.0 — explainer-video narration and on-screen text in a controlled, STE-style English (about 80% of ASD-STE100, never claimed as compliant). Narration is data (a script table), one idea per sentence, one word per meaning, glossary with spoken forms, per-scene word budgets from the timeline, audio-length gate, Remotion `<Audio>` wiring and Manim notes; `scripts/narration_lint.py` (stdlib) checks sentence length, contractions, unspeakable symbols, glossary terms, budgets and audio length. Standalone — not bundled; no STACK.md (no library versions) |
 | `demo-presentation-architect` | ✅ | v1.1.0 — slide-deck spec authoring (`.md` output only). Interview-first (language → main info). Cross-slide content distribution (slide budget, fixed slots, 5 narrative arcs, splitting + repetition discipline) and within-slide organization (takeaway-led titles, ordering by layout family, body word budgets). 14-layout catalog in `LAYOUTS.md` with primitive blocks, decision flow, and deck-wide design conventions; reference HTML exemplar in the skill folder. Presenter-centric demo scripts; no longer personal (moved to frontend/) |
 
 #### Academic

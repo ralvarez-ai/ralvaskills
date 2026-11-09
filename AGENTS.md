@@ -31,7 +31,7 @@ React 19 + TypeScript + Vite, one prerendered document. `task site:dev`, `task s
 `task site:check` (lint, typecheck, build, gate). Biome (`pnpm lint` in `site/`) owns formatting
 and lint there. The page's numbers are generated from this repository by
 `site/scripts/gen-data.mjs` before every dev run and build, and that script fails when the tree
-drifts from 63 skills / 15 bundles / 13 commands / 3 tools. `site/src/data/facts.ts` holds the
+drifts from 64 skills / 15 bundles / 13 commands / 3 tools. `site/src/data/facts.ts` holds the
 hand-checked constants and labels them on the page. It consumes `@ralvarez-ts/tokens` directly
 (GitHub Packages, needs `NODE_AUTH_TOKEN`); nothing under `skills/**` or `registry/**` is read at
 runtime, only at build.
