@@ -13,3 +13,7 @@ Found while committing `backend-performance-architect` (`e3e812d`); that commit 
 Fix the formatting, then decide whether `task lint`, `task registry:check` and `task tokens:lint` belong in `check-site.yml` or a separate workflow, so a red gate stops depending on someone running it by hand.
 
 Done when `task lint` is green on `main` and CI enforces it.
+
+Reproduced again on 2026-11-09 while preparing `go-architect` 1.17.0: the only
+working-tree files were four markdown changes, so the failure is still on `main`
+and still predates the skill work.
