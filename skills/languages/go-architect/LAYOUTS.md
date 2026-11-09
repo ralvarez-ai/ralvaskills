@@ -119,8 +119,10 @@ The layouts above describe the model. The process shape on top differs:
 ## Cross-context communication
 
 - **Integration events and shared contract types** live in the publishing context's contract package (or `contracts/` when wire-only). Consumers depend on the contract, never on the publisher's model.
-- **Shared kernel** stays tiny and deliberate: value objects only, no behaviour that one context would want to change alone.
-- **Rule:** a context never imports another context's `core/`, feature root or adapters. If two contexts need the same type, either the kernel owns it or each defines its own and a translator sits at the boundary.
+- **Shared vocabulary stays tiny and deliberate:** value objects and pure rules only, no behaviour that one context would want to change alone. Name it for what it provides (`finance`, `money`, `permission`), not a catch-all (`shared`, `common`, `types`); DDD's `kernel`/`domain` are acceptable but generic. Prefer the focused name when the domain word is already a context, split it when it holds unrelated clusters, and keep vocabulary-free helpers in `pkg/`.
+- **Port signatures are part of the boundary.** An interface or func type may use the shared vocabulary, `pkg` and the standard library, never a sibling context's exported type — even when the import itself is allowlisted. Put the shared type in the vocabulary package or declare a consumer-local interface. Enforce it with an AST test over the context root; the import-level rank test cannot see this leak.
+- **Cross-repo sharing is a library, not a copied package.** When the same vocabulary is needed by independently versioned modules, publish it as a small library (`corekit`-style error kinds, a contracts module) and let each app compose it; do not fork a `kernel` into every repo. Inside one module, a `domain/<concept>/` tree is the same idea split by concept — keep each subpackage small and named for its concept.
+- **Rule:** a context never imports another context's `core/`, feature root or adapters. If two contexts need the same type, either the shared vocabulary owns it or each defines its own and a translator sits at the boundary.
 
 ## Test layout
 

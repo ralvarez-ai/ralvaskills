@@ -18,14 +18,15 @@ Go 1.27.3 standards: enums, struct layout, interfaces, concurrency, errors, DB a
 - DI through constructors; container only at the composition root; libraries expose `New(deps...)`.
 - Lint: golangci-lint v2 (the skill's golangci.yml template); `gofmt` + `goimports`; `go fix` periodically.
 - Dead code: `deadcode -test ./...`; confirm each hit before deleting.
-- Packages: short, lowercase, organized by domain. `pkg/*` only for code shared by 2+ modules.
+- Packages: short, lowercase, named for what they provide; `shared`/`common`/`types`/`model` are catch-alls. One tiny top-level vocabulary package (`money`, `permission`, or the domain) for cross-context values and pure rules; `pkg/*` only for vocabulary-free code shared by 2+ modules.
 - Per binary: thin `cmd/` main; composition root in `internal/<service>`.
 
 ## Hard constraints
 - Never embed `context.Context` in a struct.
 - Never force a type assertion on an error; use `ok` or `errors.As`.
 - Never use panic as control flow; panic only at init.
-- Never name a package `util`, `common` or `helpers`. No `init()`, no global state.
+- Never name a package `util`, `common`, `helpers`, `shared`, `types` or `model`. No `init()`, no global state.
+- Never name another context's exported type in a port signature; use the shared vocabulary or a consumer-local interface.
 - Never `fmt.Sprintf("%s:%d", ...)` for host:port.
 - Never hand-edit generated sqlc output.
 - Never build SQL by string concatenation; always bind parameters.
