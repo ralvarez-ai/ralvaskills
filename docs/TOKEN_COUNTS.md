@@ -4,7 +4,7 @@
 >
 > Estimate: ~4 bytes/token for bodies, ~3 bytes/token for descriptions (Claude tokenizer). Actual range ±15%.
 
-_Last updated: 2026-11-09 · 63 skills · 15 bundles_
+_Last updated: 2026-11-09 · 64 skills · 15 bundles_
 
 ## Load model
 
@@ -12,9 +12,9 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 | What | When loaded | Estimated tokens |
 |---|---|---:|
-| All `SKILL.md` bodies | Only when invoked | ~150541 |
-| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~178729 |
-| All `description:` fields (every skill) | Every turn, if all installed | ~7576 |
+| All `SKILL.md` bodies | Only when invoked | ~152207 |
+| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~180769 |
+| All `description:` fields (every skill) | Every turn, if all installed | ~7710 |
 
 ## Session profiles
 
@@ -58,9 +58,10 @@ These skills are not part of any bundle. They are installed individually with `r
 | `docs-architect` | workflows | ~1643 | ~144 | ~5790 |
 | `uru-scientific-paper-architect` | personal | ~2118 | ~141 | ~2572 |
 | `mockup-architect` | frontend | ~885 | ~136 | ~439 |
+| `narration-architect` | frontend | ~1666 | ~134 | ~2040 |
+| `astro-architect` | frameworks | ~2889 | ~132 | ~4442 |
 | `secrets-architect` | infra | ~2555 | ~132 | ~558 |
 | `uru-thesis-defense-architect` | personal | ~1782 | ~132 | ~2026 |
-| `astro-architect` | frameworks | ~2889 | ~132 | ~4442 |
 | `website-concept-architect` | frontend | ~2299 | ~122 | ~1199 |
 | `ml-conference-paper-architect` | academic | ~2568 | ~121 | ~2219 |
 | `uru-thesis-reviewer` | personal | ~3299 | ~119 | ~8215 |
@@ -82,9 +83,9 @@ These skills are not part of any bundle. They are installed individually with `r
 | frameworks | 10 | ~25014 | ~1118 | ~28137 |
 | personal | 7 | ~15951 | ~1046 | ~26885 |
 | protocols | 4 | ~15896 | ~695 | ~21980 |
+| frontend | 7 | ~13293 | ~858 | ~13977 |
 | languages | 3 | ~13035 | ~381 | ~15482 |
 | infra | 5 | ~11698 | ~517 | ~11921 |
-| frontend | 6 | ~11627 | ~724 | ~11937 |
 | quality | 5 | ~11193 | ~563 | ~7752 |
 | meta | 4 | ~8166 | ~572 | ~7287 |
 | workflows | 5 | ~6510 | ~512 | ~10500 |
@@ -176,18 +177,19 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 51 | `gin-architect` | frameworks | 6769 | ~1705 | ~109 | ~419 | ~1266 | ~594 |
 | 52 | `grafana-architect` | infra | 6739 | ~1685 | ~77 | ~407 | ~1149 | ~617 |
 | 53 | `uru-thesis-architect` | personal | 6676 | ~1669 | ~114 | ~0 | ~1698 | ~5466 |
-| 54 | `docs-architect` | workflows | 6570 | ~1643 | ~144 | ~0 | ~0 | ~5790 |
-| 55 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~410 |
-| 56 | `tdd` | workflows | 4080 | ~1051 | ~69 | ~0 | ~0 | ~1771 |
-| 57 | `demo-script-architect` | frontend | 3636 | ~939 | ~96 | ~0 | ~0 | ~795 |
-| 58 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~439 |
-| 59 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
-| 60 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~380 |
-| 61 | `grill-with-docs` | workflows | 2972 | ~743 | ~104 | ~0 | ~0 | ~1965 |
-| 62 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
-| 63 | `caveman` | meta | 1687 | ~422 | ~71 | ~0 | ~0 | ~272 |
+| 54 | `narration-architect` | frontend | 6661 | ~1666 | ~134 | ~0 | ~1531 | ~509 |
+| 55 | `docs-architect` | workflows | 6570 | ~1643 | ~144 | ~0 | ~0 | ~5790 |
+| 56 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~410 |
+| 57 | `tdd` | workflows | 4080 | ~1051 | ~69 | ~0 | ~0 | ~1771 |
+| 58 | `demo-script-architect` | frontend | 3636 | ~939 | ~96 | ~0 | ~0 | ~795 |
+| 59 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~439 |
+| 60 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
+| 61 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~380 |
+| 62 | `grill-with-docs` | workflows | 2972 | ~743 | ~104 | ~0 | ~0 | ~1965 |
+| 63 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
+| 64 | `caveman` | meta | 1687 | ~422 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 599527 body bytes · ~150541 body tokens · ~7576 desc tokens · ~178729 side tokens
+**Totals:** 606188 body bytes · ~152207 body tokens · ~7710 desc tokens · ~180769 side tokens
 
 ## Topic files
 
@@ -310,9 +312,9 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `DIGEST.md` — ~545 tokens
 - `security-reviewer` (~544 tokens total):
   - `DIGEST.md` — ~544 tokens
-- `astro-architect` (~540 tokens total):
-  - `DIGEST.md` — ~540 tokens
 - `latex-architect` (~540 tokens total):
+  - `DIGEST.md` — ~540 tokens
+- `astro-architect` (~540 tokens total):
   - `DIGEST.md` — ~540 tokens
 - `react-architect` (~535 tokens total):
   - `DIGEST.md` — ~535 tokens
@@ -330,6 +332,8 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `DIGEST.md` — ~519 tokens
 - `cli-tool-architect` (~517 tokens total):
   - `DIGEST.md` — ~517 tokens
+- `narration-architect` (~509 tokens total):
+  - `DIGEST.md` — ~509 tokens
 - `event-driven-architect` (~507 tokens total):
   - `DIGEST.md` — ~507 tokens
 - `uru-thesis-defense-architect` (~501 tokens total):
