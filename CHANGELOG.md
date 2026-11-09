@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## Unreleased
 
 ### Changed
+- **go-architect:** package naming follows Go's own guidance — a package is named for what it provides, and `shared`, `common`, `types` and `model` join `util`/`helpers` as catch-alls. Adds the single-module shared-vocabulary rule (one tiny top-level package for cross-context values and pure rules: `money`, `permission` or the domain word, not a bucket; split it when it grows unrelated clusters) and the port-signature rule (a port may not name a sibling context's exported type; enforce it with an AST test, not only the import rank test). `DIGEST.md` carries both as always-on rules.
 - **Breaking:** the module path is `go.ralva.dev/ralvaskills/v3` (was `github.com/ralvarezdev/ralvaskills/v3`); every import changes, and so does the `go install` path. The Go libraries it requires moved to `go.ralva.dev` too. Releases up to v3.x keep the old path.
 - **The skill registry moves to `skills.ralva.dev`:** GitHub Pages serves the index under that host (the publish workflow is unchanged, so every skill version still appears on its own) and `skills.ralvarez.dev` stays alive as a 301 Redirect Rule to it. No Worker is involved in the registry path. The CLI side is in v3.6.0 below.
 
