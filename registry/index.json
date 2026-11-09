@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-09T15:11:42Z",
+  "generated_at": "2026-11-09T15:14:43Z",
   "skills": {
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
@@ -1025,6 +1025,18 @@
           "version": "1.2.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/react-architect@v1.2.0/react-architect-v1.2.0.tar.gz"
+        }
+      }
+    },
+    "remotion-architect": {
+      "name": "remotion-architect",
+      "description": "Remotion 4.0.542 programmatic video — compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Use when building, structuring, rendering, or reviewing a Remotion video project.",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-09T15:14:43Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/remotion-architect@v1.0.0/remotion-architect-v1.0.0.tar.gz"
         }
       }
     },
