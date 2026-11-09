@@ -17,3 +17,8 @@ Done when `task lint` is green on `main` and CI enforces it.
 Reproduced again on 2026-11-09 while preparing `go-architect` 1.17.0: the only
 working-tree files were four markdown changes, so the failure is still on `main`
 and still predates the skill work.
+
+Resolved 2026-11-09: the fix was only import order in `cmd/rsk/root.go`; `task lint` is green (0
+issues). The Go gates now run as a second job in `check-site.yml`, which keeps the manual-dispatch
+policy: setup-go, `task`, golangci-lint 2.14.0, then `task lint`, `task registry:check` and
+`task tokens:lint`. `task ci:local` runs both jobs locally.
