@@ -326,7 +326,8 @@ progress. Keep the pair consistent, and rename the *pair*, not one half.
 - A package with hundreds of files and no internal structure (god package), or two packages that always change together.
 - Import cycles worked around with interfaces in a third package instead of moving the code.
 - Rank-rule exceptions that only grow.
-- `app` (or any layer name) meaning two different things in two places.
+- A root-level layer bucket (`app/`, `application/`, `services/`, `core/`, `domain/`, `shared/`) whose name
+  could hold anything; `app` or any layer name meaning two different things in two places.
 
 ## Cross-cutting rules (all layouts)
 
@@ -342,6 +343,13 @@ progress. Keep the pair consistent, and rename the *pair*, not one half.
   one folder per noun. Merge tiny ones into a neighbour.
 - **Name the composition root for what it is** (`internal/<binary>`, `bootstrap`), not `app`,
   when `app` already means a layer elsewhere.
+- **No layer bucket at the root of a multi-context module.** `internal/app/`, `internal/application/`,
+  `internal/services/`, `internal/core/` and `internal/domain/` name a category, not the work: every package
+  inside ends one level deeper for no gain, and the folder becomes where unrelated things land. Name each
+  package for what it does (`internal/obligations`, `internal/filesync`) and let `internal/` be the privacy
+  boundary. A layer folder is meaningful *inside* a feature (`<feature>/core`, `<feature>/adapters`) because it
+  groups that feature's own pieces — the rule is about the root bucket across contexts. If a bucket is
+  unavoidable, its children must be domains (`pkg/services/alerting`, as Grafana does), never "misc".
 
 ## What large Go codebases tend to do
 
@@ -350,7 +358,10 @@ triplet. The component root holds model, logic and interfaces; implementations a
 subpackages by variant; subpackages are split by concern only when self-contained; big packages
 are organized by file prefix before folders; `internal/` holds unstable helpers; shared types or
 APIs get their own package or module; `cmd/<binary>` stays thin; import direction is checked
-mechanically (import-restriction files, `depguard`, custom `go list` tests). Staying flat forever
+mechanically (import-restriction files, `depguard`, custom `go list` tests). None of them introduces an
+`application/` or `app/` layer at the root: Grafana groups application services under `pkg/services/<domain>`,
+Gitea uses `services/`, and Argo CD (controller/server/reposerver), Prometheus, Vault, etcd, Tailscale and Moby
+name the domain or the role instead. Staying flat forever
 ends in a god package — that is the signal to extract a concern or escalate the feature, not a
 reason to adopt layers up front.
 

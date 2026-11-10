@@ -1,6 +1,6 @@
 ---
 name: go-architect
-version: 1.18.0
+version: 1.19.0
 description: Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/<protocol>, postgres/, inbound <protocol> packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.
 ---
 
@@ -86,6 +86,7 @@ Prefer stdlib over hand-rolled or third-party when stdlib now covers it.
 - **Layout:** Organize by domain/feature, not by technical layer.
 - **Cross-context vocabulary (single-module repo):** when several contexts genuinely share value types or pure rules, give them one top-level package named for the vocabulary it provides — `money` (`money.Currency`), `permission` (`permission.EntryRead`), or the domain word itself (`finance.Money`, `finance.Action`). DDD's `kernel`/`domain` are acceptable but generic; `shared`/`common` are not. Prefer the focused name when the domain word is already a context. Keep it to value objects and pure functions — no DB, no identity, no behaviour one context would want to change alone — and split it when it holds unrelated clusters. `pkg/` stays vocabulary-free and technology-shaped, and exists only when an external module imports it — otherwise the code is `internal/`; do not mix the two.
 - **Ports never name another context's type.** A port (an interface or func type in a context root) may use the shared vocabulary, `pkg` and the standard library; a sibling context's exported type couples the models and belongs either in the shared package or in a consumer-local interface. Enforce it with an AST test over port signatures, not only the import rank test — an allowlisted import can still leak a type.
+- **No layer bucket at the root.** `internal/app`, `internal/application`, `internal/services`, `internal/core`, `internal/domain` and `internal/shared` name a category, not the work; name each package for what it does and let `internal/` be the privacy boundary. A layer folder belongs inside a feature (`<feature>/core`), not above unrelated contexts. See [LAYOUTS.md](LAYOUTS.md#cross-cutting-rules-all-layouts).
 - **Directory = package.** Splitting a package to hit a file count changes the import path, package name, and exported surface — split on a real seam, not on size. Many well-named files in one package is normal (`net/http`, `go/types`); the folder's navigability, not the count, is the trigger. See [code-design-refactor §4](../../refactoring/code-design-refactor/SKILL.md#4-extract).
 - **Domain modeling & interface placement:** See [hexagonal-arch](../../design/hexagonal-arch/SKILL.md) for ports/adapters and [ddd-architect](../../design/ddd-architect/SKILL.md) for aggregates/bounded contexts. For `go.work` multi-module layout, see §16.
 

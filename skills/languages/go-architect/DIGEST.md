@@ -20,6 +20,7 @@ Go 1.27.3 standards: enums, struct layout, interfaces, concurrency, errors, DB a
 - Dead code: `deadcode -test ./...`; confirm each hit before deleting.
 - Packages: short, lowercase, named for what they provide; `shared`/`common`/`types`/`model` are catch-alls. One tiny top-level vocabulary package (`money`, `permission`, or the domain) for cross-context values and pure rules; `pkg/*` only when an external module imports it, otherwise `internal/`.
 - Per binary: thin `cmd/` main; composition root in `internal/<service>`.
+- No root layer bucket (`internal/app`, `application`, `services`, `core`, `domain`, `shared`): name each package for what it does; `internal/` is the privacy boundary, not a layer.
 - Adapters: `<ctx>/postgres/` for the store, `<ctx>/client/<protocol>/` for outbound (`client/rest`, `client/grpc`), `<ctx>/<protocol>/` for inbound handlers (`mcp/`); no `remote/`, `transport/` or `handler/` folders, and servers stay app-level (`internal/api`, `internal/grpcserver`).
 
 ## Hard constraints
