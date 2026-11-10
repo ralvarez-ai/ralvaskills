@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-09T22:53:44Z",
+  "generated_at": "2026-11-10T02:20:06Z",
   "skills": {
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
@@ -335,6 +335,18 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/event-driven-architect@v1.1.0/event-driven-architect-v1.1.0.tar.gz"
+        }
+      }
+    },
+    "explainer-architect": {
+      "name": "explainer-architect",
+      "description": "Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) — the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-10T02:20:06Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-architect@v1.0.0/explainer-architect-v1.0.0.tar.gz"
         }
       }
     },
@@ -770,6 +782,18 @@
         }
       }
     },
+    "manim-architect": {
+      "name": "manim-architect",
+      "description": "Manim Community 0.22 explainer scenes for formal objects that change shape — graphs explored, formulas built piece by piece, tables filled in, traces unrolled — with LaTeX formulas fitted to the frame, a base class that times scenes from the narration and writes a sections file, a cue helper, a teaching-helper package, audio muxed per scene, 1080p review renders and the traps that waste hours (morphing text, a failing formula failing the whole render, unredirected output). Use when writing, structuring, rendering or reviewing Manim scenes, alone or as a companion to a Remotion video.",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-10T02:20:06Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/manim-architect@v1.0.0/manim-architect-v1.0.0.tar.gz"
+        }
+      }
+    },
     "mcp-architect": {
       "name": "mcp-architect",
       "description": "MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations, structured output, JSON-RPC error mapping, prompt-injection/SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — JSON Schemas as the source of truth for tool inputs/outputs, Go types generated with atombender/go-jsonschema, enums shared via $defs, and the two traps (SDK resolves OutputSchema with no loader; go-jsonschema ignores $ref) that silently yield a wrong contract. MCP Apps panels only as an addition to a complete text result, with capability detection on stateless servers.",
@@ -849,12 +873,17 @@
     "narration-architect": {
       "name": "narration-architect",
       "description": "Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) — short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-11-09T22:53:44Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-architect@v1.0.0/narration-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-10T02:20:06Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-architect@v1.1.0/narration-architect-v1.1.0.tar.gz"
         }
       }
     },
@@ -1042,13 +1071,18 @@
     },
     "remotion-architect": {
       "name": "remotion-architect",
-      "description": "Remotion 4.0.542 programmatic video — compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Use when building, structuring, rendering, or reviewing a Remotion video project.",
-      "latest": "1.0.0",
+      "description": "Remotion 4.0.542 programmatic video — compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-11-09T15:14:43Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/remotion-architect@v1.0.0/remotion-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-10T02:20:06Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/remotion-architect@v1.1.0/remotion-architect-v1.1.0.tar.gz"
         }
       }
     },
