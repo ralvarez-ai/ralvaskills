@@ -13,6 +13,8 @@ Writes explainer-video narration and on-screen text in a controlled, STE-style E
 - Run `scripts/narration_lint.py` (add `--audio-dir` for the length gate) before declaring a script done. Errors block; warnings are heuristics.
 - Interview first: length, scene table, audience, language, who supplies the voice, what is real, sources.
 
+- For a learner lesson the dial may be conversational (about 30 words a sentence, connectors allowed, glossary kept); see CONVERSATIONAL.md.
+
 ## Hard constraints
 
 - Never claim ASD-STE100 compliance: no dictionary check is done, and the name is a trademark. Never copy the specification or its word list.

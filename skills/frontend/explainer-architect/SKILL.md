@@ -6,7 +6,7 @@ description: Engine-independent design of teaching videos (explainers for a mech
 
 # Explainer Architect
 
-Decides what a teaching video shows and in which order, and how to check it. It produces the scene plan, the content file and the review, not the code of an engine: for Remotion see [remotion-architect](../../frameworks/remotion-architect/SKILL.md), for Manim see [manim-architect](../../frameworks/manim-architect/SKILL.md). The words and the speech rate belong to [narration-architect](../narration-architect/SKILL.md); a live, presenter-led demo is [demo-script-architect](../demo-script-architect/SKILL.md). Templates and commands are in [RECIPES.md](RECIPES.md).
+Decides what a teaching video shows and in which order, and how to check it. It produces the scene plan, the content file and the review, not the code of an engine: for Remotion see [remotion-architect](../../frameworks/remotion-architect/SKILL.md), for Manim see [manim-architect](../../frameworks/manim-architect/SKILL.md). The words and the speech rate belong to [narration-architect](../narration-architect/SKILL.md); a live, presenter-led demo is [demo-script-architect](../demo-script-architect/SKILL.md). Templates and commands are in [RECIPES.md](RECIPES.md); videos for learners (a worked number per concept, predict then reveal, a pointer to a tool as a switch) are in [LEARNERS.md](LEARNERS.md).
 
 ## 1. Mental model
 

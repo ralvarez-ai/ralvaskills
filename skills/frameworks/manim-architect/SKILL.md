@@ -6,7 +6,7 @@ description: Manim Community 0.22 explainer scenes for formal objects that chang
 
 # Manim Architect
 
-Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene code and render scripts. What to teach and in which order is [explainer-architect](../../frontend/explainer-architect/SKILL.md); the words and the speech rate are [narration-architect](../../frontend/narration-architect/SKILL.md); a Remotion frame that embeds a clip or owns the final timing is [remotion-architect](../remotion-architect/SKILL.md). Code patterns are in [RECIPES.md](RECIPES.md); pinned versions and system packages in [STACK.md](STACK.md).
+Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene code and render scripts. What to teach and in which order is [explainer-architect](../../frontend/explainer-architect/SKILL.md); the words and the speech rate are [narration-architect](../../frontend/narration-architect/SKILL.md); a Remotion frame that embeds a clip or owns the final timing is [remotion-architect](../remotion-architect/SKILL.md). Code patterns are in [RECIPES.md](RECIPES.md); objects kept across scenes, a worked number before a formula, a squared quantity drawn as a square and the draft sweep are in [TRAPS.md](TRAPS.md); pinned versions and system packages in [STACK.md](STACK.md).
 
 ## 1. When Manim, when not
 
@@ -30,6 +30,7 @@ Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene 
 - **Build a formula from pieces** and point each piece at the part of the drawing it describes, so the viewer sees where every symbol comes from. Colour the piece and its target the same.
 - **Colours and fonts come from one token file** shared with the other tools (CSS custom properties parsed once), so Manim and the web side cannot drift. Register fonts in a context manager around the scene.
 - **Layout is a budget.** A frame is 8 units high; keep a title band, a drawing band, a summary band and a footer band, and a measured gap between them. Dense text on one side and an empty side is a layout bug.
+- **Teach a formula with one real case first** (pick an item by a stated rule, show its numbers, then apply to all); see [TRAPS.md](TRAPS.md#2-a-worked-number-before-the-general-formula).
 - **Every scene is closed to the same state**: everything fades out in a fixed time, and the last frame of a scene is the finished drawing.
 
 ## 4. Rendering
@@ -51,6 +52,7 @@ Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene 
 - Output of the render printed into the session.
 - Colours or fonts typed into scenes instead of read from the token file.
 - Page-wide formulas that overflow the frame because nothing scaled them.
+- A kept drawing that disappears or sits on the wrong layer because only top-level mobjects were compared, or a group left at `z_index` 0 ([TRAPS.md](TRAPS.md#1-objects-that-stay-on-screen-across-scenes)).
 - A `Scene.wait()` with no reason; a pause either holds a finished drawing or waits for a cue.
 
 ## 6. Review checklist

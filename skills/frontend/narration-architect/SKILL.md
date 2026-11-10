@@ -19,6 +19,7 @@ Writes the words of an explainer video: voiceover and on-screen text, in a contr
 
 - **Strict:** every rule in §3, for steps a viewer will repeat.
 - **80% (default):** keep the sentence limits, active voice, one meaning per word and no idioms. Allow named technical terms from the glossary, and a connector such as "because" or "so" when it carries the reason.
+- **Conversational (about 30 words a sentence):** for a lesson that explains why, where many short sentences sound clipped. Keep the glossary and one meaning per word, allow connectors and a varied rhythm. Details, and notes on offline voices, in [CONVERSATIONAL.md](CONVERSATIONAL.md).
 - **Say "STE-style", never "ASD-STE100 compliant".** No approved-word dictionary is checked here, and the name is a trademark of ASD. The official specification (Issue 9, January 2025) is free on request at asd-ste100.org. Read it for the exact limits and the dictionary; do not copy its text or word list into scripts or into this skill.
 
 ## 3. Writing rules

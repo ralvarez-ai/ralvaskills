@@ -12,6 +12,8 @@ Designs teaching videos independent of the engine that draws them: scene rule, p
 - Before handoff: a contact sheet of end-state frames, the dense scenes at full size, the length gate with real audio, all at the final resolution.
 - Interview first: audience, the one thing they must take away, sources and which are real, engine, who supplies the voice.
 
+- For learners: one worked number per concept, predict then reveal, a pointer to a tool is an option off by default (LEARNERS.md).
+
 ## Hard constraints
 
 - Never overwrite a render someone has seen or published.

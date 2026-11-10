@@ -11,6 +11,7 @@ Manim Community 0.22 scenes for formal objects that change shape, timed from the
 - Colours and fonts come from the shared token file. Teaching helpers live in a package, one module per family; chapter files stay thin.
 - Draft with `-ql`, review at 1920x1080 30 fps `-qh`. Always redirect output to a log file.
 - Audio is muxed in a separate step from the sections file (`adelay`, `amix=normalize=0`, copy the video); scene code never calls a speech engine.
+- Keep a drawing across scenes by family, set `z_index` on groups, use `Group` for images; teach a formula with one real worked case first (details in TRAPS.md).
 - Review with a contact sheet of end-state frames and full-size frames of dense scenes (explainer-architect).
 
 ## Hard constraints
