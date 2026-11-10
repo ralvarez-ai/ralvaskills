@@ -119,10 +119,50 @@ The layouts above describe the model. The process shape on top differs:
 ## Cross-context communication
 
 - **Integration events and shared contract types** live in the publishing context's contract package (or `contracts/` when wire-only). Consumers depend on the contract, never on the publisher's model.
-- **Shared vocabulary stays tiny and deliberate:** value objects and pure rules only, no behaviour that one context would want to change alone. Name it for what it provides (`finance`, `money`, `permission`), not a catch-all (`shared`, `common`, `types`); DDD's `kernel`/`domain` are acceptable but generic. Prefer the focused name when the domain word is already a context, split it when it holds unrelated clusters, and keep vocabulary-free helpers in `pkg/`.
+- **Shared vocabulary stays tiny and deliberate:** value objects and pure rules only, no behaviour that one context would want to change alone. Name it for what it provides (`finance`, `money`, `permission`), not a catch-all (`shared`, `common`, `types`); DDD's `kernel`/`domain` are acceptable but generic. Prefer the focused name when the domain word is already a context, split it when it holds unrelated clusters, and keep vocabulary-free helpers in `internal/` unless an external module imports them (then `pkg/`).
 - **Port signatures are part of the boundary.** An interface or func type may use the shared vocabulary, `pkg` and the standard library, never a sibling context's exported type — even when the import itself is allowlisted. Put the shared type in the vocabulary package or declare a consumer-local interface. Enforce it with an AST test over the context root; the import-level rank test cannot see this leak.
 - **Cross-repo sharing is a library, not a copied package.** When the same vocabulary is needed by independently versioned modules, publish it as a small library (`corekit`-style error kinds, a contracts module) and let each app compose it; do not fork a `kernel` into every repo. Inside one module, a `domain/<concept>/` tree is the same idea split by concept — keep each subpackage small and named for its concept.
 - **Rule:** a context never imports another context's `core/`, feature root or adapters. If two contexts need the same type, either the shared vocabulary owns it or each defines its own and a translator sits at the boundary.
+
+## Adapter names: role and protocol
+
+Every context root holds the same few adapter shapes; name them by role and protocol, one axis per
+level:
+
+```
+<ctx>/
+  entity.go port.go service.go
+  postgres/            the store (sqlc + pgx under db/)
+  client/<protocol>/   outbound: client/rest, client/grpc
+  <protocol>/          inbound handlers: mcp/, rest/, grpc/
+```
+
+- **Role folder plus protocol leaf for outbound; protocol only for inbound.** `client/rest` reads as
+  "the REST client"; `mcp/` is the handler package the shared MCP server registers. Do not add
+  `remote/` (a second word for `client/`), `transport/` (it implies a server the package does not
+  own), or `handler/` (Kubernetes' `endpoints/handlers` is a subpackage of its API server, not one
+  per resource).
+- **Servers stay at the application level.** `internal/api` (HTTP), `internal/grpcserver` and
+  `internal/<mcp>` own the listeners, auth, error mapping and lifecycle; the context packages are
+  handlers. When a context owns inbound handlers, `<ctx>/mcp` — later `<ctx>/rest`, `<ctx>/grpc` —
+  is the whole name.
+- **`rpc` names an RPC layer you own; stock gRPC is `grpc`.** etcd `v3rpc`, CockroachDB `pkg/rpc`
+  and Consul `agent/rpc` are in-house RPC/endpoint surfaces; a generated gRPC client is
+  `client/grpc` (OpenTelemetry's `otlptracegrpc` uses the same word).
+- **Generated code keeps the role on the type** (`XClient`/`XServer`); the package keeps the domain
+  or the protocol.
+- **Single-context apps keep `transport/<protocol>`** as the app-level server layer (Consul
+  `agent`, Vault `http`, several small apps that follow this skill). The per-context split above is
+  for multi-context modules where each context has its own surfaces.
+- **`pkg/` only when an external module imports it.** Otherwise the code is `internal/`: Go gives
+  `pkg` no meaning, and a repo that calls its own `pkg/` "not a public promise" should not keep the
+  folder.
+
+Evidence: etcd `server/etcdserver/api/{v3rpc,etcdhttp}`, Vault `http/`, Consul `agent/` with
+`agent/rpc`, Nomad `command/agent`, Prometheus `web/api/v1`, Grafana `pkg/api`, Kubernetes
+`client-go` (a published client) next to `apiserver` (the server) and `cri/{remote,server}` (role
+folders). Clients are separate modules (`client-go`, `clientv3`, `consul/api`) or a `client/`
+folder; servers are not published.
 
 ## Test layout
 
@@ -158,7 +198,7 @@ repo/
 ├── cmd/<binary>/            main.go only: flags/env, then internal/<binary>
 ├── internal/<binary>/       composition root per binary, plus private helpers
 ├── internal/webui/          //go:embed all:dist + the SPA handler
-├── <ctx>/                   bounded contexts, flat; postgres/, transport/<proto> as siblings
+├── <ctx>/                   bounded contexts, flat; postgres/, client/<proto>/, <proto>/ as siblings
 ├── kernel/  pkg/  db/
 ├── contracts/{openapi,proto,schema}/
 ├── web/                     the SPA; its build is copied into internal/webui/dist
@@ -227,9 +267,10 @@ Docker, docs) and changes no behaviour.
    binary (`internal/<binary>`) or for what it is (`internal/bootstrap`, `internal/api`). With one
    binary a shared root is enough; with two or more, give each its own so one lifecycle cannot
    disturb another.
-5. **Contexts stay flat** at the module root, implementations as sibling subpackages (`postgres/`,
-   `transport/mcp/`, `remote/grpc/`). Group under `ledger/`, `billing/` only past ~7 contexts — see
-   layout 5.
+5. **Contexts stay flat** at the module root, implementations as sibling subpackages named by role
+   and protocol (`postgres/`, `client/<protocol>/`, and `<protocol>/` for inbound handlers — see
+   [Adapter names](#adapter-names-role-and-protocol)). Group under `ledger/`, `billing/` only past
+   ~7 contexts — see layout 5.
 6. **Operational directories exist once, at the repo root:** `config/`, `bin/`, `scripts/`, `docs/`,
    `deploy/`. A `backend/scripts/` next to a root `scripts/` is two homes for one concern, and
    `backend/config/` splits configuration by language instead of by scope.
