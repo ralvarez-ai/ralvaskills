@@ -27,6 +27,8 @@ Go 1.27.3 standards: enums, struct layout, interfaces, concurrency, errors, DB a
 - Never embed `context.Context` in a struct.
 - Never force a type assertion on an error; use `ok` or `errors.As`.
 - Never use panic as control flow; panic only at init.
+- Ports live in the context root package; a `port/` folder only survives a cycle or a cross-context contract, and is then named for the contract (`coreapi`). `adapter`/`adapters` are never folder names.
+- golangci `exclusions.rules[].path` is a regex: `(a|b)` matches, `{a,b}` silently matches nothing, and a stale path after a rename disables the rule.
 - Never name a package `util`, `common`, `helpers`, `shared`, `types` or `model`. No `init()`, no global state.
 - Never name another context's exported type in a port signature; use the shared vocabulary or a consumer-local interface.
 - Never `fmt.Sprintf("%s:%d", ...)` for host:port.

@@ -26,7 +26,7 @@
     },
     "astro-architect": {
       "name": "astro-architect",
-      "description": "Astro 6+ standards — islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `\u003cscript\u003e` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.",
+      "description": "Astro 6+ standards — islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `<script>` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.",
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
@@ -423,8 +423,8 @@
     },
     "go-architect": {
       "name": "go-architect",
-      "description": "Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/\u003cprotocol\u003e, postgres/, inbound \u003cprotocol\u003e packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.",
-      "latest": "1.19.0",
+      "description": "Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/<protocol>, postgres/, inbound <protocol> packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.",
+      "latest": "1.20.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -505,6 +505,11 @@
           "version": "1.2.0",
           "published_at": "2026-07-05T15:51:19Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/go-architect@v1.2.0/go-architect-v1.2.0.tar.gz"
+        },
+        "1.20.0": {
+          "version": "1.20.0",
+          "published_at": "2026-11-10T21:37:16Z",
+          "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/go-architect@v1.20.0/go-architect-v1.20.0.tar.gz"
         },
         "1.3.0": {
           "version": "1.3.0",
@@ -682,7 +687,7 @@
     },
     "hexagonal-arch": {
       "name": "hexagonal-arch",
-      "description": "Hexagonal architecture (ports \u0026 adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
+      "description": "Hexagonal architecture (ports & adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
       "latest": "1.2.0",
       "versions": {
         "1.0.0": {
