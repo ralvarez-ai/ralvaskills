@@ -1,12 +1,12 @@
 ---
 name: remotion-architect
-version: 1.0.0
-description: Remotion 4.0.542 programmatic video — compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Use when building, structuring, rendering, or reviewing a Remotion video project.
+version: 1.1.0
+description: Remotion 4.0.542 programmatic video — compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.
 ---
 
 # Remotion Architect
 
-Targets **Remotion 4.0.542** (React, TypeScript). Produces real Remotion source — `Root.tsx`, composition components, render scripts — not a storyboard or script document (for that, see [demo-script-architect](../../frontend/demo-script-architect/SKILL.md)). Project skeletons and render recipes in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md). General React conventions (hooks, component structure) defer to [react-architect](../react-architect/SKILL.md).
+Targets **Remotion 4.0.542** (React, TypeScript). Produces real Remotion source — `Root.tsx`, composition components, render scripts — not a storyboard or script document (for that, see [demo-script-architect](../../frontend/demo-script-architect/SKILL.md)). Project skeletons and render recipes in [RECIPES.md](RECIPES.md); explainer videos, scene kinds, variants and embedding Manim clips in [EXPLAINERS.md](EXPLAINERS.md); pinned versions in [STACK.md](STACK.md). General React conventions (hooks, component structure) defer to [react-architect](../react-architect/SKILL.md).
 
 ## 1. Mental model
 
@@ -96,7 +96,11 @@ Never scaffold before these are answered, in order:
 
 Remotion is source-available, **not** plain MIT: individuals and eligible small teams use it free; **companies above the free-tier eligibility need a paid Company License**, and the license terms also cover Lambda render usage telemetry. Before delivering a project for a company, confirm eligibility at <https://www.remotion.dev/docs/license> and tell the user — don't assume.
 
-## 11. Anti-patterns and review checklist
+## 11. Explainer and teaching videos
+
+When the video teaches, plan it with [explainer-architect](../../frontend/explainer-architect/SKILL.md) (scene rule, provenance chips, content file, cues, versions, look check), write its words with [narration-architect](../../frontend/narration-architect/SKILL.md), and read [EXPLAINERS.md](EXPLAINERS.md) for the Remotion side: scenes as a union of kinds with optional `a`/`b` variants, a `style` prop whose default is the old look, charts wired through the schema, embedding a Manim clip ([manim-architect](../manim-architect/SKILL.md)), and render pitfalls.
+
+## 12. Anti-patterns and review checklist
 
 Rules already stated above, checked on review:
 
@@ -108,5 +112,6 @@ Rules already stated above, checked on review:
 - Mixed or `^`-ranged `@remotion/*` versions (§8).
 - Re-bundling per render in batch jobs; unvalidated `inputProps` on a server (§7).
 - Hardcoded dimensions in scene math (§5).
+- A teaching scene that opens with the formula, scene times from a guessed speech rate, a render that overwrote an earlier version, a new look that changes the default render (§11).
 
 Before handing off: `remotion compositions` lists every id; a still of a first, middle and last frame of each composition renders with no console errors; duration constants add up to `durationInFrames`; the license question (§10) was raised.

@@ -1,12 +1,12 @@
 ---
 name: narration-architect
-version: 1.0.0
+version: 1.1.0
 description: Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) — short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.
 ---
 
 # Narration Architect
 
-Writes the words of an explainer video: voiceover and on-screen text, in a controlled English that a synthetic voice reads clearly and a non-native listener can follow. It produces scripts and checks, not video code (for that, see [remotion-architect](../../frameworks/remotion-architect/SKILL.md)). For live, presenter-led demos in a conversational voice, see [demo-script-architect](../demo-script-architect/SKILL.md); this skill is the opposite register: recorded, controlled, one claim per sentence. Templates, the budget math and the audio wiring are in [RECIPES.md](RECIPES.md).
+Writes the words of an explainer video: voiceover and on-screen text, in a controlled English that a synthetic voice reads clearly and a non-native listener can follow. It produces scripts and checks, not video code (for that, see [remotion-architect](../../frameworks/remotion-architect/SKILL.md) or [manim-architect](../../frameworks/manim-architect/SKILL.md)); what a teaching scene shows is [explainer-architect](../explainer-architect/SKILL.md). For live, presenter-led demos in a conversational voice, see [demo-script-architect](../demo-script-architect/SKILL.md); this skill is the opposite register: recorded, controlled, one claim per sentence. Templates, the budget math and the audio wiring are in [RECIPES.md](RECIPES.md).
 
 ## 1. Mental model
 
@@ -35,7 +35,9 @@ Writes the words of an explainer video: voiceover and on-screen text, in a contr
 
 ## 4. Narrating for video
 
-- **Plan at 2.5 words per second.** The words allowed in a scene are `floor((scene seconds - lead-in - tail) * rate)`, with 0.5 s of silence at each end. Replace the rate with the real voice once it is measured.
+- **Plan at 2.5 words per second.** The words allowed in a scene are `floor((scene seconds - lead-in - tail) * rate)`, with 0.5 s of silence at each end. 2.5 is a first guess: replace it with the measured rate of the real voice.
+- **Measure on the slowest scene, not the mean.** Real voices vary a lot between scenes (one video ran from 1.75 to 3.1 words per second, and a plan at 2.5 failed 7 of 15 scenes). Count spoken words, after the `say` forms: an acronym said as letters is one word per letter. The lint script prints the mean and the slowest rate when it is given `--audio-dir`.
+- **One rate drives both the scene length and the cues.** If scenes are timed from words and drawings are cued to phrases, a wrong rate makes the scene too short and every cue early. Set the measured rate in the script file; do not patch single scenes.
 - **Tie each sentence to a cue.** Note the second at which its picture appears, so the audio lines up with the animation (`<Sequence from>` in Remotion, `wait` and `run_time` in Manim).
 - **Leave silence.** Give a new diagram one or two seconds before speaking, and do not talk over dense text.
 - **First sentence says what the scene shows.** The last may bridge to the next scene, only when it states a reason.
@@ -55,7 +57,7 @@ Writes the words of an explainer video: voiceover and on-screen text, in a contr
 3. **Draft each scene** at the 80% dial, inside its budget.
 4. **Lint:** run `scripts/narration_lint.py` on the script. Errors block; warnings are heuristics, not verdicts. Usage in [RECIPES.md](RECIPES.md#4-the-lint-script).
 5. **Generate audio per scene** with the chosen engine. Cache by hash of text, voice and settings so unchanged scenes are not regenerated.
-6. **Gate on length.** Measure each audio file; if it is longer than the scene minus the tail, cut words. Do not speed the voice up to fit.
+6. **Gate on length, then fix the cause.** Measure each audio file; if it is longer than the scene minus the tail, there are two honest fixes. If the script is over budget, cut words. If the picture is correct and only the rate was optimistic, lower `rate` in the script file to the measured slowest rate and rebuild the scene times: audio that already exists stays valid. Do not speed the voice up or trim it to fit.
 7. **Wire it in:** one `<Audio>` per scene inside its sequence ([RECIPES.md](RECIPES.md#5-wiring-audio-in-remotion)).
 8. **Review:** listen once, and check each sentence against its source.
 
@@ -68,6 +70,7 @@ Provider choice, cost, privacy and voice rights belong to the owner. Keys live i
 - Two names for one thing across scenes.
 - Reading the screen aloud word for word.
 - Speeding up or trimming audio to hide an over-budget script.
+- Keeping a planning rate that the measured audio contradicts, so scenes end before the voice does.
 - A claim in the voice that the sources do not support.
 - Claiming ASD-STE100 compliance.
 - A secret in a script, a header or a log.
@@ -77,6 +80,7 @@ Provider choice, cost, privacy and voice rights belong to the owner. Keys live i
 - [ ] Every sentence is within the limit, in active voice, with its actor named.
 - [ ] Every term matches the glossary, and every glossary term has a spoken form.
 - [ ] Each scene is within its word budget, and its measured audio is within its seconds.
+- [ ] The script's `rate` is the measured slowest rate, not the planning guess.
 - [ ] No symbol, path or identifier is spoken.
 - [ ] Every claim traces to a source shown or cited with the video.
 - [ ] Anything not recorded is said to be an illustration.

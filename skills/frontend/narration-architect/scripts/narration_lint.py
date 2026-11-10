@@ -127,18 +127,19 @@ def check_scene(scene: dict, cfg: dict, glossary: list[dict]) -> tuple[list[Find
     return findings, total, allowed
 
 
-def check_audio(scene: dict, cfg: dict, audio_dir: Path) -> list[Finding]:
+def check_audio(scene: dict, cfg: dict, audio_dir: Path) -> tuple[list[Finding], float | None]:
+    """Findings and the measured length in seconds (None when there is no audio or it cannot be measured)."""
     scene_id = scene.get("id", "?")
     seconds = scene.get("seconds")
     match = next((audio_dir / f"{scene_id}{suffix}" for suffix in AUDIO_SUFFIXES if (audio_dir / f"{scene_id}{suffix}").exists()), None)
     if match is None:
-        return [Finding("warning", f"scene {scene_id!r}", f"no audio file in {audio_dir}")]
+        return [Finding("warning", f"scene {scene_id!r}", f"no audio file in {audio_dir}")], None
     length = audio_seconds(match)
     if length is None:
-        return [Finding("warning", f"scene {scene_id!r}", f"could not measure {match.name} (is ffprobe installed?)")]
+        return [Finding("warning", f"scene {scene_id!r}", f"could not measure {match.name} (is ffprobe installed?)")], None
     if seconds is not None and length > seconds - cfg["tail"]:
-        return [Finding("error", f"scene {scene_id!r}", f"audio is {length:.2f} s, scene allows {seconds - cfg['tail']:.2f} s: cut words")]
-    return []
+        return [Finding("error", f"scene {scene_id!r}", f"audio is {length:.2f} s, scene allows {seconds - cfg['tail']:.2f} s: cut words")], length
+    return [], length
 
 
 def main() -> int:
@@ -154,15 +155,24 @@ def main() -> int:
     glossary = data.get("glossary", [])
 
     findings: list[Finding] = []
+    measured: list[tuple[str, float]] = []  # (scene id, words per second of speech)
     for scene in data.get("scenes", []):
         scene_findings, used, allowed = check_scene(scene, cfg, glossary)
         findings += scene_findings
         if args.audio_dir is not None:
-            findings += check_audio(scene, cfg, args.audio_dir)
+            audio_findings, length = check_audio(scene, cfg, args.audio_dir)
+            findings += audio_findings
+            speech = None if length is None else length - cfg["leadIn"] - cfg["tail"]
+            if speech and speech > 0 and used:
+                measured.append((scene.get("id", "?"), used / speech))
         print(f"scene {scene.get('id', '?')!r}: {used} words" + (f" of {allowed}" if allowed else ""))
 
     for finding in findings:
         print(finding)
+    if measured:
+        slowest = min(measured, key=lambda item: item[1])
+        mean = sum(rate for _, rate in measured) / len(measured)
+        print(f"measured rate: mean {mean:.2f}, slowest {slowest[1]:.2f} words per second (scene {slowest[0]!r}); the script says {cfg['rate']}")
     errors = sum(1 for f in findings if f.level == "error")
     warnings = len(findings) - errors
     print(f"{errors} error(s), {warnings} warning(s)")

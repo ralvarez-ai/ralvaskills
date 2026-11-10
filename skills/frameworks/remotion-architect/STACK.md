@@ -20,4 +20,4 @@
 - React-side conventions defer to [react-architect](../react-architect/SKILL.md).
 
 _Last reviewed: 2026-11-09_
-_Skill version at last review: 1.0.0_
+_Skill version at last review: 1.1.0_
