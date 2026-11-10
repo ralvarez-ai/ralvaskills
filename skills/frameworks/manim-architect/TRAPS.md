@@ -4,12 +4,13 @@ Details behind [SKILL.md](SKILL.md). Read it when a scene keeps objects across s
 
 ## 1. Objects that stay on screen across scenes
 
-A video often keeps one drawing (a plot, a table) and changes only what sits around it. The base class fades out "everything that is not kept". Four traps:
+A video often keeps one drawing (a plot, a table) and changes only what sits around it. The base class fades out "everything that is not kept". Five traps:
 
 - **Keep the whole family.** An animation may add parts one by one, or wrap them in an anonymous `AnimationGroup` group. The scene's `mobjects` list then holds a wrapper, not the object you marked. Compare the *family* (`get_family()`) of each scene mobject with the family of each kept one, and keep a mobject when any member matches. Comparing the top-level objects only fades out things you meant to keep.
 - **Set `z_index` on the group.** A group is drawn by its own `z_index`, not by its parts'. An anonymous group made by an animation has `z_index = 0`, so a kept layer can end up above or below the wrong thing. Give every group the layer you want, and use fixed layers: plot frame lowest, region or heat images next, lines, points, markers on top.
 - **Images do not go in a `VGroup`.** `ImageMobject` (a raster made from a grid, a heat map, class regions) needs `Group`. A `VGroup` raises at `add`.
 - **Do not name an attribute `points` on a `VGroup` or `Mobject`.** Manim uses `.points` for its geometry; assigning your own list silently breaks drawing. Use `markers`, `dots`, `members`.
+- **Never fade out what a scene change already removed.** If the base class fades everything not kept when a scene closes, a `FadeOut(old_things)` at the start of the next scene makes Manim put those things back at full opacity and fade them again: a flash of the previous scene. Drop a `FadeOut` whose target is no longer in the scene (override `play`, and keep its time as a wait), narrow a group to the parts still shown, and check every render for flashes: decode to small frames and look for a jump that returns within about half a second (a normal animation changes a little every frame; a flash is one big step in and one out).
 
 ## 2. A worked number before the general formula
 

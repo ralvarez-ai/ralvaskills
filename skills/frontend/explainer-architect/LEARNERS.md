@@ -14,11 +14,15 @@ When a formula squares, averages or normalises something, a scene shows what tha
 
 Before a result, give the viewer a beat to guess: the voice asks the question, the picture holds, the answer follows. Use it where a wrong guess is common (which centroid is nearest, where the curve bends). One or two per video; more is a quiz.
 
-## 4. Pointing to a tool is a switch
+## 4. Say how it differs from its neighbours
+
+A method is easier to remember against the others of its family (clustering: round regions, dense areas, ellipses, exemplars; ensembles: bagging, boosting, stacking; kernels). End the video with one scene that runs the siblings on the same data, as a row of equal panels: a title, one line on what each assumes, what it found, and a mark where it matches the known answer. Reveal one panel as the voice names it, then switch every panel to a second dataset where the winner changes. Use data the video already has (the same runs as the app's comparison view), and keep it to three or four methods, so the voice can name them in turn.
+
+## 5. Pointing to a tool is a switch
 
 A video may end by sending the viewer to an app, a lab or a repository. Make that an option (a flag at render and narration time) that is off by default, and keep the words in their own field (`labRef`), so the same take can ship with or without it. The off version must not leave a gap: the last scene still ends on a stable frame.
 
-## 5. Order of work for a new topic
+## 6. Order of work for a new topic
 
 1. Write the one thing the viewer must be able to say afterwards.
 2. List the quantities the formula uses and decide how each is drawn.
