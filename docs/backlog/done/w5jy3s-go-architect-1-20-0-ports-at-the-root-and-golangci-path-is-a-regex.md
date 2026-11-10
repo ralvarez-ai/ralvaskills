@@ -19,3 +19,15 @@ Three rules keep being re-derived in review because the skill does not state the
   brace list silently disables the rule; `identity/(a|b)/` works. The template must use the second form and say why.
 
 Publish as 1.20.0; the estate re-pin is tracked in ralvafi.
+
+**2026-11-10: done, pending the push.** `go-architect` is 1.20.0: SKILL.md gained the ports-at-the-root rule (a `port/`
+folder only survives a cycle or a cross-context contract, and is named for the contract — `coreapi`), the ban on
+`adapter`/`adapters` as folder names, and the golangci note that `exclusions.rules[].path` is a **regex** (`{a,b}`
+matches nothing; a stale path after a rename silently disables the rule). DIGEST.md carries both as always-on bullets so
+`rsk pin` materialises them.
+
+`task registry:generate` + `registry:sync-index` rebuilt the index; only the `go-architect` entry was spliced in, because
+the regenerated index also carried three skills from another session's uncommitted edits (remotion-architect,
+explainer-architect, narration-architect). Publication happens on push, so the estate re-pin (ralvafi `fcv886`) waits for
+that.
+
