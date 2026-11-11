@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-11T13:51:07Z",
+  "generated_at": "2026-11-11T13:58:34Z",
   "skills": {
     "adhd-mode": {
       "name": "adhd-mode",
@@ -852,7 +852,7 @@
     "manim-architect": {
       "name": "manim-architect",
       "description": "Manim Community 0.22 explainer scenes for formal objects that change shape — graphs explored, formulas built piece by piece, tables filled in, traces unrolled — with LaTeX formulas fitted to the frame, a base class that times scenes from the narration and writes a sections file, a cue helper, a teaching-helper package, audio muxed per scene, 1080p review renders and the traps that waste hours (morphing text, a failing formula failing the whole render, unredirected output). Use when writing, structuring, rendering or reviewing Manim scenes, alone or as a companion to a Remotion video.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -863,6 +863,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-11T13:24:51Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/manim-architect@v1.1.0/manim-architect-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-11T13:58:34Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/manim-architect@v1.2.0/manim-architect-v1.2.0.tar.gz"
         }
       }
     },
