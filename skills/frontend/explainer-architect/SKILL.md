@@ -1,6 +1,6 @@
 ---
 name: explainer-architect
-version: 1.0.0
+version: 1.1.0
 description: Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) — the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).
 ---
 
@@ -22,8 +22,9 @@ Ask in order and wait for each answer: who watches and what they know already; t
 ## 3. The scene rule
 
 1. **Draw in the order the narration says it.** If the voice says A and then B, A appears first. Reorder the words before you reorder the animation.
-2. **Cue drawings to phrases, not to seconds.** Keep the narration as data, take the words before the phrase and divide by the speech rate. The cue must fail the build when its phrase is no longer in the narration, so an edit of the words cannot leave the picture behind.
-3. **Scene length is `max(animation time, words / rate + lead-in + tail)`.** Use the rate measured on the real voice (narration-architect, section 4). A guessed rate ends scenes before the voice and fires every cue early. Count spoken words (after pronunciation forms), in the cue as well as in the length.
+2. **Cue drawings to phrases, not to seconds.** Keep the narration as data; an item (a row, a card, a step) carries the phrase at which it appears, and its time is the place of the phrase in the text times the measured length of the voice, minus a short lead so the item is on screen as it is named. The cue must fail the build when its phrase is no longer in the narration. A time typed by hand is only the fallback for a scene with no audio.
+   - **A recorded clip (a rendered animation) is cued the same way:** cut the voice into one narration per part of the clip and start each audio when its part starts (the clip records where its parts start). One audio for a long clip drifts: in one video the voice ran 13 s ahead of the picture and said "this is a bounded model" over a different drawing.
+3. **Scene length comes from the audio.** When the audio exists, a scene lasts `voice + lead-in + tail + a short hold`, read from the measured length of each file (record it in the audio manifest); a scene with no audio keeps a planned length from `max(animation time, words / rate + lead-in + tail)` with the measured rate (narration-architect, section 4). Hand-set seconds leave 30% to 60% of a video silent, and change with every voice. Count spoken words (after pronunciation forms) when you estimate.
 4. **Leave silence.** A new drawing gets a second or two before the voice talks over it, and dense text is never read at the same time as it appears.
 5. **End on a stable frame.** The last frame of a scene is the finished drawing, not half an animation.
 6. **Do not draw twice what is said once.** If a number is on screen, the voice gives its meaning.
@@ -65,6 +66,8 @@ Every scene carries a small chip with the origin of its content:
 - A made-up value with no label.
 - Scene times from a guessed speech rate.
 - A cue given in seconds that no one updates when the words change.
+- A scene length typed by hand next to audio that has a measured length.
+- One long voice over a clip with several parts.
 - A new render saved over the old one.
 - Two ideas in one scene, or a scene with no stable end frame.
 - Reading the screen aloud.
@@ -76,6 +79,8 @@ Every scene carries a small chip with the origin of its content:
 - [ ] Each scene has its origin chip; every illustration is flagged on screen and in the words.
 - [ ] Every number on screen is in the content file with a source.
 - [ ] Cues point at phrases, and the build fails if a phrase disappears.
+- [ ] Scene lengths come from the audio of the take being rendered; silent time after the voice is a hold of a second or so, not a third of the video.
+- [ ] A clip scene has its voice cut at the parts of the clip.
 - [ ] The speech rate is measured, and no audio runs past its scene.
 - [ ] The last scene says what was not checked.
 - [ ] Old versions are untouched; the new render has its own name.

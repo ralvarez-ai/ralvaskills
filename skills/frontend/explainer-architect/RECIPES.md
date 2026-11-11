@@ -61,6 +61,8 @@ def scene_seconds(animation, text, rate, lead, tail):
 
 Take `rate` from the narration script (measured), not from a constant in the scene code.
 
+With audio, skip the estimate: `scene_seconds = audio_seconds + lead + tail + hold` (hold about 1.2 s), and `cue_time = max(0.3, lead + (index_of_phrase / len(text)) * audio_seconds - 0.35)`. Character position is a fair stand-in for time when the engine gives no word timestamps; use the timestamps when it does. Write `durations` in the manifest when the audio is made (`ffprobe -show_entries format=duration`), so the renderer needs no audio library.
+
 ## 4. A scene plan table
 
 | Scene | Idea (one line) | Drawing | Formula or code beside it | Chip | Sources | Cue phrases |
