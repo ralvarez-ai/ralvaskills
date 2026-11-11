@@ -54,3 +54,8 @@ version = 1
   name = "commit-author"
   version = "1.12.0"
   source = "registry"
+
+[[skills]]
+  name = "adhd-mode"
+  version = "1.0.0"
+  source = "registry"

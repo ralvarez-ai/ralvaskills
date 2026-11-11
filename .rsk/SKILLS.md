@@ -120,3 +120,57 @@ Write Conventional Commits messages from a staged diff. Activates only when the 
 Invoke the full skill when: the user wants a commit message or asks to commit, and you need the merge-commit or breaking-change rules.
 
 Full guide: invoke the commit-author skill.
+
+## repo-tooling-architect v1.6.0
+
+Language-agnostic repo-root tooling: `.editorconfig`, `.gitignore`, version pins, task runner, minimal pre-commit, env files, Renovate, and agent instruction files.
+
+### Always-on rules
+- Add a tool only when all three hold: it pays back on day one, it costs less to install than to go without, and no language-native option covers it. When in doubt, skip.
+- Always include `.editorconfig` and `.gitignore`; trim `.gitignore` per language, starting from github/gitignore.
+- Local-only exclusions go in `.git/info/exclude` or `~/.gitignore_global`, not the repo `.gitignore`.
+- Pin tools in one committed file: `mise.toml` by default, `.prototools` as alternative. CI installs the same versions.
+- Skip a task runner for single-language projects; add one for multi-language, multi-service, or many multi-step commands.
+- Task (`Taskfile.yml`) is the default, just (`justfile`) the alternative; settle on one per repo.
+- Task names: `module[:submodule…]:verb[:target|mode]`. Verb right after the module; env and service are targets after the verb; unprefixed names only for repo-wide entry points. Full grammar is in `TASKFILE.md`. Stay flat until a module has 5+ tasks.
+- Pre-commit stays minimal: whitespace, EOF, large files, merge conflicts, YAML/JSON, gitleaks. Language linters run in the editor and in CI.
+- Non-secret config: committed `.env` plus git-ignored `.env.local`, loaded by Task `dotenv:`. Real secrets come from an external secret manager.
+- `.gitignore` must include `.env.local`; audit any `.env*` pattern. No `direnv` unless you need auto-activation on `cd`.
+- Renovate is the default: minor and patch grouped weekly; security updates immediate; major bumps labeled, never auto-merged. Dependabot is an acceptable alternative for tiny single-language repos.
+- CI defaults to GitHub Actions; `act` is an opt-in free local runner (e.g. when Actions billing blocks). Wire it as one `ci:local` task with a gitignored `.secrets`.
+- `AGENTS.md` is the single source. `CLAUDE.md` stays thin: `@AGENTS.md` plus Claude-only lines. Aim for under ~150 lines in `AGENTS.md`.
+
+### Hard constraints
+- Never copy a whole GitHub `.gitignore` default that covers languages you don't use.
+- Never put real secrets in `.env`; never commit them.
+- Never run language-specific linters or formatters in commit hooks.
+- Never duplicate content between `AGENTS.md` and `CLAUDE.md`. Generated blocks are never hand-edited.
+- Don't mix `Taskfile.yml` and `justfile` in one repo. Never mix task orderings in one namespace, or flattened and namespaced includes for one domain.
+- Major dependency bumps are never auto-merged.
+- Don't reimplement the pipeline as shell scripts; run the real workflow file with `act`.
+
+Invoke the full skill when: scaffolding or auditing a repo's tooling layer; choosing version pins, task runner, hooks, env files, or Renovate; writing `AGENTS.md` or `CLAUDE.md`; naming or renaming Taskfile tasks.
+
+Full guide: invoke the repo-tooling-architect skill.
+
+## adhd-mode v1.0.0
+
+Reply shape for a reader with ADHD: act first, small steps, visible state.
+
+### Always-on rules
+- Active every response once triggered; off only on "stop adhd mode" or "normal mode".
+- Line one is the next action (command, path, snippet); context after.
+- Multi-step work: numbered, one bounded action per step, fewest steps that work.
+- Restate state each turn ("step 3 of 5 done; next: …"); use the task tool if there is one.
+- If anything is open, end with one next action doable in under two minutes.
+- Finish one issue before offering another; estimates in minutes or hours; say what now works.
+- Errors: cause and fix, no "uh oh". Visible lists max 5 per group (presentation only, never shorten analysis).
+- No preamble, recap or closer.
+
+### Hard constraints
+- Explain/walk-through requests run long; destructive actions get confirmed first; harness and `AGENTS.md` win over the rules.
+- With `caveman`: caveman sets words, this sets order. Commits, docs and code keep their own format.
+
+Invoke the full skill when: the user says "adhd mode" or invokes /adhd-mode, or you need the exceptions list and the pre-send check.
+
+Full guide: invoke the adhd-mode skill.
