@@ -102,3 +102,30 @@ Wrap them in one script that takes a registry id, passes `--quality` through, co
 ## 6. Embedding a clip in Remotion
 
 Render the clip silent, copy it to `public/clips/`, and play it in a scene with `<Video src={staticFile('clips/foo.mp4')} />` from `@remotion/media`; read its length from the sections file or a recorded metadata file and use it for the scene's `durationInFrames`. The Remotion frame owns the audio and the badges.
+
+## 7. Timing from the audio
+
+Once audio exists, the base class takes lengths and cue times from the measured audio, not from the planned rate. The audio step writes a manifest (`durations` per scene id, in seconds; narration-architect, section 6) beside the audio.
+
+```python
+manifest = Path(f"audio/{self.CHAPTER}/manifest.json")
+self.durations = json.loads(manifest.read_text())["durations"] if manifest.exists() else {}
+self.hold = narration.get("hold", 0.7)
+
+def scene_seconds(self, scene_id):
+    if scene_id in self.durations:                    # measured: voice + lead-in + tail + hold
+        return self.lead + self.durations[scene_id] + self.tail + self.hold
+    return len(self.words[scene_id].split()) / self.rate + self.lead + self.tail   # planned
+
+def cue_time(self, scene_id, phrase, early=0.3):
+    text = self.words[scene_id]
+    before = len(text[:text.index(phrase)].split())   # ValueError: the phrase is gone
+    voice = self.durations.get(scene_id, len(text.split()) / self.rate)
+    return max(0.0, self.lead + before / len(text.split()) * voice - early)
+```
+
+Use `scene_seconds` in `close_scene` and `cue_time` in `cue`. Count spoken words (after pronunciation forms) in both.
+
+- Never type a scene length next to audio with a measured one. A take with another voice gets its own lengths because it has its own manifest.
+- A clip that holds several parts (a long recorded animation inside a longer video) has one narration and one audio per part. Each part is a scene in the sections file with its own `start`, so the mux places each audio at its part. One long voice over a long clip drifts.
+

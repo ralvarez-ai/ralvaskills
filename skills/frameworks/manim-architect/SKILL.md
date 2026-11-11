@@ -1,6 +1,6 @@
 ---
 name: manim-architect
-version: 1.1.0
+version: 1.2.0
 description: Manim Community 0.22 explainer scenes for formal objects that change shape — graphs explored, formulas built piece by piece, tables filled in, traces unrolled — with LaTeX formulas fitted to the frame, a base class that times scenes from the narration and writes a sections file, a cue helper, a teaching-helper package, audio muxed per scene, 1080p review renders and the traps that waste hours (morphing text, a failing formula failing the whole render, unredirected output). Use when writing, structuring, rendering or reviewing Manim scenes, alone or as a companion to a Remotion video.
 ---
 
@@ -17,7 +17,7 @@ Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene 
 ## 2. Structure
 
 - **One chapter = one `Scene` subclass** that extends a small base class. The base class reads the content file and the narration file, draws the frame of each scene, and writes the start and end of every scene to a **sections file** (`id`, `start`, `end`, `seconds`). The audio step and the review step read that file. Pattern in [RECIPES.md](RECIPES.md#1-the-base-class).
-- **Scene length** is `max(animation time, words / rate + lead-in + tail)`; the base class waits for the difference before it closes a scene. The rate is measured (narration-architect), not guessed.
+- **Scene length** is `max(animation time, words / rate + lead-in + tail)` before audio exists, with a measured rate (narration-architect). Once audio exists it is `lead-in + measured voice + tail + hold` from the audio manifest, and cues are resolved against the measured length ([RECIPES.md](RECIPES.md#7-timing-from-the-audio)). A clip with several parts gets one audio per part.
 - **Cue drawings to narration phrases** with a `cue(scene, phrase)` helper that waits until the voice would reach the phrase, and raises when the phrase is not in the narration ([RECIPES.md](RECIPES.md#2-the-cue-helper)).
 - **Teaching helpers live in a package, one module per family** (a formula built from pieces, a token that walks a path, a wave that fills a table, a stamp, a slider, a chain of states). Chapter files stay thin and call helpers; parallel work then touches different files, and a helper is fixed once.
 - **A registry file** lists the editions (id, module, class) so one command renders any of them, or all.
@@ -47,7 +47,7 @@ Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene 
 
 - Animating a `Transform` between two text labels.
 - A formula edit that was not rendered before the next edit.
-- Scene times from a hard-coded constant instead of the narration file.
+- Scene times from a hard-coded constant instead of the narration file, or from the planned rate after audio exists.
 - Scene code that calls a speech engine, or audio that is part of the scene.
 - Output of the render printed into the session.
 - Colours or fonts typed into scenes instead of read from the token file.

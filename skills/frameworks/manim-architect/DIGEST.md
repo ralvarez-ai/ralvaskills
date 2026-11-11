@@ -5,6 +5,7 @@ Manim Community 0.22 scenes for formal objects that change shape, timed from the
 ## Always-on rules
 
 - One chapter is one `Scene` subclass on a base class that reads the narration and content files, closes each scene to `max(animation, words / rate + lead-in + tail)` and writes a sections file (`id`, `start`, `end`, `seconds`).
+- With audio, scene length is lead-in + measured voice + tail + hold from the audio manifest, and cues resolve against the measured length (RECIPES.md section 7).
 - Cue drawings to narration phrases with a `cue(scene, phrase)` helper that raises when the phrase is gone.
 - Morph shapes, not text: fade the new label in after the shape moves.
 - Formulas are LaTeX through one helper with a minimal template, scaled to a maximum width. A failing formula fails the whole render: render after every edit that touches one.
