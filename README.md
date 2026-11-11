@@ -118,6 +118,7 @@ Skills about authoring/operating the toolkit itself, plus communication modes th
 - **`skill-builder`** — Meta-skill that scaffolds new ralvaskills skills per SPECS.md (SKILL.md skeleton, optional STACK/RECIPES, folder placement, SPECS updates). Interview-first.
 - **`rsk-guide`** — Operator's guide for the `rsk` CLI: the `.rsk/` project manifest (`rsk new`, `rsk install`, `rsk pin`), bundle/global installs, the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards.
 - **`caveman`** — Ultra-compressed communication mode that reduces token usage by ~75% while preserving technical accuracy.
+- **`adhd-mode`** — Reply shape for a reader with ADHD: next action first, numbered steps, restated state, one next step.
 - **`token-economy`** — Token-saving habits and setup for Claude Code and OpenCode: always-on rules, subagent exploration, model escalation and handoff, cheap-model guidance, and an audit of context-mode, RTK and CodeGraph.
 
 ### `personal/` — author-specific, not bundle-installable
