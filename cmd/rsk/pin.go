@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 	"slices"
 
 	"github.com/spf13/cobra"
@@ -67,6 +68,7 @@ func runPin(cmd *cobra.Command, args []string) error {
 	if err = syncPinnedAllTools(rskDir, m); err != nil {
 		return err
 	}
+	warnSkillsIndexBudget(cmd.ErrOrStderr(), filepath.Dir(rskDir), m.Pinned)
 
 	fmt.Fprintln(out)
 	ui.Success(out, "pinned "+ui.SkillName(name))

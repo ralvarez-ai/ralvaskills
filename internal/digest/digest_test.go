@@ -114,3 +114,47 @@ func TestSync_removesFileWhenNothingPinned(t *testing.T) {
 		t.Errorf("removing an absent file should be a no-op: %v", err)
 	}
 }
+
+func TestMeasure(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, ".rsk"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	names := []string{"biggest", "big", "medium", "smaller", "tiny", "tiny2"}
+	for i, name := range names {
+		writeSkill(t, dir, name, "1.0.0", strings.Repeat("always-on rule\n", 40*(len(names)-i)))
+	}
+
+	size := Measure(dir, names)
+	if !size.OverBudget() {
+		t.Errorf("six digests should pass the %d-token budget, measured %d", BudgetTokens, size.Tokens)
+	}
+	if len(size.Largest) != len(names) {
+		t.Fatalf("Largest has %d entries, want %d", len(size.Largest), len(names))
+	}
+	if size.Largest[0].Name != "biggest" {
+		t.Errorf("Largest[0] = %q, want the biggest digest", size.Largest[0].Name)
+	}
+	for i := 1; i < len(size.Largest); i++ {
+		if size.Largest[i].Tokens > size.Largest[i-1].Tokens {
+			t.Errorf("Largest is not ordered by size: %v", size.Largest)
+		}
+	}
+
+	// Measure predicts what Sync writes, and writes nothing itself.
+	if _, err := os.Stat(filepath.Join(dir, ".rsk", IndexFileName)); !os.IsNotExist(err) {
+		t.Errorf("Measure must not create %s (stat err = %v)", IndexFileName, err)
+	}
+	tokens, err := Sync(dir, names)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tokens != size.Tokens {
+		t.Errorf("Sync measured %d tokens, Measure predicted %d", tokens, size.Tokens)
+	}
+	if empty := Measure(dir, nil); empty.Tokens != 0 || empty.OverBudget() || len(empty.Largest) != 0 {
+		t.Errorf("nothing pinned should measure zero, got %+v", empty)
+	}
+}

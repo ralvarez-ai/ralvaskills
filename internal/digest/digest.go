@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"go.ralva.dev/ralvaskills/v3/internal"
@@ -102,6 +103,54 @@ func EstimateTokens(s string) int {
 	return (len(s) + bytesPerToken - 1) / bytesPerToken
 }
 
+// EntrySize is one pinned skill's share of the generated file.
+type EntrySize struct {
+	Name   string
+	Tokens int
+}
+
+// Size estimates the file Sync writes for a pinned set: the whole-file count
+// the budget is measured against, plus each entry's own estimate, largest
+// first, so a caller can name what is taking the room.
+type Size struct {
+	Tokens  int
+	Largest []EntrySize
+}
+
+// OverBudget reports whether the estimate passes BudgetTokens.
+func (s Size) OverBudget() bool {
+	return s.Tokens > BudgetTokens
+}
+
+// loadEntries reads one Entry per pinned skill from the project's linked
+// skills directory.
+func loadEntries(projectDir string, pinned []string) []Entry {
+	skillsDir := filepath.Join(projectDir, ".claude", skill.SkillsFolderName)
+	entries := make([]Entry, 0, len(pinned))
+	for _, name := range pinned {
+		entries = append(entries, Load(filepath.Join(skillsDir, name), name))
+	}
+	return entries
+}
+
+// Measure estimates the file Sync would write for pinned, without touching
+// disk. An empty pinned set measures zero, matching Sync's removal of the file.
+func Measure(projectDir string, pinned []string) Size {
+	if len(pinned) == 0 {
+		return Size{}
+	}
+	entries := loadEntries(projectDir, pinned)
+	size := Size{
+		Tokens:  EstimateTokens(Render(entries)),
+		Largest: make([]EntrySize, 0, len(entries)),
+	}
+	for _, e := range entries {
+		size.Largest = append(size.Largest, EntrySize{Name: e.Name, Tokens: EstimateTokens(e.Body)})
+	}
+	sort.SliceStable(size.Largest, func(i, j int) bool { return size.Largest[i].Tokens > size.Largest[j].Tokens })
+	return size
+}
+
 // Sync writes .rsk/SKILLS.md in projectDir from the pinned skills installed in
 // .claude/skills/, or removes it when nothing is pinned. It returns the
 // estimated size of what it wrote.
@@ -114,12 +163,7 @@ func Sync(projectDir string, pinned []string) (int, error) {
 		return 0, nil
 	}
 
-	skillsDir := filepath.Join(projectDir, ".claude", skill.SkillsFolderName)
-	entries := make([]Entry, 0, len(pinned))
-	for _, name := range pinned {
-		entries = append(entries, Load(filepath.Join(skillsDir, name), name))
-	}
-	content := Render(entries)
+	content := Render(loadEntries(projectDir, pinned))
 
 	if err := fsx.WriteAtomic(path, tempPattern, func(w io.Writer) error {
 		_, err := io.WriteString(w, content)

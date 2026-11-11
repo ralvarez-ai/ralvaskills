@@ -156,7 +156,15 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 	if opts.format == output.FormatJSON {
 		return newFormatter(cmd, opts.format).JSON(statusSectionsToEntries(sections, pinnedSet))
 	}
-	return printStatusText(out, capture, cmd, opts.format, sections, pinnedSet)
+	if err = printStatusText(out, capture, cmd, opts.format, sections, pinnedSet); err != nil {
+		return err
+	}
+	// The captured (picker) run must not write behind the TUI, and --global
+	// has no project index to size.
+	if capture == nil && !opts.global && modErr == nil {
+		printSkillsIndexStatus(out, filepath.Dir(rskDir), m.Pinned)
+	}
+	return nil
 }
 
 // warnOrCapture reports msg on the capture (when a captured in-process run is

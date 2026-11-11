@@ -44,12 +44,12 @@ func TestUpdatePairNames(t *testing.T) {
 
 // writeLinkedSkill seeds the linked skill a pinned entry points at: a SKILL.md
 // and the DIGEST.md it ships.
-func writeLinkedSkill(t *testing.T, dir, version, body string) {
+func writeLinkedSkill(t *testing.T, dir, name, version, body string) {
 	t.Helper()
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	skillMD := "---\nname: tdd\nversion: " + version + "\ndescription: red-green-refactor\n---\nbody\n"
+	skillMD := "---\nname: " + name + "\nversion: " + version + "\ndescription: does " + name + "\n---\nbody\n"
 	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(skillMD), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -68,9 +68,9 @@ func TestRefreshPinnedDigest(t *testing.T) {
 	projDir := t.TempDir()
 	t.Chdir(projDir)
 
-	var buf bytes.Buffer
-	refreshPinnedDigest(&buf)
-	if got := buf.String(); got != "" {
+	var buf, errBuf bytes.Buffer
+	refreshPinnedDigest(&buf, &errBuf)
+	if got := buf.String() + errBuf.String(); got != "" {
 		t.Errorf("outside a project: expected no output, got %q", got)
 	}
 
@@ -80,17 +80,17 @@ func TestRefreshPinnedDigest(t *testing.T) {
 	skillDir := filepath.Join(projDir, ".claude", "skills", "tdd")
 	index := filepath.Join(projDir, ".rsk", digest.IndexFileName)
 
-	writeLinkedSkill(t, skillDir, "1.0.0", "Rules\n- old rule\n")
-	refreshPinnedDigest(&buf)
-	if got := buf.String(); got != "" {
+	writeLinkedSkill(t, skillDir, "tdd", "1.0.0", "Rules\n- old rule\n")
+	refreshPinnedDigest(&buf, &errBuf)
+	if got := buf.String() + errBuf.String(); got != "" {
 		t.Errorf("expected no warning, got %q", got)
 	}
 	assertIndexHas(t, index, "## tdd v1.0.0", "- old rule")
 
 	// A pull rewrites DIGEST.md in place; the next refresh must carry the new
 	// rule into SKILLS.md without a second `rsk pin`.
-	writeLinkedSkill(t, skillDir, "1.0.1", "Rules\n- new rule\n")
-	refreshPinnedDigest(&buf)
+	writeLinkedSkill(t, skillDir, "tdd", "1.0.1", "Rules\n- new rule\n")
+	refreshPinnedDigest(&buf, &errBuf)
 	assertIndexHas(t, index, "## tdd v1.0.1", "- new rule")
 
 	data, err := os.ReadFile(index)

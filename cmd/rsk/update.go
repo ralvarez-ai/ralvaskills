@@ -167,6 +167,7 @@ func applyLocalUpdate(
 	cmd *cobra.Command, args []string, cfg config.Config, opts updateOpts, needsOfficial bool, officialCacheDir string,
 ) error {
 	out := cmd.OutOrStdout()
+	errOut := cmd.ErrOrStderr()
 	ctx := cmd.Context()
 
 	ui.Info(out, fmt.Sprintf("Pulling %s …", cfg.RepoPath))
@@ -193,7 +194,7 @@ func applyLocalUpdate(
 		if err := bumpLockForProject(cmd, args, cfg); err != nil {
 			ui.Warn(out, fmt.Sprintf("update rsk.lock: %v", err))
 		}
-		refreshPinnedDigest(out)
+		refreshPinnedDigest(out, errOut)
 	}
 
 	fmt.Fprintln(out)
@@ -222,7 +223,7 @@ func tryReadMod(rskDir string) (manifest.Mod, bool) {
 // reach the tool adapters on the next `rsk pin`/`rsk install`. A no-op outside
 // a project or when writing fails (warned, not fatal — the update itself
 // already succeeded).
-func refreshPinnedDigest(out io.Writer) {
+func refreshPinnedDigest(out, errOut io.Writer) {
 	rskDir, ok := tryRskDir()
 	if !ok {
 		return
@@ -234,6 +235,7 @@ func refreshPinnedDigest(out io.Writer) {
 	if _, err := digest.Sync(filepath.Dir(rskDir), m.Pinned); err != nil {
 		ui.Warn(out, fmt.Sprintf("update .rsk/%s: %v", digest.IndexFileName, err))
 	}
+	warnSkillsIndexBudget(errOut, filepath.Dir(rskDir), m.Pinned)
 }
 
 // bumpLockForProject re-resolves skills and updates the project's rsk.lock.
@@ -416,7 +418,7 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		if lockErr := bumpLockForProject(cmd, args, cfg); lockErr != nil {
 			ui.Warn(out, fmt.Sprintf("update rsk.lock: %v", lockErr))
 		}
-		refreshPinnedDigest(out)
+		refreshPinnedDigest(out, errOut)
 	}
 
 	fmt.Fprintln(out)

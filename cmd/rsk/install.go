@@ -253,7 +253,7 @@ func runInstallProject(
 	if err != nil {
 		return err
 	}
-	return reportInstall(out, errOut, results)
+	return reportProjectInstall(out, errOut, results, rskDir)
 }
 
 // previewAndConfirm renders the install preview and, unless dryRun, asks the
@@ -375,7 +375,7 @@ func runInstallFromMod(cmd *cobra.Command, opts installOpts) error {
 	if err != nil {
 		return err
 	}
-	return reportInstall(out, errOut, results)
+	return reportProjectInstall(out, errOut, results, rskDir)
 }
 
 // reportInstall renders the outcome of an install.Apply call and returns an
@@ -402,6 +402,21 @@ func reportInstall(out, errOut io.Writer, results []install.Result) error {
 	}
 	fmt.Fprintln(out)
 	ui.Info(out, "Run 'rsk status' to verify installed skills.")
+	return nil
+}
+
+// reportProjectInstall is reportInstall for the project scope, adding the
+// .rsk/SKILLS.md budget warning: an install with --pin, or one that completes a
+// project's pinned set, can push the generated file past its budget.
+func reportProjectInstall(out, errOut io.Writer, results []install.Result, rskDir string) error {
+	if err := reportInstall(out, errOut, results); err != nil {
+		return err
+	}
+
+	m, modErr := manifest.ReadMod(rskDir)
+	if modErr == nil {
+		warnSkillsIndexBudget(errOut, filepath.Dir(rskDir), m.Pinned)
+	}
 	return nil
 }
 
