@@ -1,7 +1,19 @@
 {
   "version": 1,
-  "generated_at": "2026-11-11T13:24:51Z",
+  "generated_at": "2026-11-11T13:45:36Z",
   "skills": {
+    "adhd-mode": {
+      "name": "adhd-mode",
+      "description": "Output shaped for a reader with ADHD — lead with the next action, number multi-step work, restate state every turn, suppress tangents, give specific time estimates, make wins visible. Composes with caveman (words) and token-economy (cost). Use when the user says \"adhd mode\", \"adhd friendly\", \"I have ADHD\", or invokes /adhd-mode; stays on until \"stop adhd mode\" or \"normal mode\".",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/adhd-mode@v1.0.0/adhd-mode-v1.0.0.tar.gz"
+        }
+      }
+    },
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
       "description": "Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. References rest-api-architect / protobuf-architect / grpc-architect for rules; runs `buf breaking` / `openapi-diff`. Severity-keyed findings. Use when reviewing a new endpoint, proto change, or before a breaking-change release.",
@@ -56,7 +68,7 @@
     "caveman": {
       "name": "caveman",
       "description": "Ultra-compressed communication mode — drops filler, articles, pleasantries while keeping technical accuracy. Use when user says \"caveman mode\", \"talk like caveman\", \"less tokens\", \"be brief\", or invokes /caveman.",
-      "latest": "1.1.0",
+      "latest": "1.1.1",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -67,6 +79,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/caveman@v1.1.0/caveman-v1.1.0.tar.gz"
+        },
+        "1.1.1": {
+          "version": "1.1.1",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/caveman@v1.1.1/caveman-v1.1.1.tar.gz"
         }
       }
     },
@@ -117,7 +134,7 @@
     "code-design-refactor": {
       "name": "code-design-refactor",
       "description": "Design-level refactoring rules — extraction, decoupling, SRP, encapsulation, primitive obsession. Language-agnostic. Sits between logic-cleaner (expression-level) and improve-codebase-architecture (system-level). Use when restructuring existing code at the module/class/function level.",
-      "latest": "1.1.0",
+      "latest": "1.1.1",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -133,6 +150,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/code-design-refactor@v1.1.0/code-design-refactor-v1.1.0.tar.gz"
+        },
+        "1.1.1": {
+          "version": "1.1.1",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/code-design-refactor@v1.1.1/code-design-refactor-v1.1.1.tar.gz"
         }
       }
     },
@@ -200,7 +222,7 @@
     "ddd-architect": {
       "name": "ddd-architect",
       "description": "Domain-Driven Design — strategic-first (bounded contexts, context mapping) with aggregates, value objects, domain events, repositories. Event sourcing out of scope. Use when shaping a domain model or designing aggregate boundaries.",
-      "latest": "1.1.0",
+      "latest": "1.1.1",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -211,6 +233,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ddd-architect@v1.1.0/ddd-architect-v1.1.0.tar.gz"
+        },
+        "1.1.1": {
+          "version": "1.1.1",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ddd-architect@v1.1.1/ddd-architect-v1.1.1.tar.gz"
         }
       }
     },
@@ -253,7 +280,7 @@
     "design-patterns": {
       "name": "design-patterns",
       "description": "Skeptical design-patterns reference catalog for modern Go and Python — keeps repository, adapter, strategy, decorator, observer, builder; flags the rest as anti-patterns. Consultative, not active: consult before introducing a pattern in code-design-refactor or improve-codebase-architecture, or when pushing back on a cargo-cult one. Not a refactoring rung itself.",
-      "latest": "1.1.0",
+      "latest": "1.1.1",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -264,6 +291,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/design-patterns@v1.1.0/design-patterns-v1.1.0.tar.gz"
+        },
+        "1.1.1": {
+          "version": "1.1.1",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/design-patterns@v1.1.1/design-patterns-v1.1.1.tar.gz"
         }
       }
     },
@@ -649,7 +681,7 @@
     "grill-with-docs": {
       "name": "grill-with-docs",
       "description": "Grilling session that challenges an existing plan or design against the project's domain model, sharpens terminology, and updates documentation (CONTEXT.md, ADRs) inline as decisions crystallise. Use when a plan or design already exists and needs stress-testing; if no plan exists yet, use feature-planner first.",
-      "latest": "1.1.0",
+      "latest": "1.1.1",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -660,6 +692,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/grill-with-docs@v1.1.0/grill-with-docs-v1.1.0.tar.gz"
+        },
+        "1.1.1": {
+          "version": "1.1.1",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/grill-with-docs@v1.1.1/grill-with-docs-v1.1.1.tar.gz"
         }
       }
     },
@@ -688,7 +725,7 @@
     "hexagonal-arch": {
       "name": "hexagonal-arch",
       "description": "Hexagonal architecture (ports \u0026 adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
-      "latest": "1.2.0",
+      "latest": "1.2.1",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -704,6 +741,11 @@
           "version": "1.2.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hexagonal-arch@v1.2.0/hexagonal-arch-v1.2.0.tar.gz"
+        },
+        "1.2.1": {
+          "version": "1.2.1",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hexagonal-arch@v1.2.1/hexagonal-arch-v1.2.1.tar.gz"
         }
       }
     },
@@ -727,7 +769,7 @@
     "improve-codebase-architecture": {
       "name": "improve-codebase-architecture",
       "description": "Find deepening opportunities in a codebase, informed by the domain language in CONTEXT.md and the decisions in docs/adr/. Use when the user wants to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, or make a codebase more testable and AI-navigable.",
-      "latest": "1.2.0",
+      "latest": "1.2.1",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -743,6 +785,11 @@
           "version": "1.2.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/improve-codebase-architecture@v1.2.0/improve-codebase-architecture-v1.2.0.tar.gz"
+        },
+        "1.2.1": {
+          "version": "1.2.1",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/improve-codebase-architecture@v1.2.1/improve-codebase-architecture-v1.2.1.tar.gz"
         }
       }
     },
@@ -1369,7 +1416,7 @@
     "tdd": {
       "name": "tdd",
       "description": "Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions \"red-green-refactor\", wants integration tests, or asks for test-first development.",
-      "latest": "1.1.0",
+      "latest": "1.1.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1380,6 +1427,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/tdd@v1.1.0/tdd-v1.1.0.tar.gz"
+        },
+        "1.1.2": {
+          "version": "1.1.2",
+          "published_at": "2026-11-11T13:45:36Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/tdd@v1.1.2/tdd-v1.1.2.tar.gz"
         }
       }
     },
