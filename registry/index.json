@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-10T18:36:32Z",
+  "generated_at": "2026-11-11T13:24:51Z",
   "skills": {
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
@@ -26,7 +26,7 @@
     },
     "astro-architect": {
       "name": "astro-architect",
-      "description": "Astro 6+ standards — islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `<script>` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.",
+      "description": "Astro 6+ standards — islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `\u003cscript\u003e` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.",
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
@@ -423,7 +423,7 @@
     },
     "go-architect": {
       "name": "go-architect",
-      "description": "Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/<protocol>, postgres/, inbound <protocol> packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.",
+      "description": "Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/\u003cprotocol\u003e, postgres/, inbound \u003cprotocol\u003e packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.",
       "latest": "1.20.0",
       "versions": {
         "1.0.0": {
@@ -687,7 +687,7 @@
     },
     "hexagonal-arch": {
       "name": "hexagonal-arch",
-      "description": "Hexagonal architecture (ports & adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
+      "description": "Hexagonal architecture (ports \u0026 adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
       "latest": "1.2.0",
       "versions": {
         "1.0.0": {
@@ -800,12 +800,17 @@
     "manim-architect": {
       "name": "manim-architect",
       "description": "Manim Community 0.22 explainer scenes for formal objects that change shape — graphs explored, formulas built piece by piece, tables filled in, traces unrolled — with LaTeX formulas fitted to the frame, a base class that times scenes from the narration and writes a sections file, a cue helper, a teaching-helper package, audio muxed per scene, 1080p review renders and the traps that waste hours (morphing text, a failing formula failing the whole render, unredirected output). Use when writing, structuring, rendering or reviewing Manim scenes, alone or as a companion to a Remotion video.",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-11-10T02:20:06Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/manim-architect@v1.0.0/manim-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-11T13:24:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/manim-architect@v1.1.0/manim-architect-v1.1.0.tar.gz"
         }
       }
     },
