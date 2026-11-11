@@ -100,6 +100,7 @@ import {Sequence, staticFile} from 'remotion';
 
 - Keep the generated audio out of the composition's source: write it to `public/narration/`, and git-ignore it if it can be rebuilt.
 - Name each file by scene id, so the lint script finds it.
+- Write the length of each file into the manifest next to the hashes (`durations`). The video takes each scene's length from it, so no scene is longer or shorter than its voice by guess.
 - Narration is generated from the script before the render. The render never calls a speech engine.
 - If the audio is longer than its scene, find out why. Over budget: cut words and generate again. Budget fine but the rate was a guess: set `rate` to the measured slowest rate in the script file and rebuild the scene times (a scene is then `max(animation time, words / rate + lead-in + tail)`); the audio you already paid for stays valid. Do not lengthen a scene to fit a script that was simply too long.
 

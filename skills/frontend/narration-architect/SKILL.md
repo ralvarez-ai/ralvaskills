@@ -1,6 +1,6 @@
 ---
 name: narration-architect
-version: 1.1.0
+version: 1.1.1
 description: Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) — short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.
 ---
 
