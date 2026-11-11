@@ -4,7 +4,7 @@
 |---|---|---|
 | manim (Community) | 0.22.1 | Scenes, animations, rendering |
 | Python | 3.13+ | Runtime; run with `uv` |
-| ffmpeg | any recent | Encoding, `adelay`/`amix` audio muxing, contact sheets |
+| ffmpeg | any recent | Encoding, `adelay`/`amix` audio muxing, `scripts/contact_sheet.py` (needs `drawtext` for labels) |
 | LaTeX + dvisvgm | TeX Live | `MathTex` formulas |
 | LaTeX packages | standalone, xkeyval, preview, amsmath, amssymb | Needed by the minimal formula template |
 | Cairo and Pango dev files | system | Text rendering (`Text`) |
