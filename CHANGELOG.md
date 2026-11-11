@@ -58,6 +58,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **docs-architect** (1.1.0): `BACKLOG.md` documents the second layout — `project.md` plus one file per item under `pending/`, `active/`, `done/` and `archive/`, with the id in the filename, the item frontmatter (`title`, `priority`, `section`, `topics`, `blocked_by`, `related`, `resolution`), transitions as renames, and the conversion from a list (state mapping, trackers in tables, the `rdk migrate` command). `FRONTMATTER.md` gains both backlog schemas, `TEMPLATES.md` the `project.md` and item templates, and `MIGRATION.md` the layout decision. The linter understands both layouts: it validates `project.md` and the item files (id in the name, schema, section against `sections`, `resolution` only in `archive/`), skips list size limits in an item-layout backlog, and no longer reads `<project>#<id>` in `related` as a path.
 
 ### Fixed
+- **`rsk update` now regenerates `.rsk/SKILLS.md`.** A pull replaced a pinned skill's linked `DIGEST.md` but left the generated index (the file the tool adapters import) holding the previous rules until the next `rsk pin` or `rsk install`; both the local and registry paths now re-render it after the lock bump, warning rather than failing when it cannot be written.
 - **website-concept-architect** (1.0.1): the sample wireframe now uses a generic example instead of personal project details.
 - `rsk new` no longer glues `@.rsk/CLAUDE.md` onto the last line of a `CLAUDE.md` that lacks a trailing newline.
 

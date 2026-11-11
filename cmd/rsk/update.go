@@ -13,6 +13,7 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/digest"
 	rskgit "go.ralva.dev/ralvaskills/v3/internal/git"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
@@ -186,11 +187,13 @@ func applyLocalUpdate(
 		}
 	}
 
-	// If we're in a project, bump rsk.lock entries for any changed skills.
+	// If we're in a project, bump rsk.lock entries for any changed skills and
+	// re-render the pinned digests from the freshly pulled sources.
 	if !opts.global {
 		if err := bumpLockForProject(cmd, args, cfg); err != nil {
 			ui.Warn(out, fmt.Sprintf("update rsk.lock: %v", err))
 		}
+		refreshPinnedDigest(out)
 	}
 
 	fmt.Fprintln(out)
@@ -211,6 +214,26 @@ func tryRskDir() (string, bool) {
 func tryReadMod(rskDir string) (manifest.Mod, bool) {
 	m, err := manifest.ReadMod(rskDir)
 	return m, err == nil
+}
+
+// refreshPinnedDigest re-renders .rsk/SKILLS.md from the pinned skills' current
+// DIGEST.md files. The skills are linked, so a pulled digest is already live,
+// but SKILLS.md is a rendered copy: without this an updated digest would only
+// reach the tool adapters on the next `rsk pin`/`rsk install`. A no-op outside
+// a project or when writing fails (warned, not fatal — the update itself
+// already succeeded).
+func refreshPinnedDigest(out io.Writer) {
+	rskDir, ok := tryRskDir()
+	if !ok {
+		return
+	}
+	m, ok := tryReadMod(rskDir)
+	if !ok {
+		return
+	}
+	if _, err := digest.Sync(filepath.Dir(rskDir), m.Pinned); err != nil {
+		ui.Warn(out, fmt.Sprintf("update .rsk/%s: %v", digest.IndexFileName, err))
+	}
 }
 
 // bumpLockForProject re-resolves skills and updates the project's rsk.lock.
@@ -393,6 +416,7 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		if lockErr := bumpLockForProject(cmd, args, cfg); lockErr != nil {
 			ui.Warn(out, fmt.Sprintf("update rsk.lock: %v", lockErr))
 		}
+		refreshPinnedDigest(out)
 	}
 
 	fmt.Fprintln(out)
