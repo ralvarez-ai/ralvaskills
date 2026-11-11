@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-11T13:45:36Z",
+  "generated_at": "2026-11-11T13:51:07Z",
   "skills": {
     "adhd-mode": {
       "name": "adhd-mode",
@@ -373,12 +373,17 @@
     "explainer-architect": {
       "name": "explainer-architect",
       "description": "Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) — the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).",
-      "latest": "1.0.0",
+      "latest": "1.1.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
           "published_at": "2026-11-10T02:20:06Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-architect@v1.0.0/explainer-architect-v1.0.0.tar.gz"
+        },
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-11T13:51:07Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-architect@v1.1.0/explainer-architect-v1.1.0.tar.gz"
         }
       }
     },
@@ -940,7 +945,7 @@
     "narration-architect": {
       "name": "narration-architect",
       "description": "Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) — short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.",
-      "latest": "1.1.0",
+      "latest": "1.1.1",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -951,6 +956,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-10T02:20:06Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-architect@v1.1.0/narration-architect-v1.1.0.tar.gz"
+        },
+        "1.1.1": {
+          "version": "1.1.1",
+          "published_at": "2026-11-11T13:51:07Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-architect@v1.1.1/narration-architect-v1.1.1.tar.gz"
         }
       }
     },
@@ -1139,7 +1149,7 @@
     "remotion-architect": {
       "name": "remotion-architect",
       "description": "Remotion 4.0.542 programmatic video — compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1150,6 +1160,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-10T02:20:06Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/remotion-architect@v1.1.0/remotion-architect-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-11T13:51:07Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/remotion-architect@v1.2.0/remotion-architect-v1.2.0.tar.gz"
         }
       }
     },
