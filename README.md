@@ -202,12 +202,13 @@ These official Claude Code skills complement the ones above and are highly recom
 
 ## Attribution
 
-Several skills are adapted from [Matt Pocock's skills](https://github.com/mattpocock/skills):
-- `tdd`
-- `caveman`
-- `improve-codebase-architecture`
+Some skills are adapted from other people's work and changed for this toolkit. Each one carries a credit footer; license notices are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
-The original implementations have been customized and integrated into this toolkit.
+| Skill | Source | License |
+| --- | --- | --- |
+| `tdd`, `grill-with-docs`, `improve-codebase-architecture` | [Matt Pocock's skills](https://github.com/mattpocock/skills) | MIT |
+| `caveman` | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) by Julius Brussee | Apache-2.0 |
+| `adhd-mode` | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) by Ayoub Ghriss | MIT |
 
 ---
 

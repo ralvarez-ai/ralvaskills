@@ -1,6 +1,6 @@
 ---
 name: grill-with-docs
-version: 1.1.0
+version: 1.1.1
 description: Grilling session that challenges an existing plan or design against the project's domain model, sharpens terminology, and updates documentation (CONTEXT.md, ADRs) inline as decisions crystallise. Use when a plan or design already exists and needs stress-testing; if no plan exists yet, use feature-planner first.
 ---
 
@@ -60,4 +60,4 @@ If any of the three is missing, skip the ADR. Use the format in [ADR_FORMAT.md](
 
 ---
 
-_Adapted from [mattpocock/skills](https://github.com/mattpocock/skills)._
+_Adapted from [mattpocock/skills `grill-with-docs`](https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs) by Matt Pocock (MIT). Changed for this workspace._
