@@ -1,6 +1,6 @@
 ---
 name: remotion-architect
-version: 1.1.0
+version: 1.2.0
 description: Remotion 4.0.542 programmatic video — compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.
 ---
 
