@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-11-11T13:58:34Z",
+  "generated_at": "2026-11-11T15:53:50Z",
   "skills": {
     "adhd-mode": {
       "name": "adhd-mode",
@@ -577,11 +577,6 @@
           "version": "1.7.1",
           "published_at": "2026-09-30T13:09:12Z",
           "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/go-architect@v1.7.1/go-architect-v1.7.1.tar.gz"
-        },
-        "1.7.2": {
-          "version": "1.7.2",
-          "published_at": "2026-10-12T22:00:08Z",
-          "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/go-architect@v1.7.2/go-architect-v1.7.2.tar.gz"
         },
         "1.7.3": {
           "version": "1.7.3",
