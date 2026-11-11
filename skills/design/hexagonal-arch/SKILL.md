@@ -1,6 +1,6 @@
 ---
 name: hexagonal-arch
-version: 1.2.0
+version: 1.2.1
 description: Hexagonal architecture (ports & adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.
 ---
 
@@ -98,3 +98,7 @@ Go and Python examples — showing the domain core, port interface, application 
 - **[sql-architect](../../databases/sql-architect/SKILL.md)** — how secondary DB adapters are typically implemented (raw SQL via psycopg / sqlx).
 - **[tdd](../../workflows/tdd/SKILL.md)** — testing benefits compound when adapters are swappable.
 - **[improve-codebase-architecture](../../refactoring/improve-codebase-architecture/SKILL.md)** — uses the same vocabulary (modules, interfaces, seams); the "one adapter = hypothetical, two = real" rule applies to port introduction.
+
+## Further reading
+
+- Alistair Cockburn, ["Hexagonal architecture"](https://alistair.cockburn.us/hexagonal-architecture/) (2005), which named ports and adapters.

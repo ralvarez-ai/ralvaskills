@@ -1,6 +1,6 @@
 # Deep Modules
 
-From "A Philosophy of Software Design":
+From John Ousterhout, *A Philosophy of Software Design* (Yaknyan Press, 2018):
 
 **Deep module** = small interface + lots of implementation
 

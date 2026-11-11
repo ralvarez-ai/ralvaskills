@@ -1,6 +1,6 @@
 ---
 name: design-patterns
-version: 1.1.0
+version: 1.1.1
 description: Skeptical design-patterns reference catalog for modern Go and Python — keeps repository, adapter, strategy, decorator, observer, builder; flags the rest as anti-patterns. Consultative, not active: consult before introducing a pattern in code-design-refactor or improve-codebase-architecture, or when pushing back on a cargo-cult one. Not a refactoring rung itself.
 ---
 
@@ -94,3 +94,7 @@ Go and Python each have their own list of "looks like a pattern, is actually a s
 ## 8. When a pattern hardens into a convention
 
 If a pattern appears across many skills and projects in this repo (Repository everywhere, Middleware in every HTTP framework), it stops being a "design pattern" decision and becomes a **convention** encoded in the architect skill for that area. Read the architect skill first; this catalog is for when you're in genuinely new territory.
+
+## Further reading
+
+- Erich Gamma, Richard Helm, Ralph Johnson and John Vlissides, *Design Patterns: Elements of Reusable Object-Oriented Software* (Addison-Wesley, 1994), the source of the catalogue this skill is skeptical of.

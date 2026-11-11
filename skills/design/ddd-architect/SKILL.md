@@ -1,6 +1,6 @@
 ---
 name: ddd-architect
-version: 1.1.0
+version: 1.1.1
 description: Domain-Driven Design — strategic-first (bounded contexts, context mapping) with aggregates, value objects, domain events, repositories. Event sourcing out of scope. Use when shaping a domain model or designing aggregate boundaries.
 ---
 
@@ -97,3 +97,8 @@ If the domain has 3–5 entities with genuine invariants and policies, DDD pays.
 - **`sql-architect`** implements repositories (§5).
 - **`rest-api-architect`** / framework architects are the application-service entry points. DTOs translate to / from aggregates at the boundary.
 - **`improve-codebase-architecture`** benefits from DDD because the domain language gives names to good seams.
+
+## Further reading
+
+- Eric Evans, *Domain-Driven Design: Tackling Complexity in the Heart of Software* (Addison-Wesley, 2003).
+- Vaughn Vernon, *Implementing Domain-Driven Design* (Addison-Wesley, 2013).

@@ -1,6 +1,6 @@
 ---
 name: code-design-refactor
-version: 1.1.0
+version: 1.1.1
 description: Design-level refactoring rules — extraction, decoupling, SRP, encapsulation, primitive obsession. Language-agnostic. Sits between logic-cleaner (expression-level) and improve-codebase-architecture (system-level). Use when restructuring existing code at the module/class/function level.
 ---
 
@@ -120,3 +120,7 @@ When a refactor reveals a deeper structural problem (port belongs in a different
 - [ddd-architect](../../design/ddd-architect/SKILL.md) — value objects, aggregates, encapsulation in the domain context.
 - [hexagonal-arch](../../design/hexagonal-arch/SKILL.md) — decoupling through ports; dependency direction.
 - [commit-author](../../workflows/commit-author/SKILL.md) — every successful move gets its own `refactor(scope):` commit.
+
+## Further reading
+
+- Martin Fowler, *Refactoring: Improving the Design of Existing Code*, 2nd ed. (Addison-Wesley, 2018), the catalogue of named, behaviour-preserving moves.
