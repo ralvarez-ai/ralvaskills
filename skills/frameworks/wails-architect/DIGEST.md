@@ -1,6 +1,6 @@
 # Wails Architecture (digest)
 
-Wails v3.1 shell around an existing web app: embedded SPA, same-origin API proxy, server-held cookies, per-OS chrome, Android shim, packaging.
+Wails v3.1 shell around an existing web app: embedded SPA, same-origin proxy, server-held cookies, per-OS chrome, Android shim, packaging.
 
 ## Always-on rules
 - A shell is a thin client: it embeds the SPA build, proxies API calls and holds no data.
@@ -19,12 +19,12 @@ Wails v3.1 shell around an existing web app: embedded SPA, same-origin API proxy
 - Linux: frameless + injected controls via `JS`; the `CSS` option does not apply under GTK 4.
 - Windows: Mica + system theme. macOS: transparent or hidden-inset title bar. Phones: plain options.
 - Android has no environment: set the API URL in code; emulator host is `10.0.2.2`.
-- Android webview sends every request as a bodiless `GET` and non-200 becomes "asset not found": wrap `fetch` and bridge to a Go service.
+- Android webview sends every request as a bodiless `GET`; non-200 reads as "asset not found" — wrap `fetch`, bridge to a Go service.
 - Fetch shim limits: no XHR, EventSource, streaming bodies, redirects or abort propagation.
 - Pad the Android root view by `WindowInsetsCompat`; scaffold regeneration drops the patch.
 - Use a full JDK 21; Gradle needs `javac` and `jlink` fails on newer JDKs.
 - Rebuild the SPA in every build task; the scaffold task is status-checked and ships a stale `dist`.
-- Android release: signed AAB with the upload key from secrets, `bundle` not `assemble:aab`, version from the tag, signature checked with `keytool`.
+- Android release: signed AAB, upload key from secrets, `bundle` not `assemble:aab`, version from the tag, signature via `keytool`.
 - The webview has no service worker: no offline cache, no Web Push, no passkeys, no keychain.
 - Unit-test the jar, the proxy and the SPA fallback; hand-check the webview per OS.
 
