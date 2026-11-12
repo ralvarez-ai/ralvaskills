@@ -207,8 +207,9 @@ func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.C
 	if err := skill.ValidateName(entry.Name); err != nil {
 		return skill.Skill{}, err
 	}
-	if entry.Version == "" || filepath.Base(entry.Version) != entry.Version || entry.Version == "." ||
-		entry.Version == ".." {
+	if entry.Source != skill.SourceOfficial &&
+		(entry.Version == "" || filepath.Base(entry.Version) != entry.Version ||
+			entry.Version == "." || entry.Version == "..") {
 		return skill.Skill{}, fmt.Errorf("invalid locked version for %s", entry.Name)
 	}
 	var s skill.Skill
@@ -229,6 +230,12 @@ func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.C
 	}
 	if err != nil {
 		return skill.Skill{}, err
+	}
+	// Official skills carry no version in their frontmatter, so their lock
+	// entries are versionless too. The cache check above already proved the
+	// source is present; comparing a version would reject every one of them.
+	if entry.Source == skill.SourceOfficial && entry.Version == "" {
+		return s, nil
 	}
 	actualVersion, err := skill.ReadVersion(s.Path)
 	if err != nil || actualVersion != entry.Version {

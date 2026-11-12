@@ -258,7 +258,13 @@ func registerOpenCodeV2(path string, cfg, mcp map[string]any) (string, error) {
 		if reflect.DeepEqual(existing, server) {
 			return path, nil
 		}
-		return "", fmt.Errorf("%s: mcp.servers.rsk already exists with different settings", path)
+		// Earlier releases wrote the v1 entry shape inside a v2 config (with
+		// "enabled", and before that without --read-only). Upgrade those two
+		// known shapes in place; anything else is user-owned and refused.
+		if !reflect.DeepEqual(existing, legacyOpenCodeMCPServer()) &&
+			!reflect.DeepEqual(existing, openCodeMCPServer()) {
+			return "", fmt.Errorf("%s: mcp.servers.rsk already exists with different settings", path)
+		}
 	}
 	servers[rskMCPServerName] = server
 	return path, writeOCConfig(path, cfg)

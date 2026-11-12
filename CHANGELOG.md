@@ -89,6 +89,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 # CLI releases
 
+## v3.9.1 (2026-11-12)
+
+### Fixed
+- **`rsk sync` restores official skills and upgrades legacy OpenCode v2 entries.** Official-source skills have no version in their frontmatter, so their `rsk.lock` entry is versionless; sync treated that as an invalid lock and refused every project that used one. It now resolves them from the official cache the same way install does. OpenCode v2 configs whose `mcp.servers.rsk` was written in the older v1 shape (with `enabled`, and before v3.9.0 without `--read-only`) are upgraded in place instead of reported as a conflict, while a genuinely user-owned entry is still refused.
+
 ## v3.9.0 (2026-11-12)
 
 ### Added

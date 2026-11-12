@@ -306,6 +306,51 @@ func TestLegacyOpenCodeMCPConfigUpgradesWithoutLosingSettings(t *testing.T) {
 	}
 }
 
+// TestOpenCodeV2UpgradesLegacyServerShapes covers v2 configs whose rsk entry
+// was written by an earlier release in the v1 shape: registration must upgrade
+// it to the v2 entry instead of refusing the project.
+func TestOpenCodeV2UpgradesLegacyServerShapes(t *testing.T) {
+	t.Parallel()
+	for name, entry := range map[string]string{
+		"pre-read-only": `{"type":"local","command":["rsk","mcp"],"enabled":true}`,
+		"with-enabled":  `{"type":"local","command":["rsk","mcp","--read-only"],"enabled":true}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			dir := t.TempDir()
+			path := filepath.Join(dir, tool.OpenCodeFileName)
+			writeFile(t, path, `{"mcp":{"servers":{"rsk":`+entry+
+				`,"other":{"type":"local","command":["other"]}}}}`)
+			client := mustTool(t, tool.OpenCodeID)
+			if _, err := client.RegisterMCP(dir); err != nil {
+				t.Fatalf("RegisterMCP over legacy v2 entry: %v", err)
+			}
+			first := readFile(t, path)
+			if _, err := client.RegisterMCP(dir); err != nil {
+				t.Fatalf("RegisterMCP (second): %v", err)
+			}
+			if second := readFile(t, path); first != second {
+				t.Fatal("RegisterMCP is not idempotent after upgrading a legacy v2 entry")
+			}
+			if strings.Contains(first, `"enabled"`) {
+				t.Fatalf("legacy shape was not normalized: %s", first)
+			}
+			if !strings.Contains(first, `"--read-only"`) {
+				t.Fatalf("command was not upgraded: %s", first)
+			}
+			cfg := readJSON(t, path)
+			mcp, ok := cfg["mcp"].(map[string]any)
+			if !ok {
+				t.Fatal("missing mcp")
+			}
+			servers, ok := mcp["servers"].(map[string]any)
+			if !ok || servers["other"] == nil {
+				t.Fatalf("other server not preserved: %+v", mcp["servers"])
+			}
+		})
+	}
+}
+
 func TestOpenCodeMCPRejectsAlternateConfigFiles(t *testing.T) {
 	t.Parallel()
 	for _, name := range []string{"opencode.jsonc", ".opencode/opencode.json", ".opencode/opencode.jsonc"} {
