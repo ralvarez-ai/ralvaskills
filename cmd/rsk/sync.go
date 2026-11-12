@@ -104,24 +104,26 @@ func printSyncConfigPlan(out io.Writer, ids []tool.ID, mcp bool) {
 			fmt.Fprintln(out, "check AGENTS.md, CLAUDE.md, and .rsk/CLAUDE.md")
 		case tool.OpenCodeID:
 			fmt.Fprintln(out, "check opencode.json instructions")
-		case tool.CodexID:
-			fmt.Fprintln(out, "Codex discovers skills on demand")
-		case tool.AntigravityID:
-			fmt.Fprintln(out, "Antigravity discovers skills on demand")
+		default:
+			fmt.Fprintf(out, "check %s: skills are discovered on demand\n", id)
 		}
 	}
 	if mcp {
 		for _, id := range ids {
-			fmt.Fprintf(out, "check %s MCP registration", id)
-			switch id {
-			case tool.ClaudeID:
-				fmt.Fprintln(out, " (.mcp.json and CLAUDE.md)")
-			case tool.CodexID:
-				fmt.Fprintln(out, " (.codex/config.toml)")
-			case tool.OpenCodeID:
-				fmt.Fprintln(out, " (opencode.json)")
-			case tool.AntigravityID:
-				fmt.Fprintln(out, " (.agents/mcp_config.json)")
+			if id == tool.ClaudeID {
+				fmt.Fprintln(out, "check claude-code MCP registration (.mcp.json and CLAUDE.md)")
+				continue
+			}
+			if id == tool.CodexID {
+				fmt.Fprintln(out, "check codex MCP registration (.codex/config.toml)")
+				continue
+			}
+			if id == tool.OpenCodeID {
+				fmt.Fprintln(out, "check opencode MCP registration (opencode.json)")
+				continue
+			}
+			if file, ok := tool.ProjectMCPFile(id); ok {
+				fmt.Fprintf(out, "check %s MCP registration (%s)\n", id, file)
 			}
 		}
 	}

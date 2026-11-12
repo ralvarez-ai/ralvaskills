@@ -2,7 +2,7 @@
 
 **Note:** This is my personal toolkit for daily development, made public for anyone who wants to use, fork, or learn from it.
 
-A growing collection of opinionated, Staff-level skills for Claude Code, Codex, OpenCode, and Google Antigravity.
+A growing collection of opinionated, Staff-level skills for Claude Code, Codex, OpenCode, Google Antigravity, Kimi Code, Factory Droid, Gemini CLI, Qwen Code, Cursor CLI, and Sourcegraph Amp.
 
 By default, AI coding agents produce functional but generic code. They nest logic too deeply, ignore architectural patterns, and write verbose commit messages. These skills enforce strict standards — functioning as an automated Senior Engineer that demands clean, maintainable, and highly optimized code.
 
@@ -183,7 +183,22 @@ rsk tools remove <rule>                   # drop a rule
 
 ### MCP server
 
-`rsk new --mcp` can register `rsk mcp` in the project config: `.mcp.json` for Claude Code, `.codex/config.toml` for Codex, `opencode.json` for OpenCode, and `.agents/mcp_config.json` for Google Antigravity. Claude Code also gets a short pointer in `./CLAUDE.md`. The server provides `project_profile`, `search_skills`, and the `rsk://catalog` resource over stdio. Claude Code additionally receives `install_skills` with Claude-specific interaction metadata. Codex, OpenCode and Antigravity registrations use `--read-only`, which omits that tool until their per-install approval behavior is verified. Codex loads project configuration only in trusted projects.
+`rsk new --mcp` registers `rsk mcp` in every selected client's project config, preserving unrelated servers and keys:
+
+| Client (`--for`) | Project MCP config |
+| --- | --- |
+| `claude-code` | `.mcp.json` (plus a short pointer in `./CLAUDE.md`) |
+| `codex` | `.codex/config.toml` |
+| `opencode` | `opencode.json` |
+| `antigravity` | `.agents/mcp_config.json` |
+| `kimi` | `.kimi-code/mcp.json` |
+| `droid` | `.factory/mcp.json` |
+| `gemini` | `.gemini/settings.json` |
+| `qwen` | `.qwen/settings.json` |
+| `cursor` | `.cursor/mcp.json` |
+| `amp` | `.amp/settings.json` |
+
+The server provides `project_profile`, `search_skills`, and the `rsk://catalog` resource over stdio. Claude Code additionally receives `install_skills` with Claude-specific interaction metadata; every other client is registered read-only (`--read-only`), which omits that tool until its per-install approval behavior is verified. Codex loads project configuration only in trusted projects.
 
 The client launches the server, so **`rsk` must be on PATH** on every machine that opens the project — `rsk new` warns and skips registration when it is not. Re-run `rsk new` to (re)register; it never overwrites other MCP servers. `rsk destroy` removes the registration and the pointer.
 
@@ -216,7 +231,7 @@ Some skills are adapted from other people's work and changed for this toolkit. E
 
 ## Installation
 
-These skills are drop-in modules for Claude Code, Codex, OpenCode, and Google Antigravity.
+These skills are drop-in modules for ten agent clients: Claude Code, Codex, OpenCode, Google Antigravity, Kimi Code, Factory Droid, Gemini CLI, Qwen Code, Cursor CLI, and Sourcegraph Amp.
 
 ### Global installation
 
@@ -244,16 +259,9 @@ cp -R ./skills/* ~/.claude/skills/
 
 ### Per-project installation
 
-Drop individual skill folders into your project's `.claude/skills/` (Claude Code), `.agents/skills/` (Codex and Antigravity), or `.opencode/skills/` (OpenCode) directory. Each skill is self-contained — copy only what you need.
+Drop individual skill folders into your project's `.claude/skills/` (Claude Code), `.agents/skills/` (Codex, Antigravity, Kimi, Droid, Gemini, Qwen, Cursor, Amp), or `.opencode/skills/` (OpenCode) directory. Each skill is self-contained — copy only what you need.
 
-To enable all of them in an existing rsk project, run `rsk new --for all`, then
-`rsk install` to link its existing skills into each native directory. Review
-old `.claude/skills/` links before removing any: Claude may still use them, and
-OpenCode also discovers them for compatibility. Run `rsk init` to configure
-Codex's and Antigravity's global targets (`~/.agents/skills` and
-`~/.gemini/config/skills`). Both discover installed skills on demand; rsk's
-pinned digests are not automatically loaded. Codex and Antigravity share
-`.agents/skills`, so `rsk.mod` listing both links each skill once.
+`.agents/skills/` is the Agent Skills convention every client but Claude Code and OpenCode reads, so `rsk new --for all` links each skill once even with eight tools selected. To enable all of them in an existing rsk project, run `rsk new --for all`, then `rsk install` to link its existing skills into each native directory. Review old `.claude/skills/` links before removing any: Claude may still use them, and OpenCode also discovers them for compatibility. Run `rsk init` to configure each client's global target — `~/.agents/skills`, `~/.gemini/config/skills`, `~/.kimi-code/skills`, `~/.factory/skills`, `~/.qwen/skills`, `~/.cursor/skills` or `~/.config/agents/skills`. Every one of them discovers installed skills on demand; rsk's pinned digests are not automatically loaded.
 
 `rsk sync` uses the exact cached registry versions in `rsk.lock` and preserves
 `rsk.mod` and `rsk.lock`. It refuses conflicting existing links. It refreshes

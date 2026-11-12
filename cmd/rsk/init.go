@@ -19,11 +19,11 @@ import (
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Set up rsk for this machine.",
-	Long: `Set up rsk for this machine by creating ~/.config/rsk/config.json.
+	Long: fmt.Sprintf(`Set up rsk for this machine by creating ~/.config/rsk/config.json.
 
 Run once per machine. Prompts for:
   - Path to your local ralvaskills repo clone
-  - Which AI tools to support (claude-code, codex, opencode, antigravity)
+  - Which AI tools to support (%s)
   - Global skills directory for each tool
   - Default install scope for --global
 
@@ -33,7 +33,7 @@ real machine config.
 
 Examples:
   rsk init
-  rsk init --force`,
+  rsk init --force`, strings.Join(tool.Names(), ", ")),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runInit(cmd, cmdx.Bool(cmd, cmdx.FlagForce))
 	},

@@ -55,6 +55,12 @@ func init() {
 	Register(&openCodeTool{})
 	Register(&codexTool{})
 	Register(newAntigravityTool())
+	Register(newKimiTool())
+	Register(newDroidTool())
+	Register(newGeminiTool())
+	Register(newQwenTool())
+	Register(newCursorTool())
+	Register(newAmpTool())
 }
 
 // String returns the string representation of the tool identifier.

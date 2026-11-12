@@ -28,7 +28,7 @@ import (
 var newCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Initialize an rsk project in the current directory.",
-	Long: `Create .rsk/rsk.mod and tool-specific config in the current directory so
+	Long: fmt.Sprintf(`Create .rsk/rsk.mod and tool-specific config in the current directory so
 this folder becomes an rsk project. Skill directories are created
 lazily the first time a skill is installed. Commit .rsk/rsk.mod,
 .rsk/rsk.lock and .rsk/CLAUDE.md: the lock resolves the same versions on
@@ -38,17 +38,17 @@ Claude Code also gets an agent guide: AGENTS.md is created from a short
 skeleton when the project has none, and CLAUDE.md imports it (@AGENTS.md) above
 the generated pin file. An existing AGENTS.md is never modified.
 
-Use --for to select which tools to configure:
-  --for claude-code  (default) AGENTS.md + CLAUDE.md (imports it and .rsk/CLAUDE.md)
-  --for opencode               Writes pinned skills to opencode.json instructions
-  --for codex                  Discovers skills from .agents/skills/
-  --for antigravity            Discovers skills from .agents/skills/
-  --for all                    All supported tools
+Use --for to select which tools to configure, from %s, or all:
+
+  claude-code  AGENTS.md + CLAUDE.md (imports it and .rsk/CLAUDE.md)
+  opencode     Writes pinned skills to opencode.json instructions
+  others       Discover skills in .agents/skills/, the shared Agent Skills path
 
 Examples:
   rsk new
   rsk new --for opencode
-  rsk new --for all`,
+  rsk new --for all`, strings.Join(tool.Names(), ", ")),
+
 	RunE: runNew,
 }
 

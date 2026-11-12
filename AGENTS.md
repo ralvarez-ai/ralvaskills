@@ -45,7 +45,8 @@ runtime, only at build.
   bundles), `cmdx` (cobra helpers), `fsx` (atomic writes), `install` (source selection,
   constraint solving), `manifest` (`rsk.mod`/`rsk.lock`), `mcp` (project detection, tool
   registration, resources), `skill`, `source` (registry/local/official), `tool` (the Claude /
-  OpenCode / MCP adapters), `ui` (termkit), `update`.
+  OpenCode / Codex adapters, and `jsonAdapter` plus `jsonMCPConfig` for the eight JSON clients),
+  `ui` (termkit), `update`.
 - `cmd/{generate-registry,registry-remove,count-tokens}` — registry build helpers.
 - `site/` — the landing page (React 19 + Vite): `src/sections`, `src/components`, generated
   `src/data/catalog.json`, ported styles, prerender and verify scripts. See `site/README.md`.

@@ -24,6 +24,38 @@ func TestNativeSkillDirectories(t *testing.T) {
 			filepath.Join(project, ".agents", "skills"),
 			filepath.Join(home, ".gemini", "config", "skills"),
 		},
+		{
+			AmpID,
+			filepath.Join(project, ".agents", "skills"),
+			filepath.Join(home, ".config", "agents", "skills"),
+		},
+		{
+			CursorID,
+			filepath.Join(project, ".agents", "skills"),
+			filepath.Join(home, ".cursor", "skills"),
+		},
+		{
+			DroidID,
+			filepath.Join(project, ".agents", "skills"),
+			filepath.Join(home, ".factory", "skills"),
+		},
+		{
+			GeminiID,
+			filepath.Join(project, ".agents", "skills"),
+			filepath.Join(home, ".gemini", "skills"),
+		},
+		{
+			KimiID,
+			filepath.Join(project, ".agents", "skills"),
+			kimiGlobalSkillsDir(home),
+		},
+		{
+			QwenID,
+			filepath.Join(project, ".agents", "skills"),
+			filepath.Join(home, ".qwen", "skills"),
+		},
+		{OpenCodeID, filepath.Join(project, ".opencode", "skills"), ""},
+		{ClaudeID, filepath.Join(project, ".claude", "skills"), ""},
 	} {
 		adapter, ok := Get(tc.id)
 		if !ok {
@@ -103,4 +135,13 @@ func TestCodexMCPRefusesConflictingServer(t *testing.T) {
 	if err != nil || string(data) != original {
 		t.Fatalf("config = %q, err=%v", data, err)
 	}
+}
+
+// kimiGlobalSkillsDir is the expectation for Kimi's global directory, which
+// moves with KIMI_CODE_HOME.
+func kimiGlobalSkillsDir(home string) string {
+	if override := os.Getenv("KIMI_CODE_HOME"); override != "" {
+		return filepath.Join(override, "skills")
+	}
+	return filepath.Join(home, ".kimi-code", "skills")
 }

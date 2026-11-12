@@ -52,18 +52,13 @@ func TestToolsFromFlag(t *testing.T) {
 		input   string
 		want    []tool.ID
 		wantErr bool
+		all     bool
 	}{
 		{name: "claude-code", input: "claude-code", want: []tool.ID{tool.ClaudeID}},
 		{name: "opencode", input: "opencode", want: []tool.ID{tool.OpenCodeID}},
 		{name: "codex", input: "codex", want: []tool.ID{tool.CodexID}},
 		{name: "antigravity", input: "antigravity", want: []tool.ID{tool.AntigravityID}},
-		{
-			name:  "all",
-			input: "all",
-			want: []tool.ID{
-				tool.AntigravityID, tool.ClaudeID, tool.CodexID, tool.OpenCodeID,
-			},
-		},
+		{name: "all", input: "all", all: true},
 		{name: "empty is rejected", input: "", wantErr: true},
 		{name: "unknown is rejected", input: "bogus", wantErr: true},
 	}
@@ -81,6 +76,15 @@ func TestToolsFromFlag(t *testing.T) {
 			}
 			if err != nil {
 				t.Fatalf("toolsFromFlag(%q): unexpected error: %v", tt.input, err)
+			}
+			if tt.all {
+				// "all" follows the registry, so a new adapter cannot be
+				// registered without this case passing.
+				registered := tool.All()
+				tt.want = make([]tool.ID, len(registered))
+				for i, t := range registered {
+					tt.want[i] = t.ID()
+				}
 			}
 			if len(got) != len(tt.want) {
 				t.Fatalf("toolsFromFlag(%q) = %v, want %v", tt.input, got, tt.want)

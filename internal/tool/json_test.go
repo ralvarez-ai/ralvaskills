@@ -2,9 +2,11 @@ package tool
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -12,7 +14,7 @@ import (
 // to the registry and to this table is all a new JSON client needs.
 func jsonTools(t *testing.T) []*jsonAdapter {
 	t.Helper()
-	ids := []ID{AntigravityID}
+	ids := []ID{AntigravityID, KimiID, DroidID, GeminiID, QwenID, CursorID, AmpID}
 	adapters := make([]*jsonAdapter, 0, len(ids))
 	for _, id := range ids {
 		client, ok := Get(id)
@@ -203,6 +205,60 @@ func TestJSONAdaptersRefuseSymlinkedDir(t *testing.T) {
 	}
 }
 
+func TestKimiSkillsDirHonorsHomeOverride(t *testing.T) {
+	t.Setenv(kimiHomeEnv, "/tmp/isolated-kimi")
+	client, _ := Get(KimiID)
+	if got, want := client.SkillsDir(), "/tmp/isolated-kimi/skills"; got != want {
+		t.Fatalf("SkillsDir = %q, want %q", got, want)
+	}
+}
+
+func TestCursorServerCarriesStdioType(t *testing.T) {
+	t.Parallel()
+	server := readOnlyMCPServer()
+	if _, hasType := server[mcpTypeKey]; hasType {
+		t.Fatal("the shared entry should not carry a transport type")
+	}
+	cursor := cursorMCPServer()
+	if cursor[mcpTypeKey] != mcpStdioType {
+		t.Fatalf("cursor type = %v, want %q", cursor[mcpTypeKey], mcpStdioType)
+	}
+	if !reflect.DeepEqual(cursor["args"], server["args"]) {
+		t.Fatalf("cursor args = %v, want %v", cursor["args"], server["args"])
+	}
+}
+
+func TestAmpUsesDottedMCPKeyAndRejectsJSONC(t *testing.T) {
+	t.Parallel()
+	project := t.TempDir()
+	client, _ := Get(AmpID)
+	path, err := client.RegisterMCP(project)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if path != filepath.Join(project, ".amp", "settings.json") {
+		t.Fatalf("path = %q", path)
+	}
+	cfg := readJSONObject(t, path)
+	if _, ok := cfg[ampMCPKey].(map[string]any); !ok {
+		t.Fatalf("%s = %T, want object", ampMCPKey, cfg[ampMCPKey])
+	}
+	if _, nested := cfg["amp"]; nested {
+		t.Fatalf("wrote a nested amp object: %v", cfg)
+	}
+
+	other := t.TempDir()
+	if mkErr := os.MkdirAll(filepath.Join(other, ".amp"), 0o755); mkErr != nil {
+		t.Fatal(mkErr)
+	}
+	if writeErr := os.WriteFile(filepath.Join(other, ampSettingsJSONC), []byte("{}"), 0o644); writeErr != nil {
+		t.Fatal(writeErr)
+	}
+	if _, registerErr := client.RegisterMCP(other); registerErr == nil {
+		t.Fatal("expected the .jsonc settings file to be refused")
+	}
+}
+
 func TestProjectMCPFileCoversEveryJSONAdapter(t *testing.T) {
 	t.Parallel()
 	for _, adapter := range jsonTools(t) {
@@ -245,5 +301,24 @@ func TestTrimSlash(t *testing.T) {
 		if got := trimSlash(in); got != want {
 			t.Errorf("trimSlash(%q) = %q, want %q", in, got, want)
 		}
+	}
+}
+
+func TestJSONAdapterAlternateErrorsAreActionable(t *testing.T) {
+	t.Parallel()
+	client, _ := Get(AmpID)
+	project := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(project, ".amp"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(project, ampSettingsJSONC), []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	_, registerErr := client.RegisterMCP(project)
+	if registerErr == nil || !strings.Contains(registerErr.Error(), ampSettingsJSONC) {
+		t.Fatalf("err = %v, want one naming %s", registerErr, ampSettingsJSONC)
+	}
+	if errors.Is(registerErr, os.ErrNotExist) {
+		t.Fatal("unexpected missing-file error")
 	}
 }

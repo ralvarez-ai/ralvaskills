@@ -1,11 +1,14 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/spf13/cobra"
 
 	"go.ralva.dev/termkit"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
@@ -59,7 +62,7 @@ func setupCommands() {
 	rootCmd.AddCommand(installCmd)
 	f = installCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "Install to the configured global skills dir(s)")
-	f.String(cmdx.FlagFor, "", "With --global, scope to a single tool (claude-code|codex|opencode|antigravity)")
+	f.String(cmdx.FlagFor, "", forFlagUsage("With --global, scope to a single tool: "))
 	cmdx.RegisterInclude(installCmd, "Allow installing extra skills", cmdx.IncludePersonal)
 	f.Bool(cmdx.FlagPin, false, "Also pin installed skills in the project (project scope only)")
 	f.String(cmdx.FlagVersion, "", "Pin to a specific repo tag (local skills only)")
@@ -77,7 +80,7 @@ func setupCommands() {
 	termkit.MarkTableView(listCmd)
 	f = listCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "List global skills")
-	f.String(cmdx.FlagFor, "", "Scope --global to a single tool (claude-code|codex|opencode|antigravity)")
+	f.String(cmdx.FlagFor, "", forFlagUsage("Scope --global to a single tool: "))
 	cmdx.RegisterInclude(listCmd, "Include extra skills in the output", cmdx.IncludePersonal)
 	addOutputFlag(listCmd)
 	registerForCompletion(listCmd, false)
@@ -85,7 +88,7 @@ func setupCommands() {
 	// new command
 	rootCmd.AddCommand(newCmd)
 	f = newCmd.Flags()
-	f.String(cmdx.FlagFor, "", "Tools to configure: claude-code|codex|opencode|antigravity|all")
+	f.String(cmdx.FlagFor, "", forFlagUsage("Tools to configure: "))
 	f.Bool(flagMCP, false, "Register the rsk MCP server in the project's client config")
 	f.Bool(flagGuide, false, "Install and pin the rsk-guide skill")
 	registerForCompletion(newCmd, true)
@@ -99,7 +102,7 @@ func setupCommands() {
 	termkit.MarkTableView(statusCmd)
 	f = statusCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "Show global skills only")
-	f.String(cmdx.FlagFor, "", "Scope --global to a single tool (claude-code|codex|opencode|antigravity)")
+	f.String(cmdx.FlagFor, "", forFlagUsage("Scope --global to a single tool: "))
 	f.Bool("project", false, "Show project skills only")
 	f.Bool(cmdx.FlagStack, false, "Fetch latest versions and show STACK.md drift (network, opt-in)")
 	f.Bool(cmdx.FlagRefresh, false, "With --stack: bypass the 24h cache and force a re-fetch")
@@ -111,7 +114,7 @@ func setupCommands() {
 	rootCmd.AddCommand(uninstallCmd)
 	f = uninstallCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "Uninstall from the configured global skills dir(s)")
-	f.String(cmdx.FlagFor, "", "With --global, scope to a single tool (claude-code|codex|opencode|antigravity)")
+	f.String(cmdx.FlagFor, "", forFlagUsage("With --global, scope to a single tool: "))
 	cmdx.RegisterInclude(uninstallCmd, "Allow uninstalling extra skills", cmdx.IncludePersonal)
 	f.Bool(cmdx.FlagDryRun, false, "Show what would be uninstalled without doing it")
 	f.BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
@@ -121,7 +124,7 @@ func setupCommands() {
 	rootCmd.AddCommand(updateCmd)
 	f = updateCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "Update global skills")
-	f.String(cmdx.FlagFor, "", "Scope --global to a single tool (claude-code|codex|opencode|antigravity)")
+	f.String(cmdx.FlagFor, "", forFlagUsage("Scope --global to a single tool: "))
 	cmdx.RegisterInclude(
 		updateCmd,
 		"Also update extra skills; official also syncs the official skill cache",
@@ -186,4 +189,10 @@ func assignGroups() {
 			cmd.GroupID = id
 		}
 	}
+}
+
+// forFlagUsage builds the --for help from the tool registry, so registering an
+// adapter lists it in every command without editing each flag.
+func forFlagUsage(lead string) string {
+	return lead + strings.Join(tool.Names(), "|") + "|" + cmdx.ForAll
 }
