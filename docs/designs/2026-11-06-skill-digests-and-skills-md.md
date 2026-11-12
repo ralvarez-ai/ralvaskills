@@ -42,7 +42,11 @@ consumer for the author's choice. The project decides, by pinning.
 
 ### `DIGEST.md` (per skill, optional)
 
-- Plain markdown, no frontmatter, hard cap of about 40 lines (about 500 tokens).
+- Plain markdown, no frontmatter, hard cap of about 40 lines (about 500 tokens). The size is a
+  band rather than a number: 500 is the target, and a dense skill that carries 25–30 always-on
+  rules lands at 700–750, which is accepted (2026-11-12) rather than paid for by dropping a rule.
+  What is not accepted is prose that restates the body — a justification clause, an enumeration
+  the body already has in a table, an example — so trimming is always the first move.
 - Contents: the always-on rules, the hard constraints ("never X without asking"), and one line
   saying when to invoke the full skill. Extracted from the body, nothing new.
 - Last line: `Full guide: invoke the <name> skill.`
