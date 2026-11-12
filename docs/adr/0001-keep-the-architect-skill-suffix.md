@@ -36,7 +36,7 @@ What a rename costs: **a skill name is the registry key.** `rsk` has no alias, r
 
 Renaming a published skill is a breaking change with no migration path. Any future rename is its own decision with its own ADR — never a side effect of a naming cleanup.
 
-Scope: this covers the 43 `-architect` names and keeps them as they are. `hexagonal-arch` is the one genuine defect — the only truncated name in the catalogue, and it exists solely to justify a one-skill `-arch` row in the specification. It is tracked separately in [the backlog](../backlog/pending/n6v2wk-fix-the-truncated-hexagonal-arch-skill-name.md) and is not part of this decision.
+Scope: this covers the 43 `-architect` names and keeps them as they are. `hexagonal-arch` is the one genuine defect — the only truncated name in the catalogue, and it exists solely to justify a one-skill `-arch` row in the specification. It is tracked separately in [the backlog](../backlog/done/n6v2wk-fix-the-truncated-hexagonal-arch-skill-name.md) and is not part of this decision.
 
 ## Consequences
 

@@ -5,7 +5,8 @@ section: ralvaskills
 topics:
     - rsk
     - skill-naming
-blocked_by:
+blocked_by: []
+related:
   - r4n8kw
   - n6v2wk
 ---
