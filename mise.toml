@@ -4,6 +4,7 @@ act = "0.2.89"
 "go:golang.org/x/tools/cmd/deadcode" = "0.51.0"
 go = "1.27.3"
 golangci-lint = "2.14.0"
+task = "3.54.0"
 
 [env]
 # Private modules: skip the public proxy and checksum DB (implies GONOPROXY and GONOSUMDB).
