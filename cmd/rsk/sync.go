@@ -106,6 +106,8 @@ func printSyncConfigPlan(out io.Writer, ids []tool.ID, mcp bool) {
 			fmt.Fprintln(out, "check opencode.json instructions")
 		case tool.CodexID:
 			fmt.Fprintln(out, "Codex discovers skills on demand")
+		case tool.AntigravityID:
+			fmt.Fprintln(out, "Antigravity discovers skills on demand")
 		}
 	}
 	if mcp {
@@ -118,6 +120,8 @@ func printSyncConfigPlan(out io.Writer, ids []tool.ID, mcp bool) {
 				fmt.Fprintln(out, " (.codex/config.toml)")
 			case tool.OpenCodeID:
 				fmt.Fprintln(out, " (opencode.json)")
+			case tool.AntigravityID:
+				fmt.Fprintln(out, " (.agents/mcp_config.json)")
 			}
 		}
 	}

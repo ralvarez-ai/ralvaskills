@@ -42,6 +42,7 @@ Use --for to select which tools to configure:
   --for claude-code  (default) AGENTS.md + CLAUDE.md (imports it and .rsk/CLAUDE.md)
   --for opencode               Writes pinned skills to opencode.json instructions
   --for codex                  Discovers skills from .agents/skills/
+  --for antigravity            Discovers skills from .agents/skills/
   --for all                    All supported tools
 
 Examples:
@@ -56,18 +57,19 @@ func toolsFromFlag(flag string) ([]tool.ID, error) {
 	if err != nil {
 		return nil, fieldError(cmdx.FlagFor, "%v", err)
 	}
-	switch scope {
-	case cmdx.TargetScope(tool.ClaudeID):
-		return []tool.ID{tool.ClaudeID}, nil
-	case cmdx.TargetScope(tool.OpenCodeID):
-		return []tool.ID{tool.OpenCodeID}, nil
-	case cmdx.TargetScope(tool.CodexID):
-		return []tool.ID{tool.CodexID}, nil
-	case cmdx.ScopeAll:
-		return []tool.ID{tool.ClaudeID, tool.CodexID, tool.OpenCodeID}, nil
-	default:
+	if scope == cmdx.ScopeAll {
+		tools := tool.All()
+		ids := make([]tool.ID, len(tools))
+		for i, t := range tools {
+			ids[i] = t.ID()
+		}
+		return ids, nil
+	}
+	id, parseErr := tool.ParseID(string(scope))
+	if parseErr != nil {
 		return nil, fieldError(cmdx.FlagFor, "--for must be a supported tool or %s; got %q", cmdx.ForAll, flag)
 	}
+	return []tool.ID{id}, nil
 }
 
 func runNew(cmd *cobra.Command, _ []string) error {
@@ -143,7 +145,7 @@ func resolveForFlag(cmd *cobra.Command, out io.Writer) (string, error) {
 		return "", fieldError(cmdx.FlagFor, "choose which tools to configure")
 	}
 
-	choices := []string{string(tool.ClaudeID), string(tool.OpenCodeID), string(tool.CodexID), cmdx.ForAll}
+	choices := append(tool.Names(), cmdx.ForAll)
 	idx, err := ui.Select(out, "Tools to configure", choices, 0)
 	if err != nil {
 		return "", err

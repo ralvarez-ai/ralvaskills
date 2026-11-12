@@ -2,7 +2,7 @@
 
 **Note:** This is my personal toolkit for daily development, made public for anyone who wants to use, fork, or learn from it.
 
-A growing collection of opinionated, Staff-level skills for Claude Code, Codex, and OpenCode.
+A growing collection of opinionated, Staff-level skills for Claude Code, Codex, OpenCode, and Google Antigravity.
 
 By default, AI coding agents produce functional but generic code. They nest logic too deeply, ignore architectural patterns, and write verbose commit messages. These skills enforce strict standards — functioning as an automated Senior Engineer that demands clean, maintainable, and highly optimized code.
 
@@ -183,7 +183,7 @@ rsk tools remove <rule>                   # drop a rule
 
 ### MCP server
 
-`rsk new --mcp` can register `rsk mcp` in the project config: `.mcp.json` for Claude Code, `.codex/config.toml` for Codex, and `opencode.json` for OpenCode. Claude Code also gets a short pointer in `./CLAUDE.md`. The server provides `project_profile`, `search_skills`, and the `rsk://catalog` resource over stdio. Claude Code additionally receives `install_skills` with Claude-specific interaction metadata. Codex and OpenCode registrations use `--read-only`, which omits that tool until their per-install approval behavior is verified. Codex loads project configuration only in trusted projects.
+`rsk new --mcp` can register `rsk mcp` in the project config: `.mcp.json` for Claude Code, `.codex/config.toml` for Codex, `opencode.json` for OpenCode, and `.agents/mcp_config.json` for Google Antigravity. Claude Code also gets a short pointer in `./CLAUDE.md`. The server provides `project_profile`, `search_skills`, and the `rsk://catalog` resource over stdio. Claude Code additionally receives `install_skills` with Claude-specific interaction metadata. Codex, OpenCode and Antigravity registrations use `--read-only`, which omits that tool until their per-install approval behavior is verified. Codex loads project configuration only in trusted projects.
 
 The client launches the server, so **`rsk` must be on PATH** on every machine that opens the project — `rsk new` warns and skips registration when it is not. Re-run `rsk new` to (re)register; it never overwrites other MCP servers. `rsk destroy` removes the registration and the pointer.
 
@@ -216,7 +216,7 @@ Some skills are adapted from other people's work and changed for this toolkit. E
 
 ## Installation
 
-These skills are drop-in modules for Claude Code, Codex, and OpenCode.
+These skills are drop-in modules for Claude Code, Codex, OpenCode, and Google Antigravity.
 
 ### Global installation
 
@@ -244,18 +244,20 @@ cp -R ./skills/* ~/.claude/skills/
 
 ### Per-project installation
 
-Drop individual skill folders into your project's `.claude/skills/` (Claude Code), `.agents/skills/` (Codex), or `.opencode/skills/` (OpenCode) directory. Each skill is self-contained — copy only what you need.
+Drop individual skill folders into your project's `.claude/skills/` (Claude Code), `.agents/skills/` (Codex and Antigravity), or `.opencode/skills/` (OpenCode) directory. Each skill is self-contained — copy only what you need.
 
-To enable all three in an existing rsk project, run `rsk new --for all`, then
+To enable all of them in an existing rsk project, run `rsk new --for all`, then
 `rsk install` to link its existing skills into each native directory. Review
 old `.claude/skills/` links before removing any: Claude may still use them, and
 OpenCode also discovers them for compatibility. Run `rsk init` to configure
-Codex's global target. Codex discovers installed skills on demand; rsk's pinned
-digests are not automatically loaded by Codex.
+Codex's and Antigravity's global targets (`~/.agents/skills` and
+`~/.gemini/config/skills`). Both discover installed skills on demand; rsk's
+pinned digests are not automatically loaded. Codex and Antigravity share
+`.agents/skills`, so `rsk.mod` listing both links each skill once.
 
 `rsk sync` uses the exact cached registry versions in `rsk.lock` and preserves
 `rsk.mod` and `rsk.lock`. It refuses conflicting existing links. It refreshes
 pinned instructions and reconciles MCP registration when an rsk server is
 already configured; use `--mcp` to register one, or `--mcp=false` to leave MCP
 configuration alone. The `rsk` binary on PATH must support read-only MCP mode
-before Codex or OpenCode MCP registrations can be synchronized.
+before Codex, OpenCode or Antigravity MCP registrations can be synchronized.

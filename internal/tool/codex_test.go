@@ -19,6 +19,11 @@ func TestNativeSkillDirectories(t *testing.T) {
 		project, global string
 	}{
 		{CodexID, filepath.Join(project, ".agents", "skills"), filepath.Join(home, ".agents", "skills")},
+		{
+			AntigravityID,
+			filepath.Join(project, ".agents", "skills"),
+			filepath.Join(home, ".gemini", "config", "skills"),
+		},
 		{OpenCodeID, filepath.Join(project, ".opencode", "skills"), ""},
 		{ClaudeID, filepath.Join(project, ".claude", "skills"), ""},
 	} {

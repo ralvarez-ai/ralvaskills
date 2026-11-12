@@ -429,3 +429,40 @@ func writeFile(t *testing.T, path, content string) {
 		t.Fatalf("write %s: %v", path, err)
 	}
 }
+
+// TestAntigravityMCPPreflightAndDetection covers the Antigravity adapter in the
+// shared MCP paths: preflight reads .agents/mcp_config.json without writing it,
+// and ProjectHasMCP reads the mcpServers map Antigravity uses.
+func TestAntigravityMCPPreflightAndDetection(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	agents := filepath.Join(dir, ".agents")
+	if err := os.MkdirAll(agents, fsperm.Dir); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tool.PreflightMCP(dir, []tool.ID{tool.AntigravityID}); err != nil {
+		t.Fatalf("preflight: %v", err)
+	}
+	if _, err := os.Lstat(filepath.Join(agents, tool.AntigravityMCPFileName)); !os.IsNotExist(err) {
+		t.Fatalf("preflight wrote the real config: %v", err)
+	}
+
+	if found, err := tool.ProjectHasMCP(dir, []tool.ID{tool.AntigravityID}); err != nil || found {
+		t.Fatalf("unconfigured found=%v err=%v", found, err)
+	}
+
+	path, err := mustTool(t, tool.AntigravityID).RegisterMCP(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := filepath.Join(agents, tool.AntigravityMCPFileName); path != want {
+		t.Fatalf("path = %q, want %q", path, want)
+	}
+	if found, foundErr := tool.ProjectHasMCP(dir, []tool.ID{tool.AntigravityID}); foundErr != nil || !found {
+		t.Fatalf("configured found=%v err=%v", found, foundErr)
+	}
+	if _, exists := mcpServers(t, path, "mcpServers")["rsk"]; !exists {
+		t.Fatalf("rsk server missing from %s", path)
+	}
+}

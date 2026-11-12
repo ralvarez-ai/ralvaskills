@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 
+	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 	"go.ralva.dev/ralvaskills/v3/internal/fsx"
 )
@@ -25,6 +26,10 @@ const (
 	mcpTypeKey     = "type"
 	mcpLocalType   = "local"
 
+	// mcpReadOnlyFlag keeps a registration to the read-only server, which omits
+	// install_skills until the client's per-install approval behavior is verified.
+	mcpReadOnlyFlag = "--read-only"
+
 	mcpPointerStart = "<!-- rsk-mcp:start -->"
 	mcpPointerEnd   = "<!-- rsk-mcp:end -->"
 )
@@ -38,7 +43,7 @@ func claudeMCPServer() map[string]any {
 func openCodeMCPServer() map[string]any {
 	return map[string]any{
 		mcpTypeKey:    mcpLocalType,
-		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, "--read-only"},
+		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, mcpReadOnlyFlag},
 		"enabled":     true,
 	}
 }
@@ -127,7 +132,7 @@ func rejectAlternateOpenCodeConfigs(projectDir string) error {
 func openCodeV2MCPServer() map[string]any {
 	return map[string]any{
 		mcpTypeKey:    mcpLocalType,
-		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, "--read-only"},
+		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, mcpReadOnlyFlag},
 	}
 }
 
@@ -156,6 +161,8 @@ func clientHasMCP(projectDir string, id ID) (bool, error) {
 		path, key = filepath.Join(projectDir, MCPFileName), "mcpServers"
 	case OpenCodeID:
 		path, key = filepath.Join(projectDir, OpenCodeFileName), openCodeMCPKey
+	case AntigravityID:
+		path, key = antigravityMCPPath(projectDir), "mcpServers"
 	default:
 		return false, fmt.Errorf("unknown tool %q", id)
 	}
@@ -237,6 +244,9 @@ func mcpConfigName(projectDir string, id ID) (string, error) {
 		return name, err
 	case OpenCodeID:
 		return OpenCodeFileName, rejectAlternateOpenCodeConfigs(projectDir)
+	case AntigravityID:
+		return filepath.Join(internal.AgentsFolderName, AntigravityMCPFileName),
+			refuseIfLinkDir(filepath.Join(projectDir, internal.AgentsFolderName))
 	default:
 		return "", fmt.Errorf("MCP preflight is not implemented for %q", id)
 	}
