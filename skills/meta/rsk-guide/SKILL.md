@@ -1,7 +1,7 @@
 ---
 name: rsk-guide
-version: 0.5.2
-description: Operator's guide for the rsk CLI — manage ralvaskills via the .rsk/ project manifest (rsk new, rsk install, rsk pin), bundle/global installs and the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards. Use when the user mentions rsk, asks how to install/pin/update skills, wants to add a skill to a project, is starting work in a new project or scaffolding (to learn which standards apply), or wants to set up ralvaskills on a new machine. Companion to cli-tool-architect (CLI design), mcp-architect (server design) and skill-builder (authoring new skills).
+version: 0.5.3
+description: Operator's guide to the rsk CLI — the .rsk/ manifest (new, install, pin, update), bundles, global installs and the `rsk mcp` server. Use when the user mentions rsk, installs or pins skills, or starts a project.
 ---
 
 # RSK Guide

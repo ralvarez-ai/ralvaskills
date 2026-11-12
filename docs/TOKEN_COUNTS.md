@@ -13,33 +13,33 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 | What | When loaded | Estimated tokens |
 |---|---|---:|
 | All `SKILL.md` bodies | Only when invoked | ~158591 |
-| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~191725 |
-| All `description:` fields (every skill) | Every turn, if all installed | ~8278 |
+| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~191560 |
+| All `description:` fields (every skill) | Every turn, if all installed | ~7637 |
 
 ## Session profiles
 
 Budgets: **global ≤ 1500** desc tokens (paid by every project), **session ≤ 2200** desc tokens (global + one project bundle). Status: `ok` < 90% · `warn` ≥ 90% · `OVER` ≥ 100%.
 
-**Global baseline** (`rsk install global --global`): 17 skills · ~1867 / 1500 desc tokens every turn (`OVER`) · ~31114 body tokens if all invoked.
+**Global baseline** (`rsk install global --global`): 17 skills · ~1226 / 1500 desc tokens every turn (`ok`) · ~31114 body tokens if all invoked.
 
 Per-project bundle additions on top of the global baseline:
 
 | Bundle | Skills | + Desc tkns / turn | Session total | Budget | Status |
 |---|---:|---:|---:|---:|---:|
-| `docs` *(+5 external)* | 0 | +0 | ~1867 | 2200 | `ok` |
-| `observability` | 2 | +151 | ~2018 | 2200 | `warn` |
-| `event-driven` | 2 | +167 | ~2034 | 2200 | `warn` |
-| `python-cli` | 3 | +261 | ~2128 | 2200 | `warn` |
-| `code-review` | 3 | +269 | ~2136 | 2200 | `warn` |
-| `ros2` | 3 | +273 | ~2140 | 2200 | `warn` |
-| `design` *(+1 external)* | 3 | +313 | ~2180 | 2200 | `warn` |
-| `llm-app` *(+2 missing)* | 4 | +389 | ~2256 | 2200 | `OVER` |
-| `go-cli` | 3 | +393 | ~2260 | 2200 | `OVER` |
-| `python-grpc` | 5 | +448 | ~2315 | 2200 | `OVER` |
-| `fastapi` | 5 | +480 | ~2347 | 2200 | `OVER` |
-| `go-grpc` | 5 | +580 | ~2447 | 2200 | `OVER` |
-| `gin` | 5 | +601 | ~2468 | 2200 | `OVER` |
-| `nethttp` | 5 | +613 | ~2480 | 2200 | `OVER` |
+| `docs` *(+5 external)* | 0 | +0 | ~1226 | 2200 | `ok` |
+| `observability` | 2 | +151 | ~1377 | 2200 | `ok` |
+| `event-driven` | 2 | +167 | ~1393 | 2200 | `ok` |
+| `python-cli` | 3 | +261 | ~1487 | 2200 | `ok` |
+| `code-review` | 3 | +269 | ~1495 | 2200 | `ok` |
+| `ros2` | 3 | +273 | ~1499 | 2200 | `ok` |
+| `design` *(+1 external)* | 3 | +313 | ~1539 | 2200 | `ok` |
+| `llm-app` *(+2 missing)* | 4 | +359 | ~1585 | 2200 | `ok` |
+| `go-cli` | 3 | +393 | ~1619 | 2200 | `ok` |
+| `python-grpc` | 5 | +448 | ~1674 | 2200 | `ok` |
+| `fastapi` | 5 | +480 | ~1706 | 2200 | `ok` |
+| `go-grpc` | 5 | +580 | ~1806 | 2200 | `ok` |
+| `gin` | 5 | +601 | ~1827 | 2200 | `ok` |
+| `nethttp` | 5 | +613 | ~1839 | 2200 | `ok` |
 
 ## Personal / unbundled skills
 
@@ -49,7 +49,7 @@ These skills are not part of any bundle. They are installed individually with `r
 |---|---|---:|---:|---:|
 | `mcp-architect` | protocols | ~7795 | ~334 | ~11014 |
 | `go-house-libs` | personal | ~2197 | ~265 | ~2071 |
-| `backend-performance-architect` | quality | ~3413 | ~204 | ~3537 |
+| `backend-performance-architect` | quality | ~3413 | ~204 | ~3498 |
 | `manim-architect` | frameworks | ~1776 | ~198 | ~4433 |
 | `explainer-designer` | frontend | ~1704 | ~187 | ~1936 |
 | `go-library-builder` | personal | ~4026 | ~167 | ~4058 |
@@ -68,7 +68,7 @@ These skills are not part of any bundle. They are installed individually with `r
 | `website-concept-designer` | frontend | ~2294 | ~122 | ~1198 |
 | `ml-paper-format` | academic | ~2551 | ~121 | ~2207 |
 | `uru-thesis-reviewer` | personal | ~3299 | ~119 | ~8215 |
-| `wails-architect` | frameworks | ~2486 | ~118 | ~4599 |
+| `wails-architect` | frameworks | ~2486 | ~118 | ~4593 |
 | `latex-architect` | languages | ~3026 | ~116 | ~2719 |
 | `uru-thesis-writer` | personal | ~1660 | ~114 | ~7162 |
 | `pi-iteration-workflow` | personal | ~878 | ~108 | ~781 |
@@ -82,19 +82,19 @@ These skills are not part of any bundle. They are installed individually with `r
 
 | Category | Skills | ~Body tkns | ~Desc tkns | ~Side tkns |
 |---|---:|---:|---:|---:|
-| frameworks | 11 | ~26995 | ~1347 | ~33700 |
+| frameworks | 11 | ~26995 | ~1347 | ~33694 |
 | personal | 7 | ~15951 | ~1046 | ~26879 |
 | protocols | 4 | ~15896 | ~695 | ~22027 |
 | frontend | 8 | ~15369 | ~1045 | ~16939 |
-| languages | 3 | ~13482 | ~406 | ~16613 |
+| languages | 3 | ~13482 | ~406 | ~16535 |
 | infra | 5 | ~11698 | ~517 | ~11926 |
-| quality | 5 | ~11193 | ~563 | ~7781 |
-| meta | 5 | ~9752 | ~699 | ~8387 |
-| refactoring | 4 | ~6628 | ~408 | ~8125 |
-| workflows | 5 | ~6572 | ~512 | ~10578 |
-| tooling | 2 | ~6155 | ~229 | ~7214 |
+| quality | 5 | ~11193 | ~563 | ~7742 |
+| meta | 5 | ~9752 | ~362 | ~8387 |
+| refactoring | 4 | ~6628 | ~278 | ~8125 |
+| workflows | 5 | ~6572 | ~423 | ~10578 |
+| tooling | 2 | ~6155 | ~174 | ~7172 |
 | academic | 2 | ~5097 | ~270 | ~9400 |
-| design | 2 | ~4365 | ~179 | ~2471 |
+| design | 2 | ~4365 | ~149 | ~2471 |
 | messaging | 1 | ~2770 | ~83 | ~3179 |
 | robotics | 1 | ~2701 | ~105 | ~2816 |
 | databases | 1 | ~2149 | ~90 | ~1823 |
@@ -106,7 +106,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 
 | Bundle | Local | External | Missing | ~Body tkns (local) | ~Desc tkns (local) |
 |---|---:|---:|---:|---:|---:|
-| `global` | 17 | 0 | 0 | ~31114 | ~1867 |
+| `global` | 17 | 0 | 0 | ~31114 | ~1226 |
 | `docs` | 0 | 5 | 0 | ~0 | ~0 |
 | `design` | 3 | 1 | 0 | ~8155 | ~313 |
 | `go-grpc` | 5 | 0 | 0 | ~15526 | ~580 |
@@ -114,7 +114,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | `nethttp` | 5 | 0 | 0 | ~15760 | ~613 |
 | `go-cli` | 3 | 0 | 0 | ~11878 | ~393 |
 | `fastapi` | 5 | 0 | 0 | ~11672 | ~480 |
-| `llm-app` | 4 | 0 | 2 | ~9350 | ~389 |
+| `llm-app` | 4 | 0 | 2 | ~9350 | ~359 |
 | `ros2` | 3 | 0 | 0 | ~7763 | ~273 |
 | `python-grpc` | 5 | 0 | 0 | ~11494 | ~448 |
 | `python-cli` | 3 | 0 | 0 | ~7846 | ~261 |
@@ -127,21 +127,21 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | # | Skill | Category | Body bytes | ~Body tkns | ~Desc tkns | ~Stack tkns | ~Recipes tkns | ~Topic tkns |
 |---|---|---|---:|---:|---:|---:|---:|---:|
 | 1 | `mcp-architect` | protocols | 31177 | ~7795 | ~334 | ~1521 | ~8783 | ~710 |
-| 2 | `go-architect` | languages | 28974 | ~7244 | ~211 | ~473 | ~4429 | ~7613 |
+| 2 | `go-architect` | languages | 28974 | ~7244 | ~211 | ~473 | ~4429 | ~7535 |
 | 3 | `go-library-builder` | personal | 16102 | ~4026 | ~167 | ~628 | ~2725 | ~705 |
-| 4 | `backend-performance-architect` | quality | 13650 | ~3413 | ~204 | ~0 | ~2747 | ~790 |
-| 5 | `repo-tooling-architect` | tooling | 13230 | ~3371 | ~136 | ~685 | ~1334 | ~2721 |
+| 4 | `backend-performance-architect` | quality | 13650 | ~3413 | ~204 | ~0 | ~2747 | ~751 |
+| 5 | `repo-tooling-architect` | tooling | 13230 | ~3371 | ~81 | ~685 | ~1334 | ~2679 |
 | 6 | `uru-thesis-reviewer` | personal | 13195 | ~3299 | ~119 | ~0 | ~0 | ~8215 |
 | 7 | `remotion-architect` | frameworks | 12870 | ~3218 | ~139 | ~316 | ~2588 | ~1581 |
 | 8 | `python-architect` | languages | 12848 | ~3212 | ~79 | ~443 | ~203 | ~733 |
 | 9 | `ci-cd-architect` | infra | 12339 | ~3085 | ~145 | ~624 | ~3520 | ~529 |
-| 10 | `token-economy` | meta | 12249 | ~3063 | ~230 | ~0 | ~2033 | ~2171 |
+| 10 | `token-economy` | meta | 12249 | ~3063 | ~73 | ~0 | ~2033 | ~2171 |
 | 11 | `landing-page-designer` | frontend | 12177 | ~3057 | ~166 | ~0 | ~0 | ~1134 |
 | 12 | `connectrpc-architect` | protocols | 12182 | ~3046 | ~153 | ~777 | ~2421 | ~552 |
 | 13 | `latex-architect` | languages | 12101 | ~3026 | ~116 | ~332 | ~1841 | ~546 |
 | 14 | `nextjs-architect` | frameworks | 11890 | ~2973 | ~108 | ~367 | ~1824 | ~555 |
 | 15 | `react-architect` | frameworks | 11872 | ~2968 | ~102 | ~415 | ~1426 | ~535 |
-| 16 | `rsk-guide` | meta | 11136 | ~2967 | ~199 | ~0 | ~0 | ~739 |
+| 16 | `rsk-guide` | meta | 11136 | ~2967 | ~71 | ~0 | ~0 | ~739 |
 | 17 | `astro-architect` | frameworks | 11496 | ~2889 | ~132 | ~604 | ~3298 | ~559 |
 | 18 | `cli-tool-architect` | tooling | 11119 | ~2784 | ~93 | ~515 | ~1436 | ~523 |
 | 19 | `event-driven-architect` | messaging | 11059 | ~2770 | ~83 | ~514 | ~2148 | ~517 |
@@ -153,13 +153,13 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 25 | `study-artifact-builder` | academic | 10184 | ~2546 | ~149 | ~0 | ~2611 | ~4582 |
 | 26 | `observability-architect` | infra | 10025 | ~2523 | ~74 | ~546 | ~874 | ~498 |
 | 27 | `api-contract-reviewer` | quality | 9798 | ~2511 | ~108 | ~0 | ~0 | ~616 |
-| 28 | `wails-architect` | frameworks | 9941 | ~2486 | ~118 | ~335 | ~3508 | ~756 |
+| 28 | `wails-architect` | frameworks | 9941 | ~2486 | ~118 | ~335 | ~3508 | ~750 |
 | 29 | `grpc-architect` | protocols | 9860 | ~2465 | ~106 | ~521 | ~864 | ~652 |
 | 30 | `reveal-js-architect` | frameworks | 9847 | ~2462 | ~93 | ~147 | ~1056 | ~526 |
-| 31 | `hexagonal-architecture` | design | 9532 | ~2417 | ~101 | ~0 | ~768 | ~420 |
-| 32 | `code-design-refactor` | refactoring | 9608 | ~2402 | ~96 | ~0 | ~0 | ~582 |
+| 31 | `hexagonal-architecture` | design | 9532 | ~2417 | ~71 | ~0 | ~768 | ~420 |
+| 32 | `code-design-refactor` | refactoring | 9608 | ~2402 | ~60 | ~0 | ~0 | ~582 |
 | 33 | `website-concept-designer` | frontend | 9175 | ~2294 | ~122 | ~0 | ~0 | ~1198 |
-| 34 | `feature-planner` | workflows | 8678 | ~2238 | ~114 | ~0 | ~200 | ~394 |
+| 34 | `feature-planner` | workflows | 8678 | ~2238 | ~66 | ~0 | ~200 | ~394 |
 | 35 | `demo-deck-designer` | frontend | 8921 | ~2231 | ~101 | ~0 | ~1776 | ~4274 |
 | 36 | `ui-ux-architect` | frontend | 8855 | ~2214 | ~103 | ~412 | ~1387 | ~527 |
 | 37 | `go-house-libs` | personal | 8785 | ~2197 | ~265 | ~1479 | ~0 | ~592 |
@@ -173,9 +173,9 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 45 | `skill-builder` | meta | 7612 | ~1903 | ~72 | ~0 | ~2337 | ~492 |
 | 46 | `fastapi-architect` | frameworks | 7481 | ~1871 | ~120 | ~420 | ~1016 | ~695 |
 | 47 | `docker-architect` | infra | 7397 | ~1850 | ~89 | ~333 | ~786 | ~1480 |
-| 48 | `design-patterns` | refactoring | 7310 | ~1828 | ~122 | ~0 | ~0 | ~2650 |
+| 48 | `design-patterns` | refactoring | 7310 | ~1828 | ~65 | ~0 | ~0 | ~2650 |
 | 49 | `protobuf-architect` | encoding | 7271 | ~1818 | ~84 | ~474 | ~914 | ~479 |
-| 50 | `improve-codebase-architecture` | refactoring | 7210 | ~1803 | ~97 | ~0 | ~0 | ~4488 |
+| 50 | `improve-codebase-architecture` | refactoring | 7210 | ~1803 | ~60 | ~0 | ~0 | ~4488 |
 | 51 | `uru-thesis-defense-designer` | personal | 7107 | ~1777 | ~132 | ~0 | ~1525 | ~500 |
 | 52 | `manim-architect` | frameworks | 7103 | ~1776 | ~198 | ~284 | ~1471 | ~2678 |
 | 53 | `gin-architect` | frameworks | 6769 | ~1705 | ~109 | ~419 | ~1266 | ~594 |
@@ -183,18 +183,18 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 55 | `grafana-architect` | infra | 6739 | ~1685 | ~77 | ~407 | ~1149 | ~622 |
 | 56 | `uru-thesis-writer` | personal | 6637 | ~1660 | ~114 | ~0 | ~1697 | ~5465 |
 | 57 | `docs-architect` | workflows | 6570 | ~1643 | ~144 | ~0 | ~0 | ~5829 |
-| 58 | `adhd-mode` | meta | 5483 | ~1371 | ~127 | ~0 | ~0 | ~343 |
+| 58 | `adhd-mode` | meta | 5483 | ~1371 | ~75 | ~0 | ~0 | ~343 |
 | 59 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~428 |
 | 60 | `tdd` | workflows | 4169 | ~1073 | ~69 | ~0 | ~0 | ~1781 |
 | 61 | `demo-script-designer` | frontend | 3635 | ~939 | ~96 | ~0 | ~0 | ~794 |
 | 62 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~474 |
 | 63 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
 | 64 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~409 |
-| 65 | `grill-with-docs` | workflows | 3084 | ~771 | ~104 | ~0 | ~0 | ~1965 |
+| 65 | `grill-with-docs` | workflows | 3084 | ~771 | ~63 | ~0 | ~0 | ~1965 |
 | 66 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
 | 67 | `caveman` | meta | 1789 | ~448 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 631721 body bytes · ~158591 body tokens · ~8278 desc tokens · ~191725 side tokens
+**Totals:** 631721 body bytes · ~158591 body tokens · ~7637 desc tokens · ~191560 side tokens
 
 ## Topic files
 
@@ -205,9 +205,9 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `TEMPLATES.md` — ~1830 tokens
   - `CHECKS.md` — ~807 tokens
   - `DIGEST.md` — ~628 tokens
-- `go-architect` (~7613 tokens total):
+- `go-architect` (~7535 tokens total):
   - `LAYOUTS.md` — ~6658 tokens
-  - `DIGEST.md` — ~955 tokens
+  - `DIGEST.md` — ~877 tokens
 - `docs-architect` (~5829 tokens total):
   - `BACKLOG.md` — ~2339 tokens
   - `MIGRATION.md` — ~1076 tokens
@@ -237,9 +237,9 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
 - `demo-deck-designer` (~4274 tokens total):
   - `LAYOUTS.md` — ~3754 tokens
   - `DIGEST.md` — ~520 tokens
-- `repo-tooling-architect` (~2721 tokens total):
+- `repo-tooling-architect` (~2679 tokens total):
   - `TASKFILE.md` — ~1949 tokens
-  - `DIGEST.md` — ~772 tokens
+  - `DIGEST.md` — ~730 tokens
 - `manim-architect` (~2678 tokens total):
   - `TRAPS.md` — ~1078 tokens
   - `FRAMEWORK.md` — ~1061 tokens
@@ -290,10 +290,10 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
 - `demo-script-designer` (~794 tokens total):
   - `REFERENCE.md` — ~417 tokens
   - `DIGEST.md` — ~377 tokens
-- `backend-performance-architect` (~790 tokens total):
-  - `DIGEST.md` — ~790 tokens
-- `wails-architect` (~756 tokens total):
-  - `DIGEST.md` — ~756 tokens
+- `backend-performance-architect` (~751 tokens total):
+  - `DIGEST.md` — ~751 tokens
+- `wails-architect` (~750 tokens total):
+  - `DIGEST.md` — ~750 tokens
 - `rsk-guide` (~739 tokens total):
   - `DIGEST.md` — ~496 tokens
   - `REFERENCE.md` — ~243 tokens
@@ -417,14 +417,14 @@ Heaviest 10 descriptions — each desc token is paid every turn for any session 
 
 - `mcp-architect` (~334 desc tokens)
 - `go-house-libs` (~265 desc tokens)
-- `token-economy` (~230 desc tokens)
 - `go-architect` (~211 desc tokens)
 - `backend-performance-architect` (~204 desc tokens)
-- `rsk-guide` (~199 desc tokens)
 - `manim-architect` (~198 desc tokens)
 - `explainer-designer` (~187 desc tokens)
 - `go-library-builder` (~167 desc tokens)
 - `landing-page-designer` (~166 desc tokens)
+- `connectrpc-architect` (~153 desc tokens)
+- `study-artifact-builder` (~149 desc tokens)
 
 ## Notes
 

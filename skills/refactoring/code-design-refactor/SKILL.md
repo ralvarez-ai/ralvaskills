@@ -1,7 +1,7 @@
 ---
 name: code-design-refactor
-version: 1.1.1
-description: Design-level refactoring rules — extraction, decoupling, SRP, encapsulation, primitive obsession. Language-agnostic. Sits between logic-cleaner (expression-level) and improve-codebase-architecture (system-level). Use when restructuring existing code at the module/class/function level.
+version: 1.1.2
+description: Design-level refactoring — extraction, decoupling, SRP, encapsulation, primitive obsession; language-agnostic. Use when restructuring code at the module, class or function level.
 ---
 
 # Code Design Refactor

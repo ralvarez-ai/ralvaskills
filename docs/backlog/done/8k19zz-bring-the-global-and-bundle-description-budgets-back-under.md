@@ -10,4 +10,4 @@ topics:
 
 Done when `task tokens` reports no `OVER` row, or the budgets are changed on purpose and the reason is written down.
 
-2026-11-12: `task tokens` regenerated the table after the ten renames and after the eight missing `global` members were installed. The global baseline is now **17 skills, ~1867 / 1500 desc tokens** (was ~1740), so the overage grew by about 127 tokens a turn; `go-cli`, `llm-app`, `python-grpc`, `fastapi`, `go-grpc`, `gin` and `nethttp` are over the 2200 session budget. Shortening the 17 global descriptions is now the cheapest fix — the bundle is complete and the page states the number.
+2026-11-12: closed by shortening descriptions, not by moving the budget. Ten of the 17 global descriptions were rewritten to the same what-and-when in fewer words (`token-economy` 230 → 73, `rsk-guide` 199 → 71, and eight more), which took the baseline from ~1867 to **1226 / 1500 (`ok`)** and put every bundle under the 2200 session budget — the worst is `nethttp` at 1839, where seven were over. `task tokens` regenerates the table with no `OVER` row. The bodies are untouched; only `description:` lines and patch bumps changed.

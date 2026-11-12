@@ -1,7 +1,7 @@
 ---
 name: feature-planner
-version: 1.1.0
-description: Upstream feature planning — requirement clarification, constraint discovery, design outline, vertical-slice task breakdown ordered by risk. Hands off to grill-with-docs and tdd. Use when starting new feature work from a vague request and no plan exists yet; if a plan or design already exists, use grill-with-docs to stress-test it instead.
+version: 1.1.1
+description: Upstream feature planning — requirement and constraint discovery, design outline, risk-ordered tasks. Use when starting from a vague request with no plan yet; if a plan exists, use grill-with-docs.
 ---
 
 # Feature Planner
