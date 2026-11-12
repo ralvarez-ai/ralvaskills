@@ -54,6 +54,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **codebase-hygiene-reviewer:** new skill (1.0.0) for evidence-based declutter audits: dead code, unused exports per consumer, duplication and oversized files. It only proposes changes and writes its report outside the repo.
 
 ### Fixed
+- **The landing page's data script counted deprecated registry entries as skills.** `site/scripts/gen-data.mjs` asserted `Object.keys(index).length === 67`, which broke the moment the rename added ten `deprecated` entries to the index (77 keys): `task site:check` and the page build failed on `main` with `expected 67 skills, found 67`, a message that hid the real mismatch. It now compares against the live entries only, and prints both counts when it fails.
 - **`task` was unusable in this repo; it is now pinned.** `mise.toml` gained `task = "3.54.0"`. With no pin the shim fell back to `/usr/bin/task` 3.4.2, which cannot parse this Taskfile, so `task --list` and every task printed `No matches.` and the gates had been run as bare commands by hand for days (`golangci-lint run --config .golangci.yml ./...`, `go test ./internal/skill/`, the site chain). `task lint`, `task skills:check`, `task tokens` and `task site:check` run as documented again.
 
 ### Changed

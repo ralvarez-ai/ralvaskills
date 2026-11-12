@@ -388,7 +388,15 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		return err
 	}
 
-	toUpdate := findOutdatedSkills(ctx, out, reg, index.Skills, namesToCheck, targets, cfg.RegistryCache())
+	// A project's lock is its own record of what is resolved. Read it before
+	// deciding what is outdated: a lock that fell behind the links (a restored
+	// file, an aborted update) must be repaired, not trusted.
+	locked := projectLockedVersions(opts.global)
+	namesToCheck = withLockedNames(namesToCheck, locked)
+
+	toUpdate := findOutdatedSkills(
+		ctx, out, reg, index.Skills, namesToCheck, targets, cfg.RegistryCache(), locked,
+	)
 	if len(toUpdate) == 0 {
 		saveUpdateCache(out, cfg, nil)
 		ui.Info(out, "All installed skills are up to date.")
@@ -461,12 +469,63 @@ func registryNamesToCheck(out io.Writer, args, targets []string) ([]string, erro
 	return names, nil
 }
 
+// projectLockedVersions reads the project's rsk.lock and returns each tracked
+// skill's recorded version. It returns nil for a global run or outside a
+// project: the lock describes one project's resolved state, not the machine's.
+func projectLockedVersions(global bool) map[string]string {
+	if global {
+		return nil
+	}
+	rskDir, ok := tryRskDir()
+	if !ok {
+		return nil
+	}
+	lock, err := manifest.ReadLock(rskDir)
+	if err != nil {
+		return nil
+	}
+	versions := make(map[string]string, len(lock.Skills))
+	for _, entry := range lock.Skills {
+		versions[entry.Name] = entry.Version
+	}
+	return versions
+}
+
+// withLockedNames appends the skills the project's lock records but no target
+// dir links, so an entry whose link went missing is repaired as well.
+func withLockedNames(names []string, locked map[string]string) []string {
+	if len(locked) == 0 {
+		return names
+	}
+	seen := make(map[string]bool, len(names))
+	for _, name := range names {
+		seen[name] = true
+	}
+	for name := range locked {
+		if !seen[name] {
+			names = append(names, name)
+		}
+	}
+	return names
+}
+
+// needsUpdate reports whether a skill is behind: the version linked in the
+// target dirs, or the version the project's lock records, disagrees with the
+// registry's latest. A skill absent from the lock is judged by its link alone,
+// since a project need not track everything it links.
+func needsUpdate(installed, locked, latest string) bool {
+	if installed != latest {
+		return true
+	}
+	return locked != "" && locked != latest
+}
+
 // findOutdatedSkills checks each name in namesToCheck against index, skipping
 // any that aren't in the registry, aren't actually behind, or fail to
 // resolve at their latest version (warned, not fatal).
 func findOutdatedSkills(
 	ctx context.Context, out io.Writer, reg *source.Registry, index map[string]*source.IndexEntry,
-	namesToCheck, targets []string, registryCache string,
+	namesToCheck, targets []string, registryCache string, locked map[string]string,
 ) []updatePair {
 	var toUpdate []updatePair
 	for _, name := range namesToCheck {
@@ -476,7 +535,8 @@ func findOutdatedSkills(
 		}
 		// Determine installed version from symlink target path.
 		installedVer := updatecheck.InstalledVersionFromTargets(name, targets, registryCache)
-		if installedVer == entry.Latest {
+		lockedVer := locked[name]
+		if !needsUpdate(installedVer, lockedVer, entry.Latest) {
 			continue
 		}
 		s, err := reg.FindVersion(ctx, name, entry.Latest)
@@ -484,9 +544,15 @@ func findOutdatedSkills(
 			ui.Warn(out, fmt.Sprintf("skip %s: %v", name, err))
 			continue
 		}
+		// When the link is already current, the lock is what is behind; report
+		// that version so the plan shows what will be rewritten.
+		reported := installedVer
+		if reported == entry.Latest {
+			reported = lockedVer
+		}
 		toUpdate = append(toUpdate, updatePair{
 			name:      name,
-			installed: installedVer,
+			installed: reported,
 			latest:    entry.Latest,
 			newSkill:  s,
 		})

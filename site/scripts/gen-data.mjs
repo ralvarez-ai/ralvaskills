@@ -71,9 +71,12 @@ function main() {
       desc: firstSentence(entry.description),
     };
   });
+  // Deprecated entries (a renamed skill's old name) stay in the index so the
+  // alias keeps resolving, but they are not skills on disk any more.
+  const live = Object.keys(index).filter((name) => !index[name].deprecated);
   assert(
-    skills.length === 67 && skills.length === Object.keys(index).length,
-    `expected 67 skills, found ${skills.length}`,
+    skills.length === 67 && skills.length === live.length,
+    `expected 67 skills, found ${skills.length} on disk and ${live.length} live index entries`,
   );
 
   const domains = {};
