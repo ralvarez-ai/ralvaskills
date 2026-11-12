@@ -15,3 +15,5 @@ Per-client details: Cursor needs `"type": "stdio"`; Amp uses the literal dotted 
 Plan: [Agent Skills clients: one adapter, ten targets](../../plans/2026-11-12-agent-skills-client-roadmap.md). Tier 2 (Crush, Goose, OpenHands) stays open in `9krt4v`; approval verification is `7wq4tn`.
 
 Done when all ten targets register in one project, a second `rsk new --for all --mcp` is a no-op, `rsk destroy` removes every entry, and `task lint` plus `go test ./...` pass — all verified 2026-11-12 (312 tests).
+
+Follow-up: the remaining plumbing in the bespoke clients — duplicated OpenCode JSON pair, three symlink guards, the OpenCode key check in the generic writer, and per-client MCP code left in `mcp.go` — is recorded in `5vq2hd`.

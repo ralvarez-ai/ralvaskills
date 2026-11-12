@@ -6,6 +6,7 @@ related:
   - plans/2026-11-12-antigravity-support.md
   - plans/2026-11-12-mcp-client-support.md
   - backlog/done/3m9qsv-add-six-agent-skills-clients-on-one-shared-adapter.md
+  - backlog/done/5vq2hd-fold-the-remaining-mcp-plumbing-and-fix-symlink-messages.md
   - backlog/pending/9krt4v-add-crush-goose-and-openhands-mcp-targets.md
   - backlog/pending/7wq4tn-verify-antigravity-mcp-approval-and-decide-on-install-skills.md
 ---
