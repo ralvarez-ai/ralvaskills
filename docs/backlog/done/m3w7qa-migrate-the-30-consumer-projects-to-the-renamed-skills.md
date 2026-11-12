@@ -25,11 +25,11 @@ Run `rsk update --dry-run` per repo first (it prints one `would rename` line per
 
 Done when no `rsk.mod` or `rsk.lock` under `~/Dev` contains a retired name, both global targets link the new names only, and `.rsk/SKILLS.md` in each repo names the new skills.
 
-## Status 2026-11-12
 
-All 30 manifests and the four global links are migrated: no `rsk.mod` or `rsk.lock` under `~/Dev` holds a retired name, and both global targets link `hexagonal-architecture@2.0.0` and `demo-script-designer@2.0.0` only. 24 projects carry the commit (`.rsk/rsk.mod` + `.rsk/rsk.lock` only). Six are migrated on disk but not committed:
+## Done 2026-11-12
 
-- Five already had uncommitted `.rsk/` work before the run, so the rename edit sits in their working tree with it: `automation-labs-coding-agents-benchmarks/third-party/openhands-plc`, `automation-labs-iec-core`, `automation-labs-plc-platform-mcp-apps-panels` (its own repo), `automation-labs-plc-platform-plugins`, `automation-labs-plc-platform-trace`.
-- `automation-labs-plc-platform-mcp-apps` cannot be committed while its `third-party/planttalk-charts` submodule points at a missing alternate object path — `git status` fails before anything can be staged.
+30 of 30 manifests and the four global links migrated, every change committed. No `rsk.mod` or `rsk.lock` under `~/Dev` holds a retired name, and both global targets link `hexagonal-architecture@2.0.0` and `demo-script-designer@2.0.0` only.
 
-`automation-labs-plc-platform-env-overlay` also took the update's other version bumps, because its lock was still on `go-architect` 1.7.1; that is one `rsk update`, not a hand edit.
+- 24 projects took a `.rsk/rsk.mod` + `.rsk/rsk.lock`-only commit; six also carried the newer `@SKILLS.md` import and re-rendered `.rsk/SKILLS.md`, and are committed with them.
+- `automation-labs-plc-platform-env-overlay`, `automation-labs-iec-core`, `mcp-apps-panels`, `plugins`, `trace` and `third-party/openhands-plc` were behind on other versions too, so their locks caught up in the same commit (one `rsk update`, no hand edit). `iec-core`'s `go-architect` pin was left uncommitted, as found.
+- `automation-labs-plc-platform-mcp-apps` is a worktree of `automation-labs-plc-platform`; its `third-party/planttalk-charts` alternate object path still named `active/projects/automation-labs/`, the pre-move location, so `git status` failed. Re-pointing `objects/info/alternates` at `active/projects/ralvarez-studio/` fixed it and the commit went in.

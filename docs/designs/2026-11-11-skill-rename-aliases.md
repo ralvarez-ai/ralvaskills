@@ -143,4 +143,4 @@ Step 1 landed first, with no rename published behind it:
 
 Step 2 landed with it in one commit: the ten directories renamed, `registry/aliases.toml` carrying the ten aliases, `registry/index.json` regenerated at version 2 (ten new entries at MAJOR, ten old entries `deprecated` at their last version), the `hexagonal-arch` lines moved in the `global` and `llm-app` bundles, and the repository's ~190 internal references, README and specification updated. `task skills:check` passes because the table and the directories moved together.
 
-Step 3 — the 30 consumer projects and the four global links — is [`m3w7qa`](../backlog/pending/m3w7qa-migrate-the-30-consumer-projects-to-the-renamed-skills.md), and it runs after the ten releases are cut.
+Step 3 — the 30 consumer projects and the four global links — is done: [`m3w7qa`](../backlog/done/m3w7qa-migrate-the-30-consumer-projects-to-the-renamed-skills.md), and it ran after the ten releases were cut.
