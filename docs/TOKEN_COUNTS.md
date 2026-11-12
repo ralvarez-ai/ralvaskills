@@ -1,3 +1,10 @@
+---
+status: active
+project: ralvaskills
+date: 2026-11-12
+related: []
+---
+
 # SKILL.md Token Estimates
 
 > Auto-generated. **Do not edit by hand.** Run `task tokens` to refresh.

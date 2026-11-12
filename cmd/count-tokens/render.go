@@ -127,8 +127,10 @@ func computeRenderTotals(skills []skill, bundles []bundle) renderTotals {
 func render(skills []skill, bundles []bundle) string {
 	var buf bytes.Buffer
 	t := computeRenderTotals(skills, bundles)
+	ts := time.Now().UTC().Format("2006-01-02")
 
-	writeRenderHeader(&buf, skills, bundles)
+	writeFrontmatter(&buf, ts)
+	writeRenderHeader(&buf, ts, skills, bundles)
 	writeLoadModelSection(&buf, t)
 	writeSessionProfilesSection(&buf, bundles, t)
 	writeUnbundledSkillsSection(&buf, t)
@@ -142,7 +144,20 @@ func render(skills []skill, bundles []bundle) string {
 	return buf.String()
 }
 
-func writeRenderHeader(buf *bytes.Buffer, skills []skill, bundles []bundle) {
+// writeFrontmatter gives the generated page the docs-tree frontmatter, so it
+// reads as a normal doc to the linter instead of an untyped file. date reuses
+// the day the header prints, so a regeneration inside one day leaves the file
+// unchanged.
+func writeFrontmatter(buf *bytes.Buffer, ts string) {
+	buf.WriteString("---\n")
+	buf.WriteString("status: active\n")
+	buf.WriteString("project: ralvaskills\n")
+	fmt.Fprintf(buf, "date: %s\n", ts)
+	buf.WriteString("related: []\n")
+	buf.WriteString("---\n\n")
+}
+
+func writeRenderHeader(buf *bytes.Buffer, ts string, skills []skill, bundles []bundle) {
 	buf.WriteString("# SKILL.md Token Estimates\n\n")
 	buf.WriteString("> Auto-generated. **Do not edit by hand.** Run `task tokens` to refresh.\n")
 	buf.WriteString(">\n")
@@ -150,7 +165,6 @@ func writeRenderHeader(buf *bytes.Buffer, skills []skill, bundles []bundle) {
 		"> Estimate: ~4 bytes/token for bodies, ~3 bytes/token for descriptions" +
 			" (Claude tokenizer). Actual range ±15%.\n\n",
 	)
-	ts := time.Now().UTC().Format("2006-01-02")
 	fmt.Fprintf(buf, "_Last updated: %s · %d skills · %d bundles_\n\n", ts, len(skills), len(bundles))
 }
 
