@@ -9,3 +9,5 @@ topics:
 
 Merge them into one `### Added` → `### Changed` → `### Fixed` → `### Removed` sequence for Unreleased only, keeping every entry and its order within each type. `## v3.7.0` and the older versions are history: leave them alone.
 Done when `## Unreleased` holds one heading per type and no entry is lost.
+
+Resolved 2026-11-12: `## Unreleased` is one `### Added`, one `### Changed` and one `### Fixed` (there was no `### Removed`). The four `### Changed` blocks merged in document order and the three `### Fixed` blocks likewise, 58 bullets before and after with the text byte-identical. `## v3.9.1` and older are untouched.
