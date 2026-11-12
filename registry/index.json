@@ -1,6 +1,18 @@
 {
-  "version": 1,
-  "generated_at": "2026-11-12T01:33:38Z",
+  "version": 2,
+  "generated_at": "2026-11-12T02:27:51Z",
+  "aliases": {
+    "demo-presentation-architect": "demo-deck-designer",
+    "demo-script-architect": "demo-script-designer",
+    "explainer-architect": "explainer-designer",
+    "hexagonal-arch": "hexagonal-architecture",
+    "ml-conference-paper-architect": "ml-paper-format",
+    "narration-architect": "narration-writer",
+    "uru-scientific-paper-architect": "uru-paper-format",
+    "uru-thesis-architect": "uru-thesis-writer",
+    "uru-thesis-defense-architect": "uru-thesis-defense-designer",
+    "website-concept-architect": "website-concept-designer"
+  },
   "skills": {
     "adhd-mode": {
       "name": "adhd-mode",
@@ -271,10 +283,23 @@
         }
       }
     },
+    "demo-deck-designer": {
+      "name": "demo-deck-designer",
+      "description": "Design slide-deck specifications — slide budget, narrative arc, splitting rule, takeaway-led titles, body word budgets, per-slide layout from a fixed catalog. Outputs one `.md` slide-by-slide; never HTML/PDF/PPTX. Always interviews for language + core info first. Use when authoring presentation specs.",
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/demo-deck-designer@v2.0.0/demo-deck-designer-v2.0.0.tar.gz"
+        }
+      }
+    },
     "demo-presentation-architect": {
       "name": "demo-presentation-architect",
       "description": "Design slide-deck specifications — slide budget, narrative arc, splitting rule, takeaway-led titles, body word budgets, per-slide layout from a fixed catalog. Outputs one `.md` slide-by-slide; never HTML/PDF/PPTX. Always interviews for language + core info first. Use when authoring presentation specs.",
       "personal": true,
+      "deprecated": true,
       "latest": "1.2.1",
       "versions": {
         "1.1.0": {
@@ -298,6 +323,7 @@
       "name": "demo-script-architect",
       "description": "Design and refine presenter-centric demo scripts — narrative flow over feature lists, visual-cue mapping, progressive capability reveals, query-to-explanation alignment, redundancy audits. Use when creating live demos, structured walkthroughs, or turning specs into engaging narratives.",
       "personal": true,
+      "deprecated": true,
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
@@ -309,6 +335,18 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/demo-script-architect@v1.1.0/demo-script-architect-v1.1.0.tar.gz"
+        }
+      }
+    },
+    "demo-script-designer": {
+      "name": "demo-script-designer",
+      "description": "Design and refine presenter-centric demo scripts — narrative flow over feature lists, visual-cue mapping, progressive capability reveals, query-to-explanation alignment, redundancy audits. Use when creating live demos, structured walkthroughs, or turning specs into engaging narratives.",
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/demo-script-designer@v2.0.0/demo-script-designer-v2.0.0.tar.gz"
         }
       }
     },
@@ -418,6 +456,7 @@
     "explainer-architect": {
       "name": "explainer-architect",
       "description": "Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) — the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).",
+      "deprecated": true,
       "latest": "1.1.1",
       "versions": {
         "1.0.0": {
@@ -434,6 +473,18 @@
           "version": "1.1.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-architect@v1.1.1/explainer-architect-v1.1.1.tar.gz"
+        }
+      }
+    },
+    "explainer-designer": {
+      "name": "explainer-designer",
+      "description": "Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) — the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).",
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-designer@v2.0.0/explainer-designer-v2.0.0.tar.gz"
         }
       }
     },
@@ -785,6 +836,7 @@
     "hexagonal-arch": {
       "name": "hexagonal-arch",
       "description": "Hexagonal architecture (ports \u0026 adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
+      "deprecated": true,
       "latest": "1.2.1",
       "versions": {
         "1.0.0": {
@@ -806,6 +858,18 @@
           "version": "1.2.1",
           "published_at": "2026-11-11T13:45:36Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hexagonal-arch@v1.2.1/hexagonal-arch-v1.2.1.tar.gz"
+        }
+      }
+    },
+    "hexagonal-architecture": {
+      "name": "hexagonal-architecture",
+      "description": "Hexagonal architecture (ports \u0026 adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hexagonal-architecture@v2.0.0/hexagonal-architecture-v2.0.0.tar.gz"
         }
       }
     },
@@ -996,6 +1060,7 @@
     "ml-conference-paper-architect": {
       "name": "ml-conference-paper-architect",
       "description": "ML conference paper formatting for NeurIPS, ICML, ICLR, and AAAI — official style-file usage, anonymization and camera-ready toggles, page-limit accounting, natbib citations, standard paper skeleton, reproducibility checklists, appendix and supplementary rules, desk-reject checks. Use when writing, formatting, or submitting a machine-learning conference paper.",
+      "deprecated": true,
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
@@ -1007,6 +1072,18 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ml-conference-paper-architect@v1.1.0/ml-conference-paper-architect-v1.1.0.tar.gz"
+        }
+      }
+    },
+    "ml-paper-format": {
+      "name": "ml-paper-format",
+      "description": "ML conference paper formatting for NeurIPS, ICML, ICLR, and AAAI — official style-file usage, anonymization and camera-ready toggles, page-limit accounting, natbib citations, standard paper skeleton, reproducibility checklists, appendix and supplementary rules, desk-reject checks. Use when writing, formatting, or submitting a machine-learning conference paper.",
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/ml-paper-format@v2.0.0/ml-paper-format-v2.0.0.tar.gz"
         }
       }
     },
@@ -1030,6 +1107,7 @@
     "narration-architect": {
       "name": "narration-architect",
       "description": "Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) — short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.",
+      "deprecated": true,
       "latest": "1.1.1",
       "versions": {
         "1.0.0": {
@@ -1046,6 +1124,18 @@
           "version": "1.1.1",
           "published_at": "2026-11-11T13:51:07Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-architect@v1.1.1/narration-architect-v1.1.1.tar.gz"
+        }
+      }
+    },
+    "narration-writer": {
+      "name": "narration-writer",
+      "description": "Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) — short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.",
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-writer@v2.0.0/narration-writer-v2.0.0.tar.gz"
         }
       }
     },
@@ -1609,10 +1699,24 @@
         }
       }
     },
+    "uru-paper-format": {
+      "name": "uru-paper-format",
+      "description": "Format scientific manuscripts for Revista Tecnocientífica URU (Universidad Rafael Urdaneta) — cover page fields, Times New Roman 12pt/16pt typography rules, IMRyD-derived structure by article type, figure/table/equation numbering, bracketed-numeric citations, reference formats by source type, ethics checklist. Outputs one `.md` manuscript spec. Use when preparing a paper for submission to Revista Tecnocientífica URU.",
+      "personal": true,
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-paper-format@v2.0.0/uru-paper-format-v2.0.0.tar.gz"
+        }
+      }
+    },
     "uru-scientific-paper-architect": {
       "name": "uru-scientific-paper-architect",
       "description": "Format scientific manuscripts for Revista Tecnocientífica URU (Universidad Rafael Urdaneta) — cover page fields, Times New Roman 12pt/16pt typography rules, IMRyD-derived structure by article type, figure/table/equation numbering, bracketed-numeric citations, reference formats by source type, ethics checklist. Outputs one `.md` manuscript spec. Use when preparing a paper for submission to Revista Tecnocientífica URU.",
       "personal": true,
+      "deprecated": true,
       "latest": "1.2.1",
       "versions": {
         "1.0.0": {
@@ -1641,6 +1745,7 @@
       "name": "uru-thesis-architect",
       "description": "Interview-first drafter for URU (Universidad Rafael Urdaneta) thesis (TEG) chapters — writes one section at a time toward the evaluation rubric the jury grades against, Spanish output, URU chapter order (I. Problema → V. Propuesta), never fabricates data. Complements uru-thesis-reviewer. Use when drafting or iterating a thesis section.",
       "personal": true,
+      "deprecated": true,
       "latest": "0.2.0",
       "versions": {
         "0.1.0": {
@@ -1659,6 +1764,7 @@
       "name": "uru-thesis-defense-architect",
       "description": "Design URU-style thesis defense presentation specs — fixed institutional slide structure (portada, problema, objetivos, antecedentes, variables, metodología, resultados, conclusiones), Spanish-only content, logo placement rules (large centered cover, small top-left from slide 2). Outputs one `.md` slide-by-slide spec. Use when authoring a thesis/tesis defense deck for Universidad Real (URU).",
       "personal": true,
+      "deprecated": true,
       "latest": "1.1.1",
       "versions": {
         "1.0.0": {
@@ -1680,6 +1786,19 @@
           "version": "1.1.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-defense-architect@v1.1.1/uru-thesis-defense-architect-v1.1.1.tar.gz"
+        }
+      }
+    },
+    "uru-thesis-defense-designer": {
+      "name": "uru-thesis-defense-designer",
+      "description": "Design URU-style thesis defense presentation specs — fixed institutional slide structure (portada, problema, objetivos, antecedentes, variables, metodología, resultados, conclusiones), Spanish-only content, logo placement rules (large centered cover, small top-left from slide 2). Outputs one `.md` slide-by-slide spec. Use when authoring a thesis/tesis defense deck for Universidad Real (URU).",
+      "personal": true,
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-defense-designer@v2.0.0/uru-thesis-defense-designer-v2.0.0.tar.gz"
         }
       }
     },
@@ -1711,6 +1830,19 @@
         }
       }
     },
+    "uru-thesis-writer": {
+      "name": "uru-thesis-writer",
+      "description": "Interview-first drafter for URU (Universidad Rafael Urdaneta) thesis (TEG) chapters — writes one section at a time toward the evaluation rubric the jury grades against, Spanish output, URU chapter order (I. Problema → V. Propuesta), never fabricates data. Complements uru-thesis-reviewer. Use when drafting or iterating a thesis section.",
+      "personal": true,
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "version": "1.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-writer@v1.0.0/uru-thesis-writer-v1.0.0.tar.gz"
+        }
+      }
+    },
     "wails-architect": {
       "name": "wails-architect",
       "description": "Wails v3.1 shell around an existing web app — embedded SPA build, same-origin API proxy with server-held session cookies (WebKit drops Set-Cookie on custom schemes), per-OS window chrome, Android fetch shim and insets, packaging and Play signing. Use when scaffolding or reviewing a Wails desktop/mobile shell, or when sign-in fails inside the webview.",
@@ -1731,6 +1863,7 @@
     "website-concept-architect": {
       "name": "website-concept-architect",
       "description": "Walk the user through designing a website concept before any code — purpose, audience, content inventory, tone, visual archetype, structure — and output 2-3 distinct concept directions plus an ASCII homepage wireframe. Use when planning a new personal site, portfolio, or marketing page upstream of implementation. Hands off to ui-ux-architect / frontend-design.",
+      "deprecated": true,
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
@@ -1747,6 +1880,18 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/website-concept-architect@v1.1.0/website-concept-architect-v1.1.0.tar.gz"
+        }
+      }
+    },
+    "website-concept-designer": {
+      "name": "website-concept-designer",
+      "description": "Walk the user through designing a website concept before any code — purpose, audience, content inventory, tone, visual archetype, structure — and output 2-3 distinct concept directions plus an ASCII homepage wireframe. Use when planning a new personal site, portfolio, or marketing page upstream of implementation. Hands off to ui-ux-architect / frontend-design.",
+      "latest": "2.0.0",
+      "versions": {
+        "2.0.0": {
+          "version": "2.0.0",
+          "published_at": "2026-11-12T02:27:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/website-concept-designer@v2.0.0/website-concept-designer-v2.0.0.tar.gz"
         }
       }
     }
