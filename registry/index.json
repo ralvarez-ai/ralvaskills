@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-12T03:11:58Z",
+  "generated_at": "2026-11-12T03:51:26Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -78,7 +78,7 @@
     "backend-performance-architect": {
       "name": "backend-performance-architect",
       "description": "Backend latency and throughput design — an impact-ordered playbook: query and index shape, cache layers and invalidation, moving work off the hot path (queues, outbox, precompute), fewer and parallel network hops, tail-latency controls (deadlines, retries, backpressure, load shedding, single-flight), then serialization and lock contention. Covers Go transport choices — unary RPC vs streaming/bidi gRPC, and when a fasthttp server is worth it. Use whenever a service feels slow, an endpoint misses its p99, a load test is coming, or someone asks whether a faster transport, framework or server would help.",
-      "latest": "1.0.1",
+      "latest": "1.0.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -89,6 +89,11 @@
           "version": "1.0.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/backend-performance-architect@v1.0.1/backend-performance-architect-v1.0.1.tar.gz"
+        },
+        "1.0.2": {
+          "version": "1.0.2",
+          "published_at": "2026-11-12T03:51:26Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/backend-performance-architect@v1.0.2/backend-performance-architect-v1.0.2.tar.gz"
         }
       }
     },
@@ -562,7 +567,7 @@
     "go-architect": {
       "name": "go-architect",
       "description": "Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/\u003cprotocol\u003e, postgres/, inbound \u003cprotocol\u003e packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.",
-      "latest": "1.20.1",
+      "latest": "1.20.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -653,6 +658,11 @@
           "version": "1.20.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-architect@v1.20.1/go-architect-v1.20.1.tar.gz"
+        },
+        "1.20.2": {
+          "version": "1.20.2",
+          "published_at": "2026-11-12T03:51:26Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-architect@v1.20.2/go-architect-v1.20.2.tar.gz"
         },
         "1.3.0": {
           "version": "1.3.0",
@@ -1356,7 +1366,7 @@
     "repo-tooling-architect": {
       "name": "repo-tooling-architect",
       "description": "Repo-root developer tooling — .editorconfig, .gitignore, version pinning (mise default, proto alt), task runner (Task default, just alt), CI (GitHub Actions default, act for local/free runs), minimal pre-commit, env vars via dotenv + external secret manager, Renovate, AGENTS.md / CLAUDE.md agent-instruction files. Use when scaffolding or auditing a repo's tooling layer, or naming/renaming Taskfile tasks.",
-      "latest": "1.6.1",
+      "latest": "1.6.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1397,6 +1407,11 @@
           "version": "1.6.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/repo-tooling-architect@v1.6.1/repo-tooling-architect-v1.6.1.tar.gz"
+        },
+        "1.6.2": {
+          "version": "1.6.2",
+          "published_at": "2026-11-12T03:51:26Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/repo-tooling-architect@v1.6.2/repo-tooling-architect-v1.6.2.tar.gz"
         }
       }
     },
