@@ -152,6 +152,34 @@ func TestPlanSyncSupportsLocalSource(t *testing.T) {
 	}
 }
 
+// TestPlanSyncSupportsVersionlessOfficialSkills covers the official-source
+// lock entry: those skills carry no version in their frontmatter, so the lock
+// records an empty one and sync must not reject it.
+func TestPlanSyncSupportsVersionlessOfficialSkills(t *testing.T) {
+	t.Parallel()
+	project := t.TempDir()
+	cfg := config.Config{OfficialCache: filepath.Join(t.TempDir(), "anthropic")}
+	skillDir := filepath.Join(cfg.OfficialCache, "skills", "frontend-design")
+	if err := os.MkdirAll(skillDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := "---\nname: frontend-design\ndescription: Frontend design\n---\n\nBody.\n"
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	m := manifest.Mod{Tools: []tool.ID{tool.ClaudeID}, Skills: map[string]string{"frontend-design": "*"}}
+	lock := manifest.Lock{
+		Skills: []manifest.LockEntry{{Name: "frontend-design", Source: skill.SourceOfficial}},
+	}
+	links, err := planSyncLinks(t.Context(), project, m, lock, cfg)
+	if err != nil || len(links) != 1 {
+		t.Fatalf("links=%+v err=%v", links, err)
+	}
+	if links[0].skill.Path != skillDir {
+		t.Fatalf("source = %s, want %s", links[0].skill.Path, skillDir)
+	}
+}
+
 func TestPlanSyncRejectsBrokenLocks(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
