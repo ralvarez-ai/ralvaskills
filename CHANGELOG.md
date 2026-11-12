@@ -89,6 +89,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 # CLI releases
 
+## v3.7.1 (2026-11-12)
+### Fixed
+- **`rsk update` repairs a lock that fell behind the links.** It decided whether a skill was current from the `.claude/skills` symlink alone, so a `rsk.lock` left behind by a restored file or an aborted update never repaired itself — and the digest re-render that hangs off an applied update never ran either. It now reads the project lock and treats a skill as outdated when either the link or the lock disagrees with the registry's latest; a bare `rsk update` also checks lock entries whose link went missing, while a named update stays scoped to the names given.
+
 ## v3.7.0 (2026-11-12)
 ### Added
 - **Alias-aware updates.** `registry/index.json` carries an `aliases` map and marks a renamed skill's old entry `deprecated` with its versions intact, so `rsk install <old>@<pinned>` still resolves and an older binary sees "outdated" rather than "gone". `rsk update` resolves a retired name to its replacement, rewrites `[skills]` and `pinned` in `rsk.mod` and `name` in `rsk.lock`, removes the stale links and re-links the new names; `--global` re-points the machine-wide links and `--dry-run` writes nothing. Ten skills were renamed; the catalogue side is in Unreleased above.
