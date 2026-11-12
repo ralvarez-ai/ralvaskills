@@ -129,3 +129,18 @@ func writeCodexConfig(path, content string) error {
 		return err
 	})
 }
+
+// hasMCP reports the managed rsk block inside .codex/config.toml.
+func (*codexTool) hasMCP(projectDir string) (bool, error) {
+	path := filepath.Join(projectDir, codexFolder, codexConfig)
+	data, err := readCodexConfig(path)
+	return strings.Contains(string(data), "[mcp_servers.rsk]"), err
+}
+
+// mcpConfigName returns the project-relative Codex config, refusing the file or
+// its directory when either is a symlink.
+func (*codexTool) mcpConfigName(projectDir string) (string, error) {
+	name := filepath.Join(codexFolder, codexConfig)
+	_, err := readCodexConfig(filepath.Join(projectDir, name))
+	return name, err
+}
