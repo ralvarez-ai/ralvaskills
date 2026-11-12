@@ -89,6 +89,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 # CLI releases
 
+## v3.8.0 (2026-11-12)
+
+### Changed
+- **Shared Go constants:** tool skill directories, atomic-write patterns, skill frontmatter markers, and repeated cancellation text use named constants across the CLI and generators. Codex adapter functions use multi-line bodies, and `task lint` checks for one-line function bodies.
+- **Native skill directories:** Codex is available as an rsk target and uses `.agents/skills/`; OpenCode project installs now use `.opencode/skills/`. Existing projects can run `rsk new --for all` and `rsk install` to link their skills into the new targets. Codex discovers skills on demand; automatic pinned digests remain unsupported.
+- **MCP registration:** Codex uses a managed project TOML block. Codex and OpenCode register a read-only server until their install approval behavior is verified; Claude retains its existing install tool. Registration refuses conflicting or symlinked config files.
+
 ## v3.7.1 (2026-11-12)
 ### Fixed
 - **`rsk update` repairs a lock that fell behind the links.** It decided whether a skill was current from the `.claude/skills` symlink alone, so a `rsk.lock` left behind by a restored file or an aborted update never repaired itself — and the digest re-render that hangs off an applied update never ran either. It now reads the project lock and treats a skill as outdated when either the link or the lock disagrees with the registry's latest; a bare `rsk update` also checks lock entries whose link went missing, while a named update stays scoped to the names given.
