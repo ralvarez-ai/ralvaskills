@@ -14,6 +14,6 @@ Why it matters: `.rsk/SKILLS.md` concatenates the digests of the pinned skills, 
 
 Trimming is a content decision, not a format one: a rule is in a digest because it is always-on, so cutting one means deciding it belongs only in `SKILL.md`. The obvious candidates are the enumeration-heavy digests, where the digest repeats a list the body already has in a table — the naming and layout lists in `go-architect`, the transport menu in `backend-performance-architect`, the tooling defaults in `repo-tooling-architect`.
 
-Constraints that still hold: plain markdown, at most 40 lines, no frontmatter, last line exactly `Full guide: invoke the <name> skill.`, extract-only from the skill's `SKILL.md`/`RECIPES.md`/`REFERENCE.md`/`STACK.md`. A digest edit publishes nothing without a `SKILL.md` version bump, and the digest must stay accurate to the body — the failure the audit fixed.
+Constraints that still hold: plain markdown, at most 40 lines, no frontmatter, last line exactly `Full guide: invoke the <name> skill.`, extract-only from the skill's `SKILL.md`/`RECIPES.md`/`REFERENCE.md`/`STACK.md`. A digest edit publishes nothing without a `SKILL.md` version bump, and the shortened digest must stay faithful to the body — the defect class the audit was about.
 
 Done when every digest is at or under ~500 tokens, or the ones above it are recorded as deliberately over with the reason (a skill whose always-on rules genuinely need the room), and the target is restated in [the digest design](../../designs/2026-11-06-skill-digests-and-skills-md.md).
