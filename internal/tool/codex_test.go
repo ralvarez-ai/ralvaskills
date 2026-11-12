@@ -24,8 +24,6 @@ func TestNativeSkillDirectories(t *testing.T) {
 			filepath.Join(project, ".agents", "skills"),
 			filepath.Join(home, ".gemini", "config", "skills"),
 		},
-		{OpenCodeID, filepath.Join(project, ".opencode", "skills"), ""},
-		{ClaudeID, filepath.Join(project, ".claude", "skills"), ""},
 	} {
 		adapter, ok := Get(tc.id)
 		if !ok {

@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"strings"
 
-	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 	"go.ralva.dev/ralvaskills/v3/internal/fsx"
 )
@@ -25,6 +24,10 @@ const (
 	mcpCommandKey  = "command"
 	mcpTypeKey     = "type"
 	mcpLocalType   = "local"
+	mcpStdioType   = "stdio"
+
+	// mcpServersKey is the JSON key most clients use for their server map.
+	mcpServersKey = "mcpServers"
 
 	// mcpReadOnlyFlag keeps a registration to the read-only server, which omits
 	// install_skills until the client's per-install approval behavior is verified.
@@ -37,6 +40,16 @@ const (
 // claudeMCPServer is the Claude Code MCP entry rsk registers.
 func claudeMCPServer() map[string]any {
 	return map[string]any{mcpCommandKey: rskMCPServerName, "args": []any{openCodeMCPKey}}
+}
+
+// JSONMCP reports where Claude Code keeps its MCP servers, so preflight and
+// detection handle it like the other JSON clients.
+func (*ClaudeTool) JSONMCP() jsonMCPConfig {
+	return jsonMCPConfig{
+		file:   MCPFileName,
+		key:    mcpServersKey,
+		server: claudeMCPServer,
+	}
 }
 
 // openCodeMCPServer is the opencode MCP entry rsk registers.
@@ -59,19 +72,13 @@ func legacyOpenCodeMCPServer() map[string]any {
 // RegisterMCP writes the rsk server into the project's .mcp.json, preserving
 // other servers and keys. It is idempotent: a matching entry is left untouched.
 // It returns the path written.
-func (*ClaudeTool) RegisterMCP(projectDir string) (string, error) {
-	return registerMCPServer(
-		filepath.Join(projectDir, MCPFileName), "mcpServers",
-		claudeMCPServer(), readClaudeConfig, writeClaudeConfig,
-	)
+func (c *ClaudeTool) RegisterMCP(projectDir string) (string, error) {
+	return c.JSONMCP().Register(projectDir)
 }
 
 // UnregisterMCP removes the rsk server from .mcp.json, leaving others intact.
-func (*ClaudeTool) UnregisterMCP(projectDir string) error {
-	return removeMCPServer(
-		filepath.Join(projectDir, MCPFileName), "mcpServers",
-		claudeMCPServer(), readClaudeConfig, writeClaudeConfig,
-	)
+func (c *ClaudeTool) UnregisterMCP(projectDir string) error {
+	return c.JSONMCP().Unregister(projectDir)
 }
 
 // RegisterMCP writes the rsk server into the project's opencode.json, preserving
@@ -151,26 +158,38 @@ func ProjectHasMCP(projectDir string, ids []ID) (bool, error) {
 }
 
 func clientHasMCP(projectDir string, id ID) (bool, error) {
-	if id == CodexID {
+	switch id {
+	case CodexID:
 		data, err := readCodexConfig(filepath.Join(projectDir, codexFolder, codexConfig))
 		return strings.Contains(string(data), "[mcp_servers.rsk]"), err
-	}
-	var path, key string
-	switch id {
-	case ClaudeID:
-		path, key = filepath.Join(projectDir, MCPFileName), "mcpServers"
 	case OpenCodeID:
-		path, key = filepath.Join(projectDir, OpenCodeFileName), openCodeMCPKey
-	case AntigravityID:
-		path, key = antigravityMCPPath(projectDir), "mcpServers"
+		return openCodeHasMCP(projectDir)
 	default:
+	}
+	provider, ok := jsonMCPProviderFor(id)
+	if !ok {
 		return false, fmt.Errorf("unknown tool %q", id)
 	}
-	config, err := readClaudeConfig(path)
+	cfg, err := readJSONConfig(filepath.Join(projectDir, filepath.FromSlash(provider.JSONMCP().file)))
 	if err != nil {
 		return false, err
 	}
-	servers, valid := config[key].(map[string]any)
+	servers, valid := cfg[provider.JSONMCP().key].(map[string]any)
+	if !valid {
+		return false, nil
+	}
+	_, exists := servers[rskMCPServerName]
+	return exists, nil
+}
+
+// openCodeHasMCP covers both OpenCode layouts: the current mcp.servers map and
+// the pre-v2 mcp.rsk entry.
+func openCodeHasMCP(projectDir string) (bool, error) {
+	config, err := readJSONConfig(filepath.Join(projectDir, OpenCodeFileName))
+	if err != nil {
+		return false, err
+	}
+	servers, valid := config[openCodeMCPKey].(map[string]any)
 	if !valid {
 		return false, nil
 	}
@@ -183,6 +202,18 @@ func clientHasMCP(projectDir string, id ID) (bool, error) {
 	}
 	_, exists := nested[rskMCPServerName]
 	return exists, nil
+}
+
+// jsonMCPProviderFor returns the JSON MCP provider for id.
+//
+//nolint:ireturn // returns the interface the caller checks
+func jsonMCPProviderFor(id ID) (jsonMCPProvider, bool) {
+	t, ok := Get(id)
+	if !ok {
+		return nil, false
+	}
+	provider, ok := t.(jsonMCPProvider)
+	return provider, ok
 }
 
 // PreflightMCP checks all selected client configurations before any registration.
@@ -236,20 +267,23 @@ func preflightClientMCP(projectDir, stage string, id ID) error {
 
 func mcpConfigName(projectDir string, id ID) (string, error) {
 	switch id {
-	case ClaudeID:
-		return MCPFileName, nil
 	case CodexID:
 		name := filepath.Join(codexFolder, codexConfig)
 		_, err := readCodexConfig(filepath.Join(projectDir, name))
 		return name, err
 	case OpenCodeID:
 		return OpenCodeFileName, rejectAlternateOpenCodeConfigs(projectDir)
-	case AntigravityID:
-		return filepath.Join(internal.AgentsFolderName, AntigravityMCPFileName),
-			refuseIfLinkDir(filepath.Join(projectDir, internal.AgentsFolderName))
 	default:
+	}
+	provider, ok := jsonMCPProviderFor(id)
+	if !ok {
 		return "", fmt.Errorf("MCP preflight is not implemented for %q", id)
 	}
+	cfg := provider.JSONMCP()
+	if err := cfg.checkAlternates(projectDir); err != nil {
+		return "", err
+	}
+	return cfg.file, nil
 }
 
 func registerOpenCodeV2(path string, cfg, mcp map[string]any) (string, error) {

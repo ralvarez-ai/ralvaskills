@@ -1,8 +1,6 @@
 package tool
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -234,7 +232,7 @@ func (*ClaudeTool) SettingsPath(projectDir string) string {
 // "allow" and "deny" keys, each mapping to a []string of rules.
 func (ct *ClaudeTool) ReadPermissions(projectDir string) (allow, deny []string, err error) {
 	path := ct.SettingsPath(projectDir)
-	cfg, err := readClaudeConfig(path)
+	cfg, err := readJSONConfig(path)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -253,7 +251,7 @@ func (ct *ClaudeTool) ReadPermissions(projectDir string) (allow, deny []string, 
 // other keys in the file. Creates the file if it does not exist.
 func (ct *ClaudeTool) WritePermissions(projectDir string, allow, deny []string) error {
 	path := ct.SettingsPath(projectDir)
-	cfg, err := readClaudeConfig(path)
+	cfg, err := readJSONConfig(path)
 	if err != nil {
 		return err
 	}
@@ -272,31 +270,7 @@ func (ct *ClaudeTool) WritePermissions(projectDir string, allow, deny []string) 
 		cfg[claudeSettingsPermKey] = perms
 	}
 
-	return writeClaudeConfig(path, cfg)
-}
-
-func readClaudeConfig(path string) (map[string]any, error) {
-	data, err := os.ReadFile(path)
-	if errors.Is(err, os.ErrNotExist) {
-		return make(map[string]any), nil
-	}
-	if err != nil {
-		return nil, fmt.Errorf("read %s: %w", path, err)
-	}
-
-	cfg := make(map[string]any)
-	if err = json.Unmarshal(data, &cfg); err != nil {
-		return nil, fmt.Errorf("parse %s: %w", path, err)
-	}
-	return cfg, nil
-}
-
-func writeClaudeConfig(path string, cfg map[string]any) error {
-	return fsx.WriteAtomic(path, rskTempPattern, func(w io.Writer) error {
-		enc := json.NewEncoder(w)
-		enc.SetIndent("", "  ")
-		return enc.Encode(cfg)
-	})
+	return writeJSONConfig(path, cfg)
 }
 
 func toStringSlice(v any) []string {

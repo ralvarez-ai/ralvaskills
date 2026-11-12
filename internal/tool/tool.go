@@ -54,7 +54,7 @@ func init() {
 	Register(&ClaudeTool{})
 	Register(&openCodeTool{})
 	Register(&codexTool{})
-	Register(&antigravityTool{})
+	Register(newAntigravityTool())
 }
 
 // String returns the string representation of the tool identifier.
