@@ -49,7 +49,7 @@ export function Hero() {
         <div className="agent-hero__top">
           <div>
             <Eyebrow>
-              <BrandMark /> rsk mcp · for Claude Code and OpenCode
+              <BrandMark /> rsk mcp · for ten coding clients
             </Eyebrow>
             <h1 className="agent-hero__title reveal" id="c-h1" style={{ '--i': 1 } as CSSProperties}>
               <span className="agent-hero__line">
@@ -67,7 +67,7 @@ export function Hero() {
             <p className="agent-hero__lede reveal" style={{ '--i': 2 } as CSSProperties}>
               <code>rsk</code> gives your coding agent three tools. Two only read: your project’s files and a catalogue
               of {data.skills.length} skills. The one that writes, <code>install_skills</code>, makes Claude Code ask
-              you on every call.
+              you on every call; the other clients get the read-only pair until their approval flow is verified.
             </p>
             <div className="agent-hero__actions reveal" style={{ '--i': 3 } as CSSProperties}>
               <ButtonLink href="#start" variant="primary">

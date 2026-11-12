@@ -14,15 +14,17 @@ const QA: [string, ReactNode][] = [
   [
     'Which clients does it support?',
     <>
-      Claude Code and OpenCode. <code>rsk new --for claude-code|opencode|all</code> picks which config files rsk writes;
-      installed skills are linked once into <code>.claude/skills/</code>.
+      Ten: Claude Code, Codex, OpenCode, Google Antigravity, Kimi Code, Factory Droid, Gemini CLI, Qwen Code, Cursor CLI
+      and Sourcegraph Amp. <code>rsk new --for &lt;tool&gt;|all</code> picks which config files rsk writes. Eight of
+      them read the shared <code>.agents/skills/</code>, so one link serves all of them.
     </>,
   ],
   [
     'Can I install a skill for every project?',
     <>
-      Yes: <code>rsk install &lt;name&gt; --global</code> links it into <code>~/.claude/skills/</code> and{' '}
-      <code>~/.config/opencode/skills/</code>. The <code>global</code> bundle is meant for that.
+      Yes: <code>rsk install &lt;name&gt; --global</code> links it into every configured client's own directory (
+      <code>~/.claude/skills/</code>, <code>~/.gemini/config/skills/</code>, …); <code>--for</code> narrows it to one.
+      The <code>global</code> bundle is meant for that.
     </>,
   ],
   [

@@ -10,8 +10,8 @@ export function QuickStart() {
           <Eyebrow reveal={false}>Quick start</Eyebrow>
           <h2 id="c-start-h">Set it up once. Then let the agent ask.</h2>
           <p className="lede">
-            <code>rsk new</code> registers the MCP server for both clients. Skip the last two lines if you want the
-            agent to propose them.
+            <code>rsk new</code> registers the MCP server for each client you select. Skip the last two lines if you
+            want the agent to propose them.
           </p>
         </div>
         <div className="reveal">

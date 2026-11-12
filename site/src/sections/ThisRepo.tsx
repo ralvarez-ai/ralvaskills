@@ -40,7 +40,7 @@ export function ThisRepo() {
                 the lock records the exact version that resolved, so a clone gets the same ones.
               </li>
               <li>
-                <b>Both tools from one list.</b> <code>tools = ["claude-code", "opencode"]</code> drives which adapter
+                <b>Two clients, one list.</b> <code>tools = ["claude-code", "opencode"]</code> drives which adapter
                 files rsk writes.
               </li>
             </ul>

@@ -20,7 +20,8 @@ export function Trade() {
                 Versions in a lock you commit. A clone runs <code>rsk install</code> and matches.
               </li>
               <li>
-                Claude Code and OpenCode from one install: skills are linked once into <code>.claude/skills/</code>.
+                Ten clients from one install: the Agent Skills ones share <code>.agents/skills/</code>, so a skill is
+                linked once, and Claude Code and OpenCode keep their own directory.
               </li>
             </ul>
           </div>

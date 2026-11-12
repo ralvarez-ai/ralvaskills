@@ -8,11 +8,19 @@ const NEW_FILES: [string, string][] = [
   ['AGENTS.md', 'A skeleton, only when the project has none. An existing one is never touched.'],
   ['.mcp.json', 'Registers rsk mcp for Claude Code.'],
   ['opencode.json', 'Registers rsk mcp for OpenCode.'],
+  [
+    '.agents/mcp_config.json',
+    'Registers rsk mcp for Antigravity. Kimi, Droid, Gemini, Qwen, Cursor and Amp write their own file; the README lists all ten.',
+  ],
 ];
 
 const INSTALL_FILES: [string, string][] = [
   ['.rsk/rsk.lock', 'Exact versions and sources. Commit it, like go.sum.'],
   ['.claude/skills/<name>', 'A symlink into rsk’s cache under ~/.config/rsk/. OpenCode reads the same folder.'],
+  [
+    '.agents/skills/<name>',
+    'The shared Agent Skills path: Codex, Antigravity, Kimi, Droid, Gemini, Qwen, Cursor and Amp read it, so one link serves them all.',
+  ],
 ];
 
 function Tree({ rows, label, children }: { rows?: [string, string][]; label: string; children?: React.ReactNode }) {
