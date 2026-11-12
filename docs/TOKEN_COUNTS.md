@@ -19,9 +19,9 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 | What | When loaded | Estimated tokens |
 |---|---|---:|
-| All `SKILL.md` bodies | Only when invoked | ~158591 |
-| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~191560 |
-| All `description:` fields (every skill) | Every turn, if all installed | ~7637 |
+| All `SKILL.md` bodies | Only when invoked | ~159345 |
+| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~193217 |
+| All `description:` fields (every skill) | Every turn, if all installed | ~7604 |
 
 ## Session profiles
 
@@ -54,7 +54,7 @@ These skills are not part of any bundle. They are installed individually with `r
 
 | Skill | Category | ~Body tkns | ~Desc tkns | ~Side tkns |
 |---|---|---:|---:|---:|
-| `mcp-architect` | protocols | ~7795 | ~334 | ~11014 |
+| `mcp-architect` | protocols | ~8549 | ~301 | ~12671 |
 | `go-house-libs` | personal | ~2197 | ~265 | ~2071 |
 | `backend-performance-architect` | quality | ~3413 | ~204 | ~3498 |
 | `manim-architect` | frameworks | ~1776 | ~198 | ~4433 |
@@ -90,8 +90,8 @@ These skills are not part of any bundle. They are installed individually with `r
 | Category | Skills | ~Body tkns | ~Desc tkns | ~Side tkns |
 |---|---:|---:|---:|---:|
 | frameworks | 11 | ~26995 | ~1347 | ~33694 |
+| protocols | 4 | ~16650 | ~662 | ~23684 |
 | personal | 7 | ~15951 | ~1046 | ~26879 |
-| protocols | 4 | ~15896 | ~695 | ~22027 |
 | frontend | 8 | ~15369 | ~1045 | ~16939 |
 | languages | 3 | ~13482 | ~406 | ~16535 |
 | infra | 5 | ~11698 | ~517 | ~11926 |
@@ -133,7 +133,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 
 | # | Skill | Category | Body bytes | ~Body tkns | ~Desc tkns | ~Stack tkns | ~Recipes tkns | ~Topic tkns |
 |---|---|---|---:|---:|---:|---:|---:|---:|
-| 1 | `mcp-architect` | protocols | 31177 | ~7795 | ~334 | ~1521 | ~8783 | ~710 |
+| 1 | `mcp-architect` | protocols | 34196 | ~8549 | ~301 | ~1521 | ~10235 | ~915 |
 | 2 | `go-architect` | languages | 28974 | ~7244 | ~211 | ~473 | ~4429 | ~7535 |
 | 3 | `go-library-builder` | personal | 16102 | ~4026 | ~167 | ~628 | ~2725 | ~705 |
 | 4 | `backend-performance-architect` | quality | 13650 | ~3413 | ~204 | ~0 | ~2747 | ~751 |
@@ -201,7 +201,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 66 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
 | 67 | `caveman` | meta | 1789 | ~448 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 631721 body bytes · ~158591 body tokens · ~7637 desc tokens · ~191560 side tokens
+**Totals:** 634740 body bytes · ~159345 body tokens · ~7604 desc tokens · ~193217 side tokens
 
 ## Topic files
 
@@ -294,6 +294,8 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
 - `landing-page-designer` (~1134 tokens total):
   - `DIGEST.md` — ~596 tokens
   - `REFERENCE.md` — ~538 tokens
+- `mcp-architect` (~915 tokens total):
+  - `DIGEST.md` — ~915 tokens
 - `demo-script-designer` (~794 tokens total):
   - `REFERENCE.md` — ~417 tokens
   - `DIGEST.md` — ~377 tokens
@@ -306,8 +308,6 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `REFERENCE.md` — ~243 tokens
 - `python-architect` (~733 tokens total):
   - `DIGEST.md` — ~733 tokens
-- `mcp-architect` (~710 tokens total):
-  - `DIGEST.md` — ~710 tokens
 - `go-library-builder` (~705 tokens total):
   - `DIGEST.md` — ~705 tokens
 - `fastapi-architect` (~695 tokens total):
@@ -392,7 +392,7 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
 
 Body > 2500 tokens — consider moving examples to `RECIPES.md` or topic files:
 
-- `mcp-architect` (~7795 body tokens)
+- `mcp-architect` (~8549 body tokens)
 - `go-architect` (~7244 body tokens)
 - `go-library-builder` (~4026 body tokens)
 - `backend-performance-architect` (~3413 body tokens)
@@ -422,7 +422,7 @@ Body > 2500 tokens — consider moving examples to `RECIPES.md` or topic files:
 
 Heaviest 10 descriptions — each desc token is paid every turn for any session that installs the skill:
 
-- `mcp-architect` (~334 desc tokens)
+- `mcp-architect` (~301 desc tokens)
 - `go-house-libs` (~265 desc tokens)
 - `go-architect` (~211 desc tokens)
 - `backend-performance-architect` (~204 desc tokens)

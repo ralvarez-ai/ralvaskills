@@ -858,3 +858,134 @@ rich := callGetReport(t, connect(t, srv, with))
 
 Also assert that no tool the model needs is `visibility: ["app"]`, that the panel resource reads with the MCP Apps MIME, and that its size stays under a budget.
 
+## 14. Tool surface audit
+
+Run this when a server's tool list has grown, before adding a family, or when an agent's context is dominated by tool schemas.
+
+### 14.1 Measure
+
+```bash
+# tools registered, by package
+grep -rhoP 'Name:\s+"\K[a-z_]+' --include='*.go' path/to/mcp | sort -u | wc -l
+
+# contract JSON on disk
+find contracts/schema -name '*_arguments.json' | wc -l
+find contracts/schema -name '*.json' -print0 | xargs -0 wc -c | tail -1
+
+# embedded/generated schema file
+wc -c internal/**/schemas*.gen.go
+```
+
+Rules of thumb: **~1k tokens per tool** with real schemas (bytes / 3.6), **~50–80 tokens per resource listing**, content paid on read. A surface above ~30 tools or ~35k tokens is a split candidate.
+
+### 14.2 Merge candidates, safest first
+
+| Pattern | Test | Fold |
+|---|---|---|
+| Read that another read answers | Is `get_X` needed when `list_X` returns every row? | Drop `get_X`; add an `id` filter |
+| CRUD over a tiny ordered config list | Is the order the only state that matters? | One replace-all tool |
+| Analytics over stored rows | Read-only aggregation with a period? | Aggregate/report key |
+| Sub-resource of a fetched parent | Does the parent fetch already exist? | Field on the parent |
+| Lifecycle pair | Are both calls destructive already? | `set(plan: [])` |
+| Second source for a `diff`/`apply` pair | Same shape, different origin? | One `source` argument |
+| Caller identity | Does the list duplicate `whoami`? | Return it from `whoami` |
+| Settings quartet | Same object, two pairs? | `get_settings` / `set_settings` |
+| Mirror of an existing action | Does the entity already carry the type? | One create with two fields |
+
+### 14.3 Never merge
+
+- Read-only with destructive — `diff`/`apply`, `preview`/`apply`, `delete_*`.
+- Per-entity CRUD into `write(entity, op)` — it erases the per-action descriptions and hints.
+- Two previews with different payloads — a `oneOf` input validates badly and hides the shape from the model.
+- Anything that changes a call's destructive hint.
+
+### 14.4 Refactors that do not change the count
+
+- Catalog file per group + tests: equality, disjoint groups, annotations on every tool, instructions cite only owned tools.
+- Grouped registration: `Register(server, deps, groups...)`, so an endpoint is a list, not a fork.
+- Endpoint split: one server graph per domain, one binary, one auth chain, one shared caller-keyed state store.
+- Shared `$defs` for entity schemas copied across contexts.
+- Per-surface instructions and prompts; each names only its own tools.
+- Tool descriptions: move repeated caution text into instructions, once.
+
+### 14.5 Resource eligibility
+
+- Eligible: small (a few hundred rows at most), read-mostly, listable without filters, stable shape.
+- Not eligible: large or volatile collections; anything that needs filters or pagination.
+- Same shape, same port, same authorization as the list tool; no server-side cache; document freshness and re-read after a write.
+- Additive first: keep the list tool until a session shows the client actually reads resources.
+
+### 14.6 Order of operations
+
+1. Catalog + invariants (no behaviour change).
+2. Mechanical merges.
+3. Endpoint scaffold with every tool still on the original path.
+4. First new family on its endpoint — it becomes the template.
+5. Remaining families; apply the design-changing folds when each family is designed, never as a retrofit.
+6. Measure each surface; take a union read tool only if the thresholds hold, else close it with the number.
+
+### 14.7 Go skeleton — catalog, groups, paths
+
+```go
+type Group string
+
+const (
+	GroupCore     Group = "core"
+	GroupPlanning Group = "planning"
+)
+
+// catalog is the single source of truth: tests compare it to what was registered,
+// and docs quote it instead of a hand-written count.
+var catalog = map[Group][]string{
+	GroupCore:     {"list_entries", "get_entry", "create_entry"},
+	GroupPlanning: {"list_plans", "create_plan"},
+}
+
+// Register adds the groups it is given. Every group is a list, not a fork of the
+// registration code.
+func Register(s *mcp.Server, deps Deps, groups ...Group) error {
+	for _, g := range groups {
+		for _, name := range catalog[g] {
+			if err := registerOne(s, deps, name); err != nil {
+				return fmt.Errorf("register %s: %w", name, err)
+			}
+		}
+	}
+	return nil
+}
+
+// build constructs the whole server graph once, at startup.
+func build(deps Deps, enabled []Group) map[string]*mcp.Server {
+	paths := map[Group]string{GroupCore: "/mcp", GroupPlanning: "/mcp/planning"}
+	out := make(map[string]*mcp.Server, len(enabled))
+	for _, g := range enabled {
+		s := mcp.NewServer(&mcp.Implementation{Name: "svc-" + string(g), Version: "1"}, nil)
+		if err := Register(s, deps, g); err != nil {
+			panic(err) // startup only
+		}
+		out[paths[g]] = s
+	}
+	return out
+}
+
+// routes selects a server by path. The auth chain wraps the whole mux.
+func routes(servers map[string]*mcp.Server) http.Handler {
+	mux := http.NewServeMux()
+	for path, s := range servers {
+		h := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server { return s }, nil)
+		mux.Handle(path, h)
+	}
+	return mux
+}
+```
+
+Invariant test: connect a client, call `tools/list`, compare to `catalog[group]` as a set, assert groups are pairwise disjoint and every tool has `readOnlyHint` or `destructiveHint` set. Python: build one `FastMCP` per domain and mount them on one ASGI router; the same catalog test reads `list_tools()`.
+
+### 14.8 Thresholds
+
+- More than ~20 tools → catalog + invariant tests.
+- More than ~30 tools or ~35k tokens on one surface → split.
+- A new analytic request → aggregate/report key first.
+- A new CRUD on a tiny ordered list → replace-all first.
+- A new "read one" → does the list with an `id` filter suffice?
+- A new second source for `diff`/`apply` → one argument first.

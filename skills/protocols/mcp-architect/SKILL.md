@@ -1,7 +1,7 @@
 ---
 name: mcp-architect
-version: 2.4.1
-description: MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations, structured output, JSON-RPC error mapping, prompt-injection/SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — JSON Schemas as the source of truth for tool inputs/outputs, Go types generated with atombender/go-jsonschema, enums shared via $defs, and the two traps (SDK resolves OutputSchema with no loader; go-jsonschema ignores $ref) that silently yield a wrong contract. MCP Apps panels only as an addition to a complete text result, with capability detection on stateless servers.
+version: 2.5.0
+description: MCP (Model Context Protocol) 2026-07-28 server standards — tools, resources, prompts, stateless core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name routing, MRTR for elicitation/sampling, cacheable lists (ttlMs/cacheScope), OAuth 2.1 (RFC 8707 resources, RFC 9207 issuer), annotations, structured output, JSON-RPC errors, injection/SSRF defenses, Inspector testing. Tool-surface economy: the token budget of the tool list, merging reads, endpoint splits, resources for read-mostly data. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing or scaffolding an MCP server, or when its tool list has grown too large. Go schema-driven contracts — JSON Schemas as the source of truth, types via atombender/go-jsonschema, enums in $defs, and the traps (SDK OutputSchema with no loader; generator ignores $ref). MCP Apps panels only add to a complete text result.
 ---
 
 # MCP Architecture
@@ -90,6 +90,26 @@ MCP Apps lets a tool point at an interactive HTML panel (`ui://` resource, MIME 
 
 Test both paths: call every tool with a client that advertises no extension and assert the result stands alone, then with one that does and assert the content is the same. Go skeleton in [RECIPES §13](RECIPES.md#13-mcp-apps-panel-go).
 
+### 3c. Tool surface economy — the loaded cost of a tool list
+
+Every tool definition — name, description, input schema, output schema, annotations — is sent to the client and sits in the model's context before it calls anything. Treat the tool list as a budget, not an API mirror.
+
+- **Cost model.** A tool with real schemas costs roughly 1k tokens (3.5–4 KB of JSON); a resource listing costs 50–80 and its content is paid only when read. Eighty tools spend ~80k tokens before the agent's first action, and selection accuracy falls as near-identical `list_*`/`get_*` names accumulate.
+- **Budgets.** Past ~20 tools, add the catalog and invariants below. Past ~30 tools or ~35k tokens on one surface, split it into separate endpoints. If a handful of tools pass ~1k tokens each, the schemas are the problem, not the count: share `$defs`.
+- **Merge before you add.** A new tool is justified only if no existing tool answers it with an argument. The safe folds:
+  - a read another read already answers → drop it and add an `id` filter to the list;
+  - CRUD over a tiny ordered config list → one replace-all tool;
+  - analytics over stored rows → an aggregate/report key, not a tool;
+  - a sub-resource of a parent the client already fetches → a field on the parent;
+  - a lifecycle pair (`set`/`clear`) → one call with an empty value;
+  - a second source for an existing `diff`/`apply` pair → one argument, not a second family.
+- **Never merge** a read-only tool with a destructive one, two previews with different payloads, or per-entity CRUD into a generic `write(entity, op)`. The extra tools are what carry the per-action descriptions and hints that make selection safe.
+- **Resources are cheaper, not free.** They carry no JSON Schema, so they suit small, read-mostly, unfiltered collections; content is paid on read, and some hosts only surface resources the user attaches. Keep the list tool until the client is known to read resources.
+- **Splitting is additive.** New domains go on new endpoints; the original path keeps every tool it had. Share one caller-keyed state store so the active profile/context follows the agent across endpoints, and build the server graph once at startup rather than per request.
+- **Catalog and invariants.** One file names the tools per group. Tests assert group == catalog, groups are disjoint, every tool declares its hints, and each endpoint's instructions cite only its own tools. Docs quote the catalog, never a hand-written count.
+
+Audit procedure, merge checklist and Go skeleton: [RECIPES §14](RECIPES.md#14-tool-surface-audit).
+
 ## 4. Tool annotations and safety hints
 
 Annotations declare behavioral properties so clients can gate confirmations and parallelism. **None of these enforce anything** — they are hints to the client UI.
@@ -119,6 +139,7 @@ Resources are read-only data accessed via URI. Use them for content the model sh
 - **List order is now deterministic.** Clients rely on stable ordering to keep upstream prompt caches warm across reconnects — don't shuffle `tools/list`/`resources/list` output between calls unless the underlying set actually changed.
 - **Subscriptions moved off the held-open GET stream.** `resources/subscribe` still registers interest, but change notifications now flow over `subscriptions/listen` — a single stream clients opt into per notification type — instead of the old per-connection SSE GET. Use it only for resources that change in observable ways; don't subscribe to static config.
 - **`list_changed` notification** when your set of resources changes (new file appeared, table dropped). Cheap to send; clients re-fetch `resources/list` and get a fresh `ttlMs`.
+- **Resources are the cheap half of the surface.** They carry no JSON Schema: a listing costs tens of tokens and content is paid only when read. Move a small, read-mostly, unfiltered collection here when its list tool is schema-heavy, but keep the tool until a client is known to read resources — some hosts only expose the ones the user attaches. See [§3c](#3c-tool-surface-economy--the-loaded-cost-of-a-tool-list).
 
 ## 6. Prompt design
 

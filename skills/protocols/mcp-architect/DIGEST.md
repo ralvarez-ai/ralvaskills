@@ -5,6 +5,10 @@ Design and review MCP servers on spec 2026-07-28: tools, resources, prompts over
 ## Always-on rules
 - Primitive by who invokes: model -> tool; read-only data -> resource; user menu -> prompt.
 - Tools: one verb, narrow scope, full JSON Schema with descriptions; description leads with the action, <300 tokens.
+- Tool list is a budget: ~1k tokens per tool with real schemas; past ~30 tools or ~35k tokens on one surface, split it into endpoints.
+- Merge before adding: a read another read answers, a tiny config list (replace-all), an analytic (aggregate key), a parent sub-resource, a lifecycle pair, a second `diff`/`apply` source.
+- Resources carry no schema: use for small, read-mostly, unfiltered collections; content is paid on read, and keep the list tool until clients read resources.
+- Past ~20 tools, one catalog of tool groups with tests: group == catalog, groups disjoint, hints declared, instructions cite only owned tools.
 - Every result has `content[]`; with `outputSchema`, the server MUST populate `structuredContent` and SHOULD also emit a JSON text copy in `content[]`.
 - Tool failures: `isError: true` inside the result. JSON-RPC errors are for protocol failures only.
 - Set annotations explicitly: `title`, `readOnlyHint`, `destructiveHint` (err toward true), `idempotentHint`, `openWorldHint`. Omitted defaults are the most dangerous.
@@ -25,6 +29,8 @@ Design and review MCP servers on spec 2026-07-28: tools, resources, prompts over
 - Don't put secrets or stack traces in `text` blocks.
 - Don't break tool schemas in place; add a new tool and deprecate the old.
 - Don't declare `outputSchema` for free-form prose tools.
+- Never merge a read-only tool with a destructive one, nor per-entity CRUD into one generic write.
+- Never remove a tool from the original endpoint when splitting; new domains get the new paths.
 - Validate on the server regardless of what the client claims.
 - Never let tool descriptions be edited dynamically from untrusted input.
 - The server MUST reject tokens whose audience claim doesn't match.
