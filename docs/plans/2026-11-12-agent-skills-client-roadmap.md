@@ -8,6 +8,7 @@ related:
   - backlog/done/3m9qsv-add-six-agent-skills-clients-on-one-shared-adapter.md
   - backlog/done/5vq2hd-fold-the-remaining-mcp-plumbing-and-fix-symlink-messages.md
   - backlog/pending/9krt4v-add-crush-goose-and-openhands-mcp-targets.md
+  - backlog/pending/6hpn3w-add-a-supported-clients-section-with-icons-to-the-landing-page.md
   - backlog/pending/7wq4tn-verify-antigravity-mcp-approval-and-decide-on-install-skills.md
 ---
 
