@@ -1,6 +1,6 @@
 ---
 name: skill-builder
-version: 1.1.0
+version: 1.2.0
 description: Scaffold a new ralvaskills skill per SPECS.md — SKILL.md skeleton, optional STACK/RECIPES, folder placement, SPECS updates. Interview-first; never guesses. Use when authoring a new skill or invoking /skill-builder.
 ---
 
@@ -10,7 +10,7 @@ Meta-skill that scaffolds new skills under `skills/<category>/<skill-name>/` fol
 
 ## 1. When to invoke
 
-- User says "let's create a new skill", "scaffold a skill", "I want to add a `<topic>-architect`", or invokes `/skill-builder`.
+- User says "let's create a new skill", "scaffold a skill", "I want a skill for `<topic>`", or invokes `/skill-builder`.
 - User wants to verify whether an existing folder structure matches the conventions.
 - User wants to move / rename a skill and needs the SPECS updates handled correctly.
 
@@ -40,7 +40,10 @@ If a question isn't answered here, **read SPECS.md before guessing.**
 
 ## 4. Naming + placement
 
-Validate against the SPECS naming convention ([RECIPES §5](RECIPES.md#5-naming-suffix-table)). Path follows category placement and the discovery rule: `skills/<category>/<name>/SKILL.md`. Never nest a `SKILL.md` inside another skill folder.
+The suffix names the **role** the skill plays, not its topic. `-architect` requires a stack or protocol in the prefix (`go`, `react`, `grpc`, `docker`); a skill whose subject is a practice, a document, a paper or a deck takes a producing role instead — `-designer`, `-writer`, `-format`. **No stack, no suffix.** Table, permanence rule and the guard in [RECIPES §5](RECIPES.md#5-naming-suffix-table).
+The name is checked before it ships: `internal/skill/names.go` requires kebab-case, at most 64 characters, no doubled hyphen and `directory == frontmatter name`, and rejects a retired name or any name containing one as a whole component. `go test ./internal/skill/` — `task skills:check` — runs it.
+Path follows category placement and the discovery rule: `skills/<category>/<name>/SKILL.md`. Never nest a `SKILL.md` inside another skill folder.
+
 ## 5. Frontmatter generation
 
 One-line description in YAML scalar form. The description sits in Claude's always-loaded skill index — every line costs tokens on every turn, forever.
@@ -97,7 +100,7 @@ If adapted from an external source (e.g. Matt Pocock, Anthropic example, communi
 
 ## 11. Validation
 
-Before declaring scaffold done, walk the full checklist in [RECIPES §7](RECIPES.md#7-validation-checklist). If any item fails, fix before handing off.
+Before declaring scaffold done, walk the full checklist in [RECIPES §7](RECIPES.md#7-validation-checklist). The name gate is part of it: `task skills:check` must pass, so an illegal, duplicated, mismatched or retired name fails here rather than at publication. If any item fails, fix before handing off.
 
 ## 12. Hand-off
 

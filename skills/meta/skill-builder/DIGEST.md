@@ -6,7 +6,8 @@ Scaffolds a new ralvaskills skill under `skills/<category>/<name>/`: SKILL.md sk
 
 - SPECS.md is canonical. Read it before guessing.
 - Interview first: ask in order, wait for each answer. Order: topic and suffix, category, version target, bundle membership, cross-skill ties, attribution, body shape preview, decisions list.
-- Name must match the SPECS suffix table. If no suffix fits, propose a new one and update SPECS. Do not shoehorn.
+- Name must match the SPECS suffix table. The suffix names the role, not the topic: -architect needs a stack or protocol prefix, and a practice, document or deck takes -designer, -writer or -format. No stack, no suffix. If no suffix fits, propose one and update SPECS; do not shoehorn.
+- A published name is the registry key: kebab-case, at most 64 chars, directory equals frontmatter name, never a retired name. `task skills:check` must pass. A rename needs an ADR and one [aliases] entry in `registry/aliases.toml`.
 - Path is `skills/<category>/<name>/SKILL.md`. Never nest a SKILL.md.
 - Description: one YAML scalar line, WHAT first (comma-separated), WHEN last, no filler, no `>` or `|`.
 - Body: rules before code. Code blocks ~15 lines max. Body under ~10 KB / ~250 lines.

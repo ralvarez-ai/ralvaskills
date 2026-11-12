@@ -91,17 +91,28 @@ Always pin actual versions; never `latest`.
 
 ## 5. Naming suffix table
 
-| Suffix | Use for |
-|---|---|
-| `-architect` | Enforces structure/standards for a language, framework, protocol, infra component |
-| `-arch` | Enforces an architectural pattern (`hexagonal-architecture`) |
-| `-reviewer` | Reviews code/contracts for issues |
-| `-refactor` | Restructures existing code |
-| `-planner` | Designs before implementation |
-| `-patterns` | Catalog of patterns / principles for a domain |
-| `-builder` | Scaffolds new artifacts of a given type |
-| `-guide` | Documentation / usage guide for a specific tool |
-| (none) | Workflow tools that don't fit above |
+The suffix names the **role** the skill plays, not its topic — the subject belongs in the description. Canonical table: SPECS.md, Naming Convention.
+
+| Suffix | Names the skill that… | Examples |
+|---|---|---|
+| `-architect` | states the conventions for a language, framework, protocol or tool | `go-architect`, `grpc-architect`, `docker-architect` |
+| `-reviewer` | audits existing code or contracts, proposes only | `security-reviewer`, `api-contract-reviewer` |
+| `-designer` | designs an artifact or spec a human reviews | `landing-page-designer`, `demo-deck-designer`, `explainer-designer` |
+| `-writer` | produces prose a human reads or speaks | `narration-writer`, `uru-thesis-writer` |
+| `-format` | formats an artifact to external rules | `ml-paper-format`, `uru-paper-format` |
+| `-author` | produces prose or commits | `commit-author` |
+| `-refactor` | restructures existing code | `code-design-refactor` |
+| `-planner` | designs something before implementation | `feature-planner` |
+| `-patterns` | catalogs patterns or principles for a domain | `design-patterns` |
+| `-builder` | scaffolds new artifacts of a given type | `skill-builder` |
+| `-guide` | documents one tool or workflow | `rsk-guide` |
+| (none) | workflow tools and meta utilities that fit nothing above | `tdd`, `caveman` |
+
+**`-architect` requires a stack or protocol in the prefix.** The prefix names a language, framework, protocol or tool — `go`, `react`, `grpc`, `docker`. A skill whose subject is a practice, a document, a paper or a deck is not an architect: **no stack, no suffix**; take the producing role (`-designer`, `-writer`, `-format`) instead. This is the rule that keeps the `-architect` count from growing on roles that do not fit — ten names moved off it in [ADR 0002](../../../docs/adr/0002-rename-ten-skills-with-registry-aliases.md).
+
+**A published name is permanent**, because it is the registry key. A rename needs its own ADR and one `[aliases]` entry in `registry/aliases.toml`, in the same commit as the directory rename; the old entry stays in the index as `deprecated` so it keeps resolving.
+
+**The name is checked, not trusted.** `internal/skill/names.go` enforces kebab-case, at most 64 characters, no doubled hyphen, `directory == frontmatter name`, uniqueness, and that the name is not retired — including as a whole hyphen-separated component, so `hexagonal-arch-v2` is rejected too. `go test ./internal/skill/` (`task skills:check`) runs it; `cmd/generate-registry` refuses to publish a violation.
 
 If the topic doesn't fit any suffix, propose a new one and update SPECS — don't shoehorn.
 
@@ -127,6 +138,10 @@ Before declaring scaffold done:
 - [ ] **Description is one line** in YAML scalar form (no `>` or `|`); has both WHAT and WHEN; version target named if applicable
 - [ ] Name in frontmatter matches folder name
 - [ ] Naming suffix valid per SPECS convention table
+- [ ] `-architect` used only with a stack or protocol prefix; a practice, document or deck takes `-designer`, `-writer` or `-format` instead
+- [ ] Name is kebab-case, at most 64 characters, no doubled hyphen, and not a retired name or containing one as a whole hyphen-separated component
+- [ ] `task skills:check` (`go test ./internal/skill/`) passes
+- [ ] If this renames a published skill: an ADR and one `[aliases]` entry in `registry/aliases.toml`, in the same commit as the directory
 - [ ] No nested `SKILL.md` inside (single discovery point)
 - [ ] All `.md` files in the folder use `UPPER_SNAKE_CASE` (except `SKILL.md` and `STACK.md` themselves)
 - [ ] `STACK.md` present if category requires (per SPECS table) and not exempt; or exemption noted in roadmap
