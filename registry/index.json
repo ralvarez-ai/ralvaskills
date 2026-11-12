@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-12T02:27:51Z",
+  "generated_at": "2026-11-12T03:11:58Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -1570,7 +1570,7 @@
     "skill-builder": {
       "name": "skill-builder",
       "description": "Scaffold a new ralvaskills skill per SPECS.md — SKILL.md skeleton, optional STACK/RECIPES, folder placement, SPECS updates. Interview-first; never guesses. Use when authoring a new skill or invoking /skill-builder.",
-      "latest": "1.1.0",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1581,6 +1581,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/skill-builder@v1.1.0/skill-builder-v1.1.0.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-12T03:11:58Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/skill-builder@v1.2.0/skill-builder-v1.2.0.tar.gz"
         }
       }
     },
