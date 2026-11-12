@@ -36,6 +36,7 @@ type (
 		Name        string                   `json:"name"`
 		Description string                   `json:"description"`
 		Personal    bool                     `json:"personal"`
+		Deprecated  bool                     `json:"deprecated"`
 		Latest      string                   `json:"latest"`
 		Versions    map[string]*IndexVersion `json:"versions"`
 	}
@@ -46,8 +47,16 @@ type (
 		ArchiveURL string `json:"archive_url"`
 	}
 
+	// Index is the published registry index: the skill table plus the retired
+	// names that still resolve to the skill which replaced them.
+	Index struct {
+		Skills  map[string]*IndexEntry
+		Aliases map[string]string
+	}
+
 	registryIndex struct {
-		Skills map[string]*IndexEntry `json:"skills"`
+		Aliases map[string]string      `json:"aliases"`
+		Skills  map[string]*IndexEntry `json:"skills"`
 	}
 
 	// Registry resolves skills from the hosted registry at baseURL.
@@ -69,41 +78,53 @@ func NewRegistry(baseURL, cacheDir string) *Registry {
 	}
 }
 
-// Index fetches and returns the registry skill index.
-func (r *Registry) Index(ctx context.Context) (map[string]*IndexEntry, error) {
+// Index fetches and returns the registry index.
+func (r *Registry) Index(ctx context.Context) (Index, error) {
 	url := r.baseURL + "/" + IndexFileName
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, http.NoBody)
 	if err != nil {
-		return nil, fmt.Errorf("build index request: %w", err)
+		return Index{}, fmt.Errorf("build index request: %w", err)
 	}
 
 	var resp *http.Response
 	resp, err = r.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("fetch index: %w", err)
+		return Index{}, fmt.Errorf("fetch index: %w", err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("fetch index: HTTP %d from %s", resp.StatusCode, url)
+		return Index{}, fmt.Errorf("fetch index: HTTP %d from %s", resp.StatusCode, url)
 	}
 
 	var idx registryIndex
 	if err = json.NewDecoder(resp.Body).Decode(&idx); err != nil {
-		return nil, fmt.Errorf("decode index: %w", err)
+		return Index{}, fmt.Errorf("decode index: %w", err)
 	}
-	return idx.Skills, nil
+	return Index{Skills: idx.Skills, Aliases: idx.Aliases}, nil
+}
+
+// ResolveAlias maps a retired skill name to the name that replaced it. A name
+// that is not retired is returned unchanged.
+func ResolveAlias(name string, aliases map[string]string) string {
+	if next, ok := aliases[name]; ok {
+		return next
+	}
+	return name
 }
 
 // All fetches the index and returns every skill at its latest version.
 func (r *Registry) All(ctx context.Context) ([]skill.Skill, error) {
-	index, err := r.Index(ctx)
+	idx, err := r.Index(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	skills := make([]skill.Skill, 0, len(index))
-	for _, entry := range index {
+	skills := make([]skill.Skill, 0, len(idx.Skills))
+	for _, entry := range idx.Skills {
+		if entry.Deprecated {
+			continue
+		}
 		skills = append(skills, skill.Skill{
 			Name:        entry.Name,
 			Version:     entry.Latest,
@@ -122,14 +143,16 @@ func (r *Registry) Find(ctx context.Context, name string) (skill.Skill, error) {
 }
 
 // FindVersion returns the skill at a specific version. An empty version string
-// selects the latest version.
+// selects the latest version. A retired name resolves to the skill that
+// replaced it, and the returned skill carries the new name.
 func (r *Registry) FindVersion(ctx context.Context, name, version string) (skill.Skill, error) {
-	index, err := r.Index(ctx)
+	idx, err := r.Index(ctx)
 	if err != nil {
 		return skill.Skill{}, err
 	}
 
-	entry, ok := index[name]
+	name = ResolveAlias(name, idx.Aliases)
+	entry, ok := idx.Skills[name]
 	if !ok {
 		return skill.Skill{}, fmt.Errorf("%w: registry skill %q not found", ErrNotFound, name)
 	}

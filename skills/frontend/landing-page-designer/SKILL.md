@@ -1,12 +1,12 @@
 ---
 name: landing-page-designer
 version: 1.1.1
-description: Design landing-page proposals for a product as self-contained HTML grounded in its code, real captures and brand — one memorable device per page, a choreographed hero film, an accessibility and verification bar (axe x8, parser check, smoke test). Use when asked to draw, propose or improve a product's public/landing page, compare directions, or "make it more attractive / more dynamic". Not for porting a chosen design into the app (later job); upstream concept work is website-concept-architect.
+description: Design landing-page proposals for a product as self-contained HTML grounded in its code, real captures and brand — one memorable device per page, a choreographed hero film, an accessibility and verification bar (axe x8, parser check, smoke test). Use when asked to draw, propose or improve a product's public/landing page, compare directions, or "make it more attractive / more dynamic". Not for porting a chosen design into the app (later job); upstream concept work is website-concept-designer.
 ---
 
 # Landing page designer (proposal rounds)
 
-The method for proposing landing pages in rounds, what each decision rests on, and the checks a page must pass before anyone sees it. Upstream of this skill: [website-concept-architect](../website-concept-architect/SKILL.md) (what the site is). Downstream: [ui-ux-architect](../ui-ux-architect/SKILL.md) (porting into the app).
+The method for proposing landing pages in rounds, what each decision rests on, and the checks a page must pass before anyone sees it. Upstream of this skill: [website-concept-designer](../website-concept-designer/SKILL.md) (what the site is). Downstream: [ui-ux-architect](../ui-ux-architect/SKILL.md) (porting into the app).
 
 ## 0. The job, and what it is not
 

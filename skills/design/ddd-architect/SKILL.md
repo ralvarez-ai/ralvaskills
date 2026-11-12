@@ -6,7 +6,7 @@ description: Domain-Driven Design — strategic-first (bounded contexts, context
 
 # DDD Architecture
 
-Domain-Driven Design as practical structure, not ceremony. **Strategic decisions** (bounded contexts, integration patterns between them) carry far more weight than **tactical patterns** (entities, value objects, aggregates) — get the boundaries right and the tactics fall into place. Builds on the domain glossary captured by [grill-with-docs](../../workflows/grill-with-docs/SKILL.md). Pairs with [hexagonal-arch](../hexagonal-arch/SKILL.md) for code structure. Reference tables in [PATTERNS.md](PATTERNS.md).
+Domain-Driven Design as practical structure, not ceremony. **Strategic decisions** (bounded contexts, integration patterns between them) carry far more weight than **tactical patterns** (entities, value objects, aggregates) — get the boundaries right and the tactics fall into place. Builds on the domain glossary captured by [grill-with-docs](../../workflows/grill-with-docs/SKILL.md). Pairs with [hexagonal-architecture](../hexagonal-architecture/SKILL.md) for code structure. Reference tables in [PATTERNS.md](PATTERNS.md).
 
 ## 1. Strategic DDD — bounded contexts
 
@@ -93,7 +93,7 @@ If the domain has 3–5 entities with genuine invariants and policies, DDD pays.
 ## 10. Cross-skill ties
 
 - **`grill-with-docs`** captures the language → CONTEXT.md → which this skill consumes. The glossary is the input; aggregates / value objects / events use those exact terms.
-- **`hexagonal-arch`** structures the *code* (domain core + ports + adapters). DDD shapes the *meaning* inside the domain core. DDD answers "what's in the domain"; hexagonal answers "where does the domain live and what touches it."
+- **`hexagonal-architecture`** structures the *code* (domain core + ports + adapters). DDD shapes the *meaning* inside the domain core. DDD answers "what's in the domain"; hexagonal answers "where does the domain live and what touches it."
 - **`sql-architect`** implements repositories (§5).
 - **`rest-api-architect`** / framework architects are the application-service entry points. DTOs translate to / from aggregates at the boundary.
 - **`improve-codebase-architecture`** benefits from DDD because the domain language gives names to good seams.

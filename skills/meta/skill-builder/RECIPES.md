@@ -94,7 +94,7 @@ Always pin actual versions; never `latest`.
 | Suffix | Use for |
 |---|---|
 | `-architect` | Enforces structure/standards for a language, framework, protocol, infra component |
-| `-arch` | Enforces an architectural pattern (`hexagonal-arch`) |
+| `-arch` | Enforces an architectural pattern (`hexagonal-architecture`) |
 | `-reviewer` | Reviews code/contracts for issues |
 | `-refactor` | Restructures existing code |
 | `-planner` | Designs before implementation |

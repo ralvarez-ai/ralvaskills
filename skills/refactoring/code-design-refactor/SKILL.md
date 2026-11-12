@@ -48,7 +48,7 @@ The most common move. Pull a coherent chunk into its own named thing.
 
 When two modules know more about each other than they should.
 
-- **Direct → indirect through a port.** If A imports concrete B but only needs *some* behavior, A should declare the interface it needs and let B (or a test fake) implement it. Aligns with [hexagonal-arch §3](../../design/hexagonal-arch/SKILL.md#3-where-to-put-port-definitions): the interface lives where it's *consumed*.
+- **Direct → indirect through a port.** If A imports concrete B but only needs *some* behavior, A should declare the interface it needs and let B (or a test fake) implement it. Aligns with [hexagonal-architecture §3](../../design/hexagonal-architecture/SKILL.md#3-where-to-put-port-definitions): the interface lives where it's *consumed*.
 - **Two-way → one-way.** If A imports B and B imports A, the design is wrong. Find the higher-level concept they both belong to, or invert the dependency.
 - **Pass dependencies, don't fetch them.** Replace `service = SomeRegistry.get()` with `def __init__(self, service: SomeService)`. Makes testing trivial and dependencies visible.
 - **Don't decouple speculatively.** The "rule of three" (per [logic-cleaner §6](../logic-cleaner/SKILL.md#6-duplication-rule-of-three)) applies: one consumer = no need for a port; two = possibly; three = yes.
@@ -118,7 +118,7 @@ When a refactor reveals a deeper structural problem (port belongs in a different
 - [improve-codebase-architecture](../improve-codebase-architecture/SKILL.md) — system-level companion; promote when scope crosses module boundaries.
 - [tdd](../../workflows/tdd/SKILL.md) — refactor phase of the red-green-refactor loop.
 - [ddd-architect](../../design/ddd-architect/SKILL.md) — value objects, aggregates, encapsulation in the domain context.
-- [hexagonal-arch](../../design/hexagonal-arch/SKILL.md) — decoupling through ports; dependency direction.
+- [hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md) — decoupling through ports; dependency direction.
 - [commit-author](../../workflows/commit-author/SKILL.md) — every successful move gets its own `refactor(scope):` commit.
 
 ## Further reading

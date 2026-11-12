@@ -42,7 +42,7 @@ Examples:
   rsk install go-architect --pin               # project: install + pin in CLAUDE.md
   rsk install global --global                  # global: bundle to every tool dir
   rsk install go-grpc --global --for claude-code
-  rsk install demo-script-architect --include personal
+  rsk install uru-thesis-writer --include personal
   rsk install go-grpc --dry-run`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		inc, err := cmdx.ReadIncludes(cmd, cmdx.IncludePersonal)

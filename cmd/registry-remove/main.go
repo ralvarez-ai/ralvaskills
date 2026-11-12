@@ -34,6 +34,7 @@ type (
 	index struct {
 		Version     int                    `json:"version"`
 		GeneratedAt string                 `json:"generated_at"`
+		Aliases     map[string]string      `json:"aliases,omitempty"`
 		Skills      map[string]*skillEntry `json:"skills"`
 	}
 
@@ -42,6 +43,7 @@ type (
 		Name        string                   `json:"name"`
 		Description string                   `json:"description"`
 		Personal    bool                     `json:"personal,omitempty"`
+		Deprecated  bool                     `json:"deprecated,omitempty"`
 		Latest      string                   `json:"latest"`
 		Versions    map[string]*versionEntry `json:"versions"`
 	}

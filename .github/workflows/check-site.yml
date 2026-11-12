@@ -76,7 +76,7 @@ jobs:
       - name: Gate (axe, overflow, films, rail, style wiring, JS off)
         run: node scripts/verify.mjs
 
-  # The Go gates the item `l9c2xm` found were only run by hand. Same
+  # The Go gates the item `k9c2xm` found were only run by hand. Same
   # manual-dispatch policy as above: no push trigger, so nothing runs on a
   # billed runner unless someone starts it or `task ci:local` does.
   go:

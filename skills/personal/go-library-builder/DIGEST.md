@@ -1,6 +1,6 @@
 # Go Library Builder (digest)
 
-Scaffolds reusable Go library modules in the ralvarezdev house style. Composition root over go-architect, hexagonal-arch, ddd-architect.
+Scaffolds reusable Go library modules in the ralvarezdev house style. Composition root over go-architect, hexagonal-architecture, ddd-architect.
 
 ## Always-on rules
 - Check go-house-libs first. Scaffold a new module only when none fits and a second consumer exists.

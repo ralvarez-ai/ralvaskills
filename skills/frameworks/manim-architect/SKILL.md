@@ -6,7 +6,7 @@ description: Manim Community 0.22 explainer scenes for formal objects that chang
 
 # Manim Architect
 
-Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene code and render scripts. What to teach and in which order is [explainer-architect](../../frontend/explainer-architect/SKILL.md); the words and the speech rate are [narration-architect](../../frontend/narration-architect/SKILL.md); a Remotion frame that embeds a clip or owns the final timing is [remotion-architect](../remotion-architect/SKILL.md). Code patterns are in [RECIPES.md](RECIPES.md); objects kept across scenes, a worked number before a formula, a squared quantity drawn as a square and the draft sweep are in [TRAPS.md](TRAPS.md); pinned versions and system packages in [STACK.md](STACK.md); the library's scene classes, animation families, built-in sections and sound, and CLI flags in [FRAMEWORK.md](FRAMEWORK.md).
+Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene code and render scripts. What to teach and in which order is [explainer-designer](../../frontend/explainer-designer/SKILL.md); the words and the speech rate are [narration-writer](../../frontend/narration-writer/SKILL.md); a Remotion frame that embeds a clip or owns the final timing is [remotion-architect](../remotion-architect/SKILL.md). Code patterns are in [RECIPES.md](RECIPES.md); objects kept across scenes, a worked number before a formula, a squared quantity drawn as a square and the draft sweep are in [TRAPS.md](TRAPS.md); pinned versions and system packages in [STACK.md](STACK.md); the library's scene classes, animation families, built-in sections and sound, and CLI flags in [FRAMEWORK.md](FRAMEWORK.md).
 
 ## 1. When Manim, when not
 
@@ -17,7 +17,7 @@ Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene 
 ## 2. Structure
 
 - **One chapter = one `Scene` subclass** that extends a small base class. The base class reads the content file and the narration file, draws the frame of each scene, and writes the start and end of every scene to a **sections file** (`id`, `start`, `end`, `seconds`). The audio step and the review step read that file. Pattern in [RECIPES.md](RECIPES.md#1-the-base-class).
-- **Scene length** is `max(animation time, words / rate + lead-in + tail)` before audio exists, with a measured rate (narration-architect). Once audio exists it is `lead-in + measured voice + tail + hold` from the audio manifest, and cues are resolved against the measured length ([RECIPES.md](RECIPES.md#7-timing-from-the-audio)). A clip with several parts gets one audio per part.
+- **Scene length** is `max(animation time, words / rate + lead-in + tail)` before audio exists, with a measured rate (narration-writer). Once audio exists it is `lead-in + measured voice + tail + hold` from the audio manifest, and cues are resolved against the measured length ([RECIPES.md](RECIPES.md#7-timing-from-the-audio)). A clip with several parts gets one audio per part.
 - **Cue drawings to narration phrases** with a `cue(scene, phrase)` helper that waits until the voice would reach the phrase, and raises when the phrase is not in the narration ([RECIPES.md](RECIPES.md#2-the-cue-helper)).
 - **Teaching helpers live in a package, one module per family** (a formula built from pieces, a token that walks a path, a wave that fills a table, a stamp, a slider, a chain of states). Chapter files stay thin and call helpers; parallel work then touches different files, and a helper is fixed once.
 - **A registry file** lists the editions (id, module, class) so one command renders any of them, or all.
@@ -41,7 +41,7 @@ Targets **Manim Community 0.22** on Python 3.13+, run with `uv`. Produces scene 
 - **No unseeded randomness** in scenes: a seeded generator, or fixed coordinates, so two renders are the same.
 - **Parallel renders** need separate media directories (and separate working trees if the code differs).
 - **Audio** is placed in a separate step: read the sections file, delay each scene's audio to its start plus the lead-in with `adelay`, mix with `amix=normalize=0`, copy the video stream. Generated audio never enters the Manim code ([RECIPES.md](RECIPES.md#3-muxing-the-audio)).
-- **Review** with one contact sheet per version: `python3 scripts/contact_sheet.py video.mp4 video.sections.json` writes `video.sheet.png`, a labelled frame at 85% of every scene, so a version is judged without playing it (explainer-architect, section 6, says what to look for). Keep the sheets of v1 and v2 side by side; open the dense scenes at full size.
+- **Review** with one contact sheet per version: `python3 scripts/contact_sheet.py video.mp4 video.sections.json` writes `video.sheet.png`, a labelled frame at 85% of every scene, so a version is judged without playing it (explainer-designer, section 6, says what to look for). Keep the sheets of v1 and v2 side by side; open the dense scenes at full size.
 
 ## 5. Anti-patterns
 

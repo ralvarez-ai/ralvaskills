@@ -1,0 +1,20 @@
+# Retired skill names.
+#
+# Every rename adds one entry here, in the same commit that renames the skill.
+# The table is published as the registry's alias map, so an old name keeps
+# resolving, and internal/skill's tests fail if any skill takes a retired name
+# again — including as a whole hyphen-separated component (`old-name-v2`).
+#
+# [aliases]
+# old-name = "new-name"
+[aliases]
+hexagonal-arch                 = "hexagonal-architecture"
+narration-architect            = "narration-writer"
+explainer-architect            = "explainer-designer"
+website-concept-architect      = "website-concept-designer"
+demo-presentation-architect    = "demo-deck-designer"
+demo-script-architect          = "demo-script-designer"
+ml-conference-paper-architect  = "ml-paper-format"
+uru-scientific-paper-architect = "uru-paper-format"
+uru-thesis-architect           = "uru-thesis-writer"
+uru-thesis-defense-architect   = "uru-thesis-defense-designer"

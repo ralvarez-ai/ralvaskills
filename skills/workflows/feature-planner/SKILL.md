@@ -59,7 +59,7 @@ Record constraints in the plan, even if they're "no constraint" — explicit not
 
 A design outline is **not** a design document. It's a short description of:
 
-- **The shape** — where the new code lives (which module, which layer, which bounded context). Use the vocabulary from [hexagonal-arch](../../design/hexagonal-arch/SKILL.md) and [ddd-architect](../../design/ddd-architect/SKILL.md).
+- **The shape** — where the new code lives (which module, which layer, which bounded context). Use the vocabulary from [hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md) and [ddd-architect](../../design/ddd-architect/SKILL.md).
 - **The seams** — what new interfaces are introduced, what existing seams are crossed. One new port? One new adapter? An aggregate gains a method?
 - **The risks** — the parts you're least sure about. Name them. The first slice in the breakdown will tackle the highest-risk one.
 - **The alternatives considered** — what other shapes were possible, and why this one wins. Even a one-line "considered X, picked Y because Z" prevents the next person from re-litigating the choice.
@@ -115,7 +115,7 @@ The plan is the input to the next pipeline step:
 
 - **[grill-with-docs](../grill-with-docs/SKILL.md)** — stress-test each decision in the plan with questions. The grilling loop will surface gaps in constraints or risks that weren't obvious during planning.
 - **[ddd-architect](../../design/ddd-architect/SKILL.md)** — if the feature shapes the domain (new aggregate, new value object, new domain event), apply DDD discipline now.
-- **[hexagonal-arch](../../design/hexagonal-arch/SKILL.md)** — confirm port placement and dependency direction before the first slice.
+- **[hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md)** — confirm port placement and dependency direction before the first slice.
 - **[tdd](../tdd/SKILL.md)** — implement each slice in red-green-refactor; never write all tests first.
 
 When the plan changes mid-implementation (and it will), **re-plan the remaining slices, don't continue with stale ones**. Sunk cost on a slice list is real but tiny compared to the cost of building the wrong thing.
@@ -135,7 +135,7 @@ Forcing a plan onto trivial work makes the planning process feel like ceremony a
 
 - [grill-with-docs](../grill-with-docs/SKILL.md) — next step in the pipeline; stress-tests the plan.
 - [ddd-architect](../../design/ddd-architect/SKILL.md) — domain-shaping decisions belong here, not in the requirement.
-- [hexagonal-arch](../../design/hexagonal-arch/SKILL.md) — seam decisions in the design outline.
+- [hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md) — seam decisions in the design outline.
 - [tdd](../tdd/SKILL.md) — vertical-slice principle inherited from here; implementation follows.
 - [improve-codebase-architecture](../../refactoring/improve-codebase-architecture/SKILL.md) — alternative entry point for *refactor* work (not new features); reads the codebase first.
 - [logic-cleaner](../../refactoring/logic-cleaner/SKILL.md) — rule-of-three justifies waiting on the refactor slice until duplication is real.

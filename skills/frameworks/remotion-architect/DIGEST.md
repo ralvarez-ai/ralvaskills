@@ -14,7 +14,7 @@ Builds Remotion 4.0.542 videos as real React source: compositions, frame-determi
 - All `remotion` and `@remotion/*` packages share one exact version, no `^`. Upgrade with `npx remotion upgrade`.
 - Batch jobs bundle once and call `renderMedia` per variant; validate `inputProps` before server renders.
 - Derive layout from `useVideoConfig()`, never hardcoded dimensions.
-- Teaching videos: plan with explainer-architect, words from narration-architect; scenes as a union of kinds with optional `a`/`b` variants, a `style` prop whose default is the old look, charts wired through the schema, Manim clips embedded with `<Video>`. See EXPLAINERS.md.
+- Teaching videos: plan with explainer-designer, words from narration-writer; scenes as a union of kinds with optional `a`/`b` variants, a `style` prop whose default is the old look, charts wired through the schema, Manim clips embedded with `<Video>`. See EXPLAINERS.md.
 
 ## Hard constraints
 

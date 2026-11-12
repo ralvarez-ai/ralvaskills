@@ -212,6 +212,11 @@ tasks:
     cmds:
       - go test ./...
 
+  skills:check:
+    desc: "Fail if a skill name is illegal, duplicated, mismatched with its directory, or retired"
+    cmds:
+      - go test ./internal/skill/ -v
+
   # Local CI: runs a real workflow file in Docker with act, so the gate that
   # guards a pull request can run here first. Scoped with -W on purpose:
   # publish-registry.yml is also workflow_dispatch and must never run locally.

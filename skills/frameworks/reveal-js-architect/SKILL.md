@@ -6,13 +6,13 @@ description: reveal.js 6.0.1 presentation architecture — section/fragment stru
 
 # Reveal.js Architect
 
-Targets **reveal.js 6.0.1** (vanilla) with an extension for **@revealjs/react 0.2.1**. Produces actual reveal.js source (HTML/JS deck scaffold or Markdown-mode slides) — never a slide-spec document; for that, see [demo-presentation-architect](../../frontend/demo-presentation-architect/SKILL.md) (unrelated output format, not a dependency). Full project skeletons in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md).
+Targets **reveal.js 6.0.1** (vanilla) with an extension for **@revealjs/react 0.2.1**. Produces actual reveal.js source (HTML/JS deck scaffold or Markdown-mode slides) — never a slide-spec document; for that, see [demo-deck-designer](../../frontend/demo-deck-designer/SKILL.md) (unrelated output format, not a dependency). Full project skeletons in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md).
 
 ## 1. Scope & output
 
 - **Output is real reveal.js source** — `index.html` + `<section>` markup, or Markdown-mode slides, plus any `main.js` config. Never a slide-spec `.md` document.
 - **Vanilla is the default target.** Reach for the React extension (§9) only when the deck already lives inside a React app or needs component-driven slide content (data-fetched slides, shared design-system components).
-- **This skill does not write slide copy for the user.** It structures decks; content (titles, bullets) comes from the user or from a spec produced by [demo-presentation-architect](../../frontend/demo-presentation-architect/SKILL.md).
+- **This skill does not write slide copy for the user.** It structures decks; content (titles, bullets) comes from the user or from a spec produced by [demo-deck-designer](../../frontend/demo-deck-designer/SKILL.md).
 
 ## 2. Interview-first protocol
 
@@ -28,7 +28,7 @@ Targets **reveal.js 6.0.1** (vanilla) with an extension for **@revealjs/react 0.
 ## 3. Deck structure conventions
 
 - **Horizontal `<section>` = new topic; nested vertical `<section>` = a sub-point of the same topic.** Don't nest vertical slides more than one level deep — audiences lose the "back" direction.
-- **One idea per slide**, same discipline as [demo-presentation-architect §3](../../frontend/demo-presentation-architect/SKILL.md) — split rather than cram.
+- **One idea per slide**, same discipline as [demo-deck-designer §3](../../frontend/demo-deck-designer/SKILL.md) — split rather than cram.
 - **Fragments (`class="fragment"`) reveal progressively within a slide** — use for build-up bullets or step-by-step diagrams, not as a substitute for splitting a slide.
 - **Speaker notes** go in `<aside class="notes">` inside each section — visible only in speaker view (`S` key), never on the audience-facing screen.
 - **`data-transition` overrides per-slide** when a specific slide needs a different transition than the deck default — use sparingly, inconsistent transitions read as sloppy.

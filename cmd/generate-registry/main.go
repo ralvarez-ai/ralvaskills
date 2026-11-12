@@ -33,6 +33,10 @@ const (
 	indexFileName       = "index.json"
 	newVersionsFileName = "new-versions.json"
 	gitHubRepoDefault   = "ralvarezdev/ralvaskills"
+
+	// indexAliasesVersion is the index format written once a retired-name
+	// table exists. Readers accept version 1 and 2 alike.
+	indexAliasesVersion = 2
 )
 
 var semverRe = regexp.MustCompile(`^\d+\.\d+\.\d+$`)
@@ -42,6 +46,7 @@ type (
 	Index struct {
 		Version     int                    `json:"version"`
 		GeneratedAt string                 `json:"generated_at"`
+		Aliases     map[string]string      `json:"aliases,omitempty"`
 		Skills      map[string]*SkillEntry `json:"skills"`
 	}
 
@@ -51,6 +56,7 @@ type (
 		Name        string                   `json:"name"`
 		Description string                   `json:"description"`
 		Personal    bool                     `json:"personal,omitempty"`
+		Deprecated  bool                     `json:"deprecated,omitempty"`
 		Latest      string                   `json:"latest"`
 		Versions    map[string]*VersionEntry `json:"versions"`
 	}
@@ -79,7 +85,7 @@ type (
 	}
 )
 
-func walkSkills(root string) ([]skillInfo, error) {
+func walkSkills(root string, retired skill.Retirements) ([]skillInfo, error) {
 	var skills []skillInfo
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || !d.IsDir() {
@@ -101,8 +107,15 @@ func walkSkills(root string) ([]skillInfo, error) {
 		if relErr != nil {
 			rel = path
 		}
+		name := filepath.Base(path)
+		if nameErr := skill.ValidateName(name); nameErr != nil {
+			return fmt.Errorf("%s: %w", path, nameErr)
+		}
+		if nameErr := skill.CheckRetirements(name, retired); nameErr != nil {
+			return fmt.Errorf("%s: %w", path, nameErr)
+		}
 		skills = append(skills, skillInfo{
-			Name:        filepath.Base(path),
+			Name:        name,
 			Version:     version,
 			Description: description,
 			Personal:    skill.IsPersonalPath(rel),
@@ -246,16 +259,30 @@ func main() {
 		"GitHub repo (owner/name) used to build release asset URLs",
 	)
 	check := flag.Bool("check", false, "Preview what would be published and validate versions; no files written")
+	aliases := flag.String(
+		"aliases", skill.RetirementsPath,
+		"Path to the retired-name table, relative to the repo root",
+	)
 	flag.Parse()
 
+	retired, retireErr := skill.LoadRetirements(*aliases)
+	if retireErr != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", retireErr)
+		os.Exit(1)
+	}
+	if retireErr = skill.ValidateRetirements(retired); retireErr != nil {
+		fmt.Fprintf(os.Stderr, "error: %s: %v\n", *aliases, retireErr)
+		os.Exit(1)
+	}
+
 	if *check {
-		runCheck(*skillsDir, *existingIndex)
+		runCheck(*skillsDir, *existingIndex, retired)
 		return
 	}
 
 	index := loadIndex(*existingIndex)
 
-	skills, err := walkSkills(*skillsDir)
+	skills, err := walkSkills(*skillsDir, retired)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error walking skills: %v\n", err)
 		os.Exit(1)
@@ -311,6 +338,11 @@ func main() {
 
 	index.GeneratedAt = now
 
+	if err = applyAliases(index, retired); err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
+
 	if err = writeJSON(filepath.Join(*outputDir, indexFileName), index); err != nil {
 		fmt.Fprintf(os.Stderr, "error writing %s: %v\n", indexFileName, err)
 		os.Exit(1)
@@ -324,13 +356,34 @@ func main() {
 	fmt.Printf("index: %d skills total, %d new versions\n", len(index.Skills), len(newVersions))
 }
 
+// applyAliases publishes the retired-name table and marks the old entries
+// deprecated, keeping their versions installable. A target that is not in the
+// index is an error: the alias would resolve to nothing.
+func applyAliases(index *Index, retired skill.Retirements) error {
+	if len(retired) == 0 {
+		return nil
+	}
+	index.Aliases = retired
+	index.Version = indexAliasesVersion
+
+	for old, next := range retired {
+		if index.Skills[next] == nil {
+			return fmt.Errorf("alias %q -> %q: target is not in the index", old, next)
+		}
+		if entry := index.Skills[old]; entry != nil {
+			entry.Deprecated = true
+		}
+	}
+	return nil
+}
+
 // runCheck previews what would be published without creating any files or
 // tarballs. Prints a current → new line for each unpublished version and exits
 // with code 1 if any version string is not in X.Y.Z format.
-func runCheck(skillsDir, existingIndex string) {
+func runCheck(skillsDir, existingIndex string, retired skill.Retirements) {
 	index := loadIndex(existingIndex)
 
-	skills, err := walkSkills(skillsDir)
+	skills, err := walkSkills(skillsDir, retired)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error walking skills: %v\n", err)
 		os.Exit(1)

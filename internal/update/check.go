@@ -155,7 +155,7 @@ func checkRegistry(ctx context.Context, cfg config.Config) (Result, error) {
 
 	var outdated []string
 	for _, name := range names {
-		entry, ok := index[name]
+		entry, ok := index.Skills[source.ResolveAlias(name, index.Aliases)]
 		if !ok {
 			continue
 		}

@@ -105,7 +105,7 @@ Render the clip silent, copy it to `public/clips/`, and play it in a scene with 
 
 ## 7. Timing from the audio
 
-Once audio exists, the base class takes lengths and cue times from the measured audio, not from the planned rate. The audio step writes a manifest (`durations` per scene id, in seconds; narration-architect, section 6) beside the audio.
+Once audio exists, the base class takes lengths and cue times from the measured audio, not from the planned rate. The audio step writes a manifest (`durations` per scene id, in seconds; narration-writer, section 6) beside the audio.
 
 ```python
 manifest = Path(f"audio/{self.CHAPTER}/manifest.json")

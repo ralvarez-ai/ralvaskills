@@ -161,7 +161,7 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   └── repo-tooling-architect/   # ✅ exists (v1.1.0 — .editorconfig/.gitignore, mise|proto, Task|just (module:verb naming), pre-commit, Renovate)
 │   ├── design/
 │   │   ├── ddd-architect/            # ✅ exists (v1.0.0 — strategic-first DDD, bounded contexts, aggregates; event sourcing OOS)
-│   │   └── hexagonal-arch/           # ✅ exists (v1.0.0 — ports & adapters; dependency direction inward; no folder rule)
+│   │   └── hexagonal-architecture/   # ✅ exists (v1.0.0 — ports & adapters; dependency direction inward; no folder rule)
 │   ├── ai-ml/
 │   │   ├── llm-app-architect/        # 📋 planned
 │   │   ├── agent-architect/          # 📋 planned
@@ -181,13 +181,13 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   └── codebase-hygiene-reviewer/ # ✅ exists (v1.0.0 — dead code, unused exports, duplication, size; propose-only, evidence-based)
 │   ├── frontend/
 │   │   ├── ui-ux-architect/          # ✅ exists (v1.0.0 — WCAG 2.2 AA, Radix + Tailwind 4, design tokens, four-state UI discipline)
-│   │   ├── demo-script-architect/    # ✅ exists (moved from workflows/, then out of personal/ once generic)
-│   │   ├── narration-architect/      # ✅ exists (v1.1.0 — measured speech rate and the lint script's rate report; explainer-video narration in a controlled STE-style English: sentence limits, glossary and spoken forms, per-scene word budgets, audio-length gate, stdlib lint script in scripts/; no STACK.md)
+│   │   ├── demo-script-designer/     # ✅ exists (moved from workflows/, then out of personal/ once generic)
+│   │   ├── narration-writer/         # ✅ exists (v1.1.0 — measured speech rate and the lint script's rate report; explainer-video narration in a controlled STE-style English: sentence limits, glossary and spoken forms, per-scene word budgets, audio-length gate, stdlib lint script in scripts/; no STACK.md)
 │   │   ├── manim-architect/          # ✅ exists (v1.0.0 — Manim Community 0.22 explainer scenes: base class that times scenes from the narration and writes a sections file, cue helper, LaTeX helpers, audio mux, 1080p review; STACK.md pins 0.22.1)
-│   │   ├── explainer-architect/      # ✅ exists (v1.0.0 — engine-independent teaching videos: the drawing teaches, provenance chips, content file with sources, cues, v1/v2 versions, contact-sheet check)
-│   │   └── demo-presentation-architect/  # ✅ exists (v1.1.0 — slide-deck spec authoring; content distribution + within-slide organization + layout catalog in LAYOUTS.md)
+│   │   ├── explainer-designer/       # ✅ exists (v1.0.0 — engine-independent teaching videos: the drawing teaches, provenance chips, content file with sources, cues, v1/v2 versions, contact-sheet check)
+│   │   └── demo-deck-designer/       # ✅ exists (v1.1.0 — slide-deck spec authoring; content distribution + within-slide organization + layout catalog in LAYOUTS.md)
 │   ├── academic/                     # ✅ category — research-publication formats (venue-specific, not institution-specific)
-│   │   └── ml-conference-paper-architect/  # ✅ exists (v1.0.0 — NeurIPS/ICML/ICLR/AAAI; style-file usage, anonymization, page-limit accounting, natbib, reproducibility checklists; layers on latex-architect); has STACK.md + assets/
+│   │   └── ml-paper-format/          # ✅ exists (v1.0.0 — NeurIPS/ICML/ICLR/AAAI; style-file usage, anonymization, page-limit accounting, natbib, reproducibility checklists; layers on latex-architect); has STACK.md + assets/
 │   ├── workflows/
 │   │   ├── commit-author/            # ✅ exists
 │   │   ├── tdd/                      # ✅ exists
@@ -198,7 +198,7 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   ├── logic-cleaner/            # ✅ exists (expression-level rung)
 │   │   ├── code-design-refactor/     # ✅ exists (v1.0.0 — design-level rung; sits between logic-cleaner and improve-codebase-architecture)
 │   │   ├── improve-codebase-architecture/  # ✅ exists (system-level rung)
-│   │   └── design-patterns/          # ✅ exists (v1.0.0 — skeptical reference catalog; modern Go/Python; defers to ddd-architect & hexagonal-arch)
+│   │   └── design-patterns/          # ✅ exists (v1.0.0 — skeptical reference catalog; modern Go/Python; defers to ddd-architect & hexagonal-architecture)
 │   ├── meta/                         # ✅ category — ralvaskills-ecosystem skills (no library stack)
 │   │   ├── skill-builder/            # ✅ exists (v1.0.0 — meta-skill: scaffolds new skills following ralvaskills standards; no STACK.md)
 │   │   ├── rsk-guide/                # ✅ exists (v0.2.0 — covers .rsk/ project manifest + bundle install; no STACK.md)
@@ -207,11 +207,11 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │
 │   └── personal/                     # 📋 new category — personal skills, never auto-bundled
 │       ├── pi-iteration-workflow/    # ✅ exists (v1.0.0 — Windows-to-Pi SSH deploy loop for the voldemorbot robot codebase; pixi/ROS2 rebuild triggers, screen for flaky WiFi, PowerShell SSH quoting, Pi Zero sudo caching; no STACK.md)
-│       ├── uru-thesis-defense-architect/  # ✅ exists (v1.0.1 — URU thesis defense deck spec authoring; fixed 9-section institutional structure, Spanish-only content, logo placement rules, user-supplied logo asset; no STACK.md)
-│       ├── uru-scientific-paper-architect/  # ✅ exists (v1.0.0 — Revista Tecnocientífica URU manuscript spec authoring; article-type structures, typography rules, citation/reference formats by source type; no STACK.md)
+│       ├── uru-thesis-defense-designer/ # ✅ exists (v1.0.1 — URU thesis defense deck spec authoring; fixed 9-section institutional structure, Spanish-only content, logo placement rules, user-supplied logo asset; no STACK.md)
+│       ├── uru-paper-format/         # ✅ exists (v1.0.0 — Revista Tecnocientífica URU manuscript spec authoring; article-type structures, typography rules, citation/reference formats by source type; no STACK.md)
 │       ├── uru-thesis-reviewer/       # ✅ exists (v0.1.1 — read-only diff feedback on URU theses vs NORMAS_URU_2020; kebab-case session output files; no STACK.md)
-│       ├── uru-thesis-architect/      # ✅ exists (v0.1.0 — interview-first section-by-section drafter for URU thesis chapters; writes to the reviewer's evaluation rubric, Spanish-only, self-contained NORMAS copy; no STACK.md)
-│       ├── go-library-builder/        # ✅ exists (v1.1.0 — scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD+hexagonal house style; composes go-architect/hexagonal-arch/ddd-architect; has STACK.md + assets/)
+│       ├── uru-thesis-writer/        # ✅ exists (v0.1.0 — interview-first section-by-section drafter for URU thesis chapters; writes to the reviewer's evaluation rubric, Spanish-only, self-contained NORMAS copy; no STACK.md)
+│       ├── go-library-builder/        # ✅ exists (v1.1.0 — scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD+hexagonal house style; composes go-architect/hexagonal-architecture/ddd-architect; has STACK.md + assets/)
 │       └── go-house-libs/             # ✅ exists (v0.3.0 — router over the shared Go modules, per-module references; renamed from house-kits)
 │
 ├── .github/
@@ -271,7 +271,7 @@ All paths shown below are **defaults** — every one is configurable via `config
 <project>/CLAUDE.md                   # gets `@.rsk/CLAUDE.md` appended (idempotent)
 ```
 
-> **Note:** Any skill whose path contains a `personal/` segment is never symlinked by `rsk install`. Personal skills must be installed explicitly via `rsk install demo-script-architect --personal`. The rule is path-based, so the literal location of `personal/` doesn't matter — it currently lives at `skills/personal/`, but could be anywhere.
+> **Note:** Any skill whose path contains a `personal/` segment is never symlinked by `rsk install`. Personal skills must be installed explicitly via `rsk install demo-script-designer --personal`. The rule is path-based, so the literal location of `personal/` doesn't matter — it currently lives at `skills/personal/`, but could be anywhere.
 
 ---
 
@@ -395,19 +395,26 @@ This table is a **heuristic keyed on the skill's parent folder name** — it's n
 
 ### Naming Convention
 
-All skill folder names follow `kebab-case` and end in a meaningful suffix:
+All skill folder names follow `kebab-case` and end in a role suffix. The suffix names **what the skill does**, not what it is about — the subject belongs in the description. `-architect` is this catalogue's marker for "states the conventions", not a claim that the skill is about architecture; see [ADR 0002](../adr/0002-rename-ten-skills-with-registry-aliases.md) (which supersedes [ADR 0001](../adr/0001-keep-the-architect-skill-suffix.md)) for why it stays on the convention sets, and which ten names moved off it.
 
 | Suffix | Meaning | Examples |
 |---|---|---|
-| `-architect` | Enforces structure/standards for a language, framework, or protocol | `go-architect`, `fastapi-architect`, `grpc-architect` |
-| `-arch` | Enforces an architectural pattern | `hexagonal-arch` |
+| `-architect` | States the conventions for a language, framework, protocol or practice | `go-architect`, `fastapi-architect`, `grpc-architect`, `docker-architect` |
 | `-reviewer` | Reviews existing code/contracts for issues | `security-reviewer`, `api-contract-reviewer` |
+| `-designer` | Produces a design artifact or spec for a human to review | `landing-page-designer`, `demo-deck-designer`, `explainer-designer` |
+| `-writer` | Produces prose a human reads or speaks | `narration-writer`, `uru-thesis-writer` |
+| `-format` | Formats an artifact to external rules | `ml-paper-format`, `uru-paper-format` |
+| `-author` | Produces prose or commits | `commit-author` |
 | `-refactor` | Restructures existing code | `code-design-refactor` |
 | `-planner` | Designs something before implementation | `feature-planner` |
 | `-patterns` | Catalog of patterns or principles for a domain | `design-patterns` |
 | `-builder` | Scaffolds new artifacts of a given type (meta-tooling) | `skill-builder` |
 | `-guide` | Documentation or usage guide for a specific tool | `rsk-guide` |
-| (none) | Workflow tools or meta utilities that don't fit above | `tdd`, `commit-author`, `caveman` |
+| (none) | Workflow tools or meta utilities that don't fit above | `tdd`, `caveman` |
+
+**Names are permanent.** A skill name is its registry key, and a rename leaves the old name resolvable only through the registry's `aliases` map: `rsk` rewrites every consumer's `.rsk/rsk.mod` and `.rsk/rsk.lock` on the next `rsk update`, while the old entry stays in the index as `deprecated` so an older binary reports "outdated" instead of "not found". A rename still needs its own ADR and one `[aliases]` entry in `registry/aliases.toml`, in the commit that renames the directory — a retired name is never reused, in any hyphen-separated position.
+
+**`-architect` needs a stack in the prefix.** The prefix must name a language, framework, protocol or tool — `go`, `react`, `grpc`, `docker`. A skill whose subject is a practice rather than a stack takes the producing role instead (`-writer`, `-designer`, `-format`), because the role, not the topic, is what the suffix names. See [ADR 0002](../adr/0002-rename-ten-skills-with-registry-aliases.md).
 
 ### Version Field
 
@@ -689,7 +696,7 @@ rsk install go-grpc                               # stack bundle for current pro
 rsk install design docs                           # multiple bundles at once
 rsk install go-architect                          # single skill (no matching bundle)
 rsk install go-architect --pin                    # install + pin for auto-load in this project
-rsk install uru-thesis-architect --include personal  # personal skill, explicit opt-in
+rsk install uru-thesis-writer --include personal  # personal skill, explicit opt-in
 rsk install go-grpc --dry-run                     # preview without writing
 ```
 
@@ -926,7 +933,7 @@ Universal skills installed machine-wide. Apply to every project regardless of st
 | `improve-codebase-architecture` | refactoring | ADR-aware architectural friction analysis |
 | `security-reviewer` | quality | Injection, auth issues, secret leakage, insecure defaults |
 | `ddd-architect` | design | Bounded contexts, aggregates, value objects, domain events |
-| `hexagonal-arch` | design | Ports & adapters enforcement, dependency direction |
+| `hexagonal-architecture` | design | Ports & adapters enforcement, dependency direction |
 | `repo-tooling-architect` | tooling | Repo-level productivity files — `.editorconfig`, `.gitignore`, tool version pinning (mise/proto), task runner (Task/just), pre-commit, Renovate |
 | `ci-cd-architect` | infra | Principles-first CI/CD (suggestion-mode) — pipeline taxonomy, OIDC, supply-chain hygiene, release automation; GitHub Actions recipes |
 | `skill-builder` | meta | Scaffolds new skills following ralvaskills naming, format, and STACK.md standards |
@@ -998,7 +1005,7 @@ Python-based LLM application or RAG pipeline.
 | `fastapi-architect` | local |
 | `llm-app-architect` | local |
 | `agent-architect` | local |
-| `hexagonal-arch` | local |
+| `hexagonal-architecture` | local |
 | `docker-architect` | local |
 
 #### `ros2`
@@ -1064,14 +1071,14 @@ Currently located in `skills/personal/`. Any skill whose path contains a `person
 
 | Skill | Description |
 |---|---|
-| `demo-script-architect` | Presenter-centric demo scripts with narrative flow and progressive capability reveals |
-| `demo-presentation-architect` | Slide-deck specifications (`.md` only) with per-slide layouts and exact text; never generates HTML/PDF/PPTX |
+| `demo-script-designer` | Presenter-centric demo scripts with narrative flow and progressive capability reveals |
+| `demo-deck-designer` | Slide-deck specifications (`.md` only) with per-slide layouts and exact text; never generates HTML/PDF/PPTX |
 | `pi-iteration-workflow` | Windows-to-Pi SSH edit-test loop for the voldemorbot robot codebase — host access, pixi/ROS2 deploy triggers, flaky-connection handling |
-| `uru-thesis-defense-architect` | URU thesis defense deck specs (`.md` only) — fixed 9-section institutional structure, Spanish-only content, logo placement rules |
-| `uru-scientific-paper-architect` | Revista Tecnocientífica URU manuscript specs (`.md` only) — article-type structures, typography rules, citation/reference formats by source type |
+| `uru-thesis-defense-designer` | URU thesis defense deck specs (`.md` only) — fixed 9-section institutional structure, Spanish-only content, logo placement rules |
+| `uru-paper-format` | Revista Tecnocientífica URU manuscript specs (`.md` only) — article-type structures, typography rules, citation/reference formats by source type |
 | `uru-thesis-reviewer` | Read-only diff feedback on URU theses vs `NORMAS_URU_2020` — substance, structure, prose, citations; kebab-case session output files; never edits the `.docx` |
-| `uru-thesis-architect` | Interview-first, section-by-section drafter for URU thesis chapters (`.md` only) — writes toward the reviewer's evaluation rubric, Spanish-only, never fabricates data; complements `uru-thesis-reviewer` |
-| `go-library-builder` | Scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD + hexagonal house style — domain-pure root package, narrow composed ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks; composes `go-architect`, `hexagonal-arch`, `ddd-architect` |
+| `uru-thesis-writer` | Interview-first, section-by-section drafter for URU thesis chapters (`.md` only) — writes toward the reviewer's evaluation rubric, Spanish-only, never fabricates data; complements `uru-thesis-reviewer` |
+| `go-library-builder` | Scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD + hexagonal house style — domain-pure root package, narrow composed ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks; composes `go-architect`, `hexagonal-architecture`, `ddd-architect` |
 | `go-house-libs` | Maps a need to the ralvarezdev shared Go modules (restkit, ginkit, pgkit, mcpkit, identity, identitygin, ratelimit, email, webpush, termkit): a router plus one `references/` file per module with its package layout, a recipe and the gotchas; the consumer-side companion of `go-library-builder` |
 
 ---
@@ -1123,7 +1130,7 @@ grill-with-docs             ← stress-test the plan, capture domain terms
     ↓
 ddd-architect               ← bounded contexts, aggregates, domain events
     ↓
-hexagonal-arch              ← validate ports & adapters are correctly placed
+hexagonal-architecture              ← validate ports & adapters are correctly placed
     ↓
 [stack architect]           ← go-architect / python-architect / etc.
     ↓
@@ -1193,8 +1200,8 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `react-architect` | ✅ | v1.0.0 — React 19 with TS strict. Feature-based folders, hooks-first composition, TanStack Query for server state, local state + Context default + zustand when justified, Suspense + ErrorBoundary at every async boundary, Vitest + RTL + Playwright + axe-core. Pairs with `nextjs-architect` for server-side concerns |
 | `nextjs-architect` | ✅ | v1.0.0 — Next.js 16, App Router only. Server components default + explicit `"use client"` boundaries, server actions for mutations, hybrid data access (RSC direct for reads, API routes for writes), streaming Suspense, edge vs node runtime, `next/image`/`next/font`/Metadata APIs, `output: "standalone"` Docker deploys |
 | `hugo-architect` | ✅ | v1.0.0 — Hugo Extended 0.161 (Go-templated SSG). Standard project layout, TOML front matter, template hierarchy (`baseof` → `single`/`list` → partials → shortcodes), **Hugo Modules over git submodules** for themes, **Page Bundles** over flat content, Hugo Pipes asset chain with mandatory fingerprinting, i18n strategies, Goldmark render hooks, static-host CDN deploys (Cloudflare Pages / GitHub Pages / S3+CloudFront). Standalone — not bundled |
-| `remotion-architect` | ✅ | v1.1.0 — adds EXPLAINERS.md (scene kinds, variants, embedding a Manim clip; the engine-independent rules are in explainer-architect); Remotion 4.0.542 (React, TypeScript). Compositions as pure functions of the frame, determinism rules (no CSS animation/random/Date), `interpolate`/`spring`, `Sequence`/`Series`/`TransitionSeries`, `@remotion/media` `<Video>`, fonts and `staticFile`, Zod props and `calculateMetadata`, local/SSR/Lambda rendering, Company License check. Project skeleton and render recipes in `RECIPES.md`; `STACK.md` pinned. Standalone — not bundled |
-| `reveal-js-architect` | ✅ | v1.0.0 — reveal.js 6.0.1 (vanilla default) with `@revealjs/react` 0.2.1 opt-in extension. Section/fragment structure, HTML vs Markdown-mode authoring trade-off, built-in theme + override discipline, standard plugin set (highlight/notes/markdown/math/zoom/search), `Reveal.initialize()` config conventions, vanilla CDN/Vite skeleton and React component skeleton in `RECIPES.md`. Produces real deck source, not a slide spec — distinct from `demo-presentation-architect`. Standalone — not bundled |
+| `remotion-architect` | ✅ | v1.1.0 — adds EXPLAINERS.md (scene kinds, variants, embedding a Manim clip; the engine-independent rules are in explainer-designer); Remotion 4.0.542 (React, TypeScript). Compositions as pure functions of the frame, determinism rules (no CSS animation/random/Date), `interpolate`/`spring`, `Sequence`/`Series`/`TransitionSeries`, `@remotion/media` `<Video>`, fonts and `staticFile`, Zod props and `calculateMetadata`, local/SSR/Lambda rendering, Company License check. Project skeleton and render recipes in `RECIPES.md`; `STACK.md` pinned. Standalone — not bundled |
+| `reveal-js-architect` | ✅ | v1.0.0 — reveal.js 6.0.1 (vanilla default) with `@revealjs/react` 0.2.1 opt-in extension. Section/fragment structure, HTML vs Markdown-mode authoring trade-off, built-in theme + override discipline, standard plugin set (highlight/notes/markdown/math/zoom/search), `Reveal.initialize()` config conventions, vanilla CDN/Vite skeleton and React component skeleton in `RECIPES.md`. Produces real deck source, not a slide spec — distinct from `demo-deck-designer`. Standalone — not bundled |
 | `wails-architect` | ✅ | v1.0.0 — Wails v3.1.0 on Go 1.27.x, a thin shell around an existing SPA. Own `go.mod`, one asset handler (SPA fallback + same-origin API proxy, 502 on failure), **server-held session cookies** because WebKit drops `Set-Cookie` on custom-scheme responses, per-OS window chrome (`--wails-draggable`, injected Linux controls), Android fetch shim for the bodiless-GET webview plus system-bar insets, build/package and signed Play AAB. `RECIPES.md` has the jar, proxy, SPA handler, shim, insets patch, version-from-tag script and Taskfile. `STACK.md` pinned. Standalone — not bundled |
 
 #### Protocols
@@ -1224,7 +1231,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | Skill | Status | Notes |
 |---|---|---|
 | `ddd-architect` | ✅ | v1.0.0 — strategic-first DDD. Bounded contexts + context mapping (consumes `grill-with-docs`/CONTEXT.md), tactical patterns (aggregates, value objects, domain events, repositories, ACL), small-aggregate discipline, when DDD is overkill. Event sourcing out of scope |
-| `hexagonal-arch` | ✅ | v1.0.0 — ports & adapters. Dependency direction always inward; ports declared by consumer (Go interface-where-used / Python Protocol); primary vs secondary adapters; testing benefits; one-vs-two-adapter rule; Go + Python examples; no folder-layout prescription |
+| `hexagonal-architecture` | ✅ | v1.0.0 — ports & adapters. Dependency direction always inward; ports declared by consumer (Go interface-where-used / Python Protocol); primary vs secondary adapters; testing benefits; one-vs-two-adapter rule; Go + Python examples; no folder-layout prescription |
 
 #### AI/ML
 | Skill | Status | Notes |
@@ -1259,16 +1266,16 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | Skill | Status | Notes |
 |---|---|---|
 | `ui-ux-architect` | ✅ | v1.0.0 — WCAG 2.2 AA mandatory, Radix primitives + Tailwind 4 + shadcn/ui recipes, OKLCH-based design tokens with semantic naming + dark mode, mobile-first + container queries, **four required states** (loading/error/empty/success) on every async surface, `prefers-reduced-motion` respected, `axe-core` + Lighthouse a11y ≥ 95 in CI |
-| `demo-script-architect` | ✅ | Presenter-centric demo scripts; no longer personal (moved to frontend/) |
-| `narration-architect` | ✅ | v1.1.0 — measured speech rate (slowest scene, spoken words) and a lint rate report; explainer-video narration and on-screen text in a controlled, STE-style English (about 80% of ASD-STE100, never claimed as compliant). Narration is data (a script table), one idea per sentence, one word per meaning, glossary with spoken forms, per-scene word budgets from the timeline, audio-length gate, Remotion `<Audio>` wiring and Manim notes; `scripts/narration_lint.py` (stdlib) checks sentence length, contractions, unspeakable symbols, glossary terms, budgets and audio length. Standalone — not bundled; no STACK.md (no library versions) |
+| `demo-script-designer` | ✅ | Presenter-centric demo scripts; no longer personal (moved to frontend/) |
+| `narration-writer` | ✅ | v1.1.0 — measured speech rate (slowest scene, spoken words) and a lint rate report; explainer-video narration and on-screen text in a controlled, STE-style English (about 80% of ASD-STE100, never claimed as compliant). Narration is data (a script table), one idea per sentence, one word per meaning, glossary with spoken forms, per-scene word budgets from the timeline, audio-length gate, Remotion `<Audio>` wiring and Manim notes; `scripts/narration_lint.py` (stdlib) checks sentence length, contractions, unspeakable symbols, glossary terms, budgets and audio length. Standalone — not bundled; no STACK.md (no library versions) |
 | `manim-architect` | ✅ | v1.0.0 — Manim Community 0.22 (Python 3.13+, uv). Scenes for formal objects that change shape; a base class times each scene from the narration (`max(animation, words / rate + lead-in + tail)`) and writes a sections file; a cue helper raises when its phrase is gone; LaTeX helpers fitted to the frame; audio muxed per scene; draft and 1080p renders with output to a log. `STACK.md` pins 0.22.1 |
-| `explainer-architect` | ✅ | v1.0.0 — engine-independent design of teaching videos: the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, origin chips (source, textbook, derived, real run, illustration), a content file with sources, v1/v2 and A/B versions that never overwrite a render, a contact-sheet look check. Standalone; no STACK.md |
-| `demo-presentation-architect` | ✅ | v1.1.0 — slide-deck spec authoring (`.md` output only). Interview-first (language → main info). Cross-slide content distribution (slide budget, fixed slots, 5 narrative arcs, splitting + repetition discipline) and within-slide organization (takeaway-led titles, ordering by layout family, body word budgets). 14-layout catalog in `LAYOUTS.md` with primitive blocks, decision flow, and deck-wide design conventions; reference HTML exemplar in the skill folder. Presenter-centric demo scripts; no longer personal (moved to frontend/) |
+| `explainer-designer` | ✅ | v1.0.0 — engine-independent design of teaching videos: the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, origin chips (source, textbook, derived, real run, illustration), a content file with sources, v1/v2 and A/B versions that never overwrite a render, a contact-sheet look check. Standalone; no STACK.md |
+| `demo-deck-designer` | ✅ | v1.1.0 — slide-deck spec authoring (`.md` output only). Interview-first (language → main info). Cross-slide content distribution (slide budget, fixed slots, 5 narrative arcs, splitting + repetition discipline) and within-slide organization (takeaway-led titles, ordering by layout family, body word budgets). 14-layout catalog in `LAYOUTS.md` with primitive blocks, decision flow, and deck-wide design conventions; reference HTML exemplar in the skill folder. Presenter-centric demo scripts; no longer personal (moved to frontend/) |
 
 #### Academic
 | Skill | Status | Notes |
 |---|---|---|
-| `ml-conference-paper-architect` | ✅ | v1.0.0 — NeurIPS / ICML / ICLR / AAAI submissions. **CFP-over-skill rule** (every page limit and checklist requirement is revised annually; never hand-copy a previous year's `.sty`), venue matrix with per-venue final-mode toggles (`[final]` / `[accepted]` / `\iclrfinalcopy` / `\pdfinfo`), AAAI called out as the constrained outlier (banned packages, Type 1 fonts, mechanical format checker), anonymization discipline (third-person self-citation, PDF metadata stripping, figure provenance), page-limit accounting with the shrink-hacks-are-violations rule, canonical paper skeleton with contributions list + mandatory ablations + honest limitations, `natbib` per venue `.bst`, reproducibility checklist honesty, appendix-must-not-be-load-bearing. Layers on `latex-architect`; `assets/VENUE_TEMPLATES.md` holds official sources + the classic NIPS 2017 look as a labeled approximation (style files deliberately not vendored). `STACK.md` tracks venue template years as a staleness marker |
+| `ml-paper-format` | ✅ | v1.0.0 — NeurIPS / ICML / ICLR / AAAI submissions. **CFP-over-skill rule** (every page limit and checklist requirement is revised annually; never hand-copy a previous year's `.sty`), venue matrix with per-venue final-mode toggles (`[final]` / `[accepted]` / `\iclrfinalcopy` / `\pdfinfo`), AAAI called out as the constrained outlier (banned packages, Type 1 fonts, mechanical format checker), anonymization discipline (third-person self-citation, PDF metadata stripping, figure provenance), page-limit accounting with the shrink-hacks-are-violations rule, canonical paper skeleton with contributions list + mandatory ablations + honest limitations, `natbib` per venue `.bst`, reproducibility checklist honesty, appendix-must-not-be-load-bearing. Layers on `latex-architect`; `assets/VENUE_TEMPLATES.md` holds official sources + the classic NIPS 2017 look as a labeled approximation (style files deliberately not vendored). `STACK.md` tracks venue template years as a staleness marker |
 
 #### Workflows
 | Skill | Status | Notes |
@@ -1285,7 +1292,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `logic-cleaner` | ✅ | Expression-level only — intentionally narrow |
 | `code-design-refactor` | ✅ | v1.0.0 — design-level refactoring rules (extract, decouple, SRP, encapsulation, primitive obsession). Sits between `logic-cleaner` (expression) and `improve-codebase-architecture` (system). One move at a time, tests first, commit each move |
 | `improve-codebase-architecture` | ✅ | |
-| `design-patterns` | ✅ | v1.0.0 — skeptical reference catalog for modern Go/Python. Keeps the few that still earn their place (Repository, Adapter, Strategy, Decorator, Observer, Builder/options, Factory); names anti-patterns (Singleton, Abstract Factory, Visitor, Chain-of-Responsibility, Template Method); defers depth to `ddd-architect` / `hexagonal-arch`; rule-of-three before introducing. **Consult before applying** a pattern in the other refactoring skills |
+| `design-patterns` | ✅ | v1.0.0 — skeptical reference catalog for modern Go/Python. Keeps the few that still earn their place (Repository, Adapter, Strategy, Decorator, Observer, Builder/options, Factory); names anti-patterns (Singleton, Abstract Factory, Visitor, Chain-of-Responsibility, Template Method); defers depth to `ddd-architect` / `hexagonal-architecture`; rule-of-three before introducing. **Consult before applying** a pattern in the other refactoring skills |
 
 #### Meta
 | Skill | Status | Notes |
@@ -1299,7 +1306,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | Skill | Status | Notes |
 |---|---|---|
 | `pi-iteration-workflow` | ✅ | v1.0.0 — Windows-to-Pi SSH edit-test loop for the `voldemorbot` robot codebase. Host access table (prefer `rpi-5-direct` over WiFi/tunnel aliases), pixi/ROS2 rebuild triggers, `screen` for flaky-WiFi survival, PowerShell SSH quoting pitfall, Pi Zero sudo credential caching. Companion to `ros2-architect` for workspace conventions. Personal use only — not bundled, requires `--personal` flag; exempt from `STACK.md` (operational, not library-version-sensitive) |
-| `go-library-builder` | ✅ | v1.1.0 — scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD + hexagonal house style (derived from `identity`, `ratelimit`, `email`). Domain-pure root package (stdlib + uuid only), narrow composed ports, technology-named adapter subpackages (prod/dev/test), config structs over functional options, testcontainers over mocks, mise + Task + golangci tooling. Two scales: flat single-port lib and vertical-slice lib with `app/` + `internal/acl/`. Composes `go-architect`, `hexagonal-arch`, `ddd-architect`; has `STACK.md` + `assets/`. Personal use only — not bundled, requires `--personal` flag |
+| `go-library-builder` | ✅ | v1.1.0 — scaffolds reusable Go 1.26 library modules in the ralvarezdev DDD + hexagonal house style (derived from `identity`, `ratelimit`, `email`). Domain-pure root package (stdlib + uuid only), narrow composed ports, technology-named adapter subpackages (prod/dev/test), config structs over functional options, testcontainers over mocks, mise + Task + golangci tooling. Two scales: flat single-port lib and vertical-slice lib with `app/` + `internal/acl/`. Composes `go-architect`, `hexagonal-architecture`, `ddd-architect`; has `STACK.md` + `assets/`. Personal use only — not bundled, requires `--personal` flag |
 | `go-house-libs` | ✅ | v0.3.0 — router over ten shared Go modules with a `references/<NAME>.md` per module (layout, recipe, gotchas) and a `STACK.md` of tags, pins and consumers. Renamed from `house-kits`. |
 
 ---

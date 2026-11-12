@@ -16,7 +16,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 
 ### `academic/` — papers and study
 
-- **`ml-conference-paper-architect`** — ML conference papers (NeurIPS, ICML, ICLR, AAAI): official style-file usage, anonymization and camera-ready toggles, page-limit accounting, natbib citations.
+- **`ml-paper-format`** — ML conference papers (NeurIPS, ICML, ICLR, AAAI): official style-file usage, anonymization and camera-ready toggles, page-limit accounting, natbib citations.
 - **`study-artifact-builder`** — Single-file interactive HTML artifact to study a paper's pipeline or dataset until it can be defended from memory: source pinning, paper-versus-code separation, per-component explanations.
 
 ### `languages/` — language standards
@@ -59,16 +59,16 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 ### `frontend/` — UI and accessibility
 
 - **`ui-ux-architect`** — WCAG 2.2 AA, Radix + Tailwind 4 + shadcn/ui, design-token theming, mandatory loading/error/empty/success states, mobile-first responsive, keyboard parity, contrast checked in CI.
-- **`website-concept-architect`** — Pre-code website concepting: purpose, audience, content inventory, tone, visual archetype, structure; outputs 2-3 concept directions plus an ASCII homepage wireframe. Hands off to `ui-ux-architect` / `frontend-design`.
+- **`website-concept-designer`** — Pre-code website concepting: purpose, audience, content inventory, tone, visual archetype, structure; outputs 2-3 concept directions plus an ASCII homepage wireframe. Hands off to `ui-ux-architect` / `frontend-design`.
 - **`landing-page-designer`** — Landing-page proposals as self-contained HTML grounded in the product's code, real captures and brand: one memorable device per page, a choreographed hero film, accessibility.
 - **`mockup-architect`** — Mockups as self-contained HTML in dated folders, with the fixed preview bar (palette, corners, accent, mark) driven by data attributes and `?query` so variants are reproducible.
-- **`demo-presentation-architect`** — Slide-deck specifications in markdown: content distribution across slides, within-slide organization, layout from a fixed catalog. Outputs `.md` only.
-- **`demo-script-architect`** — Presenter-centric demo scripts with narrative flow, visual-cue mapping, progressive capability reveals.
+- **`demo-deck-designer`** — Slide-deck specifications in markdown: content distribution across slides, within-slide organization, layout from a fixed catalog. Outputs `.md` only.
+- **`demo-script-designer`** — Presenter-centric demo scripts with narrative flow, visual-cue mapping, progressive capability reveals.
 
 ### `design/` — architectural patterns
 
 - **`ddd-architect`** — Domain-Driven Design: strategic-first (bounded contexts, context mapping) with aggregates, value objects, domain events, repositories. Event sourcing out of scope.
-- **`hexagonal-arch`** — Ports & adapters: dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP.
+- **`hexagonal-architecture`** — Ports & adapters: dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP.
 
 ### `infra/` — runtime, packaging, observability
 
@@ -126,10 +126,10 @@ Skills about authoring/operating the toolkit itself, plus communication modes th
 These are personal to me and excluded from bundle installs. Listed here for transparency; not intended for reuse.
 
 - **`pi-iteration-workflow`** — Windows-to-Pi SSH edit-test loop for the `voldemorbot` robot codebase: pixi/ROS2 rebuild triggers, `screen` for flaky-WiFi survival, PowerShell SSH quoting pitfalls, Pi Zero sudo caching.
-- **`uru-thesis-architect`** — Interview-first, section-by-section drafter for URU thesis (TEG) chapters, Spanish output, URU chapter order, never fabricates data. Complements `uru-thesis-reviewer`.
+- **`uru-thesis-writer`** — Interview-first, section-by-section drafter for URU thesis (TEG) chapters, Spanish output, URU chapter order, never fabricates data. Complements `uru-thesis-reviewer`.
 - **`uru-thesis-reviewer`** — Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) Trabajos Especiales de Grado. Produces ordered `.md` diff files; never edits the source `.docx`.
-- **`uru-thesis-defense-architect`** — URU-style thesis defense deck specs: fixed institutional slide structure, Spanish-only content, logo placement rules. Outputs `.md` only.
-- **`uru-scientific-paper-architect`** — Manuscript formatting for Revista Tecnocientífica URU: typography rules, IMRyD-derived structure by article type, citation/reference formats. Outputs one `.md` manuscript spec.
+- **`uru-thesis-defense-designer`** — URU-style thesis defense deck specs: fixed institutional slide structure, Spanish-only content, logo placement rules. Outputs `.md` only.
+- **`uru-paper-format`** — Manuscript formatting for Revista Tecnocientífica URU: typography rules, IMRyD-derived structure by article type, citation/reference formats. Outputs one `.md` manuscript spec.
 - **`go-library-builder`** — Scaffolds reusable Go 1.27.3 library modules in the ralvarezdev house style (flat, vertical-slice, toolkit or framework-adapter shapes): domain-pure root package, narrow ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter.
 - **`go-house-libs`** — Maps a need to the ralvarezdev shared Go modules (restkit, ginkit, pgkit, mcpkit, contracts, connectrpckit, identity, identitygin, ratelimit, email, webpush, termkit, svckit, tick, sqlitekit, resilience): a router plus one `references/` file per module with its package layout, a recipe and the gotchas; the consumer-side companion of `go-library-builder`.
 

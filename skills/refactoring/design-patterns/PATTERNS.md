@@ -13,7 +13,7 @@ Detail beyond the SKILL.md summary. Loaded on demand when you need code snippets
 
 ### Adapter (ports & adapters)
 
-Wrap an external dependency in an interface that the consumer defines. Full pattern in [hexagonal-arch](../../design/hexagonal-arch/SKILL.md). **One adapter is a hypothetical seam; two adapters are a real one.**
+Wrap an external dependency in an interface that the consumer defines. Full pattern in [hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md). **One adapter is a hypothetical seam; two adapters are a real one.**
 
 - **Use when:** the dependency has at least two real implementations (typically prod + test fake) and the surface is small enough to express as an interface.
 - **Skip when:** there's only one implementation and no plausible second one.

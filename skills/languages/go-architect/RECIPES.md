@@ -119,7 +119,7 @@ var (
 
 ## `internal/order/app/order/place_order.go` — thin orchestration
 
-No explicit primary port here: `PlaceOrderService` has exactly one production caller (the HTTP handler below), so per [hexagonal-arch §7](../../design/hexagonal-arch/SKILL.md#7-when-not-to-use-it) an interface would be ceremony without payoff. Introduce one (`PlaceOrderer`, declared here since this is the layer offering the capability) only when a second caller genuinely needs to swap it — e.g. a handler test injecting a fake.
+No explicit primary port here: `PlaceOrderService` has exactly one production caller (the HTTP handler below), so per [hexagonal-architecture §7](../../design/hexagonal-architecture/SKILL.md#7-when-not-to-use-it) an interface would be ceremony without payoff. Introduce one (`PlaceOrderer`, declared here since this is the layer offering the capability) only when a second caller genuinely needs to swap it — e.g. a handler test injecting a fake.
 
 ```go
 package order

@@ -13,7 +13,7 @@ Manim Community 0.22 scenes for formal objects that change shape, timed from the
 - Draft with `-ql`, review at 1920x1080 30 fps `-qh`. Always redirect output to a log file.
 - Audio is muxed in a separate step from the sections file (`adelay`, `amix=normalize=0`, copy the video); scene code never calls a speech engine.
 - Keep a drawing across scenes by family, set `z_index` on groups, use `Group` for images; teach a formula with one real worked case first (details in TRAPS.md).
-- Review with one labelled contact sheet per version (`scripts/contact_sheet.py video.mp4 sections.json`) and full-size frames of dense scenes (explainer-architect). Library tools (scene classes, `next_section`, `add_sound`, CLI flags) are in FRAMEWORK.md.
+- Review with one labelled contact sheet per version (`scripts/contact_sheet.py video.mp4 sections.json`) and full-size frames of dense scenes (explainer-designer). Library tools (scene classes, `next_section`, `add_sound`, CLI flags) are in FRAMEWORK.md.
 
 ## Hard constraints
 

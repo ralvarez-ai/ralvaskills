@@ -11,11 +11,16 @@ import (
 
 // Frontmatter is the subset of a SKILL.md YAML frontmatter that rsk reads.
 type Frontmatter struct {
+	Name        string
 	Version     string
 	Description string
 }
 
 const (
+	// NamePrefix is the YAML frontmatter key that declares a skill's name. It
+	// must equal the directory the skill lives in.
+	NamePrefix = "name:"
+
 	// VersionPrefix is the YAML frontmatter key used to store a skill's version.
 	VersionPrefix = "version:"
 
@@ -102,6 +107,9 @@ func readFrontmatter(path string) (Frontmatter, error) {
 		}
 		if !inFrontmatter {
 			continue
+		}
+		if v, ok := strings.CutPrefix(line, NamePrefix); ok {
+			fm.Name = strings.Trim(strings.TrimSpace(v), `"'`)
 		}
 		if v, ok := strings.CutPrefix(line, VersionPrefix); ok {
 			fm.Version = strings.Trim(strings.TrimSpace(v), `"'`)

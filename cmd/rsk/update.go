@@ -191,6 +191,11 @@ func applyLocalUpdate(
 	// If we're in a project, bump rsk.lock entries for any changed skills and
 	// re-render the pinned digests from the freshly pulled sources.
 	if !opts.global {
+		if aliases, aliasErr := localAliases(cfg); aliasErr == nil {
+			if _, migrateErr := migrateProjectRenames(out, aliases, opts.dryRun); migrateErr != nil {
+				ui.Warn(out, fmt.Sprintf("rename migration: %v", migrateErr))
+			}
+		}
 		if err := bumpLockForProject(cmd, args, cfg); err != nil {
 			ui.Warn(out, fmt.Sprintf("update rsk.lock: %v", err))
 		}
@@ -376,12 +381,14 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		return fmt.Errorf("fetch registry index: %w", err)
 	}
 
+	applyRenames(cmd, cfg, reg, index, targets, opts, out, errOut)
+
 	namesToCheck, err := registryNamesToCheck(out, args, targets)
 	if err != nil {
 		return err
 	}
 
-	toUpdate := findOutdatedSkills(ctx, out, reg, index, namesToCheck, targets, cfg.RegistryCache())
+	toUpdate := findOutdatedSkills(ctx, out, reg, index.Skills, namesToCheck, targets, cfg.RegistryCache())
 	if len(toUpdate) == 0 {
 		saveUpdateCache(out, cfg, nil)
 		ui.Info(out, "All installed skills are up to date.")

@@ -9,7 +9,7 @@ description: Scaffolds reusable Go 1.27.3 library modules in the ralvarezdev hou
 Scaffolds a new **reusable Go library module** in the ralvarezdev house style, distilled from the `identity`, `ratelimit`, and `email` libraries, and extended for the toolkit and framework-adapter modules (`restkit`, `pgkit`, `ginkit`). **Check [go-house-libs](../go-house-libs/SKILL.md) first:** if a module already covers the need, use it; scaffold a new one only when none fits and a second consumer exists. This skill is the *composition root* for three others — it does not restate them:
 
 - **[go-architect](../../languages/go-architect/SKILL.md)** — every Go idiom (memory alignment, errors, iterators, linters, `//go:embed` SQL). This skill assumes it.
-- **[hexagonal-arch](../../design/hexagonal-arch/SKILL.md)** — ports & adapters, dependency direction. This skill applies it *at library scale*.
+- **[hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md)** — ports & adapters, dependency direction. This skill applies it *at library scale*.
 - **[ddd-architect](../../design/ddd-architect/SKILL.md)** — entities, value objects, bounded contexts. This skill uses it for domain shape.
 
 Also leans on [repo-tooling-architect](../../tooling/repo-tooling-architect/SKILL.md) (mise/Task/editorconfig/renovate) and [sql-architect](../../databases/sql-architect/SKILL.md) (persistence adapters). File skeletons and full tooling templates live in [RECIPES.md](RECIPES.md) and [assets/](assets). Pinned versions in [STACK.md](STACK.md).
@@ -36,14 +36,14 @@ Four shapes, same rules (§9 decides between the first two; the last two are for
 
 ## 3. Domain purity — the load-bearing invariant
 
-The root/domain package imports **stdlib + `google/uuid` only**. Zero third-party. This is the invariant everything else protects: only adapters may import a driver, an HTTP client, or a crypto library. A toolkit's root core (`restkit`) is held to the same stdlib-only rule, and a heavy dependency in a toolkit sits in its own subpackage. Static check: grep the domain package's imports — a single third-party line is a bug. See [hexagonal-arch §2](../../design/hexagonal-arch/SKILL.md#2-dependency-direction--always-inward).
+The root/domain package imports **stdlib + `google/uuid` only**. Zero third-party. This is the invariant everything else protects: only adapters may import a driver, an HTTP client, or a crypto library. A toolkit's root core (`restkit`) is held to the same stdlib-only rule, and a heavy dependency in a toolkit sits in its own subpackage. Static check: grep the domain package's imports — a single third-party line is a bug. See [hexagonal-architecture §2](../../design/hexagonal-architecture/SKILL.md#2-dependency-direction--always-inward).
 
 ## 4. Ports — narrow, composed, domain-owned
 
 Interfaces are declared **by the domain, where consumed**, per [go-architect §4](../../languages/go-architect/SKILL.md#4-interfaces). House specifics:
 
 - **Cap at ~3 methods** (`interfacebloat`). Grow by **composition, not method count**: `UserStore = UserRecordReader + UserRecordWriter + UserRecordQuery`. Callers depend on the narrowest sub-interface they use.
-- **`context.Context` first, plain domain data across the seam.** No driver types in a port signature — that's a leaky port ([hexagonal-arch §6](../../design/hexagonal-arch/SKILL.md#6-common-mistakes)).
+- **`context.Context` first, plain domain data across the seam.** No driver types in a port signature — that's a leaky port ([hexagonal-architecture §6](../../design/hexagonal-architecture/SKILL.md#6-common-mistakes)).
 - **Name for role, not tech:** `TokenIssuer`, `AttemptLimiter`, `UserLookup`. Suffix `…Port` only when `…er`/`…Store` would collide.
 - **One instance may satisfy many ports** — a single `*postgres.Store` can implement eight interfaces; wiring passes the same pointer.
 
@@ -80,7 +80,7 @@ The reuse axis is **multiple adapters behind one port**, swapped at wiring time:
 - **Dev/observability** — e.g. a `logger` adapter that logs instead of sending.
 - **Test** — a real, hand-written **in-memory** adapter (`memory`) with `Sent()`/`Reset()` helpers. This *is* the test double — see §10.
 
-Each adapter imports the domain, translates errors inward (§6), and keeps its third-party dep contained. A port with only ever **one** adapter is ceremony — inline it until a second (the in-memory test double counts) justifies the seam ([hexagonal-arch §7](../../design/hexagonal-arch/SKILL.md#7-when-not-to-use-it)).
+Each adapter imports the domain, translates errors inward (§6), and keeps its third-party dep contained. A port with only ever **one** adapter is ceremony — inline it until a second (the in-memory test double counts) justifies the seam ([hexagonal-architecture §7](../../design/hexagonal-architecture/SKILL.md#7-when-not-to-use-it)).
 
 ## 9. Scaling — start flat, grow to slices
 
@@ -113,7 +113,7 @@ Copy from [assets/](assets); details in [repo-tooling-architect](../../tooling/r
 - **`.golangci.yml`** (v2) — copy [go-architect's `assets/golangci.yml`](../../languages/go-architect/assets/golangci.yml), set `goimports.local-prefixes` to the module path, scope `exhaustruct` to the `Config` structs. Ship the separate **`.golangci.doccheck.yml`** for on-demand doc coverage.
 - **`.github/workflows/ci.yml`** — copy the asset. Its header states the **manual-dispatch only** policy. Dependencies under `github.com/ralvarezdev/*` are private for now, so each job takes the optional `GH_PRIVATE_MODULES_TOKEN` and sets `GOPRIVATE`; drop both once they are public.
 - **`.editorconfig`**, **`.gitignore`**, **`renovate.json`**, and a **spec-first `docs/YYYY-MM-DD-spec.md`** written so an agent can rebuild the module from it alone (list the invariants explicitly).
-- **`.rsk/`** — pin the architecture skills this repo was built with (`go-architect`, `hexagonal-arch`, `ddd-architect`, plus `sql-architect`/`repo-tooling-architect` as used) so the conventions travel with the repo.
+- **`.rsk/`** — pin the architecture skills this repo was built with (`go-architect`, `hexagonal-architecture`, `ddd-architect`, plus `sql-architect`/`repo-tooling-architect` as used) so the conventions travel with the repo.
 
 ## 13. Bootstrap procedure
 

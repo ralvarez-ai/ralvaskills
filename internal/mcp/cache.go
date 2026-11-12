@@ -29,12 +29,13 @@ const (
 
 // IndexFetchFunc fetches the registry index. It lets the cache be tested without
 // a server and lets the caller wire the real source.Registry.
-type IndexFetchFunc func(context.Context) (map[string]*source.IndexEntry, error)
+type IndexFetchFunc func(context.Context) (source.Index, error)
 
 // IndexSnapshot is a registry index plus how current it is.
 type IndexSnapshot struct {
 	FetchedAt time.Time
 	Skills    map[string]*source.IndexEntry
+	Aliases   map[string]string
 	Stale     bool
 }
 
@@ -47,10 +48,11 @@ type IndexCache struct {
 	ttl   time.Duration
 }
 
-// cachedIndex is the on-disk shape: the published skills map plus the instant it
+// cachedIndex is the on-disk shape: the published index plus the instant it
 // was fetched, which drives the TTL.
 type cachedIndex struct {
 	FetchedAt time.Time                     `json:"fetched_at"`
+	Aliases   map[string]string             `json:"aliases,omitempty"`
 	Skills    map[string]*source.IndexEntry `json:"skills"`
 }
 
@@ -73,20 +75,26 @@ func NewIndexCache(cacheDir string, ttl time.Duration, fetch IndexFetchFunc) *In
 func (c *IndexCache) Load(ctx context.Context) (IndexSnapshot, error) {
 	cached, cacheErr := readIndexCache(c.path)
 	if cacheErr == nil && time.Since(cached.FetchedAt) < c.ttl {
-		return IndexSnapshot{Skills: cached.Skills, FetchedAt: cached.FetchedAt}, nil
+		return IndexSnapshot{Skills: cached.Skills, Aliases: cached.Aliases, FetchedAt: cached.FetchedAt}, nil
 	}
 
-	skills, fetchErr := c.fetch(ctx)
+	index, fetchErr := c.fetch(ctx)
 	if fetchErr == nil {
 		now := time.Now()
 		// Persisting is best-effort: a write failure must not fail the load.
 		//nolint:errcheck // the fetched index is returned regardless of the cache write
-		_ = writeIndexCache(c.path, now, skills)
-		return IndexSnapshot{Skills: skills, FetchedAt: now}, nil
+		_ = writeIndexCache(c.path, now, index)
+		return IndexSnapshot{Skills: index.Skills, Aliases: index.Aliases, FetchedAt: now}, nil
 	}
 
 	if cacheErr == nil {
-		return IndexSnapshot{Skills: cached.Skills, FetchedAt: cached.FetchedAt, Stale: true}, nil
+		snapshot := IndexSnapshot{
+			Skills:    cached.Skills,
+			Aliases:   cached.Aliases,
+			FetchedAt: cached.FetchedAt,
+			Stale:     true,
+		}
+		return snapshot, nil
 	}
 	return IndexSnapshot{}, fmt.Errorf("fetch registry index: %w", fetchErr)
 }
@@ -107,12 +115,12 @@ func readIndexCache(path string) (cachedIndex, error) {
 	return cached, nil
 }
 
-func writeIndexCache(path string, fetchedAt time.Time, skills map[string]*source.IndexEntry) error {
+func writeIndexCache(path string, fetchedAt time.Time, index source.Index) error {
 	if err := os.MkdirAll(filepath.Dir(path), fsperm.Dir); err != nil {
 		return fmt.Errorf("create index cache dir: %w", err)
 	}
 
-	cached := cachedIndex{FetchedAt: fetchedAt, Skills: skills}
+	cached := cachedIndex{FetchedAt: fetchedAt, Aliases: index.Aliases, Skills: index.Skills}
 	return fsx.WriteAtomic(path, indexCacheTempPattern, func(w io.Writer) error {
 		enc := json.NewEncoder(w)
 		enc.SetIndent("", "  ")

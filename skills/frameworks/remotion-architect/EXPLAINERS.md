@@ -1,6 +1,6 @@
 # Explainer videos in Remotion
 
-The Remotion-specific half of a teaching video. What to teach, the scene rule, provenance chips, content files, cues and versions are engine-independent: read [explainer-architect](../../frontend/explainer-architect/SKILL.md) first. Words and speech rate: [narration-architect](../../frontend/narration-architect/SKILL.md). Scenes where a formal object changes shape can be drawn with [manim-architect](../manim-architect/SKILL.md) and embedded here.
+The Remotion-specific half of a teaching video. What to teach, the scene rule, provenance chips, content files, cues and versions are engine-independent: read [explainer-designer](../../frontend/explainer-designer/SKILL.md) first. Words and speech rate: [narration-writer](../../frontend/narration-writer/SKILL.md). Scenes where a formal object changes shape can be drawn with [manim-architect](../manim-architect/SKILL.md) and embedded here.
 
 ## 1. Scene kinds as data
 
@@ -23,7 +23,7 @@ The Remotion-specific half of a teaching video. What to teach, the scene rule, p
 
 ## 4. Embedding a Manim clip
 
-Render the clip silent, copy it to `public/clips/`, play it with `<Video>` from `@remotion/media`, and size the scene from the clip's recorded length. The Remotion frame owns the badges, the sources and the audio (`<Audio>` per scene, narration-architect `RECIPES.md`).
+Render the clip silent, copy it to `public/clips/`, play it with `<Video>` from `@remotion/media`, and size the scene from the clip's recorded length. The Remotion frame owns the badges, the sources and the audio (`<Audio>` per scene, narration-writer `RECIPES.md`).
 
 ## 5. Pitfalls
 

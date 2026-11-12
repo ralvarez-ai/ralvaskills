@@ -8,7 +8,7 @@ description: LaTeX document standards on TeX Live 2026 — latexmk-only builds, 
 
 LaTeX conventions for documents you control — papers, reports, theses, preprints. Targets **TeX Live 2026** with **pdfLaTeX** as the default engine and **latexmk** as the only build entry point. Full skeletons (project tree, `.latexmkrc`, preamble, CI workflow, `.gitignore`) live in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md).
 
-Venue-specific formatting (page limits, anonymization, conference style files) is **not** this skill's job — see [ml-conference-paper-architect](../../academic/ml-conference-paper-architect/SKILL.md).
+Venue-specific formatting (page limits, anonymization, conference style files) is **not** this skill's job — see [ml-paper-format](../../academic/ml-paper-format/SKILL.md).
 
 ## 1. Scope & defaults
 
@@ -146,8 +146,8 @@ Each of these has a correct replacement and no legitimate use in a new document:
 
 ## 11. Out of scope
 
-- **Venue formatting** (page limits, anonymization, camera-ready toggles, conference `.sty` files) → [ml-conference-paper-architect](../../academic/ml-conference-paper-architect/SKILL.md)
-- **Presentations / beamer** → [demo-presentation-architect](../../frontend/demo-presentation-architect/SKILL.md) for deck content design, [reveal-js-architect](../../frameworks/reveal-js-architect/SKILL.md) for HTML decks
-- **URU institutional formats** (Word-targeted `.md` specs) → [uru-thesis-architect](../../personal/uru-thesis-architect/SKILL.md), [uru-scientific-paper-architect](../../personal/uru-scientific-paper-architect/SKILL.md)
+- **Venue formatting** (page limits, anonymization, camera-ready toggles, conference `.sty` files) → [ml-paper-format](../../academic/ml-paper-format/SKILL.md)
+- **Presentations / beamer** → [demo-deck-designer](../../frontend/demo-deck-designer/SKILL.md) for deck content design, [reveal-js-architect](../../frameworks/reveal-js-architect/SKILL.md) for HTML decks
+- **URU institutional formats** (Word-targeted `.md` specs) → [uru-thesis-writer](../../personal/uru-thesis-writer/SKILL.md), [uru-paper-format](../../personal/uru-paper-format/SKILL.md)
 - **Repo tooling** (task runner, pre-commit wiring, version pinning) → [repo-tooling-architect](../../tooling/repo-tooling-architect/SKILL.md)
 - **CI pipeline design** beyond the build job → [ci-cd-architect](../../infra/ci-cd-architect/SKILL.md)

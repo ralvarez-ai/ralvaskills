@@ -13,7 +13,7 @@
 ## Notes
 
 - **biblatex and biber versions are coupled** — biber 2.21 requires biblatex 3.21. A mismatch fails with a version-check error, not a subtle bug. Upgrade both together, and pin both in CI.
-- Engine default is `pdflatex` (TeX Live 2026); `lualatex` is the switch target for system fonts or native Unicode. Conference style files frequently assume pdfLaTeX — see [ml-conference-paper-architect](../../academic/ml-conference-paper-architect/SKILL.md).
+- Engine default is `pdflatex` (TeX Live 2026); `lualatex` is the switch target for system fonts or native Unicode. Conference style files frequently assume pdfLaTeX — see [ml-paper-format](../../academic/ml-paper-format/SKILL.md).
 - Tectonic is listed as an alternative, not the default: package coverage is still incomplete and some venue `.sty` files fail on it.
 - TeX Live ships a new release each spring; the `texlive/texlive:latest` container tracks it. Pin to a dated tag near submission.
 

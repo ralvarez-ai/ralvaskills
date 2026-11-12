@@ -49,10 +49,14 @@ func FromSkills(skills []skill.Skill) []Entry {
 
 // FromIndex maps a registry index to catalog entries, sorted by name. It is the
 // offline path: the caller supplies an index it already holds (for example from
-// the disk cache in internal/mcp) instead of hitting the network.
+// the disk cache in internal/mcp) instead of hitting the network. Deprecated
+// entries are redirects, not suggestions, so they are skipped.
 func FromIndex(index map[string]*source.IndexEntry) []Entry {
 	entries := make([]Entry, 0, len(index))
 	for _, e := range index {
+		if e.Deprecated {
+			continue
+		}
 		entries = append(entries, Entry{
 			Name:        e.Name,
 			Description: e.Description,

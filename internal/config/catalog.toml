@@ -18,7 +18,7 @@ skills = [
   { name = "feature-planner",               source = "local" },
   { name = "security-reviewer",             source = "local" },
   { name = "ddd-architect",                 source = "local" },
-  { name = "hexagonal-arch",                source = "local" },
+  { name = "hexagonal-architecture",        source = "local" },
   { name = "design-patterns",               source = "local" },
   { name = "improve-codebase-architecture", source = "local" },
   { name = "rsk-guide",                     source = "local" },
@@ -108,7 +108,7 @@ skills = [
   { name = "fastapi-architect", source = "local" },
   { name = "llm-app-architect", source = "local" },
   { name = "agent-architect",   source = "local" },
-  { name = "hexagonal-arch",    source = "local" },
+  { name = "hexagonal-architecture", source = "local" },
   { name = "docker-architect",  source = "local" },
 ]
 

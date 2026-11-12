@@ -207,3 +207,52 @@ func TestRegistryAllCarriesDescription(t *testing.T) {
 		t.Errorf("All = %+v, want description and latest", skills[0])
 	}
 }
+
+func TestRegistryResolvesRetiredName(t *testing.T) {
+	t.Parallel()
+
+	data := buildTarball(t, []struct{ name, content string }{
+		{"hexagonal-architecture/", ""},
+		{"hexagonal-architecture/SKILL.md", "name: hexagonal-architecture\nversion: 2.0.0\n"},
+	})
+
+	var indexBody string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/"+IndexFileName {
+			_, _ = w.Write([]byte(indexBody))
+			return
+		}
+		_, _ = w.Write(data)
+	}))
+	defer srv.Close()
+
+	indexBody = `{"version":2,"aliases":{"hexagonal-arch":"hexagonal-architecture"},` +
+		`"skills":{"hexagonal-arch":{"name":"hexagonal-arch","deprecated":true,"latest":"1.2.1",` +
+		`"versions":{"1.2.1":{"version":"1.2.1","archive_url":"` + srv.URL + `/old.tar.gz"}}},` +
+		`"hexagonal-architecture":{"name":"hexagonal-architecture","latest":"2.0.0",` +
+		`"versions":{"2.0.0":{"version":"2.0.0","archive_url":"` + srv.URL + `/new.tar.gz"}}}}}`
+
+	r := NewRegistry(srv.URL, t.TempDir())
+	s, err := r.Find(context.Background(), "hexagonal-arch")
+	if err != nil {
+		t.Fatalf("Find: %v", err)
+	}
+	if s.Name != "hexagonal-architecture" {
+		t.Errorf("Name = %q, want the canonical name", s.Name)
+	}
+	if s.Version != "2.0.0" {
+		t.Errorf("Version = %q, want the new latest", s.Version)
+	}
+}
+
+func TestResolveAlias(t *testing.T) {
+	t.Parallel()
+
+	aliases := map[string]string{"old-name": "new-name"}
+	if got := ResolveAlias("old-name", aliases); got != "new-name" {
+		t.Errorf("ResolveAlias(old) = %q, want new-name", got)
+	}
+	if got := ResolveAlias("other", aliases); got != "other" {
+		t.Errorf("ResolveAlias(other) = %q, want other", got)
+	}
+}

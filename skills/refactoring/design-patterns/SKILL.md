@@ -6,7 +6,7 @@ description: Skeptical design-patterns reference catalog for modern Go and Pytho
 
 # Design Patterns — Skeptical, Pragmatic Catalog
 
-Most "design patterns" exist to work around missing language features. **Go and Python in 2026 don't need most of them.** This skill names what's still useful, what's covered by other skills, and what to actively avoid. Detail (code samples, anti-pattern rationale, language-specific smells) lives in [PATTERNS.md](PATTERNS.md). Companion to [ddd-architect](../../design/ddd-architect/SKILL.md), [hexagonal-arch](../../design/hexagonal-arch/SKILL.md), [logic-cleaner](../logic-cleaner/SKILL.md), [improve-codebase-architecture](../improve-codebase-architecture/SKILL.md).
+Most "design patterns" exist to work around missing language features. **Go and Python in 2026 don't need most of them.** This skill names what's still useful, what's covered by other skills, and what to actively avoid. Detail (code samples, anti-pattern rationale, language-specific smells) lives in [PATTERNS.md](PATTERNS.md). Companion to [ddd-architect](../../design/ddd-architect/SKILL.md), [hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md), [logic-cleaner](../logic-cleaner/SKILL.md), [improve-codebase-architecture](../improve-codebase-architecture/SKILL.md).
 
 ## 1. The framing
 
@@ -60,7 +60,7 @@ These are real patterns; this skill names them once and points to their owner:
 | Value Object | [ddd-architect](../../design/ddd-architect/SKILL.md) §3 |
 | Domain Event | [ddd-architect](../../design/ddd-architect/SKILL.md) §6 |
 | Anticorruption Layer | [ddd-architect](../../design/ddd-architect/SKILL.md) §8 |
-| Ports & Adapters | [hexagonal-arch](../../design/hexagonal-arch/SKILL.md) |
+| Ports & Adapters | [hexagonal-architecture](../../design/hexagonal-architecture/SKILL.md) |
 | Middleware chain | [nethttp-architect](../../frameworks/nethttp-architect/SKILL.md) §7, [gin-architect](../../frameworks/gin-architect/SKILL.md) §9, [fastapi-architect](../../frameworks/fastapi-architect/SKILL.md) §8 |
 | Functional options (Go) | [go-architect](../../languages/go-architect/SKILL.md) §3 |
 | Dependency injection | [go-architect](../../languages/go-architect/SKILL.md) §11, [python-architect](../../languages/python-architect/SKILL.md) §3 |

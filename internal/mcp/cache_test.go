@@ -23,9 +23,9 @@ func TestIndexCacheFreshSkipsFetch(t *testing.T) {
 	dir := t.TempDir()
 	writeIndexCacheFile(t, dir, time.Now(), map[string]*source.IndexEntry{"a": {Name: "a", Latest: "1.0.0"}})
 
-	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (map[string]*source.IndexEntry, error) {
+	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (source.Index, error) {
 		t.Error("fetch called for a fresh cache")
-		return nil, errors.New("unexpected fetch")
+		return source.Index{}, errors.New("unexpected fetch")
 	})
 
 	snap, err := cache.Load(t.Context())
@@ -48,9 +48,9 @@ func TestIndexCacheStaleRefetches(t *testing.T) {
 
 	calls := 0
 	fetched := map[string]*source.IndexEntry{"new": {Name: "new", Latest: "2.0.0"}}
-	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (map[string]*source.IndexEntry, error) {
+	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (source.Index, error) {
 		calls++
-		return fetched, nil
+		return source.Index{Skills: fetched}, nil
 	})
 
 	snap, err := cache.Load(t.Context())
@@ -86,8 +86,8 @@ func TestIndexCacheStaleFallbackOffline(t *testing.T) {
 	dir := t.TempDir()
 	writeIndexCacheFile(t, dir, time.Now().Add(-30*time.Hour), map[string]*source.IndexEntry{"old": {Name: "old"}})
 
-	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (map[string]*source.IndexEntry, error) {
-		return nil, errors.New("network down")
+	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (source.Index, error) {
+		return source.Index{}, errors.New("network down")
 	})
 
 	snap, err := cache.Load(t.Context())
@@ -108,8 +108,8 @@ func TestIndexCacheMissAndFetchFails(t *testing.T) {
 	cache := mcp.NewIndexCache(
 		t.TempDir(),
 		mcp.DefaultIndexTTL,
-		func(context.Context) (map[string]*source.IndexEntry, error) {
-			return nil, errors.New("network down")
+		func(context.Context) (source.Index, error) {
+			return source.Index{}, errors.New("network down")
 		},
 	)
 	if _, err := cache.Load(t.Context()); err == nil {
@@ -123,8 +123,8 @@ func TestIndexCacheCorruptFileRefetches(t *testing.T) {
 	dir := t.TempDir()
 	writeFile(t, filepath.Join(dir, "index.json"), []byte("{not json"))
 
-	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (map[string]*source.IndexEntry, error) {
-		return map[string]*source.IndexEntry{"a": {Name: "a"}}, nil
+	cache := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, func(context.Context) (source.Index, error) {
+		return source.Index{Skills: map[string]*source.IndexEntry{"a": {Name: "a"}}}, nil
 	})
 	snap, err := cache.Load(t.Context())
 	if err != nil {

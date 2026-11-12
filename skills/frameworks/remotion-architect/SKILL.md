@@ -6,7 +6,7 @@ description: Remotion 4.0.542 programmatic video — compositions, frame-determi
 
 # Remotion Architect
 
-Targets **Remotion 4.0.542** (React, TypeScript). Produces real Remotion source — `Root.tsx`, composition components, render scripts — not a storyboard or script document (for that, see [demo-script-architect](../../frontend/demo-script-architect/SKILL.md)). Project skeletons and render recipes in [RECIPES.md](RECIPES.md); explainer videos, scene kinds, variants and embedding Manim clips in [EXPLAINERS.md](EXPLAINERS.md); pinned versions in [STACK.md](STACK.md). General React conventions (hooks, component structure) defer to [react-architect](../react-architect/SKILL.md).
+Targets **Remotion 4.0.542** (React, TypeScript). Produces real Remotion source — `Root.tsx`, composition components, render scripts — not a storyboard or script document (for that, see [demo-script-designer](../../frontend/demo-script-designer/SKILL.md)). Project skeletons and render recipes in [RECIPES.md](RECIPES.md); explainer videos, scene kinds, variants and embedding Manim clips in [EXPLAINERS.md](EXPLAINERS.md); pinned versions in [STACK.md](STACK.md). General React conventions (hooks, component structure) defer to [react-architect](../react-architect/SKILL.md).
 
 ## 1. Mental model
 
@@ -98,7 +98,7 @@ Remotion is source-available, **not** plain MIT: individuals and eligible small 
 
 ## 11. Explainer and teaching videos
 
-When the video teaches, plan it with [explainer-architect](../../frontend/explainer-architect/SKILL.md) (scene rule, provenance chips, content file, cues, versions, look check), write its words with [narration-architect](../../frontend/narration-architect/SKILL.md), and read [EXPLAINERS.md](EXPLAINERS.md) for the Remotion side: scenes as a union of kinds with optional `a`/`b` variants, a `style` prop whose default is the old look, charts wired through the schema, embedding a Manim clip ([manim-architect](../manim-architect/SKILL.md)), and render pitfalls.
+When the video teaches, plan it with [explainer-designer](../../frontend/explainer-designer/SKILL.md) (scene rule, provenance chips, content file, cues, versions, look check), write its words with [narration-writer](../../frontend/narration-writer/SKILL.md), and read [EXPLAINERS.md](EXPLAINERS.md) for the Remotion side: scenes as a union of kinds with optional `a`/`b` variants, a `style` prop whose default is the old look, charts wired through the schema, embedding a Manim clip ([manim-architect](../manim-architect/SKILL.md)), and render pitfalls.
 
 ## 12. Anti-patterns and review checklist
 
