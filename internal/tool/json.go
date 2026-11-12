@@ -51,7 +51,7 @@ func (c jsonMCPConfig) Register(projectDir string) (string, error) {
 	if err = os.MkdirAll(filepath.Dir(path), fsperm.Dir); err != nil {
 		return "", err
 	}
-	return registerMCPServer(path, c.key, c.server(), readJSONConfig, writeJSONConfig)
+	return registerMCPServer(path, c.key, c.server(), nil, readJSONConfig, writeJSONConfig)
 }
 
 // Unregister removes the rsk server from the client's config, leaving other
@@ -61,7 +61,7 @@ func (c jsonMCPConfig) Unregister(projectDir string) error {
 	if err != nil {
 		return err
 	}
-	return removeMCPServer(path, c.key, c.server(), readJSONConfig, writeJSONConfig)
+	return removeMCPServer(path, c.key, c.server(), nil, readJSONConfig, writeJSONConfig)
 }
 
 // locate resolves the config path and refuses the shapes rsk cannot write
@@ -83,11 +83,20 @@ func (c jsonMCPConfig) locate(projectDir string) (string, error) {
 // checkAlternates rejects a config file in an alternate location, which the
 // client may resolve ahead of the one rsk writes.
 func (c jsonMCPConfig) checkAlternates(projectDir string) error {
-	for _, alternate := range c.alternate {
+	return rejectAlternates(projectDir, c.file, c.alternate)
+}
+
+// rejectAlternates fails when any project-relative alternate file exists. A
+// client that reads two files would otherwise get two sources of truth whose
+// precedence rsk cannot see.
+func rejectAlternates(projectDir, preferred string, alternates []string) error {
+	for _, alternate := range alternates {
 		path := filepath.Join(projectDir, filepath.FromSlash(alternate))
 		if _, err := os.Lstat(path); err == nil {
-			return fmt.Errorf("%s: %s is also read by this client; edit it or remove it, then retry",
-				path, c.file)
+			return fmt.Errorf(
+				"%s: this client also reads it; edit it or remove it, then retry (%s stays rsk-managed)",
+				path, preferred,
+			)
 		} else if !errors.Is(err, os.ErrNotExist) {
 			return err
 		}
@@ -196,21 +205,51 @@ func writeJSONConfig(path string, cfg map[string]any) error {
 	})
 }
 
-// refuseIfLinkDir rejects a symlinked configuration directory so rsk does not
-// write the MCP config outside the project.
+// refuseIfLink refuses to write through a symlink, or over a non-regular file.
+//
+// Failing loudly is deliberate: someone who symlinked the file did it on
+// purpose, and rsk cannot know whether the target wants an rsk-managed entry,
+// so it must not guess in either direction.
+func refuseIfLink(path string) error {
+	return refuseLink(path, false)
+}
+
+// refuseIfLinkDir rejects a symlinked directory so rsk does not write a config
+// outside the project.
 func refuseIfLinkDir(dir string) error {
-	info, err := os.Lstat(dir)
+	return refuseLink(dir, true)
+}
+
+func refuseLink(path string, wantDir bool) error {
+	info, err := os.Lstat(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil
 		}
-		return fmt.Errorf("stat %s: %w", dir, err)
+		return fmt.Errorf("stat %s: %w", path, err)
 	}
 	if skill.IsLink(info) {
-		return fmt.Errorf("%s is a symlink (→ %s): refusing to write the MCP config through it",
-			dir, linkTarget(info))
+		return fmt.Errorf(
+			"%s is a symlink (→ %s): rsk will not write through it, because that would modify "+
+				"the target or replace the link. Remove the link, then retry",
+			path, linkTarget(path),
+		)
+	}
+	if !wantDir && !info.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file (mode %s): refusing to write",
+			path, info.Mode())
 	}
 	return nil
+}
+
+// linkTarget returns a symlink's target for an error message, or "unknown" when
+// the mode bit came from a Windows junction, which has no readable target.
+func linkTarget(path string) string {
+	target, err := os.Readlink(path)
+	if err != nil {
+		return "unknown"
+	}
+	return target
 }
 
 // ProjectMCPFile returns the project-relative MCP config file a client reads,

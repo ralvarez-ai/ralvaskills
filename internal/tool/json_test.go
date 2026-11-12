@@ -322,3 +322,23 @@ func TestJSONAdapterAlternateErrorsAreActionable(t *testing.T) {
 		t.Fatal("unexpected missing-file error")
 	}
 }
+
+// TestSymlinkRefusalNamesTheTarget guards the error message: linkTarget used to
+// read the base name, so every refusal printed "→ unknown".
+func TestSymlinkRefusalNamesTheTarget(t *testing.T) {
+	t.Parallel()
+	project := t.TempDir()
+	target := t.TempDir()
+	link := filepath.Join(project, ".agents")
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+
+	err := refuseIfLinkDir(link)
+	if err == nil {
+		t.Fatal("expected the symlink to be refused")
+	}
+	if !strings.Contains(err.Error(), target) {
+		t.Fatalf("err = %v, want it to name %s", err, target)
+	}
+}

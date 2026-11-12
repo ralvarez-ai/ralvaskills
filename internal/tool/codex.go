@@ -26,11 +26,7 @@ func (*codexTool) ID() ID {
 }
 
 func (*codexTool) SkillsDir() string {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return ""
-	}
-	return filepath.Join(home, internal.AgentsFolderName, skill.SkillsFolderName)
+	return homePath(internal.AgentsFolderName, skill.SkillsFolderName)
 }
 
 func (*codexTool) ProjectSkillsDir(projectRoot string) string {
@@ -114,10 +110,7 @@ func (*codexTool) UnregisterMCP(projectDir string) error {
 }
 
 func readCodexConfig(path string) ([]byte, error) {
-	dir := filepath.Dir(path)
-	if info, err := os.Lstat(dir); err == nil && skill.IsLink(info) {
-		return nil, fmt.Errorf("%s: refusing symlinked config directory", dir)
-	} else if err != nil && !errors.Is(err, os.ErrNotExist) {
+	if err := refuseIfLinkDir(filepath.Dir(path)); err != nil {
 		return nil, err
 	}
 	if err := refuseIfLink(path); err != nil {

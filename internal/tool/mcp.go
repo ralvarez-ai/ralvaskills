@@ -21,10 +21,13 @@ const (
 
 	// openCodeMCPKey is the opencode.json key holding local MCP servers.
 	openCodeMCPKey = "mcp"
-	mcpCommandKey  = "command"
-	mcpTypeKey     = "type"
-	mcpLocalType   = "local"
-	mcpStdioType   = "stdio"
+
+	// mcpSubcommand is the argv every client passes to rsk.
+	mcpSubcommand = "mcp"
+	mcpCommandKey = "command"
+	mcpTypeKey    = "type"
+	mcpLocalType  = "local"
+	mcpStdioType  = "stdio"
 
 	// mcpServersKey is the JSON key most clients use for their server map.
 	mcpServersKey = "mcpServers"
@@ -39,7 +42,7 @@ const (
 
 // claudeMCPServer is the Claude Code MCP entry rsk registers.
 func claudeMCPServer() map[string]any {
-	return map[string]any{mcpCommandKey: rskMCPServerName, "args": []any{openCodeMCPKey}}
+	return map[string]any{mcpCommandKey: rskMCPServerName, "args": []any{mcpSubcommand}}
 }
 
 // JSONMCP reports where Claude Code keeps its MCP servers, so preflight and
@@ -56,7 +59,7 @@ func (*ClaudeTool) JSONMCP() jsonMCPConfig {
 func openCodeMCPServer() map[string]any {
 	return map[string]any{
 		mcpTypeKey:    mcpLocalType,
-		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, mcpReadOnlyFlag},
+		mcpCommandKey: []any{rskMCPServerName, mcpSubcommand, mcpReadOnlyFlag},
 		"enabled":     true,
 	}
 }
@@ -64,7 +67,7 @@ func openCodeMCPServer() map[string]any {
 func legacyOpenCodeMCPServer() map[string]any {
 	return map[string]any{
 		mcpTypeKey:    mcpLocalType,
-		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey},
+		mcpCommandKey: []any{rskMCPServerName, mcpSubcommand},
 		"enabled":     true,
 	}
 }
@@ -88,7 +91,7 @@ func (*openCodeTool) RegisterMCP(projectDir string) (string, error) {
 		return "", err
 	}
 	path := filepath.Join(projectDir, OpenCodeFileName)
-	cfg, err := readOCConfig(path)
+	cfg, err := readJSONConfig(path)
 	if err != nil {
 		return "", err
 	}
@@ -99,7 +102,8 @@ func (*openCodeTool) RegisterMCP(projectDir string) (string, error) {
 	}
 	return registerMCPServer(
 		path, openCodeMCPKey,
-		openCodeMCPServer(), readOCConfig, writeOCConfig,
+		openCodeMCPServer(), []map[string]any{legacyOpenCodeMCPServer()},
+		readJSONConfig, writeJSONConfig,
 	)
 }
 
@@ -109,7 +113,7 @@ func (*openCodeTool) UnregisterMCP(projectDir string) error {
 		return err
 	}
 	path := filepath.Join(projectDir, OpenCodeFileName)
-	cfg, err := readOCConfig(path)
+	cfg, err := readJSONConfig(path)
 	if err != nil {
 		return err
 	}
@@ -120,26 +124,27 @@ func (*openCodeTool) UnregisterMCP(projectDir string) error {
 	}
 	return removeMCPServer(
 		path, openCodeMCPKey,
-		openCodeMCPServer(), readOCConfig, writeOCConfig,
+		openCodeMCPServer(), []map[string]any{legacyOpenCodeMCPServer()},
+		readJSONConfig, writeJSONConfig,
 	)
 }
 
+// openCodeAlternateConfigs lists the files OpenCode reads before or beside
+// opencode.json. rsk refuses them instead of writing a second source of truth.
+var openCodeAlternateConfigs = []string{
+	"opencode.jsonc",
+	".opencode/opencode.json",
+	".opencode/opencode.jsonc",
+}
+
 func rejectAlternateOpenCodeConfigs(projectDir string) error {
-	for _, name := range []string{"opencode.jsonc", ".opencode/opencode.json", ".opencode/opencode.jsonc"} {
-		path := filepath.Join(projectDir, filepath.FromSlash(name))
-		if _, err := os.Lstat(path); err == nil {
-			return fmt.Errorf("%s: alternate OpenCode config requires manual MCP setup", path)
-		} else if !os.IsNotExist(err) {
-			return err
-		}
-	}
-	return nil
+	return rejectAlternates(projectDir, OpenCodeFileName, openCodeAlternateConfigs)
 }
 
 func openCodeV2MCPServer() map[string]any {
 	return map[string]any{
 		mcpTypeKey:    mcpLocalType,
-		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, mcpReadOnlyFlag},
+		mcpCommandKey: []any{rskMCPServerName, mcpSubcommand, mcpReadOnlyFlag},
 	}
 }
 
@@ -305,7 +310,7 @@ func registerOpenCodeV2(path string, cfg, mcp map[string]any) (string, error) {
 		return "", fmt.Errorf("%s: mcp.servers.rsk already exists with different settings", path)
 	}
 	servers[rskMCPServerName] = server
-	return path, writeOCConfig(path, cfg)
+	return path, writeJSONConfig(path, cfg)
 }
 
 func removeOpenCodeV2(path string, cfg, mcp map[string]any) error {
@@ -333,12 +338,25 @@ func removeOpenCodeV2(path string, cfg, mcp map[string]any) error {
 	if len(mcp) == 0 {
 		delete(cfg, openCodeMCPKey)
 	}
-	return writeOCConfig(path, cfg)
+	return writeJSONConfig(path, cfg)
+}
+
+// matchesAny reports whether v equals one of the accepted legacy shapes. A
+// client that changed its server entry passes the old shape here, so the
+// generic writer stays ignorant of which client needed it.
+func matchesAny(v any, candidates []map[string]any) bool {
+	for _, candidate := range candidates {
+		if reflect.DeepEqual(v, candidate) {
+			return true
+		}
+	}
+	return false
 }
 
 func registerMCPServer(
 	path, key string,
 	server map[string]any,
+	legacy []map[string]any,
 	read func(string) (map[string]any, error),
 	write func(string, map[string]any) error,
 ) (string, error) {
@@ -360,8 +378,7 @@ func registerMCPServer(
 	if reflect.DeepEqual(servers[rskMCPServerName], server) {
 		return path, nil
 	}
-	if existing, exists := servers[rskMCPServerName]; exists &&
-		(key != openCodeMCPKey || !reflect.DeepEqual(existing, legacyOpenCodeMCPServer())) {
+	if existing, exists := servers[rskMCPServerName]; exists && !matchesAny(existing, legacy) {
 		return "", fmt.Errorf("%s: MCP server rsk already exists with different settings", path)
 	}
 
@@ -376,6 +393,7 @@ func registerMCPServer(
 func removeMCPServer(
 	path, key string,
 	managed map[string]any,
+	legacy []map[string]any,
 	read func(string) (map[string]any, error),
 	write func(string, map[string]any) error,
 ) error {
@@ -395,8 +413,7 @@ func removeMCPServer(
 	if !present {
 		return nil
 	}
-	if !reflect.DeepEqual(existing, managed) &&
-		(key != openCodeMCPKey || !reflect.DeepEqual(existing, legacyOpenCodeMCPServer())) {
+	if !reflect.DeepEqual(existing, managed) && !matchesAny(existing, legacy) {
 		return fmt.Errorf("%s: refusing to remove a modified rsk MCP server", path)
 	}
 

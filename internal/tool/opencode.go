@@ -1,17 +1,11 @@
 package tool
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"os"
 	"path/filepath"
 	"strings"
 
 	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/digest"
-	"go.ralva.dev/ralvaskills/v3/internal/fsx"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
@@ -78,7 +72,7 @@ func (*openCodeTool) RemovePinned(projectDir string) error {
 // .claude/skills/ entries with pinnedNames, and writes the file back atomically.
 // Pass a nil or empty pinnedNames to remove all rsk entries.
 func updateOCInstructions(path string, pinnedNames []string) error {
-	cfg, err := readOCConfig(path)
+	cfg, err := readJSONConfig(path)
 	if err != nil {
 		return err
 	}
@@ -94,7 +88,7 @@ func updateOCInstructions(path string, pinnedNames []string) error {
 		cfg[OpenCodeInstructionsKey] = kept
 	}
 
-	return writeOCConfig(path, cfg)
+	return writeJSONConfig(path, cfg)
 }
 
 // filterOCEntries returns the subset of raw that are not rsk-managed: neither
@@ -114,28 +108,4 @@ func filterOCEntries(raw any) []any {
 		kept = append(kept, e)
 	}
 	return kept
-}
-
-func readOCConfig(path string) (map[string]any, error) {
-	data, err := os.ReadFile(path)
-	if errors.Is(err, os.ErrNotExist) {
-		return make(map[string]any), nil
-	}
-	if err != nil {
-		return nil, fmt.Errorf("read %s: %w", path, err)
-	}
-
-	cfg := make(map[string]any)
-	if err = json.Unmarshal(data, &cfg); err != nil {
-		return nil, fmt.Errorf("parse %s: %w", path, err)
-	}
-	return cfg, nil
-}
-
-func writeOCConfig(path string, cfg map[string]any) error {
-	return fsx.WriteAtomic(path, rskTempPattern, func(w io.Writer) error {
-		enc := json.NewEncoder(w)
-		enc.SetIndent("", "  ")
-		return enc.Encode(cfg)
-	})
 }
