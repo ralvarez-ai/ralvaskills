@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-12T03:53:51Z",
+  "generated_at": "2026-11-12T04:39:50Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -16,8 +16,8 @@
   "skills": {
     "adhd-mode": {
       "name": "adhd-mode",
-      "description": "Output shaped for a reader with ADHD — lead with the next action, number multi-step work, restate state every turn, suppress tangents, give specific time estimates, make wins visible. Composes with caveman (words) and token-economy (cost). Use when the user says \"adhd mode\", \"adhd friendly\", \"I have ADHD\", or invokes /adhd-mode; stays on until \"stop adhd mode\" or \"normal mode\".",
-      "latest": "1.0.1",
+      "description": "Output shaped for a reader with ADHD — next action first, numbered steps, restated state, time estimates, no tangents. Use when the user says \"adhd mode\" or \"I have ADHD\", or invokes /adhd-mode; stays until \"stop adhd mode\".",
+      "latest": "1.0.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -28,6 +28,11 @@
           "version": "1.0.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/adhd-mode@v1.0.1/adhd-mode-v1.0.1.tar.gz"
+        },
+        "1.0.2": {
+          "version": "1.0.2",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/adhd-mode@v1.0.2/adhd-mode-v1.0.2.tar.gz"
         }
       }
     },
@@ -170,8 +175,8 @@
     },
     "code-design-refactor": {
       "name": "code-design-refactor",
-      "description": "Design-level refactoring rules — extraction, decoupling, SRP, encapsulation, primitive obsession. Language-agnostic. Sits between logic-cleaner (expression-level) and improve-codebase-architecture (system-level). Use when restructuring existing code at the module/class/function level.",
-      "latest": "1.1.1",
+      "description": "Design-level refactoring — extraction, decoupling, SRP, encapsulation, primitive obsession; language-agnostic. Use when restructuring code at the module, class or function level.",
+      "latest": "1.1.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -192,6 +197,11 @@
           "version": "1.1.1",
           "published_at": "2026-11-11T13:45:36Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/code-design-refactor@v1.1.1/code-design-refactor-v1.1.1.tar.gz"
+        },
+        "1.1.2": {
+          "version": "1.1.2",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/code-design-refactor@v1.1.2/code-design-refactor-v1.1.2.tar.gz"
         }
       }
     },
@@ -357,8 +367,8 @@
     },
     "design-patterns": {
       "name": "design-patterns",
-      "description": "Skeptical design-patterns reference catalog for modern Go and Python — keeps repository, adapter, strategy, decorator, observer, builder; flags the rest as anti-patterns. Consultative, not active: consult before introducing a pattern in code-design-refactor or improve-codebase-architecture, or when pushing back on a cargo-cult one. Not a refactoring rung itself.",
-      "latest": "1.1.1",
+      "description": "Skeptical design-patterns catalog for Go and Python — which few still earn their place, which are anti-patterns. Consult before introducing a pattern, or when pushing back on a cargo-cult one.",
+      "latest": "1.1.2",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -374,6 +384,11 @@
           "version": "1.1.1",
           "published_at": "2026-11-11T13:45:36Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/design-patterns@v1.1.1/design-patterns-v1.1.1.tar.gz"
+        },
+        "1.1.2": {
+          "version": "1.1.2",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/design-patterns@v1.1.2/design-patterns-v1.1.2.tar.gz"
         }
       }
     },
@@ -522,8 +537,8 @@
     },
     "feature-planner": {
       "name": "feature-planner",
-      "description": "Upstream feature planning — requirement clarification, constraint discovery, design outline, vertical-slice task breakdown ordered by risk. Hands off to grill-with-docs and tdd. Use when starting new feature work from a vague request and no plan exists yet; if a plan or design already exists, use grill-with-docs to stress-test it instead.",
-      "latest": "1.1.0",
+      "description": "Upstream feature planning — requirement and constraint discovery, design outline, risk-ordered tasks. Use when starting from a vague request with no plan yet; if a plan exists, use grill-with-docs.",
+      "latest": "1.1.1",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -534,6 +549,11 @@
           "version": "1.1.0",
           "published_at": "2026-11-06T23:28:56Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/feature-planner@v1.1.0/feature-planner-v1.1.0.tar.gz"
+        },
+        "1.1.1": {
+          "version": "1.1.1",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/feature-planner@v1.1.1/feature-planner-v1.1.1.tar.gz"
         }
       }
     },
@@ -801,8 +821,8 @@
     },
     "grill-with-docs": {
       "name": "grill-with-docs",
-      "description": "Grilling session that challenges an existing plan or design against the project's domain model, sharpens terminology, and updates documentation (CONTEXT.md, ADRs) inline as decisions crystallise. Use when a plan or design already exists and needs stress-testing; if no plan exists yet, use feature-planner first.",
-      "latest": "1.1.1",
+      "description": "Grilling session that stress-tests an existing plan against the project's domain model and updates CONTEXT.md and ADRs as decisions crystallise. Use when a plan exists and needs challenging.",
+      "latest": "1.1.2",
       "versions": {
         "1.0.1": {
           "version": "1.0.1",
@@ -818,6 +838,11 @@
           "version": "1.1.1",
           "published_at": "2026-11-11T13:45:36Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/grill-with-docs@v1.1.1/grill-with-docs-v1.1.1.tar.gz"
+        },
+        "1.1.2": {
+          "version": "1.1.2",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/grill-with-docs@v1.1.2/grill-with-docs-v1.1.2.tar.gz"
         }
       }
     },
@@ -873,13 +898,18 @@
     },
     "hexagonal-architecture": {
       "name": "hexagonal-architecture",
-      "description": "Hexagonal architecture (ports \u0026 adapters) — dependencies point inward; domain declares ports, adapters implement them; domain never imports framework/DB/HTTP. Dependency graph is prescribed, folder layout is not. Use when designing service structure, placing interfaces, or evaluating seam cleanliness.",
-      "latest": "2.0.0",
+      "description": "Hexagonal architecture (ports and adapters) — dependencies point inward; the domain declares ports, adapters implement them, no framework or database inside. Use when designing service structure or judging seams.",
+      "latest": "2.0.1",
       "versions": {
         "2.0.0": {
           "version": "2.0.0",
           "published_at": "2026-11-12T02:27:51Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hexagonal-architecture@v2.0.0/hexagonal-architecture-v2.0.0.tar.gz"
+        },
+        "2.0.1": {
+          "version": "2.0.1",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/hexagonal-architecture@v2.0.1/hexagonal-architecture-v2.0.1.tar.gz"
         }
       }
     },
@@ -907,8 +937,8 @@
     },
     "improve-codebase-architecture": {
       "name": "improve-codebase-architecture",
-      "description": "Find deepening opportunities in a codebase, informed by the domain language in CONTEXT.md and the decisions in docs/adr/. Use when the user wants to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, or make a codebase more testable and AI-navigable.",
-      "latest": "1.2.1",
+      "description": "Find deepening and consolidation opportunities in a codebase, informed by CONTEXT.md and docs/adr/. Use when asked to improve architecture, make code more testable or AI-navigable.",
+      "latest": "1.2.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -929,6 +959,11 @@
           "version": "1.2.1",
           "published_at": "2026-11-11T13:45:36Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/improve-codebase-architecture@v1.2.1/improve-codebase-architecture-v1.2.1.tar.gz"
+        },
+        "1.2.2": {
+          "version": "1.2.2",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/improve-codebase-architecture@v1.2.2/improve-codebase-architecture-v1.2.2.tar.gz"
         }
       }
     },
@@ -1365,8 +1400,8 @@
     },
     "repo-tooling-architect": {
       "name": "repo-tooling-architect",
-      "description": "Repo-root developer tooling — .editorconfig, .gitignore, version pinning (mise default, proto alt), task runner (Task default, just alt), CI (GitHub Actions default, act for local/free runs), minimal pre-commit, env vars via dotenv + external secret manager, Renovate, AGENTS.md / CLAUDE.md agent-instruction files. Use when scaffolding or auditing a repo's tooling layer, or naming/renaming Taskfile tasks.",
-      "latest": "1.6.2",
+      "description": "Repo-root developer tooling — .editorconfig, .gitignore, version pinning (mise), task runner (Task), CI (GitHub Actions, act), pre-commit, env vars, Renovate, AGENTS.md. Use when scaffolding or auditing a repo's tooling layer or naming tasks.",
+      "latest": "1.6.3",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1412,6 +1447,11 @@
           "version": "1.6.2",
           "published_at": "2026-11-12T03:51:26Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/repo-tooling-architect@v1.6.2/repo-tooling-architect-v1.6.2.tar.gz"
+        },
+        "1.6.3": {
+          "version": "1.6.3",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/repo-tooling-architect@v1.6.3/repo-tooling-architect-v1.6.3.tar.gz"
         }
       }
     },
@@ -1493,8 +1533,8 @@
     },
     "rsk-guide": {
       "name": "rsk-guide",
-      "description": "Operator's guide for the rsk CLI — manage ralvaskills via the .rsk/ project manifest (rsk new, rsk install, rsk pin), bundle/global installs and the official Anthropic cache, and the `rsk mcp` server the agent queries for project standards. Use when the user mentions rsk, asks how to install/pin/update skills, wants to add a skill to a project, is starting work in a new project or scaffolding (to learn which standards apply), or wants to set up ralvaskills on a new machine. Companion to cli-tool-architect (CLI design), mcp-architect (server design) and skill-builder (authoring new skills).",
-      "latest": "0.5.2",
+      "description": "Operator's guide to the rsk CLI — the .rsk/ manifest (new, install, pin, update), bundles, global installs and the `rsk mcp` server. Use when the user mentions rsk, installs or pins skills, or starts a project.",
+      "latest": "0.5.3",
       "versions": {
         "0.3.0": {
           "version": "0.3.0",
@@ -1535,6 +1575,11 @@
           "version": "0.5.2",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rsk-guide@v0.5.2/rsk-guide-v0.5.2.tar.gz"
+        },
+        "0.5.3": {
+          "version": "0.5.3",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rsk-guide@v0.5.3/rsk-guide-v0.5.3.tar.gz"
         }
       }
     },
@@ -1677,8 +1722,8 @@
     },
     "token-economy": {
       "name": "token-economy",
-      "description": "Token-saving habits and setup for coding agents — context and cache hygiene, batched tool calls, subagent exploration and delegation of mechanical work (refactors, checklist audits, repetitive loops) to cheaper models, escalation and session handoff, cheap-model (DeepSeek Flash) guidance, Claude Code guardrail settings and hooks, measuring sessions from transcripts, and an audit of context-mode, RTK and CodeGraph for Claude Code and OpenCode. Use when the user wants to save tokens or cost, shrink context, find where a session's tokens went, choose models or subagents for a task, hand repetitive work to a cheaper model, set up RTK/CodeGraph/context-mode, or invokes /token-economy.",
-      "latest": "1.1.1",
+      "description": "Token and cost control for coding agents — context and cache hygiene, batching, subagents for mechanical work, escalation, session measurement, guardrails, RTK/CodeGraph audit. Use when saving tokens, cost or context.",
+      "latest": "1.1.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1694,6 +1739,11 @@
           "version": "1.1.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/token-economy@v1.1.1/token-economy-v1.1.1.tar.gz"
+        },
+        "1.1.2": {
+          "version": "1.1.2",
+          "published_at": "2026-11-12T04:39:50Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/token-economy@v1.1.2/token-economy-v1.1.2.tar.gz"
         }
       }
     },
