@@ -82,6 +82,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 # CLI releases
 
+## v3.7.0 (2026-11-12)
+### Added
+- **Alias-aware updates.** `registry/index.json` carries an `aliases` map and marks a renamed skill's old entry `deprecated` with its versions intact, so `rsk install <old>@<pinned>` still resolves and an older binary sees "outdated" rather than "gone". `rsk update` resolves a retired name to its replacement, rewrites `[skills]` and `pinned` in `rsk.mod` and `name` in `rsk.lock`, removes the stale links and re-links the new names; `--global` re-points the machine-wide links and `--dry-run` writes nothing. Ten skills were renamed; the catalogue side is in Unreleased above.
+- **The `.rsk/SKILLS.md` budget warning.** `digest.Measure` estimates what `Sync` would write and each digest's share without writing anything; `rsk pin`, both project install paths and `rsk update` print one stderr warning naming the three largest digests once the file passes its 2000-token budget, and `rsk status` shows the size under its tables. `--output json` is untouched.
+- **A retired name cannot come back.** `registry/aliases.toml` records every retired name and its replacement; `internal/skill/names.go` enforces kebab-case, `directory == frontmatter name` and uniqueness, and rejects a retired name or one containing it as a whole component. `go test ./...` fails on a violation and `cmd/generate-registry` refuses to publish one.
+
+### Changed
+- The module path is `go.ralva.dev/ralvaskills/v3` (was `github.com/ralvarezdev/ralvaskills/v3`); the shared libraries come from `go.ralva.dev` too. Binaries are unaffected, importers are not.
+- Skills: 27 digests were audited (patch bumps) and ten skills renamed (MAJOR). The catalogue changes are in Unreleased above.
+
+## v3.6.1 (2026-11-11)
+### Fixed
+- `rsk update` re-renders `.rsk/SKILLS.md` from the linked digests after a pull or a registry re-link, instead of leaving the previous rules in the file the adapters import. The tag was cut but no binary was published from it, so this ships first in v3.7.0.
+
 ## v3.6.0 (2026-11-07)
 ### Added
 - **`RSK_REGISTRY_URL`:** overrides the registry base URL for one process, ahead of `registry_url` in `config.json` and the compiled-in default (`internal/config`: `Config.EffectiveRegistryURL`, used by `update`, the update check, `install` and `rsk mcp`). It must start with `http://` or `https://`, a trailing `/` is dropped, and it is never written back to `config.json`. `rsk init` offers it as the default of the registry prompt. A registry on another host needs no release.
