@@ -146,6 +146,7 @@ tasks:
     desc: Lint everything
     cmds:
       - golangci-lint run --config .golangci.yml ./...
+      - task: lint:oneliners
 
   deadcode:
     desc: Report functions unreachable from any main or test
@@ -169,7 +170,7 @@ tasks:
       - golangci-lint run --config .golangci.doccheck.yml ./cmd/rsk/... ./internal/... ./cmd/count-tokens/... ./cmd/generate-registry/... ./cmd/registry-remove/...
 
   lint:oneliners:
-    desc: Check for one-line function bodies (not part of the standard gate — opt-in)
+    desc: Check for one-line function bodies
     cmds:
       - bash skills/languages/go-architect/assets/check-no-oneline-functions.sh
 

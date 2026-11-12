@@ -20,6 +20,8 @@ const (
 	fieldArgRule = "arg:rule"
 )
 
+const messageAborted = "Aborted."
+
 // fieldError marks err as caused by the form field named field, so the
 // interactive session shows it on that field instead of dropping back to the
 // picker. On the command line it is the same error.

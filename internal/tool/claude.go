@@ -24,7 +24,7 @@ const (
 
 	// ClaudeFolderName is the name of the Claude Code configuration directory
 	// inside the user's home directory or inside the project.
-	ClaudeFolderName = ".claude"
+	ClaudeFolderName = internal.ClaudeFolderName
 
 	// ClaudeFileName is the name of the generated file inside .rsk/ that lists
 	// pinned skills for Claude Code to import.
@@ -38,7 +38,7 @@ const (
 
 	claudeImportLine    = "@" + internal.ProjectFolderName + "/" + ClaudeFileName
 	claudeFileOpenFlags = os.O_APPEND | os.O_CREATE | os.O_WRONLY
-	rskTempPattern      = ".rsk-*.tmp"
+	rskTempPattern      = internal.TempFilePattern
 
 	// claudeSkillsIndexReference is the single import line in .rsk/CLAUDE.md. The
 	// path is relative to .rsk/ and points at the generated SKILLS.md, which

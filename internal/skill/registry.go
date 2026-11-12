@@ -17,6 +17,9 @@ type Frontmatter struct {
 }
 
 const (
+	// FrontmatterDelimiter separates YAML metadata from the skill body.
+	FrontmatterDelimiter = "---"
+
 	// NamePrefix is the YAML frontmatter key that declares a skill's name. It
 	// must equal the directory the skill lives in.
 	NamePrefix = "name:"
@@ -98,7 +101,7 @@ func readFrontmatter(path string) (Frontmatter, error) {
 	inFrontmatter := false
 	for scanner.Scan() {
 		line := scanner.Text()
-		if line == "---" {
+		if line == FrontmatterDelimiter {
 			if !inFrontmatter {
 				inFrontmatter = true
 				continue

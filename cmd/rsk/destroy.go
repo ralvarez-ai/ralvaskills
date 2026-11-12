@@ -58,7 +58,7 @@ func runDestroy(cmd *cobra.Command, _ []string) error {
 	printDestroyPlan(out, rskDir, cwd, tools, len(installedNames) > 0)
 
 	if !termkit.Confirm(cmd, cmdx.Bool(cmd, cmdx.FlagYes), termkit.StdioIsTerminal(), "Proceed?") {
-		fmt.Fprintln(out, "Aborted.")
+		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
 	fmt.Fprintln(out)

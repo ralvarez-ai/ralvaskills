@@ -17,6 +17,8 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+
+	rskSkill "go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 const (
@@ -42,11 +44,11 @@ const (
 	sessionDescBudget int64 = 2200
 
 	// File and directory names.
-	skillMarkdownFile   = "SKILL.md"
+	skillMarkdownFile   = rskSkill.SkillFileName
 	stackMarkdownFile   = "STACK.md"
 	recipesMarkdownFile = "RECIPES.md"
 	gitDir              = ".git"
-	skillsDir           = "skills"
+	skillsDir           = rskSkill.SkillsFolderName
 	catalogFilePath     = "internal/config/catalog.toml"
 	docsDir             = "docs"
 	tokenCountsFile     = "TOKEN_COUNTS.md"
@@ -289,12 +291,12 @@ func scan(skillsDir string) ([]skill, error) {
 // forms, collapsing the latter to a single line for length estimation.
 func extractDescription(data []byte) string {
 	content := string(data)
-	if !strings.HasPrefix(content, "---") {
+	if !strings.HasPrefix(content, rskSkill.FrontmatterDelimiter) {
 		return ""
 	}
 
-	rest := content[3:]
-	frontmatter, _, ok := strings.Cut(rest, "\n---")
+	rest := content[len(rskSkill.FrontmatterDelimiter):]
+	frontmatter, _, ok := strings.Cut(rest, "\n"+rskSkill.FrontmatterDelimiter)
 	if !ok {
 		return ""
 	}
@@ -302,10 +304,10 @@ func extractDescription(data []byte) string {
 	lines := strings.Split(frontmatter, "\n")
 	for i, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		if !strings.HasPrefix(trimmed, "description:") {
+		if !strings.HasPrefix(trimmed, rskSkill.DescriptionPrefix) {
 			continue
 		}
-		value := strings.TrimSpace(strings.TrimPrefix(trimmed, "description:"))
+		value := strings.TrimSpace(strings.TrimPrefix(trimmed, rskSkill.DescriptionPrefix))
 
 		if strings.HasPrefix(value, ">") || strings.HasPrefix(value, "|") {
 			var parts []string
@@ -354,11 +356,11 @@ func estimateTokens(content []byte) int64 {
 // frontmatter block. If no frontmatter is present, the full content is returned.
 func stripFrontmatter(data []byte) []byte {
 	content := string(data)
-	if !strings.HasPrefix(content, "---") {
+	if !strings.HasPrefix(content, rskSkill.FrontmatterDelimiter) {
 		return data
 	}
-	rest := content[3:]
-	_, after, ok := strings.Cut(rest, "\n---")
+	rest := content[len(rskSkill.FrontmatterDelimiter):]
+	_, after, ok := strings.Cut(rest, "\n"+rskSkill.FrontmatterDelimiter)
 	if !ok {
 		return data
 	}

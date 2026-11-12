@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	descriptionField    = "description:"
-	frontmatterDelim    = "---"
+	descriptionField    = skill.DescriptionPrefix
+	frontmatterDelim    = skill.FrontmatterDelimiter
 	archiveSuffix       = ".tar.gz"
 	tempFilePattern     = ".rsk-gen-*.tmp"
 	releaseURLPath      = "releases/download"
@@ -251,7 +251,7 @@ func writeJSON(path string, v any) error {
 }
 
 func main() {
-	skillsDir := flag.String("skills-dir", "skills", "Path to skills directory")
+	skillsDir := flag.String("skills-dir", skill.SkillsFolderName, "Path to skills directory")
 	outputDir := flag.String("output-dir", "dist", "Output directory for tarballs and index")
 	existingIndex := flag.String("existing-index", "", "Path to existing index.json to merge with")
 	githubRepo := flag.String(

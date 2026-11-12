@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+
+	"go.ralva.dev/ralvaskills/v3/internal"
 )
 
 type (
@@ -153,7 +155,7 @@ func newFileIndex(root string) *fileIndex {
 // stack and would only add noise.
 func skipDir(name string) bool {
 	switch name {
-	case ".git", ".rsk", "node_modules", "vendor", ".venv", "venv", ".next", ".cache", "testdata":
+	case ".git", internal.ProjectFolderName, "node_modules", "vendor", ".venv", "venv", ".next", ".cache", "testdata":
 		return true
 	default:
 		return false

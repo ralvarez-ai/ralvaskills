@@ -18,7 +18,7 @@ const (
 
 	// TempFilePattern is the glob pattern for temporary files created during
 	// atomic write operations inside the .rsk directory.
-	TempFilePattern = ".rsk-*.tmp"
+	TempFilePattern = internal.TempFilePattern
 )
 
 // ProjectFolderPath returns the .rsk directory path for the current working

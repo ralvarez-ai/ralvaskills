@@ -109,7 +109,7 @@ func runUpdateLocal(cmd *cobra.Command, args []string, cfg config.Config, opts u
 	}
 
 	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
-		fmt.Fprintln(out, "Aborted.")
+		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
 	fmt.Fprintln(out)
@@ -414,7 +414,7 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		return nil
 	}
 	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
-		fmt.Fprintln(out, "Aborted.")
+		fmt.Fprintln(out, messageAborted)
 		saveUpdateCache(out, cfg, updatePairNames(toUpdate))
 		return nil
 	}
