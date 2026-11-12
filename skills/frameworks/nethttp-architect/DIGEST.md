@@ -21,7 +21,7 @@ Go stdlib net/http on Go 1.27.3: enhanced ServeMux, no router framework, feature
 - Errors as RFC 9457 problem+json; Recover emits 500 with correlation id, never a stack trace.
 - Background work: `context.Background()` with timeout, log errors.
 - Tests: `httptest.NewRecorder` with the handler directly; `testing/synctest` for timing-dependent goroutines.
-- OpenAPI via kin-openapi, served at `/v1/openapi.json`, snapshot-tested in CI.
+- OpenAPI: kin-openapi (the intended choice) or a committed `openapi.yaml`; CI snapshot-tests the spec.
 
 ## Hard constraints
 - Never leave the four server timeouts unset; defaults are unlimited.

@@ -14,6 +14,8 @@ Reply shape for a reader with ADHD: act first, small steps, visible state.
 
 ## Hard constraints
 - Explain/walk-through requests run long; destructive actions get confirmed first; harness and `AGENTS.md` win over the rules.
+- Cut words, never a verification or a tool call.
+- Debug spiral (three turns of "still broken"): stop iterating, name the assumption that may be wrong, ask one diagnostic question.
 - With `caveman`: caveman sets words, this sets order. Commits, docs and code keep their own format.
 
 Invoke the full skill when: the user says "adhd mode" or invokes /adhd-mode, or you need the exceptions list and the pre-send check.

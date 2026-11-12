@@ -15,7 +15,7 @@ Language-agnostic repo-root tooling: `.editorconfig`, `.gitignore`, version pins
 - `.gitignore` must include `.env.local`; audit any `.env*` pattern. No `direnv` unless you need auto-activation on `cd`.
 - Renovate is the default: minor and patch grouped weekly; security updates immediate; major bumps labeled, never auto-merged. Dependabot is an acceptable alternative for tiny single-language repos.
 - CI defaults to GitHub Actions; `act` is an opt-in free local runner (e.g. when Actions billing blocks). Wire it as one `ci:local` task with a gitignored `.secrets`.
-- `AGENTS.md` is the single source. `CLAUDE.md` stays thin: `@AGENTS.md` plus Claude-only lines. Aim for under ~150 lines in `AGENTS.md`.
+- `AGENTS.md` is the single source; `CLAUDE.md` stays thin (`@AGENTS.md` plus Claude-only lines), and a nested `AGENTS.md` exists only when that package has its own commands or rules. Aim for under ~150 lines in `AGENTS.md`.
 
 ## Hard constraints
 - Never copy a whole GitHub `.gitignore` default that covers languages you don't use.

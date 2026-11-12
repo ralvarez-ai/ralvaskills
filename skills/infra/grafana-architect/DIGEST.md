@@ -25,7 +25,7 @@ Operator side of observability: dashboards and alerts as code (Grizzly), one ser
 - `runbook_url` annotation is mandatory on every alert.
 - No CPU > 80% alerts, no per-instance alerts on horizontally scaled services, no static thresholds on traffic-growing metrics.
 - "Disk full" alerts need `for: 15m`.
-- Anonymous access off in every environment, staging included; SSO for humans.
+- Anonymous access off in any environment with non-public data, staging included; SSO for humans.
 - No personal folders for production.
 - Dashboards use read-only data sources; write access goes through audited service accounts.
 

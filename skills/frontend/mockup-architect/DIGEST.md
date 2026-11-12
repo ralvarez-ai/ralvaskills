@@ -11,7 +11,7 @@ Self-contained HTML UI mockups: dated folders, gallery index, token variables, a
 - Pages that offer options use the skill's pv-bar.css and pv-bar.js, copied next to the mockup. Axes go in the `pv-config` JSON before pv-bar.js. State: `<html data-*>`, `localStorage pv-*`, `?key=value` (query wins, not persisted). Add class `pv-clear` to the last section.
 - Axes only for what the owner can choose (palette, corners, accent, logo mark, density, theme).
 - Check contrast of every variant, not only the default.
-- Retrofit: change the generator and regenerate, never only the output.
+- Retrofit only pages that compare options; one-file-per-option rounds, JS-driven switchers and canvas exports are left alone. If the page is generated, change the generator and regenerate, never only the output.
 - Verify: parser check, axe per variant and theme, 390px and 1440px screenshots per variant, no console errors, works from `file://`.
 
 ## Hard constraints

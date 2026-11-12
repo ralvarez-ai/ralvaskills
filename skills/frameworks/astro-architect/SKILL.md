@@ -1,6 +1,6 @@
 ---
 name: astro-architect
-version: 1.1.0
+version: 1.1.1
 description: Astro 6+ standards — islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `<script>` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: study-artifact-builder
-version: 1.2.0
+version: 1.2.1
 description: Build a single-file interactive HTML artifact to study a paper's pipeline or dataset until it can be defended from memory — source pinning, paper-versus-code separation, per-component explanation (mechanics, real example, measured on the data, non-obvious details), ablation toggles, SVG diagram, numeric audit. Use when asked to study, compare, explain or memorize a method, pipeline, benchmark or dataset, or to turn a diagram into an artifact.
 ---
 

@@ -10,6 +10,7 @@ Design and review MCP servers on spec 2026-07-28: tools, resources, prompts over
 - Set annotations explicitly: `title`, `readOnlyHint`, `destructiveHint` (err toward true), `idempotentHint`, `openWorldHint`. Omitted defaults are the most dangerous.
 - Resources: `mimeType` on every resource; `ttlMs` + `cacheScope` on list and read results; deterministic list order.
 - Stateless: no `initialize`, no `Mcp-Session-Id`. Client identity and capabilities ride in `_meta` on every request.
+- `server/discover` RPC: servers MUST implement it; it returns supported versions, capabilities and server identity.
 - Headers: `MCP-Protocol-Version`, `Mcp-Method`, `Mcp-Name` on Streamable HTTP POST.
 - Mid-call input: MRTR (`InputRequiredResult`, `inputRequests`, `requestState`), not server push.
 - Cross-call state: explicit-handle pattern (tool returns an ID the model passes back).

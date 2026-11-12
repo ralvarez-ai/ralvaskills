@@ -1,6 +1,6 @@
 ---
 name: adhd-mode
-version: 1.0.0
+version: 1.0.1
 description: Output shaped for a reader with ADHD — lead with the next action, number multi-step work, restate state every turn, suppress tangents, give specific time estimates, make wins visible. Composes with caveman (words) and token-economy (cost). Use when the user says "adhd mode", "adhd friendly", "I have ADHD", or invokes /adhd-mode; stays on until "stop adhd mode" or "normal mode".
 ---
 

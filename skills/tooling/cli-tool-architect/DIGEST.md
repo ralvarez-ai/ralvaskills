@@ -4,7 +4,7 @@ Cross-language CLI standards: subcommand structure, flag > env > config > defaul
 
 ## Always-on rules
 - `tool <noun> <verb>` or `tool <verb>`; one verb per subcommand; `tool` alone prints help.
-- Positional args only for the required noun, at most two; everything else is a flag.
+- Positional args only for the required noun, and no more than two in most cases; everything else is a flag.
 - Short flags only for the top ~5; boolean flags are pure switches (`--no-foo` to negate).
 - Precedence is fixed: flag > env var > config file > built-in default. Env prefix is the upper-snake tool name.
 - Provide `tool config show` with the source of each resolved value.

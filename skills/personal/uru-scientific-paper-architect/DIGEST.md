@@ -5,7 +5,7 @@ Formats a scientific manuscript for Revista Tecnocientífica URU (No. 26 norms) 
 ## Always-on rules
 
 - Interview first, in order: article type, language, cover page, abstract (ES/EN), keywords, body, figures/tables/equations, references. Propose the outline and wait for approval before the full spec.
-- Article type sets structure and page limit: 20 pages, or 8 for nota técnica. Confirm the content fits the type by method, not topic.
+- Article type sets structure and page limit: 20 pages, or 8 for nota técnica. Confirm the content fits the type by method and intent, not just subject matter.
 - Typography: Times New Roman 12pt justified; title 16pt bold centered; captions 10pt; section names bold centered; subsections bold, left, Title Case.
 - Double spacing, except resumen/abstract, agradecimientos and references (single).
 - Cover: up to 6 authors; name as `Primer nombre, inicial del segundo, Primer apellido-Segundo apellido`; each with affiliation, city, country, email, ORCID.

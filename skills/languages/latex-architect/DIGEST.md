@@ -19,7 +19,7 @@ LaTeX standards for documents you control: TeX Live 2026, pdfLaTeX default, late
 - Quality gates: chktex and latexindent; CI builds the PDF on every push.
 
 ## Hard constraints
-- Never `$$`, `eqnarray`, `\hline`, `subfigure`, `\bf`/`\it`/`\rm`/`\sc`, `\centerline`, or `\sloppy` to fix overfull boxes.
+- Never `$$`, `eqnarray`, `\hline`, `subfigure`, `\bf`/`\it`/`\rm`/`\sc`, `\centerline`, `\sloppy` to fix overfull boxes, or `\\` to end a paragraph.
 - Zero tolerance for `Overfull \hbox` over ~5pt in the final pass; fix by rewording.
 - Never `\vspace`/`\hspace` for layout; never absolute paths in `\includegraphics`.
 - Never convert a venue's natbib template to biblatex; keep natbib and `bibtex` there.

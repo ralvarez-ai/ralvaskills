@@ -4,7 +4,7 @@ Evidence-based declutter audit: dead code, unused exports, duplication, oversize
 
 ## Always-on rules
 - Audit tracked files only (`git ls-files`); exclude generated code and note the exclusion in the report.
-- For a library, enumerate real consumers before calling anything dead. "This repo does not use it" is not "nobody uses it".
+- For a library, enumerate real consumers before calling anything dead, and call a symbol dead only when every consumer reports it unreachable. "This repo does not use it" is not "nobody uses it".
 - Tests count as roots by default.
 - Keep categories apart: dead code (delete), unused export (unexport or deprecate), duplication (extract or share), size (candidate only), modularization (hand off).
 - Verify every hit before it reaches the report. Static tools miss reflection, cobra `RunE`, handlers in maps, framework conventions.

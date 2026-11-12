@@ -1,6 +1,6 @@
 ---
 name: demo-presentation-architect
-version: 1.2.0
+version: 1.2.1
 description: Design slide-deck specifications — slide budget, narrative arc, splitting rule, takeaway-led titles, body word budgets, per-slide layout from a fixed catalog. Outputs one `.md` slide-by-slide; never HTML/PDF/PPTX. Always interviews for language + core info first. Use when authoring presentation specs.
 ---
 

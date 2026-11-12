@@ -25,6 +25,7 @@ Purpose: one `docs/` tree where the folder is the doc type, frontmatter is the s
 - Never reuse an ADR number. Keep `adr/` flat; no per-project subfolder there.
 - Create a per-project subfolder inside a type only after ~10 files of that type.
 - Migrate: propose moves and renames, wait for approval, then move.
+- Stale work is pruned, not archived: a backlog item unmoved for 2–3 months is deleted or demoted, and drafts older than 2 months are promoted or deleted.
 - Never duplicate these conventions in `CLAUDE.md`/`AGENTS.md`; point them at `docs/`.
 
 Invoke the full skill when: setting up `docs/`, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.

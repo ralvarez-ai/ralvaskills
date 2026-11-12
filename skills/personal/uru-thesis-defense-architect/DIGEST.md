@@ -10,7 +10,7 @@ Writes one `.md` slide-by-slide spec for a URU (Universidad Real) thesis defense
 - Resultados correlate 1:1 with the Metodología de Desarrollo fases.
 - Section emphasis: objetivo general and específicos visually separate; metodología has four fields (Tipo, Diseño, Población-Muestra, Técnicas e Instrumentos); conclusiones closes with a handoff line to the live demo.
 - Every slide text in Spanish, including speaker notes.
-- Logo asset: the skill's `uru-logo.png`. Lámina 1: large, centered, top. Lámina 2 onward, including extra slides of a section: small, top-left. Every slide has a `**Logo:**` field. Never describe the logo's content.
+- Logo asset: the skill's `assets/uru-logo.png`. Lámina 1: large, centered, top. Lámina 2 onward, including extra slides of a section: small, top-left. Every slide has a `**Logo:**` field. Never describe the logo's content.
 - Slide block: `## Lámina N — <Sección>`, `**Logo:**`, `**Contenido:**`, optional `**Notas del orador:**`.
 - Run the skill's review checklist before handing off the spec.
 

@@ -22,6 +22,7 @@ Architecture standards for Hugo 0.161 Extended sites and themes: layout, front m
 - Never inject styling through shortcodes.
 - Never hardcode UI strings in templates.
 - Never mix TOML and YAML front matter in one repo.
+- Never rely on the global scope inside a partial; pass an explicit context.
 - Enable `unsafe = true` only when content authors are trusted.
 
 Invoke the full skill when: scaffolding, reviewing or auditing a Hugo site or theme, or choosing modules, bundles, pipes, i18n or deploy setup.

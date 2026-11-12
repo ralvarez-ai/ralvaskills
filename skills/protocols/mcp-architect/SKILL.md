@@ -1,6 +1,6 @@
 ---
 name: mcp-architect
-version: 2.4.0
+version: 2.4.1
 description: MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations, structured output, JSON-RPC error mapping, prompt-injection/SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — JSON Schemas as the source of truth for tool inputs/outputs, Go types generated with atombender/go-jsonschema, enums shared via $defs, and the two traps (SDK resolves OutputSchema with no loader; go-jsonschema ignores $ref) that silently yield a wrong contract. MCP Apps panels only as an addition to a complete text result, with capability detection on stateless servers.
 ---
 

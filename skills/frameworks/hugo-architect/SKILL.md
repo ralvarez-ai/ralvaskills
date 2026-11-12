@@ -1,6 +1,6 @@
 ---
 name: hugo-architect
-version: 1.1.0
+version: 1.1.1
 description: Hugo 0.161 static-site architectural standards — project layout, front matter conventions, template hierarchy, Hugo Modules over submodules, Page Bundles, asset pipeline via Hugo Pipes, i18n, render hooks, deployment targets. Extended edition required. Use when scaffolding, reviewing, or auditing a Hugo site or theme.
 ---
 

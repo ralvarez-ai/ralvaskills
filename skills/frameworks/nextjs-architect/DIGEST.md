@@ -17,7 +17,7 @@ Next.js 16 standards: App Router only, server components by default, server acti
 - Metadata via `generateMetadata` and root `metadata`; never hand-write `<head>`.
 - `priority` only on above-the-fold images; remote images need `remotePatterns`.
 - Only `NEXT_PUBLIC_*` env vars reach the client; the rest are server-only.
-- Tests: Vitest + RTL for components, action functions as units, Playwright against `next start`.
+- Tests: Vitest + RTL for components, action functions as units, Playwright against `next start`, or `next dev` in CI (build then start).
 
 ## Hard constraints
 - Never `<img>` in App Router code; always `next/image` with width/height or `fill`.

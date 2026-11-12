@@ -5,8 +5,8 @@ Astro 6+ standards: zero-JS-by-default output, typed content collections, script
 ## Always-on rules
 - Default to `.astro` components; use a framework island only when the interaction cannot be an event handler on server HTML.
 - Interactivity ladder, cheapest first: CSS `:checked`/`:target`/`:hover`; `<details>`/`<dialog>`; processed `<script>` in the `.astro` file; `client:visible`/`client:idle` island; `client:load` last resort.
-- Every `<script>` ships to the browser. Processed scripts are bundled, deduped, hoisted, rendered once per page.
-- Collections live in `src/content.config.ts`; each has a loader and a schema.
+- Every `<script>` ships to the browser. Processed scripts are bundled, deduped, hoisted; a `<script>` in `src/components/` renders once per page.
+- Collections live in `src/content.config.ts`; each needs a loader (required) and a schema (optional but load-bearing).
 - Import Zod from `astro/zod`. Import order: `astro:content`, `astro/loaders`, `astro/zod`.
 - Dates: `z.coerce.date()`.
 - `getCollection` is unsorted: sort explicitly. Filter in the query. Use `getEntry` for lookup by id.

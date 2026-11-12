@@ -1,6 +1,6 @@
 ---
 name: backend-performance-architect
-version: 1.0.0
+version: 1.0.1
 description: Backend latency and throughput design — an impact-ordered playbook: query and index shape, cache layers and invalidation, moving work off the hot path (queues, outbox, precompute), fewer and parallel network hops, tail-latency controls (deadlines, retries, backpressure, load shedding, single-flight), then serialization and lock contention. Covers Go transport choices — unary RPC vs streaming/bidi gRPC, and when a fasthttp server is worth it. Use whenever a service feels slow, an endpoint misses its p99, a load test is coming, or someone asks whether a faster transport, framework or server would help.
 ---
 

@@ -9,7 +9,7 @@ Operator's summary of the `rsk` CLI: manage ralvaskills skills via the `.rsk/` m
 - Quote the exact command, then wait for the user to confirm, redirect or decline.
 - Use `--dry-run` when available if the user wants to preview.
 - Confirm each bundle and each pin separately, even after a blanket "yes".
-- Pin only skills that truly need auto-loading; installed-but-unpinned skills are not auto-loaded.
+- Pin only skills that truly need auto-loading; installed-but-unpinned skills are not auto-loaded. Keep the pinned set small: the generated file has a 2000-token budget, and `rsk` warns once it passes.
 - Read-only commands (`rsk list`, `rsk catalog`, `rsk status` without `--stack`) need no confirmation.
 - Verify flags against `rsk --help`; the CLI is still in progress (draft).
 

@@ -31,7 +31,7 @@ Wails v3.1 shell around an existing web app: embedded SPA, same-origin API proxy
 ## Hard constraints
 - Never rewrite `Secure`/`Domain`/`SameSite` to fix cookies; the cookie is never stored.
 - Never claim a platform works because it compiles.
-- Never put the upload key, passwords or a GitHub token in the repo or binary.
+- Never put the upload key or passwords in the repo or binary; a private-repo GitHub provider needs a token in the binary — prefer an `endpoint` provider with a signed manifest.
 - Never design around service workers, Web Push, passkeys or a keychain in the webview.
 - Add native features only after the shell works, in value order.
 

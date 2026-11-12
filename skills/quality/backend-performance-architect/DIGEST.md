@@ -10,7 +10,7 @@ Impact-ordered backend latency and throughput playbook: remove work first, then 
 - Cache in layers — in-process (bounded + TTL), shared (Valkey/Redis), CDN/HTTP — with an explicit invalidation story. Version keys; never cache an authorization decision without a revocation path.
 - Coalesce concurrent misses (`singleflight`), jitter TTLs so a fleet does not expire together, and cache negatives briefly.
 - Move email, push, audit, exports and webhooks behind a queue or outbox; return `202` and let a worker do the work.
-- Index every FK and every `WHERE`/`JOIN` column; composite most-selective-first; partial index for soft delete; read the plan before adding one.
+- Index every FK not already covered by a composite index, and every `WHERE`/`JOIN` column; composite most-selective-first; partial index for soft delete; read the plan before adding one.
 - Kill N+1 with batching/`IN`/`JOIN`; `COPY`/`UNNEST` for bulk writes; cursor pagination on hot lists, never `OFFSET`.
 - Size connection pools explicitly and cap the total across replicas. Add a read replica only with explicit routing and bounded staleness; shard only after a single-node measurement.
 - One pooled HTTP client or gRPC/Connect channel per target. Parallelize independent hops with bounded concurrency; prefer a batch endpoint over N calls.

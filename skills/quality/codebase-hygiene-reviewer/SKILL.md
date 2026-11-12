@@ -1,6 +1,6 @@
 ---
 name: codebase-hygiene-reviewer
-version: 1.2.0
+version: 1.2.1
 description: Evidence-based declutter audit — dead code, unused exports, duplication, oversized files/functions, modularization candidates; shared libraries with several consumers. Proposes, never edits. Use when cleaning up a repo or library, hunting dead code, or sizing a split.
 ---
 

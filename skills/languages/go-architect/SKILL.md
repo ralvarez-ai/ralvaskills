@@ -1,6 +1,6 @@
 ---
 name: go-architect
-version: 1.20.0
+version: 1.20.1
 description: Go 1.27.3 architectural standards — memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/<protocol>, postgres/, inbound <protocol> packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.
 ---
 

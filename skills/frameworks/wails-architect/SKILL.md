@@ -1,6 +1,6 @@
 ---
 name: wails-architect
-version: 1.0.0
+version: 1.0.1
 description: Wails v3.1 shell around an existing web app — embedded SPA build, same-origin API proxy with server-held session cookies (WebKit drops Set-Cookie on custom schemes), per-OS window chrome, Android fetch shim and insets, packaging and Play signing. Use when scaffolding or reviewing a Wails desktop/mobile shell, or when sign-in fails inside the webview.
 ---
 

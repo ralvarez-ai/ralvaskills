@@ -10,7 +10,7 @@ Builds one self-contained interactive HTML file that lets you study a paper's pi
 - Label what was not verified; a "not verified" chip beats a confident guess.
 - Keep notes beside components, not inside them: component facts, paper claim, code behavior and discrepancy get separate blocks.
 - Run what you explain: read the function, run the component on the data, then write.
-- Interview before building, in order: goal, subject, witnesses, depth, language. Wait for each answer.
+- Interview before building, in order: goal, subject, witnesses, depth, language. Wait for each answer; skip a question only when the user already stated it.
 - Explain each component in the fixed form: why it exists, inputs and outputs, steps, real example, measured, non-obvious details, consequence, not verified. Fill every part or write "not available".
 - Check each rate is k over n; recompute every cited percentage and name its base. Report odd cells, do not fix them.
 - Before handover: render headless with no script errors, test one interaction per control, review the screenshot, run the numeric audit in the page.

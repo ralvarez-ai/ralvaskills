@@ -1,6 +1,6 @@
 ---
 name: mockup-architect
-version: 1.0.0
+version: 1.0.1
 description: Standards for UI mockups as self-contained HTML — dated folders, a gallery index, tokens as CSS variables, and the fixed preview bar that flips palette, corners, accent and mark variants (state in data attributes, localStorage and ?query so screenshots are reproducible). Ships pv-bar.css and pv-bar.js. Use when drawing, comparing or retrofitting mockups, or when a mockup offers options to choose between.
 ---
 

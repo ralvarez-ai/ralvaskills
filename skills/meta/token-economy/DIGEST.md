@@ -20,6 +20,7 @@ Spend tokens where they buy accuracy. Cut what persists (context, cache, always-
 - Poll inside the 5-minute cache TTL or far beyond it, or let a script wait and report once.
 - After a long break, `/clear` rather than resume a large context.
 - Install only the skills and MCP servers a project uses.
+- Configuration beats instructions: prefer a setting, then a hook, then a sentence.
 
 ## Hard constraints
 - Never fork a deep context; brief a fresh subagent instead.

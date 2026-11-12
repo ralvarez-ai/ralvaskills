@@ -1,6 +1,6 @@
 ---
 name: latex-architect
-version: 1.1.0
+version: 1.1.1
 description: LaTeX document standards on TeX Live 2026 — latexmk-only builds, preamble and package-order discipline, biblatex + biber bibliographies, semantic cross-references (cleveref, siunitx, booktabs), float and math conventions, chktex/latexindent gates. Use when writing, building, structuring, or reviewing LaTeX documents, papers, reports, or theses.
 ---
 

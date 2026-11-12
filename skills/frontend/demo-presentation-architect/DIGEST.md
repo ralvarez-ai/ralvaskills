@@ -5,7 +5,7 @@ Designs a slide-deck spec as one `.md` file: slide budget, narrative arc, layout
 ## Always-on rules
 - Interview first, in order: language, then core info (topic, audience, goal, duration/slide budget, source material, constraints). Propose the outline; expand to full slide specs only after approval.
 - Slide budget: ~90-120 s per content slide; subtract fixed slots.
-- Fixed slots: `cover` opens; `section-divider` when >=3 sections; `recap-numbered` (>=3 takeaways) and/or `closing-cta` close; a live-demo handoff ends with `handoff-band`.
+- Fixed slots: `cover` opens; `section-divider` when >=3 sections (skipped for decks of 8 slides or fewer); `recap-numbered` (>=3 takeaways) and/or `closing-cta` close; a live-demo handoff ends with `handoff-band`.
 - One idea per slide. Split on an "and"/comma joining unrelated phrases, word-budget overflow, two card-grids, or a transition that needs a new idea.
 - A concept appears on at most two slides: introduction and recap.
 - Title carries the takeaway, not the topic; exactly one `<em>` accent on the takeaway word.

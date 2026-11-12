@@ -21,7 +21,7 @@ Designs landing-page proposals as self-contained HTML grounded in product code, 
 - Forbidden: stock photography, purple gradients, bento grids of grey cards with an icon each, "Trusted by 10,000 teams", invented testimonials, fake metrics.
 - Each page: self-contained HTML, inline CSS and SVG, no CDN, under 200 KB excluding captures.
 - Light and dark via `data-theme` with a toggle. One h1, skip link, focus-visible, 44 px targets.
-- Before showing anyone: verify-js axe x8 (390x844 and 1440x800, light and dark, motion and reduced) zero violations; HTML parser check; smoke test; look at the screenshots.
+- Before showing anyone: `verify.js` axe x8 (390x844 and 1440x800, light and dark, motion and reduced) zero violations; HTML parser check; smoke test; look at the screenshots.
 - State what is not covered: screen readers, Safari/Firefox, real devices, user testing.
 
 Invoke the full skill when: drawing, proposing or improving a product's public landing page, comparing directions, or asked to make it more attractive or dynamic. Not for porting a chosen design into the app.

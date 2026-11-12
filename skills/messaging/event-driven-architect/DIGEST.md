@@ -3,7 +3,7 @@
 Async event services: event and command taxonomy, Protobuf schemas, topic naming, outbox, idempotency, DLQs, backpressure, schema evolution. Broker-agnostic.
 
 ## Always-on rules
-- Events are past-tense facts (`OrderPlaced`). Commands are imperative with one handler (`PlaceOrder`). A command with several handlers is an event; rename it.
+- Events are past-tense facts (`OrderPlaced`). Commands are imperative with one handler (`PlaceOrder`). A command with several handlers is almost always wrong — it is an event in disguise; rename it.
 - Envelope on every event: `event_id` (UUID v7), `occurred_at` (RFC 3339), `aggregate_id`, `schema_version`.
 - Payloads are minimal: IDs and the facts subscribers need, not full aggregate state.
 - Topic: `<org>.<context>.<resource>.<version>.<event_name>`. Version lives in the topic name. One case convention per broker.

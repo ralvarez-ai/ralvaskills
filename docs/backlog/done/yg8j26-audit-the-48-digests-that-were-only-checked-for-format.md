@@ -1,0 +1,15 @@
+---
+title: 'Audit the 48 digests that were only checked for format'
+priority: p3
+section: ralvaskills
+topics:
+    - skills
+    - tokens
+---
+Twelve digests were compared line by line with their skills (11 needed fixes: invented or over-strong wording, omitted hard constraints). The other 48 were drafted by a cheap model and checked mechanically only. Run the same audit (digest against `SKILL.md` and supporting files: unsupported claims, constraints worded stronger than the source, omitted never/always rules, paths that mislead without the skill) and fix what it finds.
+
+Done when every digest has been audited; record the result in `docs/reviews/2026-11-06-skill-digests-and-compaction.md` or a new review.
+
+Plan and per-batch findings: [digest audit plan](../../plans/2026-11-11-digest-audit.md).
+
+Resolved 2026-11-11: all 67 digests were read against their `SKILL.md` and the files a rule depends on, and 29 defects were fixed in 26 skills — 13 over-strong (`at most two` where the body says "in most cases", `every FK` where the body exempts a covering composite index, `a command with several handlers is an event` where the body says "almost always"), 10 omitted hard constraints (`server/discover` MUST in `mcp-architect`, HTTPS-always in `rest-api-architect`, the harness-trailer rule in `commit-author`), and 3 misleading paths (`verify-js` for `verify.js`, `uru-logo.png` for `assets/uru-logo.png`). Nothing was invented or stale — the failure mode the first pass found had already been fixed on the 12 it audited. Forty skills came back clean; `go-architect` only needed its 43 lines trimmed to the 40-line cap. Every touched skill got a patch bump. Recorded in [docs/reviews/2026-11-11-digest-audit.md](../../reviews/2026-11-11-digest-audit.md). Left over: the 27 skills are uncommitted and unpublished, and 44 digests are still over the ~500-token target — trimming them is a content decision, separate from this audit.

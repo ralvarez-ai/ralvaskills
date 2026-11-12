@@ -1,6 +1,6 @@
 ---
 name: grafana-architect
-version: 1.1.0
+version: 1.1.1
 description: Grafana dashboards + alerts — dashboards-as-code (Grizzly), per-service folders, one-question-per-panel, unified alerting with runbooks, low-cardinality discipline. Use when designing dashboards, writing alert rules, or auditing.
 ---
 

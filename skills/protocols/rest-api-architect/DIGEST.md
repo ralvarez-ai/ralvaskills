@@ -12,6 +12,7 @@ Framework-agnostic JSON-over-HTTP REST conventions: URLs, methods, status codes,
 - Errors are RFC 9457 `application/problem+json`; `type` is a stable URL; `correlation_id` on every `5xx`.
 - JSON: ISO 8601 timestamps with timezone as strings; money as decimal strings; UUID v7; `null` is intentional absence, a missing field is not provided.
 - Auth via `Authorization: Bearer`. No tokens in query params; no PII in URLs.
+- HTTPS always; reject plaintext in production at the load balancer.
 - `Cache-Control` on every response; `Vary` when responses differ by user or encoding.
 - Rate limits: `429` with `RateLimit-*` headers and `Retry-After`; limit per caller, not per IP.
 - OpenAPI 3.1 is generated from code, snapshot-tested and linted in CI.
