@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-12T03:51:26Z",
+  "generated_at": "2026-11-12T03:53:51Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -1866,7 +1866,7 @@
     "wails-architect": {
       "name": "wails-architect",
       "description": "Wails v3.1 shell around an existing web app — embedded SPA build, same-origin API proxy with server-held session cookies (WebKit drops Set-Cookie on custom schemes), per-OS window chrome, Android fetch shim and insets, packaging and Play signing. Use when scaffolding or reviewing a Wails desktop/mobile shell, or when sign-in fails inside the webview.",
-      "latest": "1.0.1",
+      "latest": "1.0.2",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1877,6 +1877,11 @@
           "version": "1.0.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/wails-architect@v1.0.1/wails-architect-v1.0.1.tar.gz"
+        },
+        "1.0.2": {
+          "version": "1.0.2",
+          "published_at": "2026-11-12T03:53:51Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/wails-architect@v1.0.2/wails-architect-v1.0.2.tar.gz"
         }
       }
     },
