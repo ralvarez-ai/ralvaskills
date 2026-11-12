@@ -383,16 +383,20 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 
 	applyRenames(cmd, cfg, reg, index, targets, opts, out, errOut)
 
-	namesToCheck, err := registryNamesToCheck(out, args, targets)
-	if err != nil {
-		return err
-	}
-
 	// A project's lock is its own record of what is resolved. Read it before
 	// deciding what is outdated: a lock that fell behind the links (a restored
 	// file, an aborted update) must be repaired, not trusted.
 	locked := projectLockedVersions(opts.global)
-	namesToCheck = withLockedNames(namesToCheck, locked)
+
+	namesToCheck, err := registryNamesToCheck(out, args, targets)
+	if err != nil {
+		return err
+	}
+	// A bare `rsk update` also checks what the lock tracks: an entry whose link
+	// went missing is otherwise invisible. Named skills are checked by name.
+	if len(args) == 0 {
+		namesToCheck = withLockedNames(namesToCheck, locked)
+	}
 
 	toUpdate := findOutdatedSkills(
 		ctx, out, reg, index.Skills, namesToCheck, targets, cfg.RegistryCache(), locked,
