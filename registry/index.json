@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-12T04:39:50Z",
+  "generated_at": "2026-11-12T18:24:10Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -1052,8 +1052,8 @@
     },
     "mcp-architect": {
       "name": "mcp-architect",
-      "description": "MCP (Model Context Protocol) 2026-07-28 server standards — tool/resource/prompt primitives, stateless protocol core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name header routing, Multi Round-Trip Requests (MRTR) for elicitation/sampling, cacheable list results (ttlMs/cacheScope), OAuth 2.1 + RFC 8707 resource indicators + RFC 9207 issuer validation, tool annotations, structured output, JSON-RPC error mapping, prompt-injection/SSRF defenses, MCP Inspector testing. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing, or scaffolding an MCP server. Go schema-driven contracts — JSON Schemas as the source of truth for tool inputs/outputs, Go types generated with atombender/go-jsonschema, enums shared via $defs, and the two traps (SDK resolves OutputSchema with no loader; go-jsonschema ignores $ref) that silently yield a wrong contract. MCP Apps panels only as an addition to a complete text result, with capability detection on stateless servers.",
-      "latest": "2.4.1",
+      "description": "MCP (Model Context Protocol) 2026-07-28 server standards — tools, resources, prompts, stateless core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name routing, MRTR for elicitation/sampling, cacheable lists (ttlMs/cacheScope), OAuth 2.1 (RFC 8707 resources, RFC 9207 issuer), annotations, structured output, JSON-RPC errors, injection/SSRF defenses, Inspector testing. Tool-surface economy: the token budget of the tool list, merging reads, endpoint splits, resources for read-mostly data. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing or scaffolding an MCP server, or when its tool list has grown too large. Go schema-driven contracts — JSON Schemas as the source of truth, types via atombender/go-jsonschema, enums in $defs, and the traps (SDK OutputSchema with no loader; generator ignores $ref). MCP Apps panels only add to a complete text result.",
+      "latest": "2.5.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1099,6 +1099,11 @@
           "version": "2.4.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/mcp-architect@v2.4.1/mcp-architect-v2.4.1.tar.gz"
+        },
+        "2.5.0": {
+          "version": "2.5.0",
+          "published_at": "2026-11-12T18:24:10Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/mcp-architect@v2.5.0/mcp-architect-v2.5.0.tar.gz"
         }
       }
     },
