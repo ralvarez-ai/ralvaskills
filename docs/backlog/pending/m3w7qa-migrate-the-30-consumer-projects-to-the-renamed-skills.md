@@ -24,3 +24,12 @@ Step 3 of [ADR 0002](../../adr/0002-rename-ten-skills-with-registry-aliases.md).
 Run `rsk update --dry-run` per repo first (it prints one `would rename` line per name and writes nothing), then `rsk update`, then commit the two-line `rsk.mod`/`rsk.lock` diff in that repo. Then `rsk update --global --dry-run` and `rsk update --global` for the four machine-wide links (`demo-script-architect`, `hexagonal-arch` in both `~/.claude/skills` and `~/.config/opencode/skills`).
 
 Done when no `rsk.mod` or `rsk.lock` under `~/Dev` contains a retired name, both global targets link the new names only, and `.rsk/SKILLS.md` in each repo names the new skills.
+
+## Status 2026-11-12
+
+All 30 manifests and the four global links are migrated: no `rsk.mod` or `rsk.lock` under `~/Dev` holds a retired name, and both global targets link `hexagonal-architecture@2.0.0` and `demo-script-designer@2.0.0` only. 24 projects carry the commit (`.rsk/rsk.mod` + `.rsk/rsk.lock` only). Six are migrated on disk but not committed:
+
+- Five already had uncommitted `.rsk/` work before the run, so the rename edit sits in their working tree with it: `automation-labs-coding-agents-benchmarks/third-party/openhands-plc`, `automation-labs-iec-core`, `automation-labs-plc-platform-mcp-apps-panels` (its own repo), `automation-labs-plc-platform-plugins`, `automation-labs-plc-platform-trace`.
+- `automation-labs-plc-platform-mcp-apps` cannot be committed while its `third-party/planttalk-charts` submodule points at a missing alternate object path — `git status` fails before anything can be staged.
+
+`automation-labs-plc-platform-env-overlay` also took the update's other version bumps, because its lock was still on `go-architect` 1.7.1; that is one `rsk update`, not a hand edit.
