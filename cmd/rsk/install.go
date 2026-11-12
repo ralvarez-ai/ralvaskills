@@ -29,7 +29,7 @@ var installCmd = &cobra.Command{
 Names are resolved against the catalog: if a name matches a bundle, the bundle
 expands to its skills; otherwise the name is treated as a single skill.
 
-By default installs into the current project: symlinks in .claude/skills/ and
+By default installs into the current project: symlinks in the selected tools' skill directories and
 entries in .rsk/rsk.mod and .rsk/rsk.lock.
 
 With --global the install targets the configured global skills directories
@@ -197,7 +197,7 @@ func runInstallGlobal(
 		return nil
 	}
 	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
-		fmt.Fprintln(out, "Aborted.")
+		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
 	fmt.Fprintln(out)
@@ -267,7 +267,7 @@ func previewAndConfirm(
 		return false
 	}
 	if !termkit.Confirm(cmd, yes, termkit.StdioIsTerminal(), "Proceed?") {
-		fmt.Fprintln(out, "Aborted.")
+		fmt.Fprintln(out, messageAborted)
 		return false
 	}
 	fmt.Fprintln(out)

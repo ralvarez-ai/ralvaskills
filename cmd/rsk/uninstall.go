@@ -28,7 +28,7 @@ var uninstallCmd = &cobra.Command{
 Names are resolved against the catalog: a name that matches a bundle expands
 to that bundle's skills; otherwise the name is treated as a single skill.
 
-By default operates on the current project (.claude/skills/ symlinks) and
+By default operates on the current project's selected tool directories and
 cleans up .rsk/rsk.mod, .rsk/rsk.lock, and pinned skill imports. With --global the
 operation targets the configured global skills directories instead.
 
@@ -119,7 +119,7 @@ func runUninstall(cmd *cobra.Command, opts uninstallOpts, args []string) error {
 		return nil
 	}
 	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
-		fmt.Fprintln(out, "Aborted.")
+		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
 	fmt.Fprintln(out)

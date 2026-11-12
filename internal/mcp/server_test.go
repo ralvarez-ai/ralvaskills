@@ -107,6 +107,23 @@ func TestServerToolsAndResource(t *testing.T) {
 	}
 }
 
+func TestReadOnlyServerOmitsInstall(t *testing.T) {
+	t.Parallel()
+	session := newSession(t, mcp.Deps{ReadOnly: true, Logger: slog.New(slog.DiscardHandler)})
+	result, err := session.ListTools(t.Context(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Tools) != 2 {
+		t.Fatalf("read-only tools = %+v, want exactly two", result.Tools)
+	}
+	for _, entry := range result.Tools {
+		if entry.Name == "install_skills" || entry.Annotations == nil || !entry.Annotations.ReadOnlyHint {
+			t.Errorf("unexpected tool in read-only server: %+v", entry)
+		}
+	}
+}
+
 func TestProjectProfileMissingPathIsToolError(t *testing.T) {
 	t.Parallel()
 

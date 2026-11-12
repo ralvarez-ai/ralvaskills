@@ -90,13 +90,16 @@ func registerTools(srv *sdk.Server, deps Deps) {
 			"Read-only.",
 		Annotations: readOnlyAnnotations("Search skills"),
 	}, searchHandler(deps))
+	if deps.ReadOnly {
+		return
+	}
 
 	installTool := &sdk.Tool{
 		Name:  "install_skills",
 		Title: "Install skills",
 		Description: "Install one or more skills or bundles into this project by " +
 			"name, resolving them through the ralvaskills catalog. Writes symlinks " +
-			"and the project manifest. The client asks the user to approve.",
+			"and the project manifest. Approval depends on the client configuration.",
 		Annotations: mutatingAnnotations("Install skills"),
 	}
 	installTool.Meta = sdk.Meta{requiresUserInteractionKey: true}

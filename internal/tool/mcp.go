@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 	"go.ralva.dev/ralvaskills/v3/internal/fsx"
 )
 
@@ -20,6 +21,9 @@ const (
 
 	// openCodeMCPKey is the opencode.json key holding local MCP servers.
 	openCodeMCPKey = "mcp"
+	mcpCommandKey  = "command"
+	mcpTypeKey     = "type"
+	mcpLocalType   = "local"
 
 	mcpPointerStart = "<!-- rsk-mcp:start -->"
 	mcpPointerEnd   = "<!-- rsk-mcp:end -->"
@@ -27,12 +31,24 @@ const (
 
 // claudeMCPServer is the Claude Code MCP entry rsk registers.
 func claudeMCPServer() map[string]any {
-	return map[string]any{"command": "rsk", "args": []any{"mcp"}}
+	return map[string]any{mcpCommandKey: rskMCPServerName, "args": []any{openCodeMCPKey}}
 }
 
 // openCodeMCPServer is the opencode MCP entry rsk registers.
 func openCodeMCPServer() map[string]any {
-	return map[string]any{"type": "local", "command": []any{"rsk", "mcp"}, "enabled": true}
+	return map[string]any{
+		mcpTypeKey:    mcpLocalType,
+		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, "--read-only"},
+		"enabled":     true,
+	}
+}
+
+func legacyOpenCodeMCPServer() map[string]any {
+	return map[string]any{
+		mcpTypeKey:    mcpLocalType,
+		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey},
+		"enabled":     true,
+	}
 }
 
 // RegisterMCP writes the rsk server into the project's .mcp.json, preserving
@@ -49,25 +65,184 @@ func (*ClaudeTool) RegisterMCP(projectDir string) (string, error) {
 func (*ClaudeTool) UnregisterMCP(projectDir string) error {
 	return removeMCPServer(
 		filepath.Join(projectDir, MCPFileName), "mcpServers",
-		readClaudeConfig, writeClaudeConfig,
+		claudeMCPServer(), readClaudeConfig, writeClaudeConfig,
 	)
 }
 
 // RegisterMCP writes the rsk server into the project's opencode.json, preserving
 // other servers and keys. It is idempotent and returns the path written.
 func (*openCodeTool) RegisterMCP(projectDir string) (string, error) {
+	if err := rejectAlternateOpenCodeConfigs(projectDir); err != nil {
+		return "", err
+	}
+	path := filepath.Join(projectDir, OpenCodeFileName)
+	cfg, err := readOCConfig(path)
+	if err != nil {
+		return "", err
+	}
+	if mcp, ok := cfg[openCodeMCPKey].(map[string]any); ok {
+		if _, exists := mcp["servers"]; exists {
+			return registerOpenCodeV2(path, cfg, mcp)
+		}
+	}
 	return registerMCPServer(
-		filepath.Join(projectDir, OpenCodeFileName), openCodeMCPKey,
+		path, openCodeMCPKey,
 		openCodeMCPServer(), readOCConfig, writeOCConfig,
 	)
 }
 
 // UnregisterMCP removes the rsk server from opencode.json, leaving others intact.
 func (*openCodeTool) UnregisterMCP(projectDir string) error {
+	if err := rejectAlternateOpenCodeConfigs(projectDir); err != nil {
+		return err
+	}
+	path := filepath.Join(projectDir, OpenCodeFileName)
+	cfg, err := readOCConfig(path)
+	if err != nil {
+		return err
+	}
+	if mcp, ok := cfg[openCodeMCPKey].(map[string]any); ok {
+		if _, exists := mcp["servers"]; exists {
+			return removeOpenCodeV2(path, cfg, mcp)
+		}
+	}
 	return removeMCPServer(
-		filepath.Join(projectDir, OpenCodeFileName), openCodeMCPKey,
-		readOCConfig, writeOCConfig,
+		path, openCodeMCPKey,
+		openCodeMCPServer(), readOCConfig, writeOCConfig,
 	)
+}
+
+func rejectAlternateOpenCodeConfigs(projectDir string) error {
+	for _, name := range []string{"opencode.jsonc", ".opencode/opencode.json", ".opencode/opencode.jsonc"} {
+		path := filepath.Join(projectDir, filepath.FromSlash(name))
+		if _, err := os.Lstat(path); err == nil {
+			return fmt.Errorf("%s: alternate OpenCode config requires manual MCP setup", path)
+		} else if !os.IsNotExist(err) {
+			return err
+		}
+	}
+	return nil
+}
+
+func openCodeV2MCPServer() map[string]any {
+	return map[string]any{
+		mcpTypeKey:    mcpLocalType,
+		mcpCommandKey: []any{rskMCPServerName, openCodeMCPKey, "--read-only"},
+	}
+}
+
+// PreflightMCP checks all selected client configurations before any registration.
+// It stages their existing files in a temporary project and invokes the same
+// registration logic used for the real project.
+func PreflightMCP(projectDir string, ids []ID) error {
+	stage, err := os.MkdirTemp("", "rsk-mcp-preflight-*")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(stage)
+	for _, id := range ids {
+		if err = preflightClientMCP(projectDir, stage, id); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func preflightClientMCP(projectDir, stage string, id ID) error {
+	client, ok := Get(id)
+	if !ok {
+		return fmt.Errorf("unknown tool %q", id)
+	}
+	name, err := mcpConfigName(projectDir, id)
+	if err != nil {
+		return err
+	}
+	source := filepath.Join(projectDir, name)
+	if err = refuseIfLink(source); err != nil {
+		return err
+	}
+	data, err := os.ReadFile(source)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	if err == nil {
+		target := filepath.Join(stage, name)
+		if err = os.MkdirAll(filepath.Dir(target), fsperm.Dir); err != nil {
+			return err
+		}
+		if err = os.WriteFile(target, data, fsperm.File); err != nil {
+			return err
+		}
+	}
+	if _, err = client.RegisterMCP(stage); err != nil {
+		return fmt.Errorf("%s MCP preflight: %w", id, err)
+	}
+	return nil
+}
+
+func mcpConfigName(projectDir string, id ID) (string, error) {
+	switch id {
+	case ClaudeID:
+		return MCPFileName, nil
+	case CodexID:
+		name := filepath.Join(codexFolder, codexConfig)
+		_, err := readCodexConfig(filepath.Join(projectDir, name))
+		return name, err
+	case OpenCodeID:
+		return OpenCodeFileName, rejectAlternateOpenCodeConfigs(projectDir)
+	default:
+		return "", fmt.Errorf("MCP preflight is not implemented for %q", id)
+	}
+}
+
+func registerOpenCodeV2(path string, cfg, mcp map[string]any) (string, error) {
+	if err := refuseIfLink(path); err != nil {
+		return "", err
+	}
+	servers, ok := mcp["servers"].(map[string]any)
+	if !ok {
+		return "", fmt.Errorf("%s: mcp.servers is not an object", path)
+	}
+	if _, exists := mcp[rskMCPServerName]; exists {
+		return "", fmt.Errorf("%s: legacy mcp.rsk conflicts with v2; migrate it manually", path)
+	}
+	server := openCodeV2MCPServer()
+	if existing, exists := servers[rskMCPServerName]; exists {
+		if reflect.DeepEqual(existing, server) {
+			return path, nil
+		}
+		return "", fmt.Errorf("%s: mcp.servers.rsk already exists with different settings", path)
+	}
+	servers[rskMCPServerName] = server
+	return path, writeOCConfig(path, cfg)
+}
+
+func removeOpenCodeV2(path string, cfg, mcp map[string]any) error {
+	if err := refuseIfLink(path); err != nil {
+		return err
+	}
+	servers, ok := mcp["servers"].(map[string]any)
+	if !ok {
+		return fmt.Errorf("%s: mcp.servers is not an object", path)
+	}
+	if _, exists := mcp[rskMCPServerName]; exists {
+		return fmt.Errorf("%s: legacy mcp.rsk conflicts with v2; resolve manually", path)
+	}
+	existing, exists := servers[rskMCPServerName]
+	if !exists {
+		return nil
+	}
+	if !reflect.DeepEqual(existing, openCodeV2MCPServer()) {
+		return fmt.Errorf("%s: refusing to remove a modified rsk MCP server", path)
+	}
+	delete(servers, rskMCPServerName)
+	if len(servers) == 0 {
+		delete(mcp, "servers")
+	}
+	if len(mcp) == 0 {
+		delete(cfg, openCodeMCPKey)
+	}
+	return writeOCConfig(path, cfg)
 }
 
 func registerMCPServer(
@@ -76,6 +251,9 @@ func registerMCPServer(
 	read func(string) (map[string]any, error),
 	write func(string, map[string]any) error,
 ) (string, error) {
+	if err := refuseIfLink(path); err != nil {
+		return "", err
+	}
 	cfg, err := read(path)
 	if err != nil {
 		return "", err
@@ -83,10 +261,17 @@ func registerMCPServer(
 
 	servers, ok := cfg[key].(map[string]any)
 	if !ok {
+		if _, exists := cfg[key]; exists {
+			return "", fmt.Errorf("%s: %s is not an object", path, key)
+		}
 		servers = make(map[string]any)
 	}
 	if reflect.DeepEqual(servers[rskMCPServerName], server) {
 		return path, nil
+	}
+	if existing, exists := servers[rskMCPServerName]; exists &&
+		(key != openCodeMCPKey || !reflect.DeepEqual(existing, legacyOpenCodeMCPServer())) {
+		return "", fmt.Errorf("%s: MCP server rsk already exists with different settings", path)
 	}
 
 	servers[rskMCPServerName] = server
@@ -99,9 +284,13 @@ func registerMCPServer(
 
 func removeMCPServer(
 	path, key string,
+	managed map[string]any,
 	read func(string) (map[string]any, error),
 	write func(string, map[string]any) error,
 ) error {
+	if err := refuseIfLink(path); err != nil {
+		return err
+	}
 	cfg, err := read(path)
 	if err != nil {
 		return err
@@ -111,8 +300,13 @@ func removeMCPServer(
 	if !ok {
 		return nil
 	}
-	if _, present := servers[rskMCPServerName]; !present {
+	existing, present := servers[rskMCPServerName]
+	if !present {
 		return nil
+	}
+	if !reflect.DeepEqual(existing, managed) &&
+		(key != openCodeMCPKey || !reflect.DeepEqual(existing, legacyOpenCodeMCPServer())) {
+		return fmt.Errorf("%s: refusing to remove a modified rsk MCP server", path)
 	}
 
 	delete(servers, rskMCPServerName)

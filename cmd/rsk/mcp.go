@@ -25,7 +25,11 @@ speaks JSON-RPC on stdout — logs go to stderr.`,
 			return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 		}
 		logger := slog.New(slog.NewTextHandler(cmd.ErrOrStderr(), nil))
-		srv := mcp.NewServer(mcp.Deps{Cfg: cfg, Logger: logger, Version: version})
+		readOnly, err := cmd.Flags().GetBool("read-only")
+		if err != nil {
+			return err
+		}
+		srv := mcp.NewServer(mcp.Deps{Cfg: cfg, Logger: logger, Version: version, ReadOnly: readOnly})
 		return mcp.ServeStdio(cmd.Context(), srv)
 	},
 }

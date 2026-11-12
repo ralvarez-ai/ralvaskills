@@ -2,7 +2,7 @@
 
 **Note:** This is my personal toolkit for daily development, made public for anyone who wants to use, fork, or learn from it.
 
-A growing collection of opinionated, Staff-level skills for Claude Code and OpenCode.
+A growing collection of opinionated, Staff-level skills for Claude Code, Codex, and OpenCode.
 
 By default, AI coding agents produce functional but generic code. They nest logic too deeply, ignore architectural patterns, and write verbose commit messages. These skills enforce strict standards — functioning as an automated Senior Engineer that demands clean, maintainable, and highly optimized code.
 
@@ -137,7 +137,7 @@ These are personal to me and excluded from bundle installs. Listed here for tran
 
 ## `rsk` CLI
 
-A Go CLI that manages skill installation across projects without copy-pasting folders. Tracked in [`docs/designs/2026-05-20-technical-specification.md`](docs/designs/2026-05-20-technical-specification.md). Latest release: [`v3.3.0`](https://github.com/ralvarezdev/ralvaskills/releases/tag/v3.3.0).
+A Go CLI that manages skill installation across projects without copy-pasting folders. Tracked in [`docs/designs/2026-05-20-technical-specification.md`](docs/designs/2026-05-20-technical-specification.md). Published builds are on the [releases page](https://github.com/ralvarezdev/ralvaskills/releases).
 
 ```
 go install go.ralva.dev/ralvaskills/v3/cmd/rsk@latest
@@ -153,7 +153,7 @@ rsk install <name> --pin                  # install + auto-load in this project
 rsk install                               # re-install from rsk.mod (after git clone)
 
 # Global / machine-wide
-rsk install <name> --global               # link into ~/.claude/skills/, ~/.config/opencode/skills/
+rsk install <name> --global               # link into configured tool directories
 rsk install <name> --global --for claude-code
 
 # Browse & inspect
@@ -181,7 +181,7 @@ rsk tools remove <rule>                   # drop a rule
 
 ### MCP server
 
-`rsk new` can register `rsk mcp` in the project's client config (`.mcp.json` for Claude Code, `opencode.json` for OpenCode) and add a short pointer to `./CLAUDE.md`, so an agent can profile the project and install the skills that apply without you naming them. The server exposes the `project_profile`, `search_skills` and `install_skills` tools plus the `rsk://catalog` resource over stdio; `install_skills` is marked destructive, so the client asks you to approve each install.
+`rsk new --mcp` can register `rsk mcp` in the project config: `.mcp.json` for Claude Code, `.codex/config.toml` for Codex, and `opencode.json` for OpenCode. Claude Code also gets a short pointer in `./CLAUDE.md`. The server provides `project_profile`, `search_skills`, and the `rsk://catalog` resource over stdio. Claude Code additionally receives `install_skills` with Claude-specific interaction metadata. Codex and OpenCode registrations use `--read-only`, which omits that tool until their per-install approval behavior is verified. Codex loads project configuration only in trusted projects.
 
 The client launches the server, so **`rsk` must be on PATH** on every machine that opens the project — `rsk new` warns and skips registration when it is not. Re-run `rsk new` to (re)register; it never overwrites other MCP servers. `rsk destroy` removes the registration and the pointer.
 
@@ -214,7 +214,7 @@ Some skills are adapted from other people's work and changed for this toolkit. E
 
 ## Installation
 
-These skills are drop-in modules for Claude Code and OpenCode.
+These skills are drop-in modules for Claude Code, Codex, and OpenCode.
 
 ### Global installation
 
@@ -242,4 +242,11 @@ cp -R ./skills/* ~/.claude/skills/
 
 ### Per-project installation
 
-Drop individual skill folders into your project's `.claude/skills/` (Claude Code) or `.opencode/skills/` (OpenCode) directory. Each skill is self-contained — copy only what you need.
+Drop individual skill folders into your project's `.claude/skills/` (Claude Code), `.agents/skills/` (Codex), or `.opencode/skills/` (OpenCode) directory. Each skill is self-contained — copy only what you need.
+
+To enable all three in an existing rsk project, run `rsk new --for all`, then
+`rsk install` to link its existing skills into each native directory. Review
+old `.claude/skills/` links before removing any: Claude may still use them, and
+OpenCode also discovers them for compatibility. Run `rsk init` to configure
+Codex's global target. Codex discovers installed skills on demand; rsk's pinned
+digests are not automatically loaded by Codex.

@@ -17,9 +17,10 @@ import (
 // Deps is the environment the MCP server needs, injected so the server is
 // testable without the CLI.
 type Deps struct {
-	Cfg     config.Config
-	Version string
-	Logger  *slog.Logger
+	Cfg      config.Config
+	Version  string
+	Logger   *slog.Logger
+	ReadOnly bool
 }
 
 // NewServer builds the MCP server with every tool and resource registered. The

@@ -56,11 +56,9 @@ func (*openCodeTool) SkillsDir() string {
 	return filepath.Join(internal.ConfigHome(), OpenCodeFolderName, skill.SkillsFolderName)
 }
 
-// ProjectSkillsDir returns the project-local skills directory (.claude/skills/).
-// OpenCode discovers skills from .claude/skills/ in addition to .opencode/skills/,
-// so both tools share a single project-level directory.
+// ProjectSkillsDir returns OpenCode's native project-local skills directory.
 func (*openCodeTool) ProjectSkillsDir(projectRoot string) string {
-	return filepath.Join(projectRoot, ClaudeFolderName, skill.SkillsFolderName)
+	return filepath.Join(projectRoot, internal.OpenCodeProjectFolderName, skill.SkillsFolderName)
 }
 
 // SyncPinned updates opencode.json in projectDir so that the

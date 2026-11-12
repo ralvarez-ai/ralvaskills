@@ -70,6 +70,32 @@ func TestApplyProjectWritesManifestLockAndPin(t *testing.T) {
 	}
 }
 
+func TestApplyProjectLinksAllNativeDirectories(t *testing.T) {
+	t.Parallel()
+	project := t.TempDir()
+	rskDir := filepath.Join(project, ".rsk")
+	m := manifest.Mod{Tools: []tool.ID{tool.ClaudeID, tool.CodexID, tool.OpenCodeID}}
+	if err := manifest.WriteMod(rskDir, m); err != nil {
+		t.Fatal(err)
+	}
+	src := filepath.Join(t.TempDir(), "example")
+	if err := os.MkdirAll(src, fsperm.Dir); err != nil {
+		t.Fatal(err)
+	}
+	results, err := install.Apply([]skill.Skill{{Name: "example", Path: src, Version: "1.0.0"}}, install.Options{
+		Scope: install.ScopeProject, Targets: install.ProjectSkillsDirs(project, m), RskDir: rskDir,
+	})
+	if err != nil || len(results) != 1 || results[0].Err != nil {
+		t.Fatalf("Apply: results=%+v error=%v", results, err)
+	}
+	for _, base := range []string{".claude", ".agents", ".opencode"} {
+		path := filepath.Join(project, base, "skills", "example")
+		if !skill.IsLinked("example", filepath.Dir(path)) {
+			t.Errorf("missing skill link %s", path)
+		}
+	}
+}
+
 func TestApplyGlobalWritesNoManifest(t *testing.T) {
 	t.Parallel()
 

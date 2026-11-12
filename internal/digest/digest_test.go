@@ -25,6 +25,43 @@ func writeSkill(t *testing.T, projectDir, name, version, digest string) {
 	}
 }
 
+func TestSync_readsNativeSkillDirectories(t *testing.T) {
+	t.Parallel()
+	for _, base := range []string{".opencode", ".agents"} {
+		t.Run(base, func(t *testing.T) {
+			t.Parallel()
+			project := t.TempDir()
+			dir := filepath.Join(project, base, "skills", "example")
+			if err := os.MkdirAll(dir, 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.MkdirAll(filepath.Join(project, ".rsk"), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(
+				filepath.Join(dir, "SKILL.md"),
+				[]byte("---\nname: example\nversion: 1.0.0\ndescription: Example\n---\n"),
+				0o644,
+			); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(dir, FileName), []byte("- native rule"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := Sync(project, []string{"example"}); err != nil {
+				t.Fatal(err)
+			}
+			data, err := os.ReadFile(filepath.Join(project, ".rsk", IndexFileName))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(string(data), "- native rule") {
+				t.Fatalf("missing digest: %s", data)
+			}
+		})
+	}
+}
+
 func TestSync_writesDigestsAndFallbacks(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()

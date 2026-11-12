@@ -53,6 +53,7 @@ var registry = make(map[ID]Tool)
 func init() {
 	Register(&ClaudeTool{})
 	Register(&openCodeTool{})
+	Register(&codexTool{})
 }
 
 // String returns the string representation of the tool identifier.

@@ -23,7 +23,7 @@ var initCmd = &cobra.Command{
 
 Run once per machine. Prompts for:
   - Path to your local ralvaskills repo clone
-  - Which AI tools to support (claude-code, opencode)
+  - Which AI tools to support (claude-code, codex, opencode)
   - Global skills directory for each tool
   - Default install scope for --global
 

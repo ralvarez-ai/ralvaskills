@@ -29,7 +29,7 @@ var newCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Initialize an rsk project in the current directory.",
 	Long: `Create .rsk/rsk.mod and tool-specific config in the current directory so
-this folder becomes an rsk project. The .claude/skills/ directory is created
+this folder becomes an rsk project. Skill directories are created
 lazily the first time a skill is installed. Commit .rsk/rsk.mod,
 .rsk/rsk.lock and .rsk/CLAUDE.md: the lock resolves the same versions on
 every machine.
@@ -41,7 +41,8 @@ the generated pin file. An existing AGENTS.md is never modified.
 Use --for to select which tools to configure:
   --for claude-code  (default) AGENTS.md + CLAUDE.md (imports it and .rsk/CLAUDE.md)
   --for opencode               Writes pinned skills to opencode.json instructions
-  --for all                    Both tools
+  --for codex                  Discovers skills from .agents/skills/
+  --for all                    All supported tools
 
 Examples:
   rsk new
@@ -60,11 +61,12 @@ func toolsFromFlag(flag string) ([]tool.ID, error) {
 		return []tool.ID{tool.ClaudeID}, nil
 	case cmdx.TargetScope(tool.OpenCodeID):
 		return []tool.ID{tool.OpenCodeID}, nil
+	case cmdx.TargetScope(tool.CodexID):
+		return []tool.ID{tool.CodexID}, nil
 	case cmdx.ScopeAll:
-		return []tool.ID{tool.ClaudeID, tool.OpenCodeID}, nil
+		return []tool.ID{tool.ClaudeID, tool.CodexID, tool.OpenCodeID}, nil
 	default:
-		return nil, fieldError(cmdx.FlagFor, "--for must be %s, %s, or %s; got %q",
-			tool.ClaudeID, tool.OpenCodeID, cmdx.ForAll, flag)
+		return nil, fieldError(cmdx.FlagFor, "--for must be a supported tool or %s; got %q", cmdx.ForAll, flag)
 	}
 }
 
@@ -80,10 +82,16 @@ func runNew(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
+	registerMCP := resolveMCPFlag(cmd)
 
 	cwd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("get working directory: %w", err)
+	}
+	if registerMCP {
+		if err = tool.PreflightMCP(cwd, tools); err != nil {
+			return err
+		}
 	}
 
 	m, rskDir, isNew, err := loadOrCreateManifest(cwd, tools, forFlag, out)
@@ -98,9 +106,12 @@ func runNew(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	if resolveMCPFlag(cmd) {
+	if registerMCP {
 		if err = registerProjectMCP(out, cwd, tools); err != nil {
-			return err
+			return fmt.Errorf(
+				"MCP registration incomplete; previously written project configuration was retained: %w",
+				err,
+			)
 		}
 	}
 
@@ -132,7 +143,7 @@ func resolveForFlag(cmd *cobra.Command, out io.Writer) (string, error) {
 		return "", fieldError(cmdx.FlagFor, "choose which tools to configure")
 	}
 
-	choices := []string{string(tool.ClaudeID), string(tool.OpenCodeID), cmdx.ForAll}
+	choices := []string{string(tool.ClaudeID), string(tool.OpenCodeID), string(tool.CodexID), cmdx.ForAll}
 	idx, err := ui.Select(out, "Tools to configure", choices, 0)
 	if err != nil {
 		return "", err

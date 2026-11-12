@@ -55,7 +55,8 @@ func TestToolsFromFlag(t *testing.T) {
 	}{
 		{name: "claude-code", input: "claude-code", want: []tool.ID{tool.ClaudeID}},
 		{name: "opencode", input: "opencode", want: []tool.ID{tool.OpenCodeID}},
-		{name: "all", input: "all", want: []tool.ID{tool.ClaudeID, tool.OpenCodeID}},
+		{name: "codex", input: "codex", want: []tool.ID{tool.CodexID}},
+		{name: "all", input: "all", want: []tool.ID{tool.ClaudeID, tool.CodexID, tool.OpenCodeID}},
 		{name: "empty is rejected", input: "", wantErr: true},
 		{name: "unknown is rejected", input: "bogus", wantErr: true},
 	}

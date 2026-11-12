@@ -88,6 +88,92 @@ func TestOpenCodeMCPRegisterPreservesInstructions(t *testing.T) {
 	}
 }
 
+func TestOpenCodeV2RegistrationPreservesOtherServers(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	path := filepath.Join(dir, tool.OpenCodeFileName)
+	writeFile(t, path, `{"mcp":{"servers":{"other":{"type":"local","command":["other"]}}}}`)
+	client := mustTool(t, tool.OpenCodeID)
+	for range 2 {
+		if _, err := client.RegisterMCP(dir); err != nil {
+			t.Fatal(err)
+		}
+	}
+	cfg := readJSON(t, path)
+	mcp, ok := cfg["mcp"].(map[string]any)
+	if !ok {
+		t.Fatal("missing mcp")
+	}
+	servers, ok := mcp["servers"].(map[string]any)
+	if !ok || servers["other"] == nil {
+		t.Fatal("missing other server")
+	}
+	rsk, ok := servers["rsk"].(map[string]any)
+	if !ok || !strings.Contains(readFile(t, path), "--read-only") || rsk["type"] != "local" {
+		t.Fatalf("invalid rsk server: %+v", servers["rsk"])
+	}
+	if err := client.UnregisterMCP(dir); err != nil {
+		t.Fatal(err)
+	}
+	cfg = readJSON(t, path)
+	mcp, ok = cfg["mcp"].(map[string]any)
+	if !ok {
+		t.Fatal("missing mcp after removal")
+	}
+	servers, ok = mcp["servers"].(map[string]any)
+	if !ok {
+		t.Fatal("missing servers after removal")
+	}
+	if _, exists := servers["rsk"]; exists || servers["other"] == nil {
+		t.Fatalf("servers after removal = %+v", servers)
+	}
+}
+
+func TestMCPRegistrationRefusesConflictingConfig(t *testing.T) {
+	t.Parallel()
+	for _, tc := range []struct {
+		id      tool.ID
+		file    string
+		content string
+	}{
+		{tool.ClaudeID, tool.MCPFileName, `{"mcpServers":{"rsk":{"command":"other"}}}`},
+		{tool.ClaudeID, tool.MCPFileName, `{"mcpServers":"invalid"}`},
+		{tool.OpenCodeID, tool.OpenCodeFileName, `{"mcp":{"servers":{"rsk":{"type":"local","command":["other"]}}}}`},
+	} {
+		t.Run(string(tc.id)+tc.content, func(t *testing.T) {
+			t.Parallel()
+			dir := t.TempDir()
+			path := filepath.Join(dir, tc.file)
+			writeFile(t, path, tc.content)
+			if _, err := mustTool(t, tc.id).RegisterMCP(dir); err == nil {
+				t.Fatal("expected conflict")
+			}
+			if got := readFile(t, path); got != tc.content {
+				t.Fatalf("config changed: %s", got)
+			}
+		})
+	}
+}
+
+func TestMCPPreflightDoesNotWriteBeforeConflict(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	path := filepath.Join(dir, tool.OpenCodeFileName)
+	original := `{"mcp":{"rsk":{"type":"local","command":["other"]}}}`
+	writeFile(t, path, original)
+	if err := tool.PreflightMCP(dir, []tool.ID{tool.ClaudeID, tool.CodexID, tool.OpenCodeID}); err == nil {
+		t.Fatal("expected conflicting OpenCode server to fail preflight")
+	}
+	if got := readFile(t, path); got != original {
+		t.Fatalf("config changed: %s", got)
+	}
+	for _, name := range []string{tool.MCPFileName, ".codex"} {
+		if _, err := os.Lstat(filepath.Join(dir, name)); !os.IsNotExist(err) {
+			t.Fatalf("preflight wrote %s: %v", name, err)
+		}
+	}
+}
+
 func TestWorkflowPointerIsIdempotentAndRemovable(t *testing.T) {
 	t.Parallel()
 

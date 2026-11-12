@@ -22,7 +22,7 @@ type (
 		Names []string `json:"names"`
 		Scope string   `json:"scope,omitempty" jsonschema:"project (por defecto) | global"`
 		Pin   bool     `json:"pin,omitempty"`
-		For   string   `json:"for,omitempty"   jsonschema:"claude-code|opencode"`
+		For   string   `json:"for,omitempty"   jsonschema:"claude-code|codex|opencode"`
 	}
 
 	// InstallSkillsOut is the install_skills tool output.
