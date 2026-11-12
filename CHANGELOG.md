@@ -89,6 +89,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 # CLI releases
 
+## v3.9.0 (2026-11-12)
+
+### Added
+- **`rsk sync` reconciles a project from its lockfile.** It restores missing skill links for every tool selected in `rsk.mod` using the exact cached versions in `rsk.lock`, refreshes pinned instructions and `.rsk/SKILLS.md`, and leaves both manifests byte-for-byte unchanged. `--dry-run` previews the plan. It refuses a link that points at another version or a user-owned path, reports missing, duplicate, or malformed lock entries instead of guessing, and a second run is a no-op. Registry, local-clone, and official sources are all resolved from their locked versions.
+
+### Changed
+- **MCP synchronization is guarded.** `rsk sync` touches MCP configuration only when an rsk server is already registered; `--mcp` adds one and `--mcp=false` skips it. Before writing anything, it preflights every selected client and requires an `rsk` on `PATH` that supports `mcp --read-only`, so Codex and OpenCode never get a registration their binary cannot serve. A pre-v2 OpenCode entry is upgraded in place, and alternate OpenCode config files are refused rather than edited.
+
 ## v3.8.0 (2026-11-12)
 
 ### Changed

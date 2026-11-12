@@ -110,6 +110,7 @@ export const helpGroups: HelpGroup[] = [
       { name: 'install', desc: 'Install bundles or skills.' },
       { name: 'uninstall', desc: 'Remove installed bundles or skills.' },
       { name: 'update', desc: 'Pull the latest skills and re-link.' },
+      { name: 'sync', desc: 'Reconcile the project skills and tool configuration.' },
     ],
   },
   {
@@ -176,7 +177,7 @@ export const sources: { what: string; where: string }[] = [
   { what: '67 skills', where: 'registry/index.json · skills/*/*/SKILL.md' },
   { what: '17 domains', where: 'skills/<domain>/' },
   { what: '15 bundles', where: 'internal/config/catalog.toml' },
-  { what: '13 commands', where: 'cmd/rsk/setup.go (+ cobra completion)' },
+  { what: '14 commands', where: 'cmd/rsk/setup.go (+ cobra completion)' },
   { what: '3 MCP tools, 1 writes', where: 'internal/mcp/tools.go' },
   { what: 'rsk://catalog', where: 'internal/mcp/resource.go' },
   { what: 'Detection rules', where: 'internal/mcp/signals.go' },

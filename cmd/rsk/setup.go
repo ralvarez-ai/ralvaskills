@@ -67,6 +67,11 @@ func setupCommands() {
 	f.BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
 	registerForCompletion(installCmd, false)
 
+	rootCmd.AddCommand(syncCmd)
+	syncCmd.Flags().Bool(flagMCP, false, "Also register the rsk MCP server")
+	syncCmd.Flags().Bool(cmdx.FlagDryRun, false, "Preview changes without applying them")
+	syncCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
+
 	// list command
 	rootCmd.AddCommand(listCmd)
 	termkit.MarkTableView(listCmd)
@@ -161,7 +166,7 @@ func setupCommands() {
 // markDestructive flags the commands that change or delete files, so the
 // interactive session asks before running them (unless --yes is given).
 func markDestructive() {
-	for _, cmd := range []*cobra.Command{destroyCmd, installCmd, uninstallCmd, updateCmd} {
+	for _, cmd := range []*cobra.Command{destroyCmd, installCmd, uninstallCmd, updateCmd, syncCmd} {
 		termkit.MarkDestructive(cmd)
 	}
 }
@@ -171,7 +176,7 @@ func assignGroups() {
 	for id, cmds := range map[string][]*cobra.Command{
 		groupMachine:   {initCmd},
 		groupProject:   {newCmd, destroyCmd},
-		groupInstall:   {installCmd, uninstallCmd, updateCmd},
+		groupInstall:   {installCmd, uninstallCmd, updateCmd, syncCmd},
 		groupPinning:   {pinCmd},
 		groupToolsConf: {canonicalTools.root},
 		groupViews:     {listCmd, catalogCmd, statusCmd},

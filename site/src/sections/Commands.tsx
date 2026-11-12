@@ -8,7 +8,7 @@ export function Commands() {
         <div className="rule" aria-hidden="true" />
         <Eyebrow>The whole surface</Eyebrow>
         <h2 id="a-cmd-h" className="reveal">
-          Thirteen commands, grouped the way <code>rsk --help</code> groups them.
+          Fourteen commands, grouped the way <code>rsk --help</code> groups them.
         </h2>
         <ul className="help-groups reveal">
           {helpGroups.map((group) => (

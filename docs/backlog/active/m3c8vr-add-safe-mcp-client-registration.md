@@ -29,3 +29,8 @@ or deliberately handle JSONC and higher-precedence config locations, improve
 ownership tracking and recovery from failures after preflight, and test removal,
 symlink and migration edge cases. The current adapter refuses alternate
 project OpenCode config files and reports partial registration if a write fails.
+
+The ralvaskills project itself still runs rsk 3.7.1 from mise. Its OpenCode MCP
+entry cannot be moved to read-only mode until the executable on PATH supports
+`rsk mcp --read-only`. Its `.opencode/skills/` links have been synchronized;
+after upgrading the executable, run `rsk sync` to reconcile the MCP entries.

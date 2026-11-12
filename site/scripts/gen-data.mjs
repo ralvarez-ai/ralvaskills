@@ -97,7 +97,7 @@ function main() {
   }));
 
   const setup = read('cmd/rsk/setup.go');
-  assert((setup.match(/rootCmd\.AddCommand\(/g) ?? []).length === 12, 'expected 12 AddCommand calls in setup.go');
+  assert((setup.match(/rootCmd\.AddCommand\(/g) ?? []).length === 13, 'expected 13 AddCommand calls in setup.go');
 
   const toolsGo = read('internal/mcp/tools.go');
   const tools = [...toolsGo.matchAll(/Name:\s+"([a-z_]+)"/g)].map((m) => m[1]);

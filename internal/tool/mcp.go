@@ -131,6 +131,53 @@ func openCodeV2MCPServer() map[string]any {
 	}
 }
 
+// ProjectHasMCP reports whether a selected client already has an rsk server.
+func ProjectHasMCP(projectDir string, ids []ID) (bool, error) {
+	for _, id := range ids {
+		found, err := clientHasMCP(projectDir, id)
+		if err != nil {
+			return false, err
+		}
+		if found {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func clientHasMCP(projectDir string, id ID) (bool, error) {
+	if id == CodexID {
+		data, err := readCodexConfig(filepath.Join(projectDir, codexFolder, codexConfig))
+		return strings.Contains(string(data), "[mcp_servers.rsk]"), err
+	}
+	var path, key string
+	switch id {
+	case ClaudeID:
+		path, key = filepath.Join(projectDir, MCPFileName), "mcpServers"
+	case OpenCodeID:
+		path, key = filepath.Join(projectDir, OpenCodeFileName), openCodeMCPKey
+	default:
+		return false, fmt.Errorf("unknown tool %q", id)
+	}
+	config, err := readClaudeConfig(path)
+	if err != nil {
+		return false, err
+	}
+	servers, valid := config[key].(map[string]any)
+	if !valid {
+		return false, nil
+	}
+	if _, exists := servers[rskMCPServerName]; exists {
+		return true, nil
+	}
+	nested, valid := servers["servers"].(map[string]any)
+	if !valid {
+		return false, nil
+	}
+	_, exists := nested[rskMCPServerName]
+	return exists, nil
+}
+
 // PreflightMCP checks all selected client configurations before any registration.
 // It stages their existing files in a temporary project and invokes the same
 // registration logic used for the real project.

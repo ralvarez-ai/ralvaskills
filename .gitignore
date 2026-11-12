@@ -37,6 +37,10 @@ bin/
 # Claude Code
 .claude/
 
+# Machine-local skill links
+.opencode/skills/
+.agents/skills/
+
 # Internal docs
 docs/internal/
 

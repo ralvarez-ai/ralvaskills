@@ -151,6 +151,8 @@ rsk new                                   # initialize .rsk/ in this project
 rsk install <name>                        # install a bundle or skill (auto-resolved)
 rsk install <name> --pin                  # install + auto-load in this project
 rsk install                               # re-install from rsk.mod (after git clone)
+rsk sync --dry-run                        # preview reconciliation using rsk.lock
+rsk sync                                  # restore links and sync configured clients
 
 # Global / machine-wide
 rsk install <name> --global               # link into configured tool directories
@@ -250,3 +252,10 @@ old `.claude/skills/` links before removing any: Claude may still use them, and
 OpenCode also discovers them for compatibility. Run `rsk init` to configure
 Codex's global target. Codex discovers installed skills on demand; rsk's pinned
 digests are not automatically loaded by Codex.
+
+`rsk sync` uses the exact cached registry versions in `rsk.lock` and preserves
+`rsk.mod` and `rsk.lock`. It refuses conflicting existing links. It refreshes
+pinned instructions and reconciles MCP registration when an rsk server is
+already configured; use `--mcp` to register one, or `--mcp=false` to leave MCP
+configuration alone. The `rsk` binary on PATH must support read-only MCP mode
+before Codex or OpenCode MCP registrations can be synchronized.

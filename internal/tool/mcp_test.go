@@ -174,6 +174,174 @@ func TestMCPPreflightDoesNotWriteBeforeConflict(t *testing.T) {
 	}
 }
 
+func TestProjectHasMCPDetectsConfiguredClients(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	writeFile(
+		t,
+		filepath.Join(dir, tool.OpenCodeFileName),
+		`{"mcp":{"servers":{"rsk":{"type":"local","command":["rsk","mcp"]}}}}`,
+	)
+	found, err := tool.ProjectHasMCP(dir, []tool.ID{tool.OpenCodeID})
+	if err != nil || !found {
+		t.Fatalf("found=%v err=%v", found, err)
+	}
+	found, err = tool.ProjectHasMCP(dir, []tool.ID{tool.ClaudeID})
+	if err != nil || found {
+		t.Fatalf("unconfigured client found=%v err=%v", found, err)
+	}
+}
+
+// TestProjectHasMCPRecognizesLegacyConfigurations covers the configurations
+// written by earlier releases: Claude's unchanged .mcp.json entry, OpenCode's
+// pre-v2 mcp.rsk entry, OpenCode's nested mcp.servers entry, and Codex's
+// managed TOML block.
+func TestProjectHasMCPRecognizesLegacyConfigurations(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name  string
+		id    tool.ID
+		setup func(*testing.T, string)
+	}{
+		{
+			name: "claude",
+			id:   tool.ClaudeID,
+			setup: func(t *testing.T, dir string) {
+				t.Helper()
+				writeFile(t, filepath.Join(dir, tool.MCPFileName),
+					`{"mcpServers":{"rsk":{"command":"rsk","args":["mcp"]}}}`)
+			},
+		},
+		{
+			name: "opencode pre-v2",
+			id:   tool.OpenCodeID,
+			setup: func(t *testing.T, dir string) {
+				t.Helper()
+				writeFile(t, filepath.Join(dir, tool.OpenCodeFileName),
+					`{"mcp":{"rsk":{"type":"local","command":["rsk","mcp"],"enabled":true}}}`)
+			},
+		},
+		{
+			name: "opencode v2",
+			id:   tool.OpenCodeID,
+			setup: func(t *testing.T, dir string) {
+				t.Helper()
+				writeFile(t, filepath.Join(dir, tool.OpenCodeFileName),
+					`{"mcp":{"servers":{"rsk":{"type":"local","command":["rsk","mcp","--read-only"]}}}}`)
+			},
+		},
+		{
+			name: "codex",
+			id:   tool.CodexID,
+			setup: func(t *testing.T, dir string) {
+				t.Helper()
+				if _, err := mustTool(t, tool.CodexID).RegisterMCP(dir); err != nil {
+					t.Fatalf("RegisterMCP: %v", err)
+				}
+			},
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			dir := t.TempDir()
+			tc.setup(t, dir)
+			found, err := tool.ProjectHasMCP(dir, []tool.ID{tc.id})
+			if err != nil || !found {
+				t.Fatalf("found=%v err=%v", found, err)
+			}
+		})
+	}
+}
+
+func TestProjectHasMCPRejectsMalformedAndUnknownClients(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, tool.OpenCodeFileName), `{`)
+	if _, err := tool.ProjectHasMCP(dir, []tool.ID{tool.OpenCodeID}); err == nil {
+		t.Fatal("expected a parse error for malformed opencode.json")
+	}
+	if _, err := tool.ProjectHasMCP(dir, []tool.ID{tool.ID("unknown")}); err == nil {
+		t.Fatal("expected an error for an unknown tool")
+	}
+}
+
+// TestLegacyOpenCodeMCPConfigUpgradesWithoutLosingSettings guards consumers
+// whose opencode.json still carries the pre-v2 command without --read-only:
+// registration must upgrade that one entry in place and leave everything else.
+func TestLegacyOpenCodeMCPConfigUpgradesWithoutLosingSettings(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	path := filepath.Join(dir, tool.OpenCodeFileName)
+	writeFile(t, path, `{"instructions":["docs/keep.md"],"mcp":{`+
+		`"rsk":{"type":"local","command":["rsk","mcp"],"enabled":true},`+
+		`"other":{"type":"local","command":["other"]}}}`)
+
+	client := mustTool(t, tool.OpenCodeID)
+	if found, err := tool.ProjectHasMCP(dir, []tool.ID{tool.OpenCodeID}); err != nil || !found {
+		t.Fatalf("legacy entry not detected: found=%v err=%v", found, err)
+	}
+	if _, err := client.RegisterMCP(dir); err != nil {
+		t.Fatalf("RegisterMCP over legacy config: %v", err)
+	}
+	first := readFile(t, path)
+	if _, err := client.RegisterMCP(dir); err != nil {
+		t.Fatalf("RegisterMCP (second): %v", err)
+	}
+	if second := readFile(t, path); first != second {
+		t.Fatal("RegisterMCP is not idempotent after upgrading a legacy entry")
+	}
+	if !strings.Contains(first, `"--read-only"`) {
+		t.Fatalf("legacy command was not upgraded: %s", first)
+	}
+
+	cfg := readJSON(t, path)
+	instructions, ok := cfg["instructions"].([]any)
+	if !ok || len(instructions) != 1 || instructions[0] != "docs/keep.md" {
+		t.Fatalf("instructions not preserved: %+v", cfg["instructions"])
+	}
+	servers, ok := cfg["mcp"].(map[string]any)
+	if !ok || servers["other"] == nil {
+		t.Fatalf("other MCP server not preserved: %+v", cfg["mcp"])
+	}
+}
+
+func TestOpenCodeMCPRejectsAlternateConfigFiles(t *testing.T) {
+	t.Parallel()
+	for _, name := range []string{"opencode.jsonc", ".opencode/opencode.json", ".opencode/opencode.jsonc"} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			dir := t.TempDir()
+			path := filepath.Join(dir, filepath.FromSlash(name))
+			if err := os.MkdirAll(filepath.Dir(path), fsperm.Dir); err != nil {
+				t.Fatal(err)
+			}
+			original := `{"mcp":{}}`
+			writeFile(t, path, original)
+			if _, err := mustTool(t, tool.OpenCodeID).RegisterMCP(dir); err == nil {
+				t.Fatalf("expected %s to require manual MCP setup", name)
+			}
+			if got := readFile(t, path); got != original {
+				t.Fatalf("%s changed: %s", name, got)
+			}
+		})
+	}
+}
+
+func TestMCPPreflightLeavesLegacyConfigUntouched(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	path := filepath.Join(dir, tool.OpenCodeFileName)
+	original := `{"mcp":{"rsk":{"type":"local","command":["rsk","mcp"],"enabled":true}}}`
+	writeFile(t, path, original)
+	if err := tool.PreflightMCP(dir, []tool.ID{tool.OpenCodeID}); err != nil {
+		t.Fatalf("preflight over legacy config: %v", err)
+	}
+	if got := readFile(t, path); got != original {
+		t.Fatalf("preflight changed the real config: %s", got)
+	}
+}
+
 func TestWorkflowPointerIsIdempotentAndRemovable(t *testing.T) {
 	t.Parallel()
 
