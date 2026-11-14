@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )
@@ -135,7 +135,7 @@ func TestCatalogBundleSubcommands(t *testing.T) {
 			t.Errorf("rsk %s not reachable: %v", strings.Join(path, " "), err)
 			continue
 		}
-		if !termkit.IsTableView(found) {
+		if !term.IsTableView(found) {
 			t.Errorf("rsk %s is not marked a table view", strings.Join(path, " "))
 		}
 	}

@@ -3,14 +3,14 @@ package ui
 import (
 	"os"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 )
 
 // rskBannerSpec is rsk's BannerSpec: the wordmark art, its gradient, copy,
 // and layout thresholds, built from theme.go's constants. termkit owns the
 // mechanism (tier selection, centering, margins); this spec owns everything
 // the banner says and looks like.
-var rskBannerSpec = termkit.BannerSpec{
+var rskBannerSpec = term.BannerSpec{
 	Wordmark:         wordmark,
 	WordmarkWidth:    wordmarkWidth,
 	WordmarkGradient: wordmarkGradient,
@@ -29,8 +29,8 @@ var rskBannerSpec = termkit.BannerSpec{
 // current process. Color honors NO_COLOR and TERM=dumb; art additionally
 // requires stdout to be a real terminal (IsTTY), since a wide pipe should
 // still get plain text.
-func NewCapability() termkit.Capability {
-	return termkit.NewCapability(useColor())
+func NewCapability() term.Capability {
+	return term.NewCapability(useColor())
 }
 
 // noColorOverride is set by the --no-color flag; it wins over the environment.
@@ -51,7 +51,7 @@ func useColor() bool {
 	if _, disabled := os.LookupEnv("NO_COLOR"); disabled {
 		return false
 	}
-	if termkit.IsDumbTerminal() {
+	if term.IsDumbTerminal() {
 		return false
 	}
 	return IsTTY()

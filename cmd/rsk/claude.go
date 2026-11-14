@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
@@ -217,7 +217,7 @@ func runClaudeToolsList(cmd *cobra.Command, args []string) error {
 	}
 
 	header := []string{headerName, "Status"}
-	tableRows := termkit.Rows(rows, claudeToolsTable)
+	tableRows := term.Rows(rows, claudeToolsTable)
 
 	return renderList(cmd, format, "Claude Code tools available:", rows, header, tableRows, claudeToolNames())
 }
@@ -240,7 +240,7 @@ type claudeToolRow struct {
 
 // claudeToolsTable projects one claudeToolRow, marking each tool's
 // permission state the same way install/uninstall mark their own rows.
-var claudeToolsTable = termkit.Table[claudeToolRow]{
+var claudeToolsTable = term.Table[claudeToolRow]{
 	Row: func(r claudeToolRow) []any {
 		switch r.status {
 		case claudeToolAllowed:

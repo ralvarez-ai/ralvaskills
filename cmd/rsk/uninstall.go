@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -118,7 +118,7 @@ func runUninstall(cmd *cobra.Command, opts uninstallOpts, args []string) error {
 	if opts.dryRun {
 		return nil
 	}
-	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, opts.yes, term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
@@ -208,13 +208,13 @@ func printUninstallPreview(out io.Writer, toRemove []removeEntry, dryRun bool) {
 		ui.Header(out, "Skills to remove:")
 	}
 
-	termkit.WriteTableStyled(out, []string{headerName, "", headerPath},
-		termkit.Rows(toRemove, uninstallPreviewTable), false, nil, termkit.TableBorderless, ui.Theme)
+	term.WriteTableStyled(out, []string{headerName, "", headerPath},
+		term.Rows(toRemove, uninstallPreviewTable), false, nil, term.TableBorderless, ui.Theme)
 	fmt.Fprintln(out)
 }
 
 // uninstallPreviewTable projects one remove-preview row.
-var uninstallPreviewTable = termkit.Table[removeEntry]{
+var uninstallPreviewTable = term.Table[removeEntry]{
 	Row: func(e removeEntry) []any {
 		return []any{ui.SkillName(e.name), ui.Arrow, ui.MutedPath(filepath.Join(e.target, e.name))}
 	},

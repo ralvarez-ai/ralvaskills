@@ -12,7 +12,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -75,7 +75,7 @@ func runSync(cmd *cobra.Command, _ []string) error {
 	if cmdx.Bool(cmd, cmdx.FlagDryRun) {
 		return nil
 	}
-	if !termkit.Confirm(cmd, cmdx.Bool(cmd, cmdx.FlagYes), termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, cmdx.Bool(cmd, cmdx.FlagYes), term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
 		return nil
 	}

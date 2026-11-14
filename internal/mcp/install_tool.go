@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"go.ralva.dev/mcpkit"
+	"go.ralva.dev/lib/mcpserver"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
@@ -115,7 +115,7 @@ func applyInstall(
 	})
 	out := toInstallOut(results)
 	if applyErr != nil {
-		errMsg := mcpkit.ErrorMsg{Public: "could not write the project manifest"}
+		errMsg := mcpserver.ErrorMsg{Public: "could not write the project manifest"}
 		return nil, out, errMsg.ToolError(deps.Logger, applyErr)
 	}
 	return nil, out, nil

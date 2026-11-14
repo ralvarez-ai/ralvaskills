@@ -8,9 +8,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/form"
-	"go.ralva.dev/termkit/session"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/form"
+	"go.ralva.dev/lib/term/session"
 )
 
 // appName is the binary's name: the session's title, and the directory name
@@ -94,18 +94,18 @@ func helpMarkdown(root *cobra.Command, notice string) string {
 
 // RunCaptured returns the session's RunFunc: it executes the selected command
 // through root (so cobra parses the form's argv and validates its arguments
-// exactly as on the command line), with a termkit.Capture in the context so
+// exactly as on the command line), with a term.Capture in the context so
 // table views record their tables. Text a command writes to its writers is
 // added to the result as a message, except for table views, whose text output
 // the captured table replaces; a raw payload (-o json) becomes a message too,
 // because the session shows messages and pages, not raw payloads.
 func RunCaptured(root *cobra.Command) session.RunFunc {
-	return func(ctx context.Context, target *cobra.Command, argv []string) (*termkit.Capture, error) {
-		capture := &termkit.Capture{}
+	return func(ctx context.Context, target *cobra.Command, argv []string) (*term.Capture, error) {
+		capture := &term.Capture{}
 		var out bytes.Buffer
 
-		ctx = termkit.WithCapture(ctx, capture)
-		termkit.ResetFlagsFor(ctx, target)
+		ctx = term.WithCapture(ctx, capture)
+		term.ResetFlagsFor(ctx, target)
 		root.SetOut(&out)
 		root.SetErr(&out)
 		root.SetArgs(argv[1:])
@@ -114,14 +114,14 @@ func RunCaptured(root *cobra.Command) session.RunFunc {
 			root.SetErr(nil)
 			root.SetArgs(nil)
 			// ResetFlags also drops the run's context, and with it the capture.
-			termkit.ResetFlags(target)
+			term.ResetFlags(target)
 		}()
 
 		if err := root.ExecuteContext(ctx); err != nil {
 			return nil, err
 		}
 
-		if text := strings.TrimSpace(out.String()); text != "" && !termkit.IsTableView(target) {
+		if text := strings.TrimSpace(out.String()); text != "" && !term.IsTableView(target) {
 			capture.AddMessage(text)
 		}
 		return capture, nil

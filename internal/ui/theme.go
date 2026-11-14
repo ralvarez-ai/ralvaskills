@@ -4,11 +4,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 )
 
 // Theme is the termkit theme every rsk style, mark and view renders with.
-var Theme = termkit.TokyoNight
+var Theme = term.TokyoNight
 
 // Adaptive palette, re-exported from the Theme so the banner and picker share
 // one palette with every other consumer.

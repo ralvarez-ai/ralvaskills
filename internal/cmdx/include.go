@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 )
 
 // Values accepted by the --include flag.
@@ -61,7 +61,7 @@ func ReadIncludes(cmd *cobra.Command, allowed ...string) (Includes, error) {
 		switch v := strings.ToLower(strings.TrimSpace(value)); {
 		case v == "":
 		case !slices.Contains(allowed, v):
-			return Includes{}, termkit.NewFieldError(FlagInclude, fmt.Errorf(
+			return Includes{}, term.NewFieldError(FlagInclude, fmt.Errorf(
 				"--%s: invalid value %q (allowed: %s)",
 				FlagInclude,
 				value,

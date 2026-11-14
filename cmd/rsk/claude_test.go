@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
@@ -77,7 +77,7 @@ func TestRunClaudeToolsListJSONOutput(t *testing.T) {
 }
 
 // TestRunClaudeToolsListCapture guards the picker's captured/scrollable path
-// for `rsk claude tools list`: under a termkit.WithCapture-wrapped context, the
+// for `rsk claude tools list`: under a term.WithCapture-wrapped context, the
 // table must land in the capture and nothing must be written to the
 // command's own writer.
 //
@@ -100,13 +100,13 @@ func TestRunClaudeToolsListCapture(t *testing.T) {
 
 	var buf bytes.Buffer
 	canonicalTools.list.SetOut(&buf)
-	canonicalTools.list.SetContext(termkit.WithCapture(t.Context(), &termkit.Capture{}))
+	canonicalTools.list.SetContext(term.WithCapture(t.Context(), &term.Capture{}))
 	t.Cleanup(func() {
 		canonicalTools.list.SetOut(nil)
 		canonicalTools.list.SetContext(context.Background())
 	})
 
-	capture := termkit.CaptureFromContext(canonicalTools.list.Context())
+	capture := term.CaptureFromContext(canonicalTools.list.Context())
 	if capture == nil {
 		t.Fatal("expected a capture on the command's context")
 	}

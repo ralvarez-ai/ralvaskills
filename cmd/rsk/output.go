@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/cli"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/cli"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
@@ -48,14 +48,14 @@ func checkOutput(cmd *cobra.Command) error {
 
 // outputOptions is how every rsk table renders: borderless with a plain
 // header; the cells carry their own styling (see ui.SkillName and friends).
-var outputOptions = output.Options{Theme: ui.Theme, Layout: termkit.TableBorderless, NoColor: true}
+var outputOptions = output.Options{Theme: ui.Theme, Layout: term.TableBorderless, NoColor: true}
 
 // newFormatter returns cmd's formatter for format, wired to the session
 // capture so a picker run records its table/JSON instead of writing behind
 // the TUI.
 func newFormatter(cmd *cobra.Command, format output.OutputFormat) *output.Formatter {
 	f := output.NewWithOptions(cmd.OutOrStdout(), format, outputOptions)
-	if capture := termkit.CaptureFromContext(cmd.Context()); capture != nil {
+	if capture := term.CaptureFromContext(cmd.Context()); capture != nil {
 		f.SetCapture(capture)
 	}
 
@@ -70,7 +70,7 @@ func renderList(
 	cmd *cobra.Command, format output.OutputFormat, section string, v any,
 	header []string, rows [][]any, ids []string,
 ) error {
-	capture := termkit.CaptureFromContext(cmd.Context())
+	capture := term.CaptureFromContext(cmd.Context())
 	f := newFormatter(cmd, format)
 	terminal := capture == nil && format == output.FormatText
 	out := cmd.OutOrStdout()
@@ -99,7 +99,7 @@ func renderTitledTable(
 	header []string, rows [][]any, ids []string,
 ) error {
 	f := newFormatter(cmd, format)
-	if capture := termkit.CaptureFromContext(cmd.Context()); capture != nil {
+	if capture := term.CaptureFromContext(cmd.Context()); capture != nil {
 		f.SetCaptureTitle(title)
 	}
 
@@ -109,7 +109,7 @@ func renderTitledTable(
 // emptyHint reports an empty result: recorded on the capture under the picker,
 // otherwise written to out. warn styles it as a warning with blank lines.
 func emptyHint(cmd *cobra.Command, warn bool, msg string) {
-	if capture := termkit.CaptureFromContext(cmd.Context()); capture != nil {
+	if capture := term.CaptureFromContext(cmd.Context()); capture != nil {
 		capture.AddMessage(msg)
 
 		return

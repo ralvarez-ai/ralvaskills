@@ -10,8 +10,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -109,7 +109,7 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 		return err
 	}
 	out := cmd.OutOrStdout()
-	capture := termkit.CaptureFromContext(cmd.Context())
+	capture := term.CaptureFromContext(cmd.Context())
 
 	if err := validateStatusOpts(opts); err != nil {
 		return err
@@ -170,7 +170,7 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 // warnOrCapture reports msg on the capture (when a captured in-process run is
 // in progress) instead of writing it to out, since nothing written to out is
 // seen while the TUI owns the terminal.
-func warnOrCapture(out io.Writer, capture *termkit.Capture, msg string) {
+func warnOrCapture(out io.Writer, capture *term.Capture, msg string) {
 	if capture != nil {
 		capture.AddMessage(msg)
 		return
@@ -200,7 +200,7 @@ func validateStatusOpts(opts statusOpts) error {
 // target directory, warning (rather than failing) on a directory that can't
 // be scanned.
 func scanStatusSections(
-	out io.Writer, capture *termkit.Capture,
+	out io.Writer, capture *term.Capture,
 	sections []statusSection, cfg config.Config, membership map[string][]string, includePersonal bool,
 ) {
 	for i := range sections {
@@ -219,7 +219,7 @@ func scanStatusSections(
 // printStatusText renders every non-empty section as a table, or a "no
 // skills installed" notice when all sections are empty.
 func printStatusText(
-	out io.Writer, capture *termkit.Capture, cmd *cobra.Command,
+	out io.Writer, capture *term.Capture, cmd *cobra.Command,
 	format output.OutputFormat, sections []statusSection, pinnedSet map[string]bool,
 ) error {
 	hasAny := false
@@ -261,7 +261,7 @@ func printStatusSectionRows(
 	skills []linkedEntry, pinnedSet map[string]bool,
 ) error {
 	header := []string{headerSource, headerName, headerVersion, "", ""}
-	rows := termkit.Rows(skills, statusRowTable(pinnedSet))
+	rows := term.Rows(skills, statusRowTable(pinnedSet))
 
 	return renderTitledTable(cmd, format, title, rows, header, rows, linkedSkillNames(skills))
 }
@@ -282,7 +282,7 @@ func linkedSkillNames(skills []linkedEntry) []string {
 // runs uninstall with --global --for <tool>, while a "Project" section keeps
 // uninstall's project default. This is what lets a bare `rsk status`, which
 // renders one table per scanned directory, uninstall from the right one.
-func statusRowActionScope(table termkit.Data) map[string]string {
+func statusRowActionScope(table term.Data) map[string]string {
 	if toolID, ok := strings.CutPrefix(table.Title, "Global — "); ok {
 		return map[string]string{cmdx.FlagGlobal: "true", cmdx.FlagFor: toolID}
 	}
@@ -291,8 +291,8 @@ func statusRowActionScope(table termkit.Data) map[string]string {
 
 // statusRowTable projects one linked skill into its status row. The pinned set
 // is captured because it is per-section, not per-entry.
-func statusRowTable(pinnedSet map[string]bool) termkit.Table[linkedEntry] {
-	return termkit.Table[linkedEntry]{
+func statusRowTable(pinnedSet map[string]bool) term.Table[linkedEntry] {
+	return term.Table[linkedEntry]{
 		Row: func(e linkedEntry) []any {
 			return []any{
 				ui.SourceLabel(e.source),

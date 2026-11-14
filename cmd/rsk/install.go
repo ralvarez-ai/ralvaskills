@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -196,7 +196,7 @@ func runInstallGlobal(
 	if opts.dryRun {
 		return nil
 	}
-	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, opts.yes, term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
@@ -266,7 +266,7 @@ func previewAndConfirm(
 	if dryRun {
 		return false
 	}
-	if !termkit.Confirm(cmd, yes, termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, yes, term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
 		return false
 	}
@@ -302,8 +302,8 @@ func printInstallPreview(out io.Writer, skills []skill.Skill, targets, warnings 
 			})
 		}
 	}
-	termkit.WriteTableStyled(out, []string{headerSource, headerName, headerVersion, "", headerPath, ""},
-		termkit.Rows(rows, installPlanTable), false, nil, termkit.TableBorderless, ui.Theme)
+	term.WriteTableStyled(out, []string{headerSource, headerName, headerVersion, "", headerPath, ""},
+		term.Rows(rows, installPlanTable), false, nil, term.TableBorderless, ui.Theme)
 
 	for _, w := range warnings {
 		fmt.Fprintln(out)
@@ -430,7 +430,7 @@ type installPlanRow struct {
 }
 
 // installPlanTable projects one install-preview row.
-var installPlanTable = termkit.Table[installPlanRow]{
+var installPlanTable = term.Table[installPlanRow]{
 	Row: func(r installPlanRow) []any {
 		suffix := ""
 		if r.relink {

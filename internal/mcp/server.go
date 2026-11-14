@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"go.ralva.dev/mcpkit"
+	"go.ralva.dev/lib/mcpserver"
 
 	"go.ralva.dev/ralvaskills/v3/internal/catalog"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -31,7 +31,7 @@ func NewServer(deps Deps) *sdk.Server {
 		&sdk.Implementation{Name: "rsk", Title: "rsk", Version: deps.Version},
 		&sdk.ServerOptions{Logger: deps.Logger},
 	)
-	srv.AddReceivingMiddleware(mcpkit.RecoverWith(mcpkit.RecoverConfig{Logger: deps.Logger}))
+	srv.AddReceivingMiddleware(mcpserver.RecoverWith(mcpserver.RecoverConfig{Logger: deps.Logger}))
 	registerTools(srv, deps)
 	registerCatalogResource(srv, deps)
 	return srv

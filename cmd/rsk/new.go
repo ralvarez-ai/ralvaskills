@@ -12,7 +12,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
@@ -223,7 +223,7 @@ func resolveMCPFlag(cmd *cobra.Command) bool {
 	if ui.InSession(cmd.Context()) {
 		return false
 	}
-	return termkit.Confirm(cmd, false, termkit.StdioIsTerminal(), "Register the rsk MCP server in this project?")
+	return term.Confirm(cmd, false, term.StdioIsTerminal(), "Register the rsk MCP server in this project?")
 }
 
 // registerProjectMCP writes the rsk server into each configured tool's project
@@ -273,7 +273,7 @@ func resolveGuideFlag(cmd *cobra.Command) bool {
 	if ui.InSession(cmd.Context()) {
 		return false
 	}
-	return termkit.Confirm(cmd, false, termkit.StdioIsTerminal(), "Install the rsk-guide skill in this project?")
+	return term.Confirm(cmd, false, term.StdioIsTerminal(), "Install the rsk-guide skill in this project?")
 }
 
 // installRskGuide installs rsk-guide into the project and pins it, so the agent

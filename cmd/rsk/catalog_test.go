@@ -8,15 +8,15 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
 // TestRunCatalogSkillsCapture guards the picker's captured/scrollable path
-// for `rsk catalog`: under a termkit.WithCapture-wrapped context, the skill table
+// for `rsk catalog`: under a term.WithCapture-wrapped context, the skill table
 // must land in the capture and nothing must be written to the command's own
 // writer.
 func TestRunCatalogSkillsCapture(t *testing.T) {
@@ -46,13 +46,13 @@ func TestRunCatalogSkillsCapture(t *testing.T) {
 
 	var buf bytes.Buffer
 	catalogCmd.SetOut(&buf)
-	catalogCmd.SetContext(termkit.WithCapture(t.Context(), &termkit.Capture{}))
+	catalogCmd.SetContext(term.WithCapture(t.Context(), &term.Capture{}))
 	t.Cleanup(func() {
 		catalogCmd.SetOut(nil)
 		catalogCmd.SetContext(context.Background())
 	})
 
-	capture := termkit.CaptureFromContext(catalogCmd.Context())
+	capture := term.CaptureFromContext(catalogCmd.Context())
 	if capture == nil {
 		t.Fatal("expected a capture on the command's context")
 	}
@@ -77,7 +77,7 @@ func TestRunCatalogSkillsCapture(t *testing.T) {
 // TestRunCatalogSkillsCaptureJSON guards the picker's captured/scrollable
 // path for `rsk catalog -o json`: under capture, JSON output must land in
 // the capture's raw payload (rendered as a scrollable viewport by
-// termkit.ResultView) instead of silently falling back to a table.
+// term.ResultView) instead of silently falling back to a table.
 func TestRunCatalogSkillsCaptureJSON(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv(config.EnvConfigHome, home)
@@ -105,13 +105,13 @@ func TestRunCatalogSkillsCaptureJSON(t *testing.T) {
 
 	var buf bytes.Buffer
 	catalogCmd.SetOut(&buf)
-	catalogCmd.SetContext(termkit.WithCapture(t.Context(), &termkit.Capture{}))
+	catalogCmd.SetContext(term.WithCapture(t.Context(), &term.Capture{}))
 	t.Cleanup(func() {
 		catalogCmd.SetOut(nil)
 		catalogCmd.SetContext(context.Background())
 	})
 
-	capture := termkit.CaptureFromContext(catalogCmd.Context())
+	capture := term.CaptureFromContext(catalogCmd.Context())
 	if capture == nil {
 		t.Fatal("expected a capture on the command's context")
 	}

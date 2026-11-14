@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )
@@ -17,13 +17,13 @@ import (
 func sessionCmd() *cobra.Command {
 	cmd := &cobra.Command{Use: "x"}
 	cmd.Flags().String(cmdx.FlagFor, "", "")
-	cmd.SetContext(termkit.WithCapture(context.Background(), &termkit.Capture{}))
+	cmd.SetContext(term.WithCapture(context.Background(), &term.Capture{}))
 	return cmd
 }
 
 func wantFieldError(t *testing.T, err error, field string) {
 	t.Helper()
-	fieldErrs := termkit.FieldErrors(err)
+	fieldErrs := term.FieldErrors(err)
 	if len(fieldErrs) != 1 || fieldErrs[0].Field != field {
 		t.Fatalf("field errors = %+v (err %v), want one for %q", fieldErrs, err, field)
 	}
@@ -33,12 +33,12 @@ func TestDestructiveCommandsAskForConfirmationInTheSession(t *testing.T) {
 	t.Parallel()
 
 	for _, cmd := range []*cobra.Command{destroyCmd, installCmd, uninstallCmd, updateCmd} {
-		if !termkit.IsDestructive(cmd) {
+		if !term.IsDestructive(cmd) {
 			t.Errorf("%s is not marked destructive", cmd.Name())
 		}
 	}
 	for _, cmd := range []*cobra.Command{listCmd, statusCmd, catalogCmd, pinCmd, newCmd} {
-		if termkit.IsDestructive(cmd) {
+		if term.IsDestructive(cmd) {
 			t.Errorf("%s is marked destructive", cmd.Name())
 		}
 	}
@@ -50,7 +50,7 @@ func TestConfirmSkipsThePromptInTheSession(t *testing.T) {
 	var out strings.Builder
 	cmd := sessionCmd()
 	cmd.SetErr(&out)
-	if !termkit.Confirm(cmd, false, termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, false, term.StdioIsTerminal(), "Proceed?") {
 		t.Fatal("the session already confirmed; the command must go ahead")
 	}
 	if out.Len() != 0 {

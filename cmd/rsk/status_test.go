@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -104,7 +104,7 @@ func TestRunStatusJSONOutput(t *testing.T) {
 }
 
 // TestRunStatusCapture guards the picker's captured/scrollable path for
-// `rsk status --global`: under a termkit.WithCapture-wrapped context, the section
+// `rsk status --global`: under a term.WithCapture-wrapped context, the section
 // table must land in the capture and nothing must be written to the
 // command's own writer.
 func TestRunStatusCapture(t *testing.T) {
@@ -144,13 +144,13 @@ func TestRunStatusCapture(t *testing.T) {
 
 	var buf bytes.Buffer
 	statusCmd.SetOut(&buf)
-	statusCmd.SetContext(termkit.WithCapture(t.Context(), &termkit.Capture{}))
+	statusCmd.SetContext(term.WithCapture(t.Context(), &term.Capture{}))
 	t.Cleanup(func() {
 		statusCmd.SetOut(nil)
 		statusCmd.SetContext(context.Background())
 	})
 
-	capture := termkit.CaptureFromContext(statusCmd.Context())
+	capture := term.CaptureFromContext(statusCmd.Context())
 	if capture == nil {
 		t.Fatal("expected a capture on the command's context")
 	}

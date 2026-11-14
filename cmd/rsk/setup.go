@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
@@ -25,7 +25,7 @@ func setupCommands() {
 	// catalog bundle <name>. The bundles view used to hide behind a bare
 	// --bundle; it is its own subcommand now.
 	rootCmd.AddCommand(catalogCmd)
-	termkit.MarkTableView(catalogCmd)
+	term.MarkTableView(catalogCmd)
 	f := catalogCmd.Flags()
 	cmdx.RegisterInclude(catalogCmd, "Include extra skills in the output", cmdx.IncludePersonal)
 	f.String(cmdx.FlagSource, "", "Filter by source: local|official")
@@ -33,11 +33,11 @@ func setupCommands() {
 	addOutputFlag(catalogCmd)
 
 	catalogCmd.AddCommand(catalogBundlesCmd)
-	termkit.MarkTableView(catalogBundlesCmd)
+	term.MarkTableView(catalogBundlesCmd)
 	addOutputFlag(catalogBundlesCmd)
 
 	catalogCmd.AddCommand(catalogBundleCmd)
-	termkit.MarkTableView(catalogBundleCmd)
+	term.MarkTableView(catalogBundleCmd)
 	f = catalogBundleCmd.Flags()
 	cmdx.RegisterInclude(catalogBundleCmd, "Include extra skills in the output", cmdx.IncludePersonal)
 	f.String(cmdx.FlagSource, "", "Filter by source: local|official")
@@ -47,7 +47,7 @@ func setupCommands() {
 	// tools command (canonical) and the hidden legacy `claude tools` path,
 	// both built by the same factory.
 	rootCmd.AddCommand(canonicalTools.root)
-	termkit.MarkTableView(canonicalTools.list)
+	term.MarkTableView(canonicalTools.list)
 
 	// destroy command
 	rootCmd.AddCommand(destroyCmd)
@@ -77,7 +77,7 @@ func setupCommands() {
 
 	// list command
 	rootCmd.AddCommand(listCmd)
-	termkit.MarkTableView(listCmd)
+	term.MarkTableView(listCmd)
 	f = listCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "List global skills")
 	f.String(cmdx.FlagFor, "", forFlagUsage("Scope --global to a single tool: "))
@@ -99,7 +99,7 @@ func setupCommands() {
 
 	// status command
 	rootCmd.AddCommand(statusCmd)
-	termkit.MarkTableView(statusCmd)
+	term.MarkTableView(statusCmd)
 	f = statusCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "Show global skills only")
 	f.String(cmdx.FlagFor, "", forFlagUsage("Scope --global to a single tool: "))
@@ -146,7 +146,7 @@ func setupCommands() {
 	ui.MarkRowAction(catalogBundleCmd, "i", "install", installCmd)
 	ui.MarkRowAction(listCmd, "u", "uninstall", uninstallCmd)
 	ui.MarkRowAction(listCmd, "p", "pin", pinCmd)
-	ui.MarkRowActionArgs(listCmd, "n", "unpin", pinCmd, func(id string, _ termkit.Data) []string {
+	ui.MarkRowActionArgs(listCmd, "n", "unpin", pinCmd, func(id string, _ term.Data) []string {
 		return []string{id, "--" + cmdx.FlagRemove}
 	})
 
@@ -170,7 +170,7 @@ func setupCommands() {
 // interactive session asks before running them (unless --yes is given).
 func markDestructive() {
 	for _, cmd := range []*cobra.Command{destroyCmd, installCmd, uninstallCmd, updateCmd, syncCmd} {
-		termkit.MarkDestructive(cmd)
+		term.MarkDestructive(cmd)
 	}
 }
 

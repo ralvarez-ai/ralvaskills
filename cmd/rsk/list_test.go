@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 )
@@ -83,7 +83,7 @@ func TestRunListGlobalLabelsRowsByTool(t *testing.T) {
 }
 
 // TestRunListGlobalCapture guards the picker's captured/scrollable path for
-// `rsk list --global`: under a termkit.WithCapture-wrapped context, the table must
+// `rsk list --global`: under a term.WithCapture-wrapped context, the table must
 // land in the capture (for the TUI's result screen to render) and nothing
 // must be written to the command's own writer, since a captured run's output
 // would otherwise print behind the TUI.
@@ -121,13 +121,13 @@ func TestRunListGlobalCapture(t *testing.T) {
 
 	var buf bytes.Buffer
 	listCmd.SetOut(&buf)
-	listCmd.SetContext(termkit.WithCapture(t.Context(), &termkit.Capture{}))
+	listCmd.SetContext(term.WithCapture(t.Context(), &term.Capture{}))
 	t.Cleanup(func() {
 		listCmd.SetOut(nil)
 		listCmd.SetContext(context.Background())
 	})
 
-	capture := termkit.CaptureFromContext(listCmd.Context())
+	capture := term.CaptureFromContext(listCmd.Context())
 	if capture == nil {
 		t.Fatal("expected a capture on the command's context")
 	}

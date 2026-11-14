@@ -3,8 +3,8 @@ package ui
 import (
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/session"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/session"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )
@@ -49,9 +49,9 @@ func MarkRowActionArgs(
 	rowActions.Inherit(source, key, defaultScopeFlags...)
 }
 
-// RowActionsFor returns the termkit.RowAction hints registered for source,
-// sorted by key, for building a captured termkit.Data's Actions.
-func RowActionsFor(source *cobra.Command) []termkit.RowAction {
+// RowActionsFor returns the term.RowAction hints registered for source,
+// sorted by key, for building a captured term.Data's Actions.
+func RowActionsFor(source *cobra.Command) []term.RowAction {
 	return rowActions.For(source)
 }
 

@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 )
 
 // newTestTree builds root -> {view (table view), say (plain output), fail,
@@ -23,11 +23,11 @@ func newTestTree() (root, view, say, fail *cobra.Command) {
 		Use: "view",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			fmt.Fprintln(cmd.OutOrStdout(), "ignored: the table replaces text output")
-			capture := termkit.CaptureFromContext(cmd.Context())
+			capture := term.CaptureFromContext(cmd.Context())
 			if capture == nil {
 				return errors.New("no capture on the context")
 			}
-			capture.AddTable(termkit.Data{Headers: []string{"NAME"}, Rows: [][]any{{"x"}}})
+			capture.AddTable(term.Data{Headers: []string{"NAME"}, Rows: [][]any{{"x"}}})
 			if cmd.Flags().Changed("json") {
 				capture.SetRaw(`{"a":1}`)
 			}
@@ -35,7 +35,7 @@ func newTestTree() (root, view, say, fail *cobra.Command) {
 		},
 	}
 	view.Flags().Bool("json", false, "raw output")
-	termkit.MarkTableView(view)
+	term.MarkTableView(view)
 
 	say = &cobra.Command{
 		Use:  "say [word...]",
@@ -51,7 +51,7 @@ func newTestTree() (root, view, say, fail *cobra.Command) {
 	fail = &cobra.Command{
 		Use: "fail",
 		RunE: func(*cobra.Command, []string) error {
-			return termkit.NewFieldError("arg:name", errors.New("bad name"))
+			return term.NewFieldError("arg:name", errors.New("bad name"))
 		},
 	}
 
@@ -125,7 +125,7 @@ func TestRunCapturedKeepsFieldErrors(t *testing.T) {
 
 	root, _, _, fail := newTestTree()
 	_, err := RunCaptured(root)(context.Background(), fail, []string{"rsk", "fail"})
-	fieldErrs := termkit.FieldErrors(err)
+	fieldErrs := term.FieldErrors(err)
 	if len(fieldErrs) != 1 || fieldErrs[0].Field != "arg:name" {
 		t.Fatalf("field errors = %+v (err %v), want one for arg:name", fieldErrs, err)
 	}
@@ -138,7 +138,7 @@ func TestRunCapturedDoesNotPinContext(t *testing.T) {
 	if _, err := RunCaptured(root)(context.Background(), view, []string{"rsk", "view"}); err != nil {
 		t.Fatalf("run: %v", err)
 	}
-	if termkit.CaptureFromContext(view.Context()) != nil {
+	if term.CaptureFromContext(view.Context()) != nil {
 		t.Fatal("the command kept the run's capture; the next run would record into it")
 	}
 }
@@ -149,7 +149,7 @@ func TestInSession(t *testing.T) {
 	if InSession(nil) || InSession(context.Background()) { //nolint:staticcheck // nil context is the case under test
 		t.Error("a plain context is not a session")
 	}
-	if !InSession(termkit.WithCapture(context.Background(), &termkit.Capture{})) {
+	if !InSession(term.WithCapture(context.Background(), &term.Capture{})) {
 		t.Error("a captured context is a session")
 	}
 }

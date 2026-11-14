@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )
@@ -80,7 +80,7 @@ func TestReadIncludesBlamesTheIncludeField(t *testing.T) {
 		t.Fatal(err)
 	}
 	_, err := cmdx.ReadIncludes(cmd, cmdx.IncludePersonal)
-	fieldErrs := termkit.FieldErrors(err)
+	fieldErrs := term.FieldErrors(err)
 	if len(fieldErrs) != 1 || fieldErrs[0].Field != cmdx.FlagInclude {
 		t.Fatalf("field errors = %+v, want one for %q", fieldErrs, cmdx.FlagInclude)
 	}

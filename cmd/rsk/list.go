@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -128,7 +128,7 @@ func runListProject(cmd *cobra.Command, opts listOpts) error {
 	}
 
 	header := []string{"", headerName, headerVersion, ""}
-	tableRows := termkit.Rows(rows, listProjectTable)
+	tableRows := term.Rows(rows, listProjectTable)
 
 	return renderList(cmd, opts.format, "Project skills:", rows, header, tableRows, listedSkillNames(rows))
 }
@@ -145,7 +145,7 @@ func listedSkillNames(rows []listedSkill) []string {
 }
 
 // listProjectTable projects one project-manifest row.
-var listProjectTable = termkit.Table[listedSkill]{
+var listProjectTable = term.Table[listedSkill]{
 	Row: func(r listedSkill) []any {
 		mark := ui.SuccessMark
 		if !r.Installed {
@@ -213,13 +213,13 @@ func runListGlobal(cmd *cobra.Command, opts listOpts) error {
 	})
 
 	header := []string{headerSource, "Tool", headerName, headerVersion}
-	tableRows := termkit.Rows(rows, listGlobalTable)
+	tableRows := term.Rows(rows, listGlobalTable)
 
 	return renderList(cmd, opts.format, "Global skills:", rows, header, tableRows, listedSkillNames(rows))
 }
 
 // listGlobalTable projects one global-install row.
-var listGlobalTable = termkit.Table[listedSkill]{
+var listGlobalTable = term.Table[listedSkill]{
 	Row: func(r listedSkill) []any {
 		return []any{
 			ui.SourceLabel(skill.Source(r.Source)),

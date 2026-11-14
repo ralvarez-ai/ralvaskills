@@ -10,7 +10,7 @@ import (
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"go.ralva.dev/mcpkit"
+	"go.ralva.dev/lib/mcpserver"
 
 	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/catalog"
@@ -142,7 +142,7 @@ func profileHandler(deps Deps) sdk.ToolHandlerFor[ProjectProfileIn, ProjectProfi
 
 		prof, err := Scan(ctx, root)
 		if err != nil {
-			errMsg := mcpkit.ErrorMsg{Public: "could not profile the project"}
+			errMsg := mcpserver.ErrorMsg{Public: "could not profile the project"}
 			return nil, ProjectProfileOut{}, errMsg.ToolError(deps.Logger, err)
 		}
 		return nil, buildProfile(ctx, deps, prof), nil
@@ -155,7 +155,7 @@ func searchHandler(deps Deps) sdk.ToolHandlerFor[SearchSkillsIn, SearchSkillsOut
 	) (*sdk.CallToolResult, SearchSkillsOut, error) {
 		entries, err := deps.catalog(ctx)
 		if err != nil {
-			errMsg := mcpkit.ErrorMsg{Public: "could not search the skill catalog"}
+			errMsg := mcpserver.ErrorMsg{Public: "could not search the skill catalog"}
 			return nil, SearchSkillsOut{}, errMsg.ToolError(deps.Logger, err)
 		}
 		out := SearchSkillsOut{Candidates: searchCatalog(entries, in.Query, clampLimit(in.Limit))}

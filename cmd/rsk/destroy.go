@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
@@ -57,7 +57,7 @@ func runDestroy(cmd *cobra.Command, _ []string) error {
 
 	printDestroyPlan(out, rskDir, cwd, tools, len(installedNames) > 0)
 
-	if !termkit.Confirm(cmd, cmdx.Bool(cmd, cmdx.FlagYes), termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, cmdx.Bool(cmd, cmdx.FlagYes), term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
@@ -87,7 +87,7 @@ type destroyPlanRow struct {
 
 // destroyPlanTable projects one destroyPlanRow, both columns muted alike
 // since nothing here is more or less severe than anything else.
-var destroyPlanTable = termkit.Table[destroyPlanRow]{
+var destroyPlanTable = term.Table[destroyPlanRow]{
 	Row: func(r destroyPlanRow) []any {
 		return []any{ui.MutedStyle.Render(r.path), ui.MutedStyle.Render(r.what)}
 	},
@@ -111,9 +111,9 @@ func printDestroyPlan(out io.Writer, rskDir, cwd string, tools []tool.ID, hasSki
 
 	fmt.Fprintln(out)
 	ui.Header(out, "This will remove:")
-	termkit.WriteTableStyled(
-		out, []string{"", ""}, termkit.Rows(rows, destroyPlanTable),
-		false, nil, termkit.TableBorderless, ui.Theme,
+	term.WriteTableStyled(
+		out, []string{"", ""}, term.Rows(rows, destroyPlanTable),
+		false, nil, term.TableBorderless, ui.Theme,
 	)
 	fmt.Fprintln(out)
 }

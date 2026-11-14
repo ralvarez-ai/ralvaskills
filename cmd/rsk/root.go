@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"go.ralva.dev/svckit"
+	"go.ralva.dev/lib/lifecycle"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
@@ -186,11 +186,11 @@ func Execute() {
 }
 
 func execute() int {
-	ctx, stop := svckit.NotifyContext(context.Background())
+	ctx, stop := lifecycle.NotifyContext(context.Background())
 	defer stop()
 
 	err := rootCmd.ExecuteContext(ctx)
-	if errors.Is(context.Cause(ctx), svckit.ErrInterrupted) || errors.Is(err, ui.ErrAborted) {
+	if errors.Is(context.Cause(ctx), lifecycle.ErrInterrupted) || errors.Is(err, ui.ErrAborted) {
 		return exitAborted
 	}
 	if err != nil {

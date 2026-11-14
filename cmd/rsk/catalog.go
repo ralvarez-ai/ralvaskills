@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/output"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/output"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -119,7 +119,7 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 	}
 	out := cmd.OutOrStdout()
 	ctx := cmd.Context()
-	capture := termkit.CaptureFromContext(ctx)
+	capture := term.CaptureFromContext(ctx)
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -156,7 +156,7 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 	}
 
 	header := []string{headerSource, headerName, headerVersion}
-	tableRows := termkit.Rows(all, catalogSkillTable)
+	tableRows := term.Rows(all, catalogSkillTable)
 
 	return renderList(cmd, opts.format, "", skillsToEntries(all), header, tableRows, skillNames(all))
 }
@@ -165,7 +165,7 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 // ("" means both), warning on (rather than failing for) a source that can't
 // be walked.
 func loadSkillsBySource(
-	ctx context.Context, out io.Writer, capture *termkit.Capture, cfg config.Config, sourceFilter skill.Source,
+	ctx context.Context, out io.Writer, capture *term.Capture, cfg config.Config, sourceFilter skill.Source,
 ) []skill.Skill {
 	var all []skill.Skill
 
@@ -192,7 +192,7 @@ func loadSkillsBySource(
 
 // filterByBundle keeps only the skills named in bundleName's catalog entry.
 func filterByBundle(
-	out io.Writer, capture *termkit.Capture, all []skill.Skill, bundleName string,
+	out io.Writer, capture *term.Capture, all []skill.Skill, bundleName string,
 ) ([]skill.Skill, error) {
 	catalog, catalogWarn := config.LoadCatalog("")
 	if catalogWarn != nil {
@@ -221,7 +221,7 @@ func skillNames(skills []skill.Skill) []string {
 }
 
 // catalogSkillTable projects one catalog skill row.
-var catalogSkillTable = termkit.Table[skill.Skill]{
+var catalogSkillTable = term.Table[skill.Skill]{
 	Row: func(s skill.Skill) []any {
 		return []any{ui.SourceLabel(s.Source), ui.SkillName(s.Name), ui.SkillVersion(s.Version)}
 	},
@@ -246,7 +246,7 @@ func runCatalogBundles(cmd *cobra.Command, opts catalogOpts) error {
 		return err
 	}
 	out := cmd.OutOrStdout()
-	capture := termkit.CaptureFromContext(cmd.Context())
+	capture := term.CaptureFromContext(cmd.Context())
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -282,7 +282,7 @@ func runCatalogBundles(cmd *cobra.Command, opts catalogOpts) error {
 	}
 
 	header := []string{"", "Bundle", "Linked", "Description"}
-	tableRows := termkit.Rows(rows, catalogBundleTable)
+	tableRows := term.Rows(rows, catalogBundleTable)
 
 	return renderList(cmd, opts.format, "", bundleRowsToEntries(rows), header, tableRows, bundleNames(rows))
 }
@@ -299,7 +299,7 @@ func bundleNames(rows []bundleRow) []string {
 }
 
 // catalogBundleTable projects one bundle row.
-var catalogBundleTable = termkit.Table[bundleRow]{
+var catalogBundleTable = term.Table[bundleRow]{
 	Row: func(r bundleRow) []any {
 		mark := ui.ErrorMark
 		switch {

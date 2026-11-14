@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
@@ -26,7 +26,7 @@ const messageAborted = "Aborted."
 // interactive session shows it on that field instead of dropping back to the
 // picker. On the command line it is the same error.
 func fieldError(field, message string, args ...any) error {
-	return termkit.NewFieldError(field, fmt.Errorf(message, args...))
+	return term.NewFieldError(field, fmt.Errorf(message, args...))
 }
 
 // nameFromArgsOrPrompt returns args[0] if provided, otherwise prompts

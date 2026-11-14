@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"go.ralva.dev/termkit/session"
+	"go.ralva.dev/lib/term/session"
 
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )

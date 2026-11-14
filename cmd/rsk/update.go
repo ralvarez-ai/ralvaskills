@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
+	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -108,7 +108,7 @@ func runUpdateLocal(cmd *cobra.Command, args []string, cfg config.Config, opts u
 		return nil
 	}
 
-	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, opts.yes, term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
@@ -347,7 +347,7 @@ func runOfficialCacheRefresh(cmd *cobra.Command, cfg config.Config, dryRun, yes 
 		return nil
 	}
 
-	if !termkit.Confirm(cmd, yes, termkit.StdioIsTerminal(), "Refresh anthropics/skills cache?") {
+	if !term.Confirm(cmd, yes, term.StdioIsTerminal(), "Refresh anthropics/skills cache?") {
 		fmt.Fprintln(out, "Skipped official cache refresh.")
 		return nil
 	}
@@ -413,7 +413,7 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		saveUpdateCache(out, cfg, updatePairNames(toUpdate))
 		return nil
 	}
-	if !termkit.Confirm(cmd, opts.yes, termkit.StdioIsTerminal(), "Proceed?") {
+	if !term.Confirm(cmd, opts.yes, term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
 		saveUpdateCache(out, cfg, updatePairNames(toUpdate))
 		return nil
@@ -569,13 +569,13 @@ func findOutdatedSkills(
 func printRegistryUpdatePlan(out io.Writer, toUpdate []updatePair) {
 	fmt.Fprintln(out)
 	ui.Header(out, "Skills to update:")
-	termkit.WriteTableStyled(out, []string{headerName, "From", "", "To"},
-		termkit.Rows(toUpdate, updatePlanTable), false, nil, termkit.TableBorderless, ui.Theme)
+	term.WriteTableStyled(out, []string{headerName, "From", "", "To"},
+		term.Rows(toUpdate, updatePlanTable), false, nil, term.TableBorderless, ui.Theme)
 	fmt.Fprintln(out)
 }
 
 // updatePlanTable projects one update-plan row.
-var updatePlanTable = termkit.Table[updatePair]{
+var updatePlanTable = term.Table[updatePair]{
 	Row: func(u updatePair) []any {
 		from := u.installed
 		if from == "" {

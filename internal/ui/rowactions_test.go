@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/termkit"
-	"go.ralva.dev/termkit/session"
+	"go.ralva.dev/lib/term"
+	"go.ralva.dev/lib/term/session"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 )
@@ -70,7 +70,7 @@ func TestSessionRowActionAppliesTableScope(t *testing.T) {
 	target := addScopeFlags(&cobra.Command{Use: "uninstall", RunE: func(*cobra.Command, []string) error { return nil }})
 	root.AddCommand(source, target)
 
-	MarkRowActionScoped(source, "u", "uninstall", target, func(table termkit.Data) map[string]string {
+	MarkRowActionScoped(source, "u", "uninstall", target, func(table term.Data) map[string]string {
 		if tool, ok := strings.CutPrefix(table.Title, "Global — "); ok {
 			return map[string]string{cmdx.FlagGlobal: "true", cmdx.FlagFor: tool}
 		}
@@ -80,7 +80,7 @@ func TestSessionRowActionAppliesTableScope(t *testing.T) {
 
 	_, args, ok := SessionRowAction(session.RowActionEvent{
 		Source: source,
-		Table:  termkit.Data{Title: "Global — opencode"},
+		Table:  term.Data{Title: "Global — opencode"},
 		ID:     "fastapi-architect",
 		Key:    "u",
 	})
