@@ -1,7 +1,7 @@
 ---
 status: active
 project: ralvaskills
-date: 2026-11-12
+date: 2026-11-17
 related: []
 ---
 
@@ -11,7 +11,7 @@ related: []
 >
 > Estimate: ~4 bytes/token for bodies, ~3 bytes/token for descriptions (Claude tokenizer). Actual range ±15%.
 
-_Last updated: 2026-11-12 · 67 skills · 15 bundles_
+_Last updated: 2026-11-17 · 68 skills · 15 bundles_
 
 ## Load model
 
@@ -19,9 +19,9 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 | What | When loaded | Estimated tokens |
 |---|---|---:|
-| All `SKILL.md` bodies | Only when invoked | ~159345 |
-| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~193217 |
-| All `description:` fields (every skill) | Every turn, if all installed | ~7604 |
+| All `SKILL.md` bodies | Only when invoked | ~160823 |
+| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~194172 |
+| All `description:` fields (every skill) | Every turn, if all installed | ~7740 |
 
 ## Session profiles
 
@@ -58,7 +58,7 @@ These skills are not part of any bundle. They are installed individually with `r
 | `go-house-libs` | personal | ~2197 | ~265 | ~2071 |
 | `backend-performance-architect` | quality | ~3413 | ~204 | ~3498 |
 | `manim-architect` | frameworks | ~1776 | ~198 | ~4433 |
-| `explainer-designer` | frontend | ~1704 | ~187 | ~1936 |
+| `explainer-designer` | frontend | ~1737 | ~187 | ~2401 |
 | `go-library-builder` | personal | ~4026 | ~167 | ~4058 |
 | `landing-page-designer` | frontend | ~3057 | ~166 | ~1134 |
 | `connectrpc-architect` | protocols | ~3046 | ~153 | ~3750 |
@@ -67,6 +67,7 @@ These skills are not part of any bundle. They are installed individually with `r
 | `docs-architect` | workflows | ~1643 | ~144 | ~5829 |
 | `uru-paper-format` | personal | ~2114 | ~141 | ~2567 |
 | `remotion-architect` | frameworks | ~3218 | ~139 | ~4485 |
+| `notify-on-finish` | tooling | ~1445 | ~136 | ~490 |
 | `mockup-architect` | frontend | ~885 | ~136 | ~474 |
 | `narration-writer` | frontend | ~2045 | ~134 | ~3027 |
 | `uru-thesis-defense-designer` | personal | ~1777 | ~132 | ~2025 |
@@ -92,14 +93,14 @@ These skills are not part of any bundle. They are installed individually with `r
 | frameworks | 11 | ~26995 | ~1347 | ~33694 |
 | protocols | 4 | ~16650 | ~662 | ~23684 |
 | personal | 7 | ~15951 | ~1046 | ~26879 |
-| frontend | 8 | ~15369 | ~1045 | ~16939 |
+| frontend | 8 | ~15402 | ~1045 | ~17404 |
 | languages | 3 | ~13482 | ~406 | ~16535 |
 | infra | 5 | ~11698 | ~517 | ~11926 |
 | quality | 5 | ~11193 | ~563 | ~7742 |
 | meta | 5 | ~9752 | ~362 | ~8387 |
+| tooling | 3 | ~7600 | ~310 | ~7662 |
 | refactoring | 4 | ~6628 | ~278 | ~8125 |
 | workflows | 5 | ~6572 | ~423 | ~10578 |
-| tooling | 2 | ~6155 | ~174 | ~7172 |
 | academic | 2 | ~5097 | ~270 | ~9400 |
 | design | 2 | ~4365 | ~149 | ~2471 |
 | messaging | 1 | ~2770 | ~83 | ~3179 |
@@ -185,23 +186,24 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 50 | `improve-codebase-architecture` | refactoring | 7210 | ~1803 | ~60 | ~0 | ~0 | ~4488 |
 | 51 | `uru-thesis-defense-designer` | personal | 7107 | ~1777 | ~132 | ~0 | ~1525 | ~500 |
 | 52 | `manim-architect` | frameworks | 7103 | ~1776 | ~198 | ~284 | ~1471 | ~2678 |
-| 53 | `gin-architect` | frameworks | 6769 | ~1705 | ~109 | ~419 | ~1266 | ~594 |
-| 54 | `explainer-designer` | frontend | 6813 | ~1704 | ~187 | ~0 | ~790 | ~1146 |
+| 53 | `explainer-designer` | frontend | 6946 | ~1737 | ~187 | ~0 | ~1255 | ~1146 |
+| 54 | `gin-architect` | frameworks | 6769 | ~1705 | ~109 | ~419 | ~1266 | ~594 |
 | 55 | `grafana-architect` | infra | 6739 | ~1685 | ~77 | ~407 | ~1149 | ~622 |
 | 56 | `uru-thesis-writer` | personal | 6637 | ~1660 | ~114 | ~0 | ~1697 | ~5465 |
 | 57 | `docs-architect` | workflows | 6570 | ~1643 | ~144 | ~0 | ~0 | ~5829 |
-| 58 | `adhd-mode` | meta | 5483 | ~1371 | ~75 | ~0 | ~0 | ~343 |
-| 59 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~428 |
-| 60 | `tdd` | workflows | 4169 | ~1073 | ~69 | ~0 | ~0 | ~1781 |
-| 61 | `demo-script-designer` | frontend | 3635 | ~939 | ~96 | ~0 | ~0 | ~794 |
-| 62 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~474 |
-| 63 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
-| 64 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~409 |
-| 65 | `grill-with-docs` | workflows | 3084 | ~771 | ~63 | ~0 | ~0 | ~1965 |
-| 66 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
-| 67 | `caveman` | meta | 1789 | ~448 | ~71 | ~0 | ~0 | ~272 |
+| 58 | `notify-on-finish` | tooling | 5422 | ~1445 | ~136 | ~0 | ~0 | ~490 |
+| 59 | `adhd-mode` | meta | 5483 | ~1371 | ~75 | ~0 | ~0 | ~343 |
+| 60 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~428 |
+| 61 | `tdd` | workflows | 4169 | ~1073 | ~69 | ~0 | ~0 | ~1781 |
+| 62 | `demo-script-designer` | frontend | 3635 | ~939 | ~96 | ~0 | ~0 | ~794 |
+| 63 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~474 |
+| 64 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
+| 65 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~409 |
+| 66 | `grill-with-docs` | workflows | 3084 | ~771 | ~63 | ~0 | ~0 | ~1965 |
+| 67 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
+| 68 | `caveman` | meta | 1789 | ~448 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 634740 body bytes · ~159345 body tokens · ~7604 desc tokens · ~193217 side tokens
+**Totals:** 640295 body bytes · ~160823 body tokens · ~7740 desc tokens · ~194172 side tokens
 
 ## Topic files
 
@@ -363,6 +365,8 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `DIGEST.md` — ~498 tokens
 - `skill-builder` (~492 tokens total):
   - `DIGEST.md` — ~492 tokens
+- `notify-on-finish` (~490 tokens total):
+  - `DIGEST.md` — ~490 tokens
 - `protobuf-architect` (~479 tokens total):
   - `DIGEST.md` — ~479 tokens
 - `mockup-architect` (~474 tokens total):
@@ -379,9 +383,9 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `DIGEST.md` — ~409 tokens
 - `logic-cleaner` (~405 tokens total):
   - `DIGEST.md` — ~405 tokens
-- `pi-iteration-workflow` (~394 tokens total):
-  - `DIGEST.md` — ~394 tokens
 - `feature-planner` (~394 tokens total):
+  - `DIGEST.md` — ~394 tokens
+- `pi-iteration-workflow` (~394 tokens total):
   - `DIGEST.md` — ~394 tokens
 - `adhd-mode` (~343 tokens total):
   - `DIGEST.md` — ~343 tokens

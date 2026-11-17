@@ -1,0 +1,311 @@
+#!/usr/bin/env bash
+# notify-on-finish — run a command detached and notify when it ends.
+# Prototype v0.1.0 — POSIX-ish, no deps beyond a notification daemon.
+set -u
+
+PROG=${0##*/}
+SELF=$(readlink -f -- "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")
+STATE_DIR=${NOTIFY_ON_FINISH_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/notify-on-finish}
+APP=notify-on-finish
+
+# ---------- helpers ----------
+
+kv() { sed -n "s/^$1=//p" "$2" 2>/dev/null | head -n1; }
+
+fmt_dur() {
+  s=${1:-0}
+  if [ "$s" -lt 60 ]; then printf '%ds' "$s"
+  elif [ "$s" -lt 3600 ]; then printf '%dm %02ds' $((s / 60)) $((s % 60))
+  else printf '%dh %02dm' $((s / 3600)) $((s % 3600 / 60)); fi
+}
+
+trunc() {
+  printf '%s' "$1" | tr '\n\t' '  ' | cut -c1-${2:-110}
+}
+
+json_esc() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\t/\\t/g'
+}
+
+write_meta() { # write_meta <file>  (reads k=v pairs from stdin, atomic replace)
+  meta=$1
+  tmp="$meta.tmp.$$"
+  cat >"$tmp" && mv -f "$tmp" "$meta"
+}
+
+# ---------- notification backends ----------
+
+notify() { # notify <title> <body> <urgency> <icon>
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send -a "$APP" -u "$3" -i "$4" "$1" "$2" >/dev/null 2>&1 && return 0
+  fi
+  if command -v gdbus >/dev/null 2>&1; then
+    gdbus call --session --dest org.freedesktop.Notifications \
+      --object-path /org/freedesktop/Notifications \
+      --method org.freedesktop.Notifications.Notify \
+      "$APP" 0 "$4" "$1" "$2" '[]' '{}' 5000 >/dev/null 2>&1 && return 0
+  fi
+  if command -v osascript >/dev/null 2>&1; then
+    osascript -e "display notification \"$2\" with title \"$1\"" >/dev/null 2>&1 && return 0
+  fi
+  return 1
+}
+
+chime() { # chime ok|fail  — best effort, never fatal
+  name=complete
+  [ "$1" = fail ] && name=bell
+  if command -v canberra-gtk-play >/dev/null 2>&1; then
+    canberra-gtk-play -i "$name" >/dev/null 2>&1 && return 0
+  fi
+  f=/usr/share/sounds/freedesktop/stereo/$name.oga
+  if [ -f "$f" ]; then
+    if command -v pw-play >/dev/null 2>&1; then pw-play "$f" >/dev/null 2>&1 && return 0; fi
+    if command -v paplay >/dev/null 2>&1; then paplay "$f" >/dev/null 2>&1 && return 0; fi
+  fi
+  if command -v afplay >/dev/null 2>&1; then
+    if [ "$1" = ok ]; then afplay /System/Library/Sounds/Glass.aiff >/dev/null 2>&1
+    else afplay /System/Library/Sounds/Basso.aiff >/dev/null 2>&1; fi && return 0
+  fi
+  return 1
+}
+
+# ---------- worker (detached child) ----------
+
+__run() {
+  meta=$1
+  shift
+  [ "${1:-}" = "--" ] && shift
+  [ $# -gt 0 ] || exit 2
+
+  label=$(kv label "$meta")
+  log=$(kv log "$meta")
+  start=$(kv start "$meta")
+  log=${log:-$STATE_DIR/${meta##*/}.log}
+
+  # publish the pid early so `--status` can show it while running
+  printf 'id=%s\nlabel=%s\ncmd=%s\nstate=running\ncode=-\nstart=%s\nend=-\nduration=-\nlog=%s\npid=%s\n' \
+    "$(kv id "$meta")" "$label" "$(kv cmd "$meta")" "$start" "$log" "$$" | write_meta "$meta"
+
+  "$@" >"$log" 2>&1
+  code=$?
+  end=$(date +%s)
+  dur=$((end - start))
+
+  if [ "$code" -eq 0 ]; then
+    state=done
+  elif [ "$code" -ge 128 ]; then
+    state=killed
+  else
+    state=failed
+  fi
+
+  # keep the last useful log line for the failure body
+  last=$(grep -v '^[[:space:]]*$' "$log" 2>/dev/null | tail -n1)
+
+  printf 'id=%s\nlabel=%s\ncmd=%s\nstate=%s\ncode=%s\nstart=%s\nend=%s\nduration=%s\nlog=%s\npid=%s\n' \
+    "$(kv id "$meta")" "$(trunc "$label" 200)" "$(kv cmd "$meta")" "$state" "$code" \
+    "$start" "$end" "$dur" "$log" "$$" | write_meta "$meta"
+
+  [ "${NOTIFY_ON_FINISH_SILENT:-0}" = 1 ] && exit "$code"
+
+  d=$(fmt_dur "$dur")
+  case $state in
+  done)
+    title="$label"
+    body="✔ OK · $d"
+    urgency=normal
+    icon=process-completed
+    ;;
+  failed)
+    title="$label"
+    body="✘ FALLÓ (exit $code) · $d"
+    [ -n "$last" ] && body="$body · $(trunc "$last" 90)"
+    urgency=critical
+    icon=dialog-error
+    ;;
+  *)
+    title="$label"
+    body="✘ interrumpido (señal $code) · $d"
+    urgency=critical
+    icon=dialog-error
+    ;;
+  esac
+
+  if [ "${NOTIFY_ON_FINISH_NO_NOTIFY:-0}" != 1 ]; then
+    notify "$(trunc "$title" 60)" "$(trunc "$body" 180)" "$urgency" "$icon" || true
+  fi
+  if [ "${NOTIFY_ON_FINISH_QUIET:-0}" != 1 ]; then
+    case $state in done) chime ok ;; *) chime fail ;; esac || true
+  fi
+
+  exit "$code"
+}
+
+# ---------- status ----------
+
+status_table() {
+  printf 'STATE\tCODE\tDURATION\tLABEL\tLOG\n'
+  [ -d "$STATE_DIR" ] || return 0
+  now=$(date +%s)
+  for f in "$STATE_DIR"/*.meta; do
+    [ -e "$f" ] || continue
+    st=$(kv state "$f")
+    code=$(kv code "$f")
+    dur=$(kv duration "$f")
+    label=$(kv label "$f")
+    log=$(kv log "$f")
+    start=$(kv start "$f")
+    if [ "$st" = running ]; then
+      dur=$(fmt_dur $((now - ${start:-now})))
+    else
+      dur=$(fmt_dur "${dur:-0}")
+    fi
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "${st:-?}" "${code:--}" "$dur" "$start" "$label" "$log"
+  done | sort -t $'\t' -k4,4nr | cut -f1-3,5,6
+}
+
+status_json() {
+  [ -d "$STATE_DIR" ] || { printf '[]\n'; return 0; }
+  first=1
+  now=$(date +%s)
+  printf '['
+  for f in "$STATE_DIR"/*.meta; do
+    [ -e "$f" ] || continue
+    st=$(kv state "$f")
+    code=$(kv code "$f")
+    dur=$(kv duration "$f")
+    start=$(kv start "$f")
+    if [ "$st" = running ]; then dur=$((now - ${start:-now})); fi
+    case ${code:-} in '' | '-') code=null ;; *) code=${code//[!0-9]/} ;; esac
+    case ${dur:-} in '' | '-') dur=0 ;; esac
+    [ "$first" = 1 ] || printf ','
+    first=0
+    printf '{"state":"%s","code":%s,"duration":%s,"label":"%s","log":"%s"}' \
+      "$(json_esc "$st")" "$code" "$dur" \
+      "$(json_esc "$(kv label "$f")")" "$(json_esc "$(kv log "$f")")"
+  done
+  printf ']\n'
+}
+
+doctor() {
+  have() { if command -v "$1" >/dev/null 2>&1; then printf 'yes (%s)' "$(command -v "$1")"; else printf 'no'; fi; }
+  printf 'state dir        %s\n' "$STATE_DIR"
+  printf 'notify-send      %s\n' "$(have notify-send)"
+  printf 'dunstify         %s\n' "$(have dunstify)"
+  printf 'makoctl          %s\n' "$(have makoctl)"
+  printf 'swaync-client    %s\n' "$(have swaync-client)"
+  printf 'gdbus            %s\n' "$(have gdbus)"
+  printf 'osascript        %s\n' "$(have osascript)"
+  printf 'canberra-gtk-play %s\n' "$(have canberra-gtk-play)"
+  printf 'pw-play          %s\n' "$(have pw-play)"
+  printf 'paplay           %s\n' "$(have paplay)"
+  printf 'afplay           %s\n' "$(have afplay)"
+  printf 'setsid           %s\n' "$(have setsid)"
+  printf 'sound theme      %s\n' "$([ -f /usr/share/sounds/freedesktop/stereo/complete.oga ] && echo 'freedesktop present' || echo 'missing')"
+  if command -v gdbus >/dev/null 2>&1; then
+    printf 'daemon           %s\n' "$(gdbus call --session --dest org.freedesktop.Notifications \
+      --object-path /org/freedesktop/Notifications \
+      --method org.freedesktop.Notifications.GetServerInformation 2>/dev/null || echo 'no reply')"
+  fi
+}
+
+# ---------- launcher ----------
+
+usage() {
+  cat <<EOF
+$PROG — run a command detached, notify when it ends
+
+  $PROG --label "go test ./..." -- go test ./...
+  $PROG --label build --quiet -- task build      # no sound
+  $PROG --label build --silent -- task build     # log only
+  $PROG --wait --label short -- cmd              # foreground, same exit code
+  $PROG --status                                 # TSV: state code duration label log
+  $PROG --status --json
+  $PROG --clean                                  # drop finished runs
+  $PROG --doctor                                 # which backends exist here
+
+Env: XDG_STATE_HOME, NOTIFY_ON_FINISH_DIR
+State: $STATE_DIR
+EOF
+}
+
+launch() {
+  mkdir -p "$STATE_DIR" || exit 1
+  find "$STATE_DIR" -type f -mtime +30 -delete 2>/dev/null
+
+  id=$(date +%Y%m%dT%H%M%S)-$$
+  meta=$STATE_DIR/$id.meta
+  log=$STATE_DIR/$id.log
+  start=$(date +%s)
+  cmdline=$(printf '%s ' "$@")
+  cmdline=${cmdline% }
+
+  printf 'id=%s\nlabel=%s\ncmd=%s\nstate=running\ncode=-\nstart=%s\nend=-\nduration=-\nlog=%s\npid=-\n' \
+    "$id" "$(trunc "$LABEL" 200)" "$(trunc "$cmdline" 300)" "$start" "$log" | write_meta "$meta"
+
+  export NOTIFY_ON_FINISH_QUIET NOTIFY_ON_FINISH_SILENT NOTIFY_ON_FINISH_NO_NOTIFY
+
+  if [ "$WAIT" = 1 ]; then
+    ( __run "$meta" -- "$@" )
+    code=$?
+    printf '%s · %s · %s\n' "$LABEL" "$([ "$code" -eq 0 ] && echo OK || echo "exit $code")" \
+      "$(fmt_dur $(( $(date +%s) - start )))" >&2
+    printf '%s\n' "$log"
+    exit "$code"
+  fi
+
+  if command -v setsid >/dev/null 2>&1; then
+    setsid nohup "$SELF" __run "$meta" -- "$@" </dev/null >"$STATE_DIR/$id.launch" 2>&1 &
+  else
+    nohup "$SELF" __run "$meta" -- "$@" </dev/null >"$STATE_DIR/$id.launch" 2>&1 &
+  fi
+  disown "$!" 2>/dev/null || true
+
+  printf '%s\n' "$id"
+}
+
+# ---------- main ----------
+
+WAIT=0
+LABEL=""
+MODE=run
+
+while [ $# -gt 0 ]; do
+  case $1 in
+  --label | -l) [ $# -ge 2 ] || { echo "$PROG: --label needs a value" >&2; exit 2; }; LABEL=$2; shift 2 ;;
+  --quiet | -q) export NOTIFY_ON_FINISH_QUIET=1; shift ;;
+  --silent | -s) export NOTIFY_ON_FINISH_SILENT=1; shift ;;
+  --no-notify) export NOTIFY_ON_FINISH_NO_NOTIFY=1; shift ;;
+  --wait | -w) WAIT=1; shift ;;
+  --status) MODE=status; shift ;;
+  --json) MODE=status_json; shift ;;
+  --doctor) MODE=doctor; shift ;;
+  --clean) MODE=clean; shift ;;
+  -h | --help) usage; exit 0 ;;
+  --) shift; break ;;
+  __run) shift; __run "$@"; exit $? ;;
+  -*) echo "$PROG: unknown flag: $1 (see --help)" >&2; exit 2 ;;
+  *) break ;;
+  esac
+done
+
+case $MODE in
+status) status_table ;;
+status_json) status_json ;;
+doctor) doctor ;;
+clean)
+  n=0
+  for f in "$STATE_DIR"/*.meta; do
+    [ -e "$f" ] || continue
+    [ "$(kv state "$f")" = running ] && continue
+    rm -f "$f" "${f%.meta}.log" "${f%.meta}.launch"
+    n=$((n + 1))
+  done
+  echo "removed $n finished run(s)"
+  ;;
+run)
+  [ $# -gt 0 ] || { usage >&2; exit 2; }
+  [ -n "$LABEL" ] || LABEL=$(printf '%s ' "$@" | cut -c1-60)
+  launch "$@"
+  ;;
+esac
