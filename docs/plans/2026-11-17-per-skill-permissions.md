@@ -1,5 +1,5 @@
 ---
-status: draft
+status: active
 project: ralvaskills
 date: 2026-11-17
 related: [designs/2026-05-20-technical-specification.md, plans/2026-10-02-mcp-server-plan.md, guides/registry-flow.md]
@@ -9,7 +9,7 @@ related: [designs/2026-05-20-technical-specification.md, plans/2026-10-02-mcp-se
 
 Una skill declara en su frontmatter los permisos de herramienta que necesita (`allowed-tools`), Claude Code ya los respeta al activarla, y `rsk` los traduce a los clientes que no leen ese campo, los reconcilia al actualizar y retira lo que concedió al desinstalar. Hoy eso es un comando manual (`rsk tools allow`) que el usuario tiene que recordar por proyecto, por skill y por cliente.
 
-Estado: propuesta, pendiente de aprobación.
+Estado: fases 1-4 implementadas (2026-11-17); fase 5 pendiente, en plan aparte.
 Origen: conversación sobre `notify-on-finish` (2026-11-17): la skill funciona, pero cada lanzamiento pide aprobación hasta que alguien añade la regla a mano.
 
 ---
@@ -208,13 +208,36 @@ Fase 0 hecha. Las fases 1-2 son el núcleo; 3 es la que se pidió; 4 y 5 pueden 
 
 Decisiones resueltas: declaración en `allowed-tools` del `SKILL.md` (no bloque nuevo ni sidecar); registro en `rsk.lock`; la fase 5 se abre como plan aparte cuando 1-4 estén cerradas.
 
-## 11. Criterios de salida
+## 11. Estado de implementación (2026-11-17)
+
+Lo que ya está en el árbol:
+
+| Pieza | Dónde |
+|---|---|
+| Parser de `allowed-tools` (lista YAML y string) + validación | `internal/skill/registry.go` (`AllowedToolsPrefix`, `ValidateAllowedTools`, `NormalizeAllowedTools`, `SplitRule`) |
+| `Skill.AllowedTools` | `internal/skill/skill.go` |
+| Registro en el lock | `internal/manifest/lock.go` (`permissions`, `granted`, `FindLockEntry`) |
+| Regla neutra y traducción por cliente | `internal/tool/permissions.go` (`Rule`, `Translate`, `PermissionWriter`, `WriterFor`) |
+| Escritura en OpenCode (append, última regla gana, sin reordenar) | `internal/tool/opencode.go` (`GrantPermissions`, `RevokePermissions`) |
+| Reconciliación, consentimiento y registro | `internal/permission/reconcile.go` |
+| Retirada al desinstalar | `internal/permission/revoke.go` + `cmd/rsk/uninstall.go` |
+| Cableado CLI y flags | `cmd/rsk/permissions.go`, `install.go`, `update_lock.go`, `setup.go` |
+
+Verificado con el binario en un proyecto temporal: instalar escribe la regla solo en OpenCode y la registra; reinstalar no duplica ni reescribe; una versión que añade una entrada escribe solo esa; una que la retira **avisa una vez** y no borra; desinstalar retira exactamente lo escrito y deja `{}`.
+
+Pendiente, fuera de esta entrega (backlog `qk4m2v`, `v7pd1a`):
+
+- `rsk tools --for opencode` (hoy sigue siendo solo Claude).
+- Un `rsk update` real de extremo a extremo: la reconciliación comparte `reconcileLock` con el install y está cubierta por tests, pero el camino `update` no se ejecutó contra una versión nueva publicada.
+- Fase 5 (índice del registry y `rsk mcp`).
+
+## 12. Criterios de salida
 
 - [x] `notify-on-finish` declara su `allowed-tools` y lanza su script sin prompt en Claude Code.
-- [ ] `rsk install` en OpenCode escribe la regla al final, conserva las existentes y es idempotente al repetir.
-- [ ] En Claude, `rsk install`/`rsk update` no escriben `.claude/settings.json` y lo informan.
-- [ ] Subir una skill a una versión con una entrada nueva en `allowed-tools` hace que `rsk update` la ofrezca una sola vez.
-- [ ] Una versión que retira una entrada la ofrece revocar y no la borra sin respuesta.
-- [ ] `rsk uninstall` deja `opencode.json` como estaba antes de instalar la skill (salvo reglas del usuario).
-- [ ] Una skill sin `allowed-tools` no produce ningún cambio en la configuración.
+- [x] `rsk install` en OpenCode escribe la regla al final, conserva las existentes y es idempotente al repetir.
+- [x] En Claude, `rsk install`/`rsk update` no escriben `.claude/settings.json` y lo informan.
+- [x] Subir una skill a una versión con una entrada nueva en `allowed-tools` hace que `rsk update` la ofrezca una sola vez.
+- [x] Una versión que retira una entrada la ofrece revocar y no la borra sin respuesta.
+- [x] `rsk uninstall` deja `opencode.json` como estaba antes de instalar la skill (salvo reglas del usuario).
+- [x] Una skill sin `allowed-tools` no produce ningún cambio en la configuración.
 - [ ] Sin TTY, ningún comando escribe permisos.
