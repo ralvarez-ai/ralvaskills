@@ -1,6 +1,6 @@
 ---
 name: explainer-designer
-version: 2.0.0
+version: 2.1.0
 description: Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) — the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).
 ---
 
@@ -59,6 +59,8 @@ Every scene carries a small chip with the origin of its content:
 3. Run the length gate with the real audio: none runs past its scene.
 4. Listen once, and check each sentence against its source.
 5. Judge at the final resolution, not at the preview size.
+
+Videos of recorded runs: the steps to pick, verify and compare the data are in [RECIPES.md](RECIPES.md#5-a-video-of-recorded-runs).
 
 ## 7. Anti-patterns
 
