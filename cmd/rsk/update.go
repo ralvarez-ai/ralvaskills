@@ -245,69 +245,6 @@ func refreshPinnedDigest(out, errOut io.Writer) {
 
 // bumpLockForProject re-resolves skills and updates the project's rsk.lock.
 // When args is empty, all skills in rsk.mod are refreshed. No-op if no project.
-func bumpLockForProject(cmd *cobra.Command, args []string, cfg config.Config) error {
-	ctx := cmd.Context()
-
-	rskDir, ok := tryRskDir()
-	if !ok {
-		return nil
-	}
-
-	catalog, warn := config.LoadCatalog("")
-	if warn != nil {
-		ui.Warn(cmd.OutOrStdout(), fmt.Sprintf("user catalog: %v", warn))
-	}
-
-	names, err := skillNamesFromArgs(args, catalog)
-	if err != nil {
-		return err
-	}
-	if len(names) == 0 {
-		m, modOK := tryReadMod(rskDir)
-		if !modOK {
-			return nil
-		}
-		for name := range m.Skills {
-			names = append(names, name)
-		}
-		if len(names) == 0 {
-			return nil
-		}
-	}
-
-	localSrc := newLocalSource(cfg)
-	officialSrc := source.NewOfficial(cfg.OfficialCache)
-
-	m, err := manifest.ReadMod(rskDir)
-	if err != nil {
-		return err
-	}
-	targets := projectSkillsDirs(filepath.Dir(rskDir), m)
-
-	lock, err := manifest.ReadLock(rskDir)
-	if err != nil {
-		return err
-	}
-	for _, name := range names {
-		s, findErr := findSkillByName(ctx, name, localSrc, officialSrc)
-		if findErr != nil {
-			continue
-		}
-		for _, target := range targets {
-			if linkErr := skill.Link(s, target); linkErr != nil {
-				return linkErr
-			}
-		}
-		lock = manifest.UpsertLockEntry(lock, manifest.LockEntry{
-			Name:    s.Name,
-			Version: s.Version,
-			Source:  s.Source,
-		})
-	}
-	return manifest.WriteLock(rskDir, lock)
-}
-
-// refreshOfficialCache clones or pulls the official anthropics/skills cache.
 func refreshOfficialCache(cmd *cobra.Command, dir string) error {
 	out := cmd.OutOrStdout()
 	ctx := cmd.Context()

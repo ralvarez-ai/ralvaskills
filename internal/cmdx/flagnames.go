@@ -17,6 +17,10 @@ const (
 	FlagYes      = "yes"
 	FlagInclude  = "include"
 	FlagRemove   = "remove"
+
+	FlagApplyPermissions = "apply-permissions"
+	FlagSkipPermissions  = "skip-permissions"
+	FlagRevokeRemoved    = "revoke-removed"
 )
 
 // ScopeAll selects every configured tool when used as the --for flag value or

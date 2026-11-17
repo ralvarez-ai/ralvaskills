@@ -68,7 +68,8 @@ func runSync(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 	out := cmd.OutOrStdout()
-	for _, link := range links {
+	for i := range links {
+		link := &links[i]
 		fmt.Fprintf(out, "link %s -> %s\n", filepath.Join(link.target, link.skill.Name), link.skill.Path)
 	}
 	printSyncConfigPlan(out, m.Tools, mcp)
@@ -79,8 +80,8 @@ func runSync(cmd *cobra.Command, _ []string) error {
 		fmt.Fprintln(out, messageAborted)
 		return nil
 	}
-	for _, link := range links {
-		if err = skill.Link(link.skill, link.target); err != nil {
+	for i := range links {
+		if err = skill.Link(links[i].skill, links[i].target); err != nil {
 			return err
 		}
 	}

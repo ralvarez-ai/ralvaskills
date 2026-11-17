@@ -253,7 +253,11 @@ func runInstallProject(
 	if err != nil {
 		return err
 	}
-	return reportProjectInstall(out, errOut, results, rskDir)
+	if err = reportProjectInstall(out, errOut, results, rskDir); err != nil {
+		return err
+	}
+	reconcilePermissions(cmd, rskDir, skills)
+	return nil
 }
 
 // previewAndConfirm renders the install preview and, unless dryRun, asks the
@@ -309,6 +313,7 @@ func printInstallPreview(out io.Writer, skills []skill.Skill, targets, warnings 
 		fmt.Fprintln(out)
 		ui.Warn(out, w)
 	}
+	printPermissionsPreview(out, skills)
 	fmt.Fprintln(out)
 }
 
@@ -375,7 +380,11 @@ func runInstallFromMod(cmd *cobra.Command, opts installOpts) error {
 	if err != nil {
 		return err
 	}
-	return reportProjectInstall(out, errOut, results, rskDir)
+	if err = reportProjectInstall(out, errOut, results, rskDir); err != nil {
+		return err
+	}
+	reconcilePermissions(cmd, rskDir, skills)
+	return nil
 }
 
 // reportInstall renders the outcome of an install.Apply call and returns an

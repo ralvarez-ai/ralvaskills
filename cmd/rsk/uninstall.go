@@ -15,6 +15,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/permission"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
@@ -135,9 +136,11 @@ func runUninstall(cmd *cobra.Command, opts uninstallOpts, args []string) error {
 			return err
 		}
 
-		if cleanErr := cleanupManifest(rskDir, toRemove); cleanErr != nil {
+		revoked, cleanErr := cleanupManifest(rskDir, toRemove)
+		if cleanErr != nil {
 			ui.Warn(out, fmt.Sprintf("update manifest: %v", cleanErr))
 		}
+		reportRevoked(out, revoked)
 	}
 
 	return nil
@@ -238,13 +241,13 @@ func unlinkAll(out, errOut io.Writer, toRemove []removeEntry) int {
 
 // cleanupManifest removes uninstalled skills from rsk.mod, rsk.lock, and tool configs.
 // Returns nil without error if rsk.mod does not exist.
-func cleanupManifest(rskDir string, removed []removeEntry) error {
+func cleanupManifest(rskDir string, removed []removeEntry) ([]tool.Rule, error) {
 	m, err := manifest.ReadMod(rskDir)
 	if errors.Is(err, os.ErrNotExist) {
-		return nil
+		return nil, nil
 	}
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	seen := make(map[string]bool, len(removed))
@@ -256,7 +259,7 @@ func cleanupManifest(rskDir string, removed []removeEntry) error {
 		}
 	}
 	if len(toClean) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	for _, name := range toClean {
@@ -264,24 +267,24 @@ func cleanupManifest(rskDir string, removed []removeEntry) error {
 		m.Pinned = slices.DeleteFunc(m.Pinned, func(v string) bool { return v == name })
 	}
 	if err = manifest.WriteMod(rskDir, m); err != nil {
-		return fmt.Errorf("write rsk.mod: %w", err)
+		return nil, fmt.Errorf("write rsk.mod: %w", err)
 	}
 
-	var lock manifest.Lock
-	lock, err = manifest.ReadLock(rskDir)
+	lock, err := manifest.ReadLock(rskDir)
 	if err != nil {
-		return fmt.Errorf("read rsk.lock: %w", err)
+		return nil, fmt.Errorf("read rsk.lock: %w", err)
 	}
-	for _, name := range toClean {
-		lock = manifest.RemoveLockEntry(lock, name)
+	lock, revoked, err := permission.RevokeSkills(lock, filepath.Dir(rskDir), m.Tools, toClean)
+	if err != nil {
+		return nil, fmt.Errorf("withdraw permissions: %w", err)
 	}
 	if err = manifest.WriteLock(rskDir, lock); err != nil {
-		return fmt.Errorf("write rsk.lock: %w", err)
+		return nil, fmt.Errorf("write rsk.lock: %w", err)
 	}
 
 	if err = syncPinnedAllTools(rskDir, m); err != nil {
-		return fmt.Errorf("sync tool configs: %w", err)
+		return nil, fmt.Errorf("sync tool configs: %w", err)
 	}
 
-	return nil
+	return revoked, nil
 }

@@ -68,6 +68,8 @@ func setupCommands() {
 	f.String(cmdx.FlagVersion, "", "Pin to a specific repo tag (local skills only)")
 	f.Bool(cmdx.FlagDryRun, false, "Show what would be installed without doing it")
 	f.BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
+	f.Bool(cmdx.FlagApplyPermissions, false, "Write the tool permissions the skills declare without asking")
+	f.Bool(cmdx.FlagSkipPermissions, false, "Report the declared tool permissions and write none")
 	registerForCompletion(installCmd, false)
 
 	rootCmd.AddCommand(syncCmd)
@@ -133,6 +135,9 @@ func setupCommands() {
 	)
 	f.Bool(cmdx.FlagDryRun, false, "Show what would be updated without doing it")
 	f.BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
+	f.Bool(cmdx.FlagApplyPermissions, false, "Write newly declared tool permissions without asking")
+	f.Bool(cmdx.FlagSkipPermissions, false, "Report newly declared tool permissions and write none")
+	f.Bool(cmdx.FlagRevokeRemoved, false, "Withdraw the permissions a newer version no longer declares")
 	registerForCompletion(updateCmd, false)
 
 	// mcp command

@@ -23,6 +23,14 @@ type (
 		Name    string       `toml:"name"`
 		Version string       `toml:"version"`
 		Source  skill.Source `toml:"source"`
+
+		// Permissions is the skill's allowed-tools declaration at the locked
+		// version, normalized. Update diffs the new declaration against this.
+		Permissions []string `toml:"permissions,omitempty"`
+
+		// Granted is the client rules rsk wrote for this skill. Revocation
+		// removes exactly these, never a rule the user added by hand.
+		Granted []string `toml:"granted,omitempty"`
 	}
 
 	// Lock is the in-memory representation of rsk.lock.
@@ -89,4 +97,14 @@ func RemoveLockEntry(l Lock, name string) Lock {
 	}
 	l.Skills = kept
 	return l
+}
+
+// FindLockEntry returns the entry for name and whether it exists.
+func FindLockEntry(l Lock, name string) (LockEntry, bool) {
+	for _, e := range l.Skills {
+		if e.Name == name {
+			return e, true
+		}
+	}
+	return LockEntry{}, false
 }

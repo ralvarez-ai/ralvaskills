@@ -98,11 +98,14 @@ func applyProject(linked []skill.Skill, opts Options) error {
 		}
 		m.Skills[s.Name] = constraint
 		names = append(names, s.Name)
-		lock = manifest.UpsertLockEntry(lock, manifest.LockEntry{
-			Name:    s.Name,
-			Version: s.Version,
-			Source:  s.Source,
-		})
+		// Keep what the previous entry recorded about this skill's tool
+		// permissions: the reconcile that follows the link step updates those
+		// fields, and dropping them here would orphan a granted rule.
+		entry, _ := manifest.FindLockEntry(lock, s.Name)
+		entry.Name = s.Name
+		entry.Version = s.Version
+		entry.Source = s.Source
+		lock = manifest.UpsertLockEntry(lock, entry)
 	}
 
 	if opts.Pin {
