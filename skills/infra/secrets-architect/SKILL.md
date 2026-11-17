@@ -62,7 +62,7 @@ services:
       - homelab-shared-tunnel-token
 secrets:
   homelab-shared-tunnel-token:
-    file: ${SECRETS_DIR}/cloudflare/tunnels/homelab-shared
+    file: ${SECRETS_DIR}/personal/cloudflare/tunnels/homelab-shared
 ```
 
 **Build vs runtime secrets.** A `file:` secret works at *runtime* (the daemon bind-mounts the host file) but not as a *build* secret when the path is outside the build context — Bake refuses to read it. For `build.secrets`, use `environment: VAR` and have the caller export `VAR` (chezmoi's shell does). Two scopes are usually needed: Go modules want `contents:read` (`GH_PRIVATE_MODULES_TOKEN`), npm `@scope/*` packages want `read:packages` (`NODE_AUTH_TOKEN`) — separate secrets.
@@ -73,7 +73,7 @@ secrets:
 
 ```ini
 [Service]
-LoadCredential=ddns-token:%h/Secrets/cloudflare/api/ddns-token
+LoadCredential=ddns-token:%h/Secrets/personal/cloudflare/dns/ddns
 # script: TOKEN_FILE="${CREDENTIALS_DIRECTORY:-}/ddns-token" (fallback to $SECRETS_DIR for ad-hoc runs)
 ```
 
