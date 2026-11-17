@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-12T18:24:10Z",
+  "generated_at": "2026-11-17T13:50:58Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -499,12 +499,17 @@
     "explainer-designer": {
       "name": "explainer-designer",
       "description": "Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) — the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).",
-      "latest": "2.0.0",
+      "latest": "2.1.0",
       "versions": {
         "2.0.0": {
           "version": "2.0.0",
           "published_at": "2026-11-12T02:27:51Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-designer@v2.0.0/explainer-designer-v2.0.0.tar.gz"
+        },
+        "2.1.0": {
+          "version": "2.1.0",
+          "published_at": "2026-11-17T13:50:58Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-designer@v2.1.0/explainer-designer-v2.1.0.tar.gz"
         }
       }
     },
