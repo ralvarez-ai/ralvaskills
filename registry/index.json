@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-17T13:50:58Z",
+  "generated_at": "2026-11-18T19:12:14Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -1255,6 +1255,18 @@
           "version": "1.1.1",
           "published_at": "2026-11-12T01:33:38Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/nextjs-architect@v1.1.1/nextjs-architect-v1.1.1.tar.gz"
+        }
+      }
+    },
+    "notify-on-finish": {
+      "name": "notify-on-finish",
+      "description": "Native desktop notifications for long-running work — runs a command detached, captures exit code and duration, then plays a sound and fires a notification (notify-send/D-Bus, osascript, log-only fallback). Use when a command will take more than a minute, when asked to leave something in the background and tell me when it finishes, or when waiting on a build, test suite, migration, benchmark or download.",
+      "latest": "0.1.0",
+      "versions": {
+        "0.1.0": {
+          "version": "0.1.0",
+          "published_at": "2026-11-18T19:12:14Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/notify-on-finish@v0.1.0/notify-on-finish-v0.1.0.tar.gz"
         }
       }
     },
