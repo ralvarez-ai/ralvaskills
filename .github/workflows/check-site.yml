@@ -105,6 +105,10 @@ jobs:
           go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.14.0
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
 
+      # Tests first: a failing test fails the job before the slower lint and
+      # registry checks run.
+      - name: Test (unit)
+        run: go test -race -short ./...
       - name: Lint
         run: task lint
 
@@ -113,3 +117,20 @@ jobs:
 
       - name: Token tool lint
         run: task tokens:lint
+
+  # The CLI's second tier: build the binary and drive it in temporary
+  # directories (exit codes, stdout/stderr, files on disk). No network, no
+  # Docker, so it stays cheap; it still runs after the fast job fails.
+  e2e:
+    needs: go
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: ./.github/actions/private-go-modules
+      - name: Test (e2e)
+        run: go test ./e2e/

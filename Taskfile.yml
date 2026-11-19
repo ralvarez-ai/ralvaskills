@@ -209,9 +209,18 @@ tasks:
       - go mod download
 
   test:
-    desc: Run all tests
+    desc: Run every tier, unit first
     cmds:
-      - go test ./...
+      - task: test:unit
+      - task: test:e2e
+  test:unit:
+    desc: Logic tests; no network, no Docker and no binary build
+    cmds:
+      - go test -short ./...
+  test:e2e:
+    desc: CLI journeys against the built binary in temporary directories
+    cmds:
+      - go test ./e2e/
 
   skills:check:
     desc: "Fail if a skill name is illegal, duplicated, mismatched with its directory, or retired"
