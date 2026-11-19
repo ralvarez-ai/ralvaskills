@@ -15,7 +15,8 @@
     "rsk": {
       "command": [
         "rsk",
-        "mcp"
+        "mcp",
+        "--read-only"
       ],
       "enabled": true,
       "type": "local"
