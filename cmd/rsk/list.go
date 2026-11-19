@@ -122,6 +122,16 @@ func runListProject(cmd *cobra.Command, opts listOpts) error {
 	}
 
 	if len(rows) == 0 {
+		// An empty JSON payload is still data: the hint is a human log, so it
+		// must not replace the array a JSON consumer parses.
+		if opts.format == output.FormatJSON {
+			header := []string{"", headerName, headerVersion, ""}
+
+			return renderList(
+				cmd, opts.format, "Project skills:", rows, header,
+				term.Rows(rows, listProjectTable), listedSkillNames(rows),
+			)
+		}
 		emptyHint(cmd, true, "No skills in manifest. Run 'rsk install <name>' to add one.")
 
 		return nil
@@ -200,6 +210,15 @@ func runListGlobal(cmd *cobra.Command, opts listOpts) error {
 	}
 
 	if len(rows) == 0 {
+		// Same contract as the project view: JSON gets the empty array.
+		if opts.format == output.FormatJSON {
+			header := []string{headerSource, "Tool", headerName, headerVersion}
+
+			return renderList(
+				cmd, opts.format, "Global skills:", rows, header,
+				term.Rows(rows, listGlobalTable), listedSkillNames(rows),
+			)
+		}
 		emptyHint(cmd, false, "No global skills installed.")
 
 		return nil
