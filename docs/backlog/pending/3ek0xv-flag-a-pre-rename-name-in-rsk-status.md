@@ -6,7 +6,7 @@ topics:
     - rsk
     - skill-naming
 related:
-    - 96x2s8
+    - ralvaskills#96x2s8
 ---
 The design's second open question: "Should `rsk status` flag an installed old name before any update runs? Cheap and useful; decide when step 1 is written" ([design](../../designs/2026-11-11-skill-rename-aliases.md) §Open questions). Step 1 shipped in `rsk` v3.7.0, the ten renames published 2026-11-12, and all 30 consumer projects were migrated, so no manifest under `~/Dev` carries a retired name today. This is the safety net for the case that remains: a checkout that has not run `rsk update` since the rename, or one restored from an older commit, looks healthy until something resolves a name and prints the redirect.
 

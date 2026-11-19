@@ -6,9 +6,9 @@ topics:
     - rsk
     - skills
 related:
-    - k3vx7p
-    - m4pnr7
-    - 8k19zz
+    - ralvaskills#k3vx7p
+    - ralvaskills#m4pnr7
+    - ralvaskills#8k19zz
 ---
 The digest audit and the trim published 31 skill releases, and the CLI is at `v3.7.1`, but the consumers are behind on both. Sixty-three repos still pin `github:ralvarez-ai/ralvaskills = "3.7.0"` in `mise.toml` (only this repository is on 3.7.1), and the 110 refreshed projects still hold the pre-trim digest text — harmless in rules, since no rule changed, but stale.
 

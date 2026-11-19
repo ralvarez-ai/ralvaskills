@@ -6,7 +6,7 @@ topics:
     - rsk
     - git
 related:
-    - m4pnr7
+    - ralvaskills#m4pnr7
 ---
 Two sweeps on 2026-11-12 committed `.rsk/SKILLS.md`, `.rsk/rsk.lock` and `mise.toml` in 145 repos, and 127 pushes landed. Eleven could not be pushed, for two reasons: six have no upstream at all — `ralvarez-go/ports`, `automation-labs-iec-contracts`, `automation-labs-iec-core` (on branch `spike/langium-st`), `automation-labs-plcverif-st-plugin`, `automation-labs-sparkov`, `automation-labs-openevolve-plc-adapter` — and five point at remotes that no longer exist — `notifier` and `protokit` (both archived), `desaparecidos-venezuela`, `strucgo`, `strucgo-runtime`, the last three carrying 6–14 unpushed commits of older work. Two more, `autoreports` and `uns-platform`, are committed but diverged while the rename migration was being re-pushed.
 
