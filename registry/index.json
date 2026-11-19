@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-18T19:12:14Z",
+  "generated_at": "2026-11-19T13:55:02Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -1739,6 +1739,18 @@
           "version": "1.1.2",
           "published_at": "2026-11-11T13:45:36Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/tdd@v1.1.2/tdd-v1.1.2.tar.gz"
+        }
+      }
+    },
+    "test-designer": {
+      "name": "test-designer",
+      "description": "Test suite design — separate logic tests (fast, in-process, deterministic) from e2e tests (few, real boundaries), ban sleep-based waits, injectable clocks, readiness polling, redundancy pruning, flake triage. Use when designing, splitting, reviewing or fixing a test suite, or when tests sleep, wait fixed times or flake.",
+      "latest": "1.1.0",
+      "versions": {
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-19T13:55:02Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/test-designer@v1.1.0/test-designer-v1.1.0.tar.gz"
         }
       }
     },
