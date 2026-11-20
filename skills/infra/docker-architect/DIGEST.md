@@ -17,6 +17,7 @@ Docker Engine 29, Compose v2 and BuildKit standards for writing or reviewing Doc
 - Restart `unless-stopped` for long-running, `no` for batch. `init: true` when the app spawns children. `TZ=Etc/UTC` in the image.
 - Logs: json-file with size and count rotation, or journald on Linux hosts.
 - Deploys reference image digests. Tags: semver, plus `latest` and `1.2` aliases for local convenience; CI also pushes `:<short-sha>`.
+- Docker Sandboxes (`sbx`) for unsupervised coding agents: microVM, private Docker Engine. Direct mode mounts the tree read-write (`--clone` for a private clone); keys via `sbx secret set`; network deny-by-default, allow hosts one at a time.
 - Trivy scan every image in CI; `.trivyignore` for documented exceptions; SBOM on releases. Sign images with Cosign for prod-bound registries.
 
 ## Hard constraints
@@ -29,7 +30,9 @@ Docker Engine 29, Compose v2 and BuildKit standards for writing or reviewing Doc
 - Avoid alpine for Python (musl breaks scientific wheels).
 - Never silent allowlists in Trivy.
 - Never rely on the host timezone.
+- Never pass credentials into a sandbox as env vars or files; never mount the host `docker.sock` into one.
+- Sandboxes are for agents, not a deploy target, CI builder or Compose replacement.
 
-Invoke the full skill when: writing or reviewing a Dockerfile or Compose file, adding Trivy or multi-arch steps, or scaffolding a new project (checklist).
+Invoke the full skill when: writing or reviewing a Dockerfile or Compose file, adding Trivy or multi-arch steps, running an agent in a Docker Sandbox, or scaffolding a new project (checklist).
 
 Full guide: invoke the docker-architect skill.

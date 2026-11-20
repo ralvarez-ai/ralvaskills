@@ -5,6 +5,7 @@
 | docker-engine | 29.5 | Container runtime + builder |
 | docker-compose | 2 (v2 plugin) | Service orchestration - `docker compose` subcommand |
 | buildx | 0.34 | Multi-arch builds, advanced BuildKit features |
+| sbx (Docker Sandboxes) | current release | MicroVM sandboxes for coding agents - not for app runtime |
 | trivy | 0.70 | Vulnerability + IaC + SBOM scanner - CI default |
 | dockerfile syntax | `docker/dockerfile:1.10` | Latest BuildKit syntax (cache mounts, secrets, here-docs) |
 | Go runtime base | `gcr.io/distroless/static-debian12:nonroot` | Static binary; ~2 MB; non-root |
@@ -20,5 +21,5 @@
 - **Trivy is the default scanner** - fail builds on `HIGH,CRITICAL` severities by default.
 - **`HEALTHCHECK` on every service** - Compose `depends_on` conditions rely on them.
 
-_Last reviewed: 2026-07-07_
-_Skill version at last review: 1.1.0_
+_Last reviewed: 2026-11-20_
+_Skill version at last review: 1.5.0_

@@ -71,6 +71,14 @@ Use this checklist when scaffolding a new project with Docker and Compose. Answe
   - Bind-mount source for hot reload, expose debugger ports, `.env.local` for secrets
 - [ ] **Test: `docker compose -f docker-compose.yaml up`** skips override and runs prod-only?
 
+## Agent sandboxes (if running coding agents)
+
+- [ ] **Workspace mode chosen?** Direct is read-write; `--clone` when agents share a repo or the tree must stay clean
+- [ ] **Keys stored with `sbx secret set`**, none passed as env vars or files?
+- [ ] **Network policy** still deny-by-default, hosts allowed one at a time?
+- [ ] **No host `docker.sock`** mounted, no `SSH_AUTH_SOCK` forwarded unless required?
+- [ ] **Finished sandboxes removed** (`sbx rm`)?
+
 ---
 
-**Before first deployment, review [SKILL.md](SKILL.md) § 1-11 and language-specific recipes in [RECIPES.md](RECIPES.md).**
+**Before first deployment, review [SKILL.md](SKILL.md) § 1-12 and language-specific recipes in [RECIPES.md](RECIPES.md).**

@@ -1,7 +1,7 @@
 ---
 name: docker-architect
-version: 1.4.1
-description: Docker standards - multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2. Use when writing or reviewing Dockerfiles or Compose files.
+version: 1.5.0
+description: Docker standards - multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2, Docker Sandboxes (sbx) for isolated coding agents. Use when writing or reviewing Dockerfiles or Compose files, or running an agent in a sandbox.
 ---
 
 # Docker Architecture & Container Standards
@@ -88,6 +88,17 @@ Always build `linux/amd64` + `linux/arm64`. Cloud is largely arm64-friendly now 
 ## 11. Language-specific recipes
 
 Reference Dockerfiles for **Go (distroless)**, **Python (uv, debian slim)**, and **Node (debian slim)** live in [RECIPES.md](RECIPES.md).
+
+## 12. Docker Sandboxes (isolated coding agents)
+
+Docker Sandboxes (`sbx` CLI) run an AI coding agent in a **microVM** with its own kernel, filesystem and private Docker Engine. Use them to let an agent run unsupervised, never to run your own services: they are not a deploy target, a CI builder or a Compose replacement. Commands in [RECIPES.md](RECIPES.md#docker-sandboxes-sbx).
+
+- **Workspace mode is a decision.** Default (direct) mounts the working tree **read-write**: edits land live, review them as a `git diff`. Use `--clone` (repo mounted read-only, private in-VM clone) when several agents share a repo or the tree must stay untouched.
+- **Credentials never enter the VM.** Store keys with `sbx secret set <service>` (OS keychain); the host proxy injects them into outbound requests. Never pass keys as env vars or files into the sandbox.
+- **Network is deny-by-default.** Keep Balanced or Locked Down; allow hosts one at a time (`sbx policy allow network <host>`), inspect with `sbx policy ls`. No blanket allow rules.
+- **The agent has sudo inside the VM.** That is contained; the boundary is what you mount or forward. Don't forward `SSH_AUTH_SOCK` or share the skills store read-write unless needed.
+- **Its Docker is not yours.** Containers the agent builds run on the sandbox's engine with no path to the host daemon. Never mount the host `docker.sock` into a sandbox to "help" it.
+- **Sandboxes persist** after the agent exits (state kept). `sbx rm` reclaims disk and is irreversible; `sbx run --rm` for throwaway sessions.
 
 ## New project checklist
 

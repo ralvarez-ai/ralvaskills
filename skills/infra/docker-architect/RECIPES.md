@@ -118,3 +118,20 @@ services:
 ```
 
 This requires `db` to define a working `healthcheck`. `depends_on` without `condition:` only orders startup - doesn't wait for readiness.
+
+## Docker Sandboxes (sbx)
+
+```bash
+sbx secret set anthropic                  # prompts for the key; kept in the OS keychain
+sbx run claude                            # agent on the current dir, mounted read-write
+sbx run claude --clone                    # private in-VM clone, repo read-only
+sbx run --name claude-app                 # resume a named sandbox; add --rm for throwaway
+sbx ls                                    # sandboxes, status, published ports, workspace
+sbx exec claude-app curl -sS https://example.com   # run a command inside from the host
+sbx policy ls                             # active network rules
+sbx policy allow network registry.npmjs.org
+sbx policy approval ls                    # pending blocked destinations
+sbx stop claude-app && sbx rm claude-app  # rm deletes the VM; the host tree is untouched
+```
+
+Run `sbx` with no arguments for the live dashboard. Verify flags with `sbx <cmd> --help`; the agent's own name (`claude`, ...) comes from the supported-agents page of the Docker docs.
