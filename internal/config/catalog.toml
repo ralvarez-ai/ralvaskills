@@ -24,6 +24,7 @@ skills = [
   { name = "rsk-guide",                     source = "local" },
   { name = "repo-tooling-architect",        source = "local" },
   { name = "skill-builder",                 source = "local" },
+  { name = "guardrail-builder",             source = "local" },
 ]
 
 [[bundle]]
@@ -35,6 +36,7 @@ skills = [
   { name = "pdf",       source = "official" },
   { name = "pptx",      source = "official" },
   { name = "find-docs", source = "official" },
+  { name = "unslop",    source = "local" },
 ]
 
 [[bundle]]
@@ -164,4 +166,5 @@ skills = [
   { name = "security-reviewer",     source = "local" },
   { name = "api-contract-reviewer", source = "local" },
   { name = "performance-reviewer",  source = "local" },
+  { name = "blast-radius-reviewer", source = "local" },
 ]

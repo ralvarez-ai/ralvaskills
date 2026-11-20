@@ -9,6 +9,9 @@ Some skills in `skills/` are adapted from other people's work. Each adapted skil
 | `improve-codebase-architecture` | [mattpocock/skills `engineering/improve-codebase-architecture`](https://github.com/mattpocock/skills/tree/main/skills/engineering/improve-codebase-architecture) | Matt Pocock | MIT |
 | `caveman` | [JuliusBrussee/caveman `skills/caveman`](https://github.com/JuliusBrussee/caveman/tree/main/skills/caveman) | Julius Brussee | Apache-2.0 |
 | `adhd-mode` | [ayghri/i-have-adhd `skills/i-have-adhd`](https://github.com/ayghri/i-have-adhd/tree/main/skills/i-have-adhd) | Ayoub Ghriss | MIT |
+| `blast-radius-reviewer` | [cursor/plugins pstack `skills/blast-radius`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/blast-radius) | Lauren Tan | MIT |
+| `unslop` | [cursor/plugins pstack `skills/unslop`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/unslop) | Lauren Tan | MIT |
+| `guardrail-builder` | [cursor/plugins pstack `skills/correct`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/correct) | Lauren Tan | MIT |
 
 `adhd-mode` upstream itself credits *The Adult ADHD Tool Kit* by J. Russell Ramsay and Anthony L. Rostain as a loose basis.
 

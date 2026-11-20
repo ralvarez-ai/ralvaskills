@@ -179,6 +179,7 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   ├── api-contract-reviewer/    # ✅ exists (v1.0.0 — REST + gRPC contract stability, buf breaking + openapi-diff)
 │   │   ├── performance-reviewer/     # ✅ exists (v1.0.0 — N+1, blocking I/O, allocation hot paths; measurement-grounded)
 │   │   ├── test-designer/            # ✅ exists (v1.1.0 — logic vs e2e test tiers, no sleep-based waits, injectable clocks, redundancy pruning, flake triage)
+│   │   ├── blast-radius-reviewer/    # ✅ exists (v1.0.0 — what a change breaks elsewhere; five-level proof ladder, proves the one safety fact; adapted from pstack)
 │   │   └── codebase-hygiene-reviewer/ # ✅ exists (v1.0.0 — dead code, unused exports, duplication, size; propose-only, evidence-based)
 │   ├── frontend/
 │   │   ├── ui-ux-architect/          # ✅ exists (v1.0.0 — WCAG 2.2 AA, Radix + Tailwind 4, design tokens, four-state UI discipline)
@@ -194,7 +195,8 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   ├── tdd/                      # ✅ exists
 │   │   ├── grill-with-docs/          # ✅ exists (formerly grill-me; absorbed ubiquitous-language)
 │   │   ├── feature-planner/          # ✅ exists (v1.0.0 — requirement → constraints → design → vertical-slice tasks)
-│   │   └── docs-architect/           # ✅ exists (v1.0.0 — docs/ tree convention: folder-per-type, mandatory frontmatter, ADR supersede mechanics, backlog rules, migrate mode, stdlib linter in scripts/; no STACK.md)
+│   │   ├── docs-architect/           # ✅ exists (v1.0.0 — docs/ tree convention: folder-per-type, mandatory frontmatter, ADR supersede mechanics, backlog rules, migrate mode, stdlib linter in scripts/; no STACK.md)
+│   │   └── guardrail-builder/        # ✅ exists (v1.0.0 — turns repeated agent mistakes into enforcement: architecture, types, lint, test, docs last; adapted from pstack)
 │   ├── refactoring/                  # ✅ category — code cleanup ladder (expression → design → system) plus pattern catalog
 │   │   ├── logic-cleaner/            # ✅ exists (expression-level rung)
 │   │   ├── code-design-refactor/     # ✅ exists (v1.0.0 — design-level rung; sits between logic-cleaner and improve-codebase-architecture)
@@ -204,7 +206,8 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   ├── skill-builder/            # ✅ exists (v1.0.0 — meta-skill: scaffolds new skills following ralvaskills standards; no STACK.md)
 │   │   ├── rsk-guide/                # ✅ exists (v0.2.0 — covers .rsk/ project manifest + bundle install; no STACK.md)
 │   │   ├── caveman/                  # ✅ exists (communication mode, language-agnostic)
-│   │   └── token-economy/            # ✅ exists (v1.0.0 — context, model routing and token-tool audit for Claude Code + OpenCode; no STACK.md)
+│   │   ├── token-economy/            # ✅ exists (v1.0.0 — context, model routing and token-tool audit for Claude Code + OpenCode; no STACK.md)
+│   │   └── unslop/                   # ✅ exists (v1.0.0 — numbered rules that strip AI patterns from prose; adapted from pstack)
 │   │
 │   └── personal/                     # 📋 new category — personal skills, never auto-bundled
 │       ├── pi-iteration-workflow/    # ✅ exists (v1.0.0 — Windows-to-Pi SSH deploy loop for the voldemorbot robot codebase; pixi/ROS2 rebuild triggers, screen for flaky WiFi, PowerShell SSH quoting, Pi Zero sudo caching; no STACK.md)
@@ -904,6 +907,7 @@ Document creation, editing, and technical reference retrieval skills.
 | `pdf` | Create, fill, and manipulate PDFs |
 | `pptx` | Build presentation slide decks |
 | `find-docs` | Retrieve authoritative API references, library docs, and code examples for any developer technology |
+| `unslop` | Numbered rules that strip AI patterns from prose (local) |
 
 #### `design` (mixed: official + local)
 UI/UX and frontend design skills.
@@ -941,6 +945,7 @@ Universal skills installed machine-wide. Apply to every project regardless of st
 | `rsk-guide` | meta | How to use the `rsk` CLI — discover, install, update, status, uninstall, bundle catalog |
 | `caveman` | meta | ~75% token reduction mode, preserves technical accuracy |
 | `token-economy` | meta | Token-saving habits, model routing and an audit of context-mode / RTK / CodeGraph for Claude Code and OpenCode |
+| `guardrail-builder` | workflows | Turns repeated agent mistakes into enforcement, highest level first; rule-to-enforcer table in AGENTS.md |
 
 ---
 
@@ -1063,6 +1068,7 @@ Cross-language review pass: security, API contract stability, performance.
 | `api-contract-reviewer` | local |
 | `performance-reviewer` | local |
 | `codebase-hygiene-reviewer` | local |
+| `blast-radius-reviewer` | local |
 
 ---
 
@@ -1262,6 +1268,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `api-contract-reviewer` | ✅ | v1.0.0 — REST + gRPC contract stability. Versioning (URL prefix, package path), field/method hygiene (no reuse, no type changes), error shape (RFC 9457, gRPC codes), idempotency, ETag, OpenAPI completeness. Mechanical pass via `buf breaking` + `openapi-diff`, then conventions vs `rest-api-architect` / `protobuf-architect` / `grpc-architect` |
 | `performance-reviewer` | ✅ | v1.0.0 — measurement-grounded perf review. N+1, missing indexes, blocking I/O in async, allocation hot paths, unbounded memory, missing timeouts, high-cardinality labels. Every finding cites `EXPLAIN ANALYZE` / `pprof` / `py-spy` / `hyperfine` / dashboard signal. Load testing & capacity planning out of scope |
 | `test-designer` | ✅ | v1.1.0 — test suite design. Logic tests (in-process, fakes, no real clock) separated from e2e (few, real boundaries, readiness-gated); bans sleep/fixed waits in favour of awaited signals, fake clocks, deadline-bounded polling; redundancy pruning; flake triage. `quality/` — exempt from STACK.md. Runner specifics and load testing out of scope |
+| `blast-radius-reviewer` | ✅ | v1.0.0 — what a change breaks somewhere else. Five-level proof ladder (claimed, cited, reasoned, ran, reproduced); finds and proves the one fact the change is safe because of. Adapted from pstack (MIT) |
 | `codebase-hygiene-reviewer` | ✅ | v1.0.0 — evidence-based declutter audit. Dead code, unused exports (per-consumer for shared libraries), duplication, oversized files/functions, split candidates. Uses `deadcode -test`/`-filter`, `go list -deps`, `knip`, `tsc --noEmit`. Propose-only; report written to the temp dir. Executing splits is `code-design-refactor` |
 
 #### Frontend
@@ -1287,6 +1294,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `grill-with-docs` | ✅ | Stress-tests plans through relentless questioning; absorbed the former `ubiquitous-language` skill (domain glossary extraction into `CONTEXT.md`) |
 | `feature-planner` | ✅ | v1.0.0 — upstream planning pipeline. Requirement → constraints → design outline → vertical-slice task breakdown ordered by risk (tracer bullet first, riskiest assumption next). Hands off to `grill-with-docs` and `tdd`. When NOT to plan: trivial changes, spikes, bug fixes with reproductions |
 | `docs-architect` | ✅ | v1.0.0 — project documentation system. Folder is the doc type, frontmatter `status` is the state, moving a file changes state. Lazy folder creation; ADRs reuse `grill-with-docs/ADR_FORMAT.md` for the threshold and add mandatory frontmatter + supersede symmetry (body immutable, only `status`/`superseded_by` change); relative markdown links; backlog with Doing/Next limits and monthly pruning; scaffold / write-doc / migrate modes (propose-then-move, evidence-based backlog cleanup); `scripts/docs_lint.py` (stdlib) checks schema, links, orphans, stale drafts. Standalone (not in a bundle yet); no STACK.md |
+| `guardrail-builder` | ✅ | v1.0.0 — turns a repeated agent mistake into enforcement in order: architecture, types, lint whose error names the fix, test, docs last; keeps a rule-to-enforcer table in `AGENTS.md`. Adapted from pstack (MIT) |
 
 #### Refactoring
 | Skill | Status | Notes |
@@ -1303,6 +1311,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `rsk-guide` | ✅ | v0.3.0 draft — operator's quick-reference for the `rsk` CLI. Two workflows (`.rsk/` project manifest via `rsk new` + `rsk install` + `rsk pin`, or bundle install), CLAUDE.md pinning contract, registry vs local-clone mode. Tracks the in-progress CLI; promote to 1.0 once `rsk` ships. **Exempt from STACK.md** (meta-skill mirroring SPECS.md) |
 | `caveman` | ✅ | Communication mode — ~75% token reduction while preserving technical accuracy. Language-agnostic; no STACK.md |
 | `token-economy` | ✅ | v1.0.0 — where tokens go, always-on rules block for AGENTS.md, subagent exploration and model escalation, cheap-model guidance, context-mode/RTK/CodeGraph audit (scripts/audit.sh), session measurement (scripts/session-usage.py), cache/fork/ceiling guardrails (GUARDRAILS.md) and delegation of mechanical work to cheaper workers, for Claude Code and OpenCode. **Exempt from STACK.md** (meta-skill; tools are detected, not pinned) |
+| `unslop` | ✅ | v1.0.0 — numbered, citable rules that strip AI patterns from prose; rule 13 bans em and en dashes in favour of hyphens. Adapted from pstack (MIT) |
 
 #### Personal
 | Skill | Status | Notes |

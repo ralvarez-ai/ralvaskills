@@ -1,7 +1,7 @@
 ---
 status: active
 project: ralvaskills
-date: 2026-11-19
+date: 2026-11-20
 related: []
 ---
 
@@ -11,7 +11,7 @@ related: []
 >
 > Estimate: ~4 bytes/token for bodies, ~3 bytes/token for descriptions (Claude tokenizer). Actual range ±15%.
 
-_Last updated: 2026-11-19 · 69 skills · 15 bundles_
+_Last updated: 2026-11-20 · 72 skills · 15 bundles_
 
 ## Load model
 
@@ -19,34 +19,34 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 | What | When loaded | Estimated tokens |
 |---|---|---:|
-| All `SKILL.md` bodies | Only when invoked | ~163071 |
-| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~195305 |
-| All `description:` fields (every skill) | Every turn, if all installed | ~7848 |
+| All `SKILL.md` bodies | Only when invoked | ~165700 |
+| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~196354 |
+| All `description:` fields (every skill) | Every turn, if all installed | ~8141 |
 
 ## Session profiles
 
 Budgets: **global ≤ 1500** desc tokens (paid by every project), **session ≤ 2200** desc tokens (global + one project bundle). Status: `ok` < 90% · `warn` ≥ 90% · `OVER` ≥ 100%.
 
-**Global baseline** (`rsk install global --global`): 17 skills · ~1226 / 1500 desc tokens every turn (`ok`) · ~31114 body tokens if all invoked.
+**Global baseline** (`rsk install global --global`): 18 skills · ~1334 / 1500 desc tokens every turn (`ok`) · ~31878 body tokens if all invoked.
 
 Per-project bundle additions on top of the global baseline:
 
 | Bundle | Skills | + Desc tkns / turn | Session total | Budget | Status |
 |---|---:|---:|---:|---:|---:|
-| `docs` *(+5 external)* | 0 | +0 | ~1226 | 2200 | `ok` |
-| `observability` | 2 | +151 | ~1377 | 2200 | `ok` |
-| `event-driven` | 2 | +167 | ~1393 | 2200 | `ok` |
-| `python-cli` | 3 | +261 | ~1487 | 2200 | `ok` |
-| `code-review` | 3 | +269 | ~1495 | 2200 | `ok` |
-| `ros2` | 3 | +273 | ~1499 | 2200 | `ok` |
-| `design` *(+1 external)* | 3 | +313 | ~1539 | 2200 | `ok` |
-| `llm-app` *(+2 missing)* | 4 | +359 | ~1585 | 2200 | `ok` |
-| `go-cli` | 3 | +393 | ~1619 | 2200 | `ok` |
-| `python-grpc` | 5 | +448 | ~1674 | 2200 | `ok` |
-| `fastapi` | 5 | +480 | ~1706 | 2200 | `ok` |
-| `go-grpc` | 5 | +580 | ~1806 | 2200 | `ok` |
-| `gin` | 5 | +601 | ~1827 | 2200 | `ok` |
-| `nethttp` | 5 | +613 | ~1839 | 2200 | `ok` |
+| `docs` *(+5 external)* | 1 | +94 | ~1428 | 2200 | `ok` |
+| `observability` | 2 | +151 | ~1485 | 2200 | `ok` |
+| `event-driven` | 2 | +167 | ~1501 | 2200 | `ok` |
+| `python-cli` | 3 | +261 | ~1595 | 2200 | `ok` |
+| `ros2` | 3 | +273 | ~1607 | 2200 | `ok` |
+| `design` *(+1 external)* | 3 | +313 | ~1647 | 2200 | `ok` |
+| `llm-app` *(+2 missing)* | 4 | +359 | ~1693 | 2200 | `ok` |
+| `code-review` | 4 | +360 | ~1694 | 2200 | `ok` |
+| `go-cli` | 3 | +393 | ~1727 | 2200 | `ok` |
+| `python-grpc` | 5 | +448 | ~1782 | 2200 | `ok` |
+| `fastapi` | 5 | +480 | ~1814 | 2200 | `ok` |
+| `go-grpc` | 5 | +580 | ~1914 | 2200 | `ok` |
+| `gin` | 5 | +601 | ~1935 | 2200 | `ok` |
+| `nethttp` | 5 | +613 | ~1947 | 2200 | `ok` |
 
 ## Personal / unbundled skills
 
@@ -95,13 +95,13 @@ These skills are not part of any bundle. They are installed individually with `r
 | protocols | 4 | ~16650 | ~662 | ~23684 |
 | personal | 7 | ~15951 | ~1046 | ~26879 |
 | frontend | 8 | ~15402 | ~1045 | ~17404 |
+| quality | 7 | ~14522 | ~762 | ~9202 |
 | languages | 3 | ~13482 | ~406 | ~16535 |
-| quality | 6 | ~13437 | ~671 | ~8875 |
 | infra | 5 | ~11702 | ~517 | ~11926 |
-| meta | 5 | ~9752 | ~362 | ~8387 |
+| meta | 6 | ~10532 | ~456 | ~8798 |
 | tooling | 3 | ~7600 | ~310 | ~7662 |
+| workflows | 6 | ~7336 | ~531 | ~10889 |
 | refactoring | 4 | ~6628 | ~278 | ~8125 |
-| workflows | 5 | ~6572 | ~423 | ~10578 |
 | academic | 2 | ~5097 | ~270 | ~9400 |
 | design | 2 | ~4365 | ~149 | ~2471 |
 | messaging | 1 | ~2770 | ~83 | ~3179 |
@@ -115,8 +115,8 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 
 | Bundle | Local | External | Missing | ~Body tkns (local) | ~Desc tkns (local) |
 |---|---:|---:|---:|---:|---:|
-| `global` | 17 | 0 | 0 | ~31114 | ~1226 |
-| `docs` | 0 | 5 | 0 | ~0 | ~0 |
+| `global` | 18 | 0 | 0 | ~31878 | ~1334 |
+| `docs` | 1 | 5 | 0 | ~780 | ~94 |
 | `design` | 3 | 1 | 0 | ~8155 | ~313 |
 | `go-grpc` | 5 | 0 | 0 | ~15526 | ~580 |
 | `gin` | 5 | 0 | 0 | ~15538 | ~601 |
@@ -129,7 +129,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | `python-cli` | 3 | 0 | 0 | ~7846 | ~261 |
 | `event-driven` | 2 | 0 | 0 | ~4588 | ~167 |
 | `observability` | 2 | 0 | 0 | ~4208 | ~151 |
-| `code-review` | 3 | 0 | 0 | ~6593 | ~269 |
+| `code-review` | 4 | 0 | 0 | ~7678 | ~360 |
 
 ## Per skill
 
@@ -180,7 +180,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 43 | `performance-reviewer` | quality | 8052 | ~2013 | ~84 | ~0 | ~612 | ~473 |
 | 44 | `ddd-architect` | design | 7790 | ~1948 | ~78 | ~0 | ~0 | ~1283 |
 | 45 | `nethttp-architect` | frameworks | 7581 | ~1927 | ~121 | ~403 | ~1609 | ~613 |
-| 46 | `skill-builder` | meta | 7612 | ~1903 | ~72 | ~0 | ~2337 | ~492 |
+| 46 | `skill-builder` | meta | 7612 | ~1903 | ~72 | ~0 | ~2464 | ~492 |
 | 47 | `fastapi-architect` | frameworks | 7481 | ~1871 | ~120 | ~420 | ~1016 | ~695 |
 | 48 | `docker-architect` | infra | 7397 | ~1850 | ~89 | ~333 | ~786 | ~1480 |
 | 49 | `design-patterns` | refactoring | 7310 | ~1828 | ~65 | ~0 | ~0 | ~2650 |
@@ -196,16 +196,19 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 59 | `notify-on-finish` | tooling | 5422 | ~1445 | ~136 | ~0 | ~0 | ~490 |
 | 60 | `adhd-mode` | meta | 5483 | ~1371 | ~75 | ~0 | ~0 | ~343 |
 | 61 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~428 |
-| 62 | `tdd` | workflows | 4169 | ~1073 | ~69 | ~0 | ~0 | ~1781 |
-| 63 | `demo-script-designer` | frontend | 3635 | ~939 | ~96 | ~0 | ~0 | ~794 |
-| 64 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~474 |
-| 65 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
-| 66 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~409 |
-| 67 | `grill-with-docs` | workflows | 3084 | ~771 | ~63 | ~0 | ~0 | ~1965 |
-| 68 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
-| 69 | `caveman` | meta | 1789 | ~448 | ~71 | ~0 | ~0 | ~272 |
+| 62 | `blast-radius-reviewer` | quality | 4337 | ~1085 | ~91 | ~0 | ~0 | ~327 |
+| 63 | `tdd` | workflows | 4169 | ~1073 | ~69 | ~0 | ~0 | ~1781 |
+| 64 | `demo-script-designer` | frontend | 3635 | ~939 | ~96 | ~0 | ~0 | ~794 |
+| 65 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~474 |
+| 66 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
+| 67 | `commit-author` | workflows | 3386 | ~847 | ~81 | ~0 | ~0 | ~409 |
+| 68 | `unslop` | meta | 3119 | ~780 | ~94 | ~0 | ~0 | ~284 |
+| 69 | `grill-with-docs` | workflows | 3084 | ~771 | ~63 | ~0 | ~0 | ~1965 |
+| 70 | `guardrail-builder` | workflows | 3056 | ~764 | ~108 | ~0 | ~0 | ~311 |
+| 71 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
+| 72 | `caveman` | meta | 1789 | ~448 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 649283 body bytes · ~163071 body tokens · ~7848 desc tokens · ~195305 side tokens
+**Totals:** 659795 body bytes · ~165700 body tokens · ~8141 desc tokens · ~196354 side tokens
 
 ## Topic files
 
@@ -387,12 +390,18 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
   - `DIGEST.md` — ~409 tokens
 - `logic-cleaner` (~405 tokens total):
   - `DIGEST.md` — ~405 tokens
-- `pi-iteration-workflow` (~394 tokens total):
-  - `DIGEST.md` — ~394 tokens
 - `feature-planner` (~394 tokens total):
+  - `DIGEST.md` — ~394 tokens
+- `pi-iteration-workflow` (~394 tokens total):
   - `DIGEST.md` — ~394 tokens
 - `adhd-mode` (~343 tokens total):
   - `DIGEST.md` — ~343 tokens
+- `blast-radius-reviewer` (~327 tokens total):
+  - `DIGEST.md` — ~327 tokens
+- `guardrail-builder` (~311 tokens total):
+  - `DIGEST.md` — ~311 tokens
+- `unslop` (~284 tokens total):
+  - `DIGEST.md` — ~284 tokens
 - `caveman` (~272 tokens total):
   - `DIGEST.md` — ~272 tokens
 
