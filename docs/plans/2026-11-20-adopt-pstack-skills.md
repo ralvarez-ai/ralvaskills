@@ -1,5 +1,5 @@
 ---
-status: active
+status: done
 project: ralvaskills
 date: 2026-11-20
 related:
@@ -178,17 +178,17 @@ and each needs its own go-ahead before it is pushed.
 
 ## Exit criteria
 
-- [ ] `blast-radius-reviewer`, `unslop` and `guardrail-builder` exist with `version: 1.0.0`,
+- [x] `blast-radius-reviewer`, `unslop` and `guardrail-builder` exist with `version: 1.0.0`,
       `DIGEST.md`, a pinned footer and `LICENSE.upstream`
-- [ ] `performance-reviewer` and `token-economy` carry the fold-ins, a footer and
+- [x] `performance-reviewer` and `token-economy` carry the fold-ins, a footer and
       `LICENSE.upstream`
-- [ ] `tdd`, `grill-with-docs`, `improve-codebase-architecture`, `caveman` and `adhd-mode` ship
+- [x] `tdd`, `grill-with-docs`, `improve-codebase-architecture`, `caveman` and `adhd-mode` ship
       `LICENSE.upstream`, and their footers link a commit
-- [ ] `grep -rE '—|–' skills` finds nothing, and `task lint:dashes` runs as part of `task lint`
-- [ ] `THIRD_PARTY_NOTICES.md` lists every upstream and every skill that uses it
-- [ ] An extracted tarball of each touched skill contains `LICENSE.upstream` (check with
+- [x] `grep -rE '—|–' skills` finds nothing, and `task lint:dashes` runs as part of `task lint`
+- [x] `THIRD_PARTY_NOTICES.md` lists every upstream and every skill that uses it
+- [x] An extracted tarball of each touched skill contains `LICENSE.upstream` (check with
       `tar tzf` on the `task registry:generate --force` output; the task's `sources` glob is
       `skills/**/*.md`, so without `--force` it can skip a change that only adds
       `LICENSE.upstream`)
-- [ ] `task lint`, `task registry:check`, `task tokens:lint` and `task site:check` pass
-- [ ] `CHANGELOG.md` and the `docs/README.md` index are updated
+- [x] `task lint`, `task registry:check`, `task tokens:lint` and `task site:check` pass
+- [x] `CHANGELOG.md` and the `docs/README.md` index are updated
