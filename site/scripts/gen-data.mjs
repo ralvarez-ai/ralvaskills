@@ -5,7 +5,7 @@
  * never typed by hand. This runs before `dev` and `build` (see package.json) and
  * fails — not warns — when the tree drifts from the anchors the copy relies on:
  *
- *   67 skills · 15 bundles · 12 cobra AddCommand (+ `completion` = 13)
+ *   72 skills · 15 bundles · 12 cobra AddCommand (+ `completion` = 13)
  *   3 MCP tools, exactly one mutating · rsk://catalog present
  *
  * Hand-checked constants that cannot be derived (a real `rsk new` run, the real
@@ -75,8 +75,8 @@ function main() {
   // alias keeps resolving, but they are not skills on disk any more.
   const live = Object.keys(index).filter((name) => !index[name].deprecated);
   assert(
-    skills.length === 67 && skills.length === live.length,
-    `expected 67 skills, found ${skills.length} on disk and ${live.length} live index entries`,
+    skills.length === 72 && skills.length === live.length,
+    `expected 72 skills, found ${skills.length} on disk and ${live.length} live index entries`,
   );
 
   const domains = {};
