@@ -1,6 +1,6 @@
 # Third-party notices
 
-Some skills in `skills/` are adapted from other people's work. Each adapted skill keeps a credit footer naming its source; this file holds the license notices. Adaptations are changed for this workspace and are not endorsed by the authors. The repository itself is GPL-3.0 (`LICENSE`); the licenses below permit the reuse.
+Some skills in `skills/` are adapted from other people's work. Each adapted skill keeps a credit footer naming its source; this file holds the license notices. Each adapted skill also ships the upstream license text as `LICENSE.upstream` in its directory, and its footer links the upstream commit it was adapted from. Adaptations are changed for this workspace and are not endorsed by the authors. The repository itself is GPL-3.0 (`LICENSE`); the licenses below permit the reuse.
 
 | Skill | Source | Author | License |
 | --- | --- | --- | --- |
@@ -20,6 +20,8 @@ MIT License
 Copyright (c) 2026 Matt Pocock
 
 Copyright (c) 2026 Ayoub Ghriss
+
+Copyright (c) 2026 Lauren Tan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -180,3 +180,10 @@ _Adapted from [<source>](<url>)._
 ```
 
 Verbatim copies require strict attribution. Evolved skills should still credit the origin — see `grill-with-docs`, `tdd`, `improve-codebase-architecture` for examples.
+
+Pin the footer link to the upstream commit the text was taken from, not to `main`. Whenever upstream text is copied or closely paraphrased, also:
+
+- add `LICENSE.upstream` to the skill directory: a header naming the source path and commit, then the upstream license text unchanged (one section per upstream). Apache-2.0 sources add the upstream `NOTICE` file when one exists.
+- add the skill to the table in the repository's `THIRD_PARTY_NOTICES.md`.
+
+Ideas credited without copied text need only the footer.
