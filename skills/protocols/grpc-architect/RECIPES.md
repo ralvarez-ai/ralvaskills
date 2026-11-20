@@ -16,7 +16,7 @@ service UserService {
 }
 ```
 
-Typed messages only: don't define `rpc Ping(StringValue) returns (StringValue)` — wrap in `PingRequest` / `PingResponse`.
+Typed messages only: don't define `rpc Ping(StringValue) returns (StringValue)` - wrap in `PingRequest` / `PingResponse`.
 
 ## Domain → code mapping
 
@@ -83,7 +83,7 @@ if cfg.Env != "prod" {
 }
 ```
 
-## In-process testing — `bufconn`
+## In-process testing - `bufconn`
 
 ```go
 func TestGetUser(t *testing.T) {

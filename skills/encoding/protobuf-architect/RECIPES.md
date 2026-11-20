@@ -53,7 +53,7 @@ message User {
 }
 ```
 
-## Validation — `protovalidate` (CEL)
+## Validation - `protovalidate` (CEL)
 
 ```proto
 import "buf/validate/validate.proto";
@@ -85,7 +85,7 @@ option (buf.validate.message).cel = {
 };
 ```
 
-## Code generation — `buf.gen.yaml`
+## Code generation - `buf.gen.yaml`
 
 ```yaml
 # buf.gen.yaml
@@ -113,7 +113,7 @@ plugins:
 buf generate
 ```
 
-## Lint + breaking-change config — `buf.yaml`
+## Lint + breaking-change config - `buf.yaml`
 
 ```yaml
 # buf.yaml
@@ -153,7 +153,7 @@ proto/
 | Point-in-time timestamp | `google.protobuf.Timestamp` (RFC 3339, nanosecond precision) |
 | Duration | `google.protobuf.Duration` |
 | Wall-clock date (no time) | `google.type.Date` (from `googleapis`) |
-| Money | `google.type.Money` (from `googleapis`) — currency code + amount |
+| Money | `google.type.Money` (from `googleapis`) - currency code + amount |
 | Unstructured JSON | `google.protobuf.Struct` (only for genuinely schemaless payloads) |
 | Empty response | `google.protobuf.Empty` |
 | Optional field marker | proto3 `optional` keyword (no wrapper needed) |

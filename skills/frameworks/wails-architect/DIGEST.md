@@ -19,7 +19,7 @@ Wails v3.1 shell around an existing web app: embedded SPA, same-origin proxy, se
 - Linux: frameless + injected controls via `JS`; the `CSS` option does not apply under GTK 4.
 - Windows: Mica + system theme. macOS: transparent or hidden-inset title bar. Phones: plain options.
 - Android has no environment: set the API URL in code; emulator host is `10.0.2.2`.
-- Android webview sends every request as a bodiless `GET`; non-200 reads as "asset not found" — wrap `fetch`, bridge to a Go service.
+- Android webview sends every request as a bodiless `GET`; non-200 reads as "asset not found" - wrap `fetch`, bridge to a Go service.
 - Fetch shim limits: no XHR, EventSource, streaming bodies, redirects or abort propagation.
 - Pad the Android root view by `WindowInsetsCompat`; scaffold regeneration drops the patch.
 - Use a full JDK 21; Gradle needs `javac` and `jlink` fails on newer JDKs.
@@ -31,7 +31,7 @@ Wails v3.1 shell around an existing web app: embedded SPA, same-origin proxy, se
 ## Hard constraints
 - Never rewrite `Secure`/`Domain`/`SameSite` to fix cookies; the cookie is never stored.
 - Never claim a platform works because it compiles.
-- Never put the upload key or passwords in the repo or binary; a private-repo GitHub provider needs a token in the binary — prefer an `endpoint` provider with a signed manifest.
+- Never put the upload key or passwords in the repo or binary; a private-repo GitHub provider needs a token in the binary - prefer an `endpoint` provider with a signed manifest.
 - Never design around service workers, Web Push, passkeys or a keychain in the webview.
 - Add native features only after the shell works, in value order.
 

@@ -1,18 +1,18 @@
 ---
 name: astro-architect
-version: 1.1.1
-description: Astro 6+ standards — islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `<script>` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.
+version: 1.1.2
+description: Astro 6+ standards - islands architecture with zero JS by default, Content Layer collections with loader + Zod schema validation, `<script>` processing, `getStaticPaths`, Actions and Sessions for forms, Server Islands for dynamic islands, per-adapter deployment. Use when scaffolding or reviewing an Astro site, wiring content collections, or auditing where client JS leaked into a static page.
 ---
 
 # Astro Architecture
 
 Targets **Astro 6+** with **TypeScript strict**, zero-JS-by-default output.
 Builds on [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md) for design
-tokens and a11y; this skill covers the Astro-specific layers — rendering model,
+tokens and a11y; this skill covers the Astro-specific layers - rendering model,
 content collections, scripts, routing, forms, deployment. Concrete skeletons in
 [RECIPES.md](RECIPES.md); pinned dependencies in [STACK.md](STACK.md).
 
-## 1. The rendering model — the one rule that governs everything else
+## 1. The rendering model - the one rule that governs everything else
 
 Astro components (`.astro`) render to HTML **at build time** and ship zero
 JavaScript unless you explicitly opt in. This is the framework's whole thesis;
@@ -25,23 +25,23 @@ every rule below is downstream of it.
   `<script>` tags, but it does not make them free. Two `onclick` attributes are
   cheaper than one hydrated island.
 - **Astro components can be islands themselves.** `<script>` inside a `.astro`
-  file is processed, bundled, hoisted, and deduplicated — it is not inline
+  file is processed, bundled, hoisted, and deduplicated - it is not inline
   markup. This is usually the cheapest interactivity available.
 
 Skeleton: [RECIPES § Script processing](RECIPES.md#script-processing).
 
 ### Prefer these, in order
 
-1. CSS `:checked` / `:target` / `:hover` — zero JS, zero hydration.
-2. `<details>` / `<dialog>` — native, accessible, free.
-3. A processed `<script>` in the `.astro` file — bundled, deduped, no framework.
-4. A framework island with `client:visible` / `client:idle` — the real cost.
-5. `client:load` — last resort. Every `client:load` is on the critical path.
+1. CSS `:checked` / `:target` / `:hover` - zero JS, zero hydration.
+2. `<details>` / `<dialog>` - native, accessible, free.
+3. A processed `<script>` in the `.astro` file - bundled, deduped, no framework.
+4. A framework island with `client:visible` / `client:idle` - the real cost.
+5. `client:load` - last resort. Every `client:load` is on the critical path.
 
 **The common failure mode:** a static content site ships 200 KB of React because
 one dropdown needed `useState`. Reach for level 3 first.
 
-## 2. Content collections — Content Layer API
+## 2. Content collections - Content Layer API
 
 Collections are defined in **`src/content.config.ts`** (note: *content* config,
 not the legacy per-directory `config.ts`). Each collection needs a **loader**
@@ -66,23 +66,23 @@ Full patterns and remote loaders: [RECIPES § Content collections](RECIPES.md#co
 
 ### Querying
 
-- **`getCollection('projects')`** returns entries **unsorted** — always sort
+- **`getCollection('projects')`** returns entries **unsorted** - always sort
   explicitly. `updated` as a `Date` needs `.sort((a, b) => b.data.updated - a.data.updated)`.
 - **Filter in the query, not after.** `getCollection('projects', ({ data }) => data.pinned)` returns a type-narrowed result and avoids loading bodies you don't render.
 - **`render(entry)`** turns an entry into a component. In Astro 5+, this replaced `entry.render()` on the entry itself.
 - **`getEntry('projects', id)`** fetches one entry; use it for lookup-by-id rather than filtering the whole collection.
-- **`getStaticPaths()`** is only required in `[slug]` routes — and in a static build it must return every path you want generated.
+- **`getStaticPaths()`** is only required in `[slug]` routes - and in a static build it must return every path you want generated.
 
 ## 3. Scripts
 
-- **Processed `<script>`** — bundled, deduped, hoisted, TypeScript-aware. The default.
-- **`is:inline`** — left completely alone. No bundling, no TS, no processing. Required for the pre-paint theme flash guard (next bullet) and for anything that must run before CSS applies.
+- **Processed `<script>`** - bundled, deduped, hoisted, TypeScript-aware. The default.
+- **`is:inline`** - left completely alone. No bundling, no TS, no processing. Required for the pre-paint theme flash guard (next bullet) and for anything that must run before CSS applies.
 - **A theme flash guard must be `is:inline` in `<head>`.** An external or bundled script may run after first paint, which defeats the purpose.
 
 Example: [RECIPES § Script processing](RECIPES.md#script-processing).
 
 - **`define:vars`** passes server values into an inline script; the script is then treated as `is:inline` and cannot import anything.
-- **A `<script>` in `src/components/` is hoisted and rendered once per page**, regardless of how many times the component is used. Do not rely on per-instance initialization — that's what islands are for.
+- **A `<script>` in `src/components/` is hoisted and rendered once per page**, regardless of how many times the component is used. Do not rely on per-instance initialization - that's what islands are for.
 
 ## 4. Routing
 
@@ -91,7 +91,7 @@ Example: [RECIPES § Script processing](RECIPES.md#script-processing).
 - **`[...slug]` is a rest parameter**; `[slug]` is a single segment.
 - **Route priority is static-first:** `about.astro` wins over `[slug].astro` for `/about`.
 - **`Astro.params`** carries route params; **`Astro.props`** carries component props. **`Astro.url`**, **`Astro.redirect()`**, and **`Astro.response`** cover the rest of the request surface.
-- **Endpoints** — any `.ts` file in `src/pages/` exporting `GET`/`POST` becomes an API route. Skip these unless you need a webhook or a non-HTML response.
+- **Endpoints** - any `.ts` file in `src/pages/` exporting `GET`/`POST` becomes an API route. Skip these unless you need a webhook or a non-HTML response.
 
 Skeleton: [RECIPES § Dynamic route with getStaticPaths](RECIPES.md#collection-with-schema--dynamic-route).
 
@@ -127,7 +127,7 @@ the rest does not.
 write it from Actions and middleware; not from `.astro` frontmatter in a fully
 static build.
 
-- **Sessions are cookies.** Size them like cookies — keep them small and store
+- **Sessions are cookies.** Size them like cookies - keep them small and store
   large state server-side.
 - **Sessions and Actions share a lifecycle**: `context.session?.get(key)` / `.set(key, value)`.
 
@@ -135,11 +135,11 @@ static build.
 
 `output` in `astro.config.mjs`:
 
-- **`static` (default)** — pre-render everything. Deploy to any CDN. No runtime.
-- **`server`** — on-demand by default; opt individual routes back to static with `export const prerender = true`.
-- **Hybrid** — `output: 'server'` plus `prerender` on the routes that don't need a runtime. This is the usual production shape for a site with one dynamic corner.
+- **`static` (default)** - pre-render everything. Deploy to any CDN. No runtime.
+- **`server`** - on-demand by default; opt individual routes back to static with `export const prerender = true`.
+- **Hybrid** - `output: 'server'` plus `prerender` on the routes that don't need a runtime. This is the usual production shape for a site with one dynamic corner.
 
-**Adding SSR means adding a runtime.** That's a real operational cost — a
+**Adding SSR means adding a runtime.** That's a real operational cost - a
 process to keep alive, cold starts, a place for secrets to live. For a portfolio
 or docs site, stay `static` and use Actions only if you accept the adapter.
 
@@ -151,7 +151,7 @@ Skeleton: [RECIPES § Hybrid rendering config](RECIPES.md#hybrid-rendering-confi
 
 ## 9. Styling
 
-- **Scoped `<style>` in `.astro` is the default** — compiled, hashed selectors,
+- **Scoped `<style>` in `.astro` is the default** - compiled, hashed selectors,
   no runtime. Prefer it for component-local styles.
 - **`is:global`** escapes the scoping.
 - **CSS custom properties for design tokens**, with theme variants on a
@@ -171,36 +171,36 @@ Skeleton: [RECIPES § Hybrid rendering config](RECIPES.md#hybrid-rendering-confi
 ## 10. Images and fonts
 
 - **`<Image>` from `astro:assets`** processes and optimizes local images at
-  build. Import the file, don't reference it by string path — that's what lets
+  build. Import the file, don't reference it by string path - that's what lets
   Astro know the dimensions.
 - **Remote images need `image.domains` (or `remotePatterns`)** in the config.
-- **Set explicit `width`/`height`** or use the `<Image>` component's output —
+- **Set explicit `width`/`height`** or use the `<Image>` component's output -
   prevents layout shift.
 - **Fonts:** `astro:assets` has a `getImage`-adjacent font API in recent
   versions, but for most projects self-hosting via `@font-face` in a global
   stylesheet beats the framework path. Never `@import` a font from a CDN in CSS
-  — it blocks render.
+  - it blocks render.
 
 ## 11. Testing
 
 - **Vitest** for unit tests. Astro exposes a container API (`astro/container`)
   for rendering a component to a string without a browser.
 - **Playwright** for end-to-end against `astro preview` (built output), not
-  `astro dev` — dev-only behavior can mask real hydration bugs.
+  `astro dev` - dev-only behavior can mask real hydration bugs.
 - **Content collection schemas are tested by the build** (§2): a malformed entry fails CI before any test runs.
 
 ## 12. Deployment
 
 - **Static output** → any CDN. Netlify, Vercel, Cloudflare Pages, GitHub Pages, or plain object storage.
 - **On-demand output** → pick the adapter matching your host, and own the runtime.
-- **Cloudflare Pages / Netlify / Vercel all auto-detect Astro** — no build config needed beyond `build.command: astro build` and `output: dist`.
+- **Cloudflare Pages / Netlify / Vercel all auto-detect Astro** - no build config needed beyond `build.command: astro build` and `output: dist`.
 
 ## 13. Cross-skill ties
 
-- [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md) — design tokens, component states, WCAG. Owns the token layer Astro's CSS custom properties consume.
-- [hugo-architect](../hugo-architect/SKILL.md) — the other content-first static generator; useful when comparing approaches on a greenfield content site.
-- [react-architect](../react-architect/SKILL.md) — only for islands that genuinely need a component framework.
-- [rest-api-architect](../../protocols/rest-api-architect/SKILL.md) — applies to `src/pages/*.ts` endpoints and Action handlers.
-- [docker-architect](../../infra/docker-architect/SKILL.md) — for self-hosted on-demand deployments.
-- [observability-architect](../../infra/observability-architect/SKILL.md) — only when on-demand rendering is in play.
-- [security-reviewer](../../quality/security-reviewer/SKILL.md) — Actions and endpoints are the attack surface.
+- [ui-ux-architect](../../frontend/ui-ux-architect/SKILL.md) - design tokens, component states, WCAG. Owns the token layer Astro's CSS custom properties consume.
+- [hugo-architect](../hugo-architect/SKILL.md) - the other content-first static generator; useful when comparing approaches on a greenfield content site.
+- [react-architect](../react-architect/SKILL.md) - only for islands that genuinely need a component framework.
+- [rest-api-architect](../../protocols/rest-api-architect/SKILL.md) - applies to `src/pages/*.ts` endpoints and Action handlers.
+- [docker-architect](../../infra/docker-architect/SKILL.md) - for self-hosted on-demand deployments.
+- [observability-architect](../../infra/observability-architect/SKILL.md) - only when on-demand rendering is in play.
+- [security-reviewer](../../quality/security-reviewer/SKILL.md) - Actions and endpoints are the attack surface.

@@ -42,7 +42,7 @@ my-site/
 
 ## Template hierarchy
 
-`baseof.html` — the single shell:
+`baseof.html` - the single shell:
 
 ```html
 <!doctype html>
@@ -98,14 +98,14 @@ hugo mod vendor   # commit _vendor/ for reproducible builds
 
 ## Render hook examples
 
-`layouts/_default/_markup/render-image.html` — lazy-load every Markdown image:
+`layouts/_default/_markup/render-image.html` - lazy-load every Markdown image:
 
 ```html
 <img src="{{ .Destination | safeURL }}" alt="{{ .Text }}"
      loading="lazy" decoding="async">
 ```
 
-`layouts/_default/_markup/render-link.html` — open external links in a new tab:
+`layouts/_default/_markup/render-link.html` - open external links in a new tab:
 
 ```html
 {{- $u := urls.Parse .Destination -}}
@@ -152,4 +152,4 @@ jobs:
 
 ## Cache layers reference
 
-(Stub — fill in once first review identifies which Hugo cache layers cause real-world friction. Candidates: build cache, image cache, module cache, partialCached.)
+(Stub - fill in once first review identifies which Hugo cache layers cause real-world friction. Candidates: build cache, image cache, module cache, partialCached.)

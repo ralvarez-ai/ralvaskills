@@ -5,7 +5,7 @@ Reference implementations of the ports & adapters pattern from [SKILL.md](SKILL.
 ## Go example
 
 ```go
-// internal/users/user.go — domain (no imports outside stdlib)
+// internal/users/user.go - domain (no imports outside stdlib)
 package users
 
 import "errors"
@@ -26,7 +26,7 @@ func (u *User) ChangeEmail(new Email) error {
     return nil
 }
 
-// internal/users/repo.go — port (interface declared by the consumer)
+// internal/users/repo.go - port (interface declared by the consumer)
 package users
 
 import "context"
@@ -36,7 +36,7 @@ type Repo interface {
     Save(ctx context.Context, u *User) error
 }
 
-// internal/users/service.go — application service (depends on the port)
+// internal/users/service.go - application service (depends on the port)
 package users
 
 type Service struct {
@@ -50,7 +50,7 @@ func (s *Service) ChangeUserEmail(ctx context.Context, id UserID, email Email) e
     return s.repo.Save(ctx, u)
 }
 
-// internal/users/postgres/repo.go — adapter (implements the port)
+// internal/users/postgres/repo.go - adapter (implements the port)
 package postgres
 
 import (
@@ -70,7 +70,7 @@ Imports flow: `postgres → users`, never the other direction.
 ## Python example
 
 ```python
-# myapp/users/domain.py — domain (no framework imports)
+# myapp/users/domain.py - domain (no framework imports)
 from dataclasses import dataclass
 
 class UserInactive(Exception): pass
@@ -86,14 +86,14 @@ class User:
             raise UserInactive
         self.email = new
 
-# myapp/users/ports.py — port (Protocol)
+# myapp/users/ports.py - port (Protocol)
 from typing import Protocol
 
 class UserRepo(Protocol):
     async def find_by_id(self, user_id: UserID) -> User: ...
     async def save(self, user: User) -> None: ...
 
-# myapp/users/service.py — application service
+# myapp/users/service.py - application service
 class UserService:
     def __init__(self, repo: UserRepo) -> None:
         self._repo = repo
@@ -103,7 +103,7 @@ class UserService:
         user.change_email(email)
         await self._repo.save(user)
 
-# myapp/users/adapters/postgres.py — adapter
+# myapp/users/adapters/postgres.py - adapter
 import psycopg
 from myapp.users.domain import User
 from myapp.users.ports import UserRepo

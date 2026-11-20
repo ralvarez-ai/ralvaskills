@@ -1,6 +1,6 @@
 # email
 
-`github.com/ralvarezdev/email` — sending email as a mechanism, independent of any domain: the `Mailer` port, the `Message` payload and a validated `Address`. The root package imports only `golang.org/x/net/idna`; only the SMTP adapter imports a mail library (go-mail). The module has a README, a CHANGELOG and godoc.
+`github.com/ralvarezdev/email` - sending email as a mechanism, independent of any domain: the `Mailer` port, the `Message` payload and a validated `Address`. The root package imports only `golang.org/x/net/idna`; only the SMTP adapter imports a mail library (go-mail). The module has a README, a CHANGELOG and godoc.
 
 ## Packages
 

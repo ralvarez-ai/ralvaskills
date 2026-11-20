@@ -1,4 +1,4 @@
-# Test Designer — Recipes
+# Test Designer - Recipes
 
 Illustrative skeletons. Adapt names to the stack; the shape is what matters.
 

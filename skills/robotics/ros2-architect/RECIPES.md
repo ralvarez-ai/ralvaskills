@@ -36,20 +36,20 @@ my_robot_ws/
 ```
 
 - `src/` holds packages, never code at the workspace root.
-- One package, one responsibility — drivers, navigation, perception, custom messages, bringup. Don't put everything in one `my_robot` package.
-- `_msgs` packages hold ONLY interfaces (msg/srv/action). Rebuilt rarely, consumed by everyone — keep code out.
+- One package, one responsibility - drivers, navigation, perception, custom messages, bringup. Don't put everything in one `my_robot` package.
+- `_msgs` packages hold ONLY interfaces (msg/srv/action). Rebuilt rarely, consumed by everyone - keep code out.
 - `_bringup` packages hold launch files and config for assembling the full robot stack. No source code.
 
-## QoS — explicit profiles
+## QoS - explicit profiles
 
 ```cpp
-// rclcpp — explicit QoS for a camera feed
+// rclcpp - explicit QoS for a camera feed
 auto qos = rclcpp::SensorDataQoS();   // best-effort, depth=5
 auto pub = create_publisher<sensor_msgs::msg::Image>("/camera/image", qos);
 ```
 
 ```python
-# rclpy — same idea
+# rclpy - same idea
 from rclpy.qos import qos_profile_sensor_data
 self.pub = self.create_publisher(Image, '/camera/image', qos_profile_sensor_data)
 ```
@@ -58,17 +58,17 @@ Profile reference:
 
 | QoS profile | When |
 |---|---|
-| **Sensor data** (`SensorDataQoS`) | High-rate sensor topics (camera, IMU, lidar) — best-effort, keep-last, drop on overflow |
-| **System default** | Slow, important data — reliable, keep-last 10 |
+| **Sensor data** (`SensorDataQoS`) | High-rate sensor topics (camera, IMU, lidar) - best-effort, keep-last, drop on overflow |
+| **System default** | Slow, important data - reliable, keep-last 10 |
 | **Parameters / services** (`ParametersQoS`) | Configuration, infrequent reliable delivery |
-| **Custom** | None of the above fit — declare every QoS attribute explicitly |
+| **Custom** | None of the above fit - declare every QoS attribute explicitly |
 
-- Reliable + KEEP_ALL on high-rate topics is a memory leak — a slow subscriber backs up the publisher's queue.
-- Best-effort + KEEP_LAST(N) is right for "tell me the latest, drop the rest" — sensor streams.
+- Reliable + KEEP_ALL on high-rate topics is a memory leak - a slow subscriber backs up the publisher's queue.
+- Best-effort + KEEP_LAST(N) is right for "tell me the latest, drop the rest" - sensor streams.
 - Reliable + KEEP_LAST(10) for low-rate state (`/robot/battery`, `/system/status`).
 - Mismatched QoS between publisher and subscriber means subscribers silently fail to connect (visible only in `ros2 topic info -v`).
 
-## `pixi.toml` — workspace manifest
+## `pixi.toml` - workspace manifest
 
 Replace `<distro>` with `jazzy`, `kilted`, or `lyrical` consistently across the file. Pick once per workspace per [STACK.md](STACK.md#supported-distributions).
 
@@ -106,7 +106,7 @@ pixi run build              # build everything
 pixi run run                # launch the robot
 ```
 
-## `package.xml` — `ament_cmake` (C++ and `_msgs`)
+## `package.xml` - `ament_cmake` (C++ and `_msgs`)
 
 ```xml
 <package format="3">
@@ -128,7 +128,7 @@ pixi run run                # launch the robot
 </package>
 ```
 
-## `package.xml` — `ament_python`
+## `package.xml` - `ament_python`
 
 ```xml
 <package format="3">
@@ -150,7 +150,7 @@ pixi run run                # launch the robot
 </package>
 ```
 
-## Launch file — Python DSL
+## Launch file - Python DSL
 
 Lifecycle node + standard node, with a launch argument, parameter dict, and YAML config. One launch, many configurations.
 

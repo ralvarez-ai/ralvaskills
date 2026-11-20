@@ -2,9 +2,9 @@
 
 | Dependency | Pinned version | Purpose |
 |---|---|---|
-| go | 1.27.3 | Language — relies on the Go 1.22+ enhanced `ServeMux` |
+| go | 1.27.3 | Language - relies on the Go 1.22+ enhanced `ServeMux` |
 | go-playground/validator | 10.30 | Struct-tag request validation |
-| jmoiron/sqlx | 1.4 | DB access — see [sql-architect](../../databases/sql-architect/STACK.md) and [go-architect](../../languages/go-architect/STACK.md) |
+| jmoiron/sqlx | 1.4 | DB access - see [sql-architect](../../databases/sql-architect/STACK.md) and [go-architect](../../languages/go-architect/STACK.md) |
 | golang-jwt/jwt/v5 | 5.3 | JWT issuance + verification (auth pattern A) |
 | golang.org/x/crypto | 0.51 | Argon2id password hashing (`argon2.IDKey`) |
 | getkin/kin-openapi | 0.138 | Code-first OpenAPI 3.1 spec + runtime validation |
@@ -15,8 +15,8 @@
 - **Inherits the `go-architect` stack.** Shared canonical libraries (viper, sqlx, slog, golangci-lint, etc.) live in [go-architect/STACK.md](../../languages/go-architect/STACK.md).
 - **Authentication library by pattern** (see [rest-api-architect/AUTH_PATTERNS.md](../../protocols/rest-api-architect/AUTH_PATTERNS.md)):
   - Pattern A (in-house JWT): `golang-jwt/jwt/v5` + `golang.org/x/crypto/argon2`
-  - Pattern B (external IdP): `golang-jwt/jwt/v5` only — keys come from JWKS
-- **OpenAPI library:** `getkin/kin-openapi` is the default — `swaggo/swag` is Gin-coupled and not a fit here.
+  - Pattern B (external IdP): `golang-jwt/jwt/v5` only - keys come from JWKS
+- **OpenAPI library:** `getkin/kin-openapi` is the default - `swaggo/swag` is Gin-coupled and not a fit here.
 - **Data access:** `sqlx + //go:embed` per [go-architect §12](../../languages/go-architect/SKILL.md#12-database-access--sqlc-default-sqlx--goembed-alternative). No ORM.
 
 _Last reviewed: 2026-05-21_

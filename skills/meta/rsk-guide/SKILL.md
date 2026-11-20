@@ -1,7 +1,7 @@
 ---
 name: rsk-guide
-version: 0.5.3
-description: Operator's guide to the rsk CLI — the .rsk/ manifest (new, install, pin, update), bundles, global installs and the `rsk mcp` server. Use when the user mentions rsk, installs or pins skills, or starts a project.
+version: 0.5.4
+description: Operator's guide to the rsk CLI - the .rsk/ manifest (new, install, pin, update), bundles, global installs and the `rsk mcp` server. Use when the user mentions rsk, installs or pins skills, or starts a project.
 ---
 
 # RSK Guide
@@ -14,12 +14,12 @@ Installing, pinning, updating, or uninstalling skills changes what tools and sta
 
 For every proposed action:
 
-1. **State the action plainly** — which skills/bundles, target scope (`--global` / `--for` / project manifest), and what changes on disk (including `.rsk/CLAUDE.md` and `./CLAUDE.md` edits when pinning)
+1. **State the action plainly** - which skills/bundles, target scope (`--global` / `--for` / project manifest), and what changes on disk (including `.rsk/CLAUDE.md` and `./CLAUDE.md` edits when pinning)
 2. **Quote the exact command** you'd run
 3. **Wait for the user to confirm**, redirect, or decline
 4. **Use `--dry-run`** when available if the user wants to see the effect first
 
-Read-only commands (`rsk list`, `rsk catalog`, `rsk status` without `--stack`) are safe to run without asking — they only display state. Anything that touches symlinks, the manifest, the project `CLAUDE.md`, the official cache, or makes network calls (`rsk status --stack`) needs an explicit go.
+Read-only commands (`rsk list`, `rsk catalog`, `rsk status` without `--stack`) are safe to run without asking - they only display state. Anything that touches symlinks, the manifest, the project `CLAUDE.md`, the official cache, or makes network calls (`rsk status --stack`) needs an explicit go.
 
 If the user gives a blanket "yes" up front (e.g. "set everything up for this project"), still pause and confirm before each *bundle* or *pin*. A slip from `go-grpc` to `go-rest`, installing globally when they meant locally, or pinning a skill they didn't want auto-loaded is hard to undo silently.
 
@@ -27,7 +27,7 @@ If the user gives a blanket "yes" up front (e.g. "set everything up for this pro
 
 Pick the one that matches the user's intent.
 
-### A. Project manifest (`.rsk/`) — preferred for per-project skill sets
+### A. Project manifest (`.rsk/`) - preferred for per-project skill sets
 
 Mirrors `go.mod`: a declarative `rsk.mod` lists the skills this project depends on, `rsk.lock` records the versions this machine resolved, and pinned skills are loaded into `./CLAUDE.md` via `@.rsk/CLAUDE.md`, which imports the generated `.rsk/SKILLS.md` (each pinned skill's short `DIGEST.md`, not its whole body). Lives in `<project>/.rsk/`.
 
@@ -43,9 +43,9 @@ rsk install                            # (no args) re-installs everything in rsk
 rsk destroy                            # delete .rsk/ and remove @.rsk/CLAUDE.md import
 ```
 
-**Pin vs install** — installed skills are present on disk but not auto-loaded; pinned skills contribute their digest (a short list of always-on rules) to `.rsk/SKILLS.md`, which `.rsk/CLAUDE.md` imports, so it loads every turn in that project; the full skill still loads only when invoked. Pin only what truly needs auto-loading, and keep the pinned set small: every digest is paid on every turn (about 2000 tokens is the budget for the whole file).
+**Pin vs install** - installed skills are present on disk but not auto-loaded; pinned skills contribute their digest (a short list of always-on rules) to `.rsk/SKILLS.md`, which `.rsk/CLAUDE.md` imports, so it loads every turn in that project; the full skill still loads only when invoked. Pin only what truly needs auto-loading, and keep the pinned set small: every digest is paid on every turn (about 2000 tokens is the budget for the whole file).
 
-### B. Bundle / global install — fastest path for stack-standard setups
+### B. Bundle / global install - fastest path for stack-standard setups
 
 Install a curated bundle or single skill into the project (symlinks in `.claude/skills/`) or globally with `--global` (`~/.claude/skills/`, `~/.config/opencode/skills/`).
 
@@ -63,7 +63,7 @@ Project installs land in `.claude/skills/` (shared by Claude Code and OpenCode) 
 
 ## Quick reference
 
-### Discover (read-only — safe)
+### Discover (read-only - safe)
 
 | Command | Purpose |
 |---|---|
@@ -80,10 +80,10 @@ Project installs land in `.claude/skills/` (shared by Claude Code and OpenCode) 
 | `rsk status --global` / `--project` | Restrict scope |
 | `rsk status --for <tool>` | Scope `--global` to one tool |
 
-### Setup (state-changing — ask first)
+### Setup (state-changing - ask first)
 
 ```bash
-rsk init                              # once per machine — writes ~/.config/rsk/config.json
+rsk init                              # once per machine - writes ~/.config/rsk/config.json
 rsk init --force                      # overwrite existing config
 ```
 
@@ -93,7 +93,7 @@ rsk init --force                      # overwrite existing config
 3. **Global skills dir** per selected tool (defaults: `~/.claude/skills/`, `~/.config/opencode/skills/`)
 4. **Default scope** for bare `--global` (`all` configured tools, or a single tool)
 
-### Update (state-changing — ask first)
+### Update (state-changing - ask first)
 
 ```bash
 rsk update [name...] [--global] [--for <tool>] [--include official,personal] [--dry-run]
@@ -102,7 +102,7 @@ rsk update [name...] [--global] [--for <tool>] [--include official,personal] [--
 - Local-clone mode: `git pull` on the repo (symlinks update automatically). Add `--include official` (legacy `--official`) to also pull `anthropics/skills` cache.
 - Registry mode: fetches latest index, re-downloads + re-links any skill whose installed version is behind.
 
-### Uninstall (state-changing — ask first)
+### Uninstall (state-changing - ask first)
 
 ```bash
 rsk uninstall <name...> [--global] [--for <tool>] [--include personal] [--dry-run]
@@ -110,7 +110,7 @@ rsk uninstall <name...> [--global] [--for <tool>] [--include personal] [--dry-ru
 
 Project uninstall also cleans the matching entries from `rsk.mod` / `rsk.lock` and unpins them from `.rsk/CLAUDE.md` (or `opencode.json`).
 
-### Status with live fetch (network — ask first; **not yet implemented**)
+### Status with live fetch (network - ask first; **not yet implemented**)
 
 ```bash
 rsk status --stack [--refresh]        # planned: fetch latest versions from proxy.golang.org / pypi.org
@@ -121,8 +121,8 @@ Per the spec this is opt-in with a 24h cache; the current build returns an expli
 ## Common workflows
 
 **First-time machine setup** (confirm each step with the user)
-1. `rsk init` — pick local clone or registry, configure tools
-2. `rsk install global --global` — universal skills, machine-wide
+1. `rsk init` - pick local clone or registry, configure tools
+2. `rsk install global --global` - universal skills, machine-wide
 
 **Set up a new project with tracked manifest**
 1. `cd <project>` then `rsk new`
@@ -131,7 +131,7 @@ Per the spec this is opt-in with a 24h cache; the current build returns an expli
 
 **Set up a new project with a stack bundle**
 1. `cd <project>` then `rsk new`
-2. `rsk install <stack-bundle>` — e.g. `rsk install go-grpc`
+2. `rsk install <stack-bundle>` - e.g. `rsk install go-grpc`
 
 **Add a single skill mid-project**
 - Tracked: `rsk install <name>` (+ `--pin` if it should auto-load)
@@ -159,7 +159,7 @@ The installed skills are not stored under `.rsk/`: they are symlinks in `.claude
 
 ## MCP server (`rsk mcp`)
 
-`rsk new` can register the rsk MCP server in the project (`.mcp.json` for Claude Code, `opencode.json` for OpenCode) and write a short pointer into `./CLAUDE.md`. Re-run `rsk new` to register later — it is idempotent and never drops other MCP servers. `rsk destroy` removes the registration.
+`rsk new` can register the rsk MCP server in the project (`.mcp.json` for Claude Code, `opencode.json` for OpenCode) and write a short pointer into `./CLAUDE.md`. Re-run `rsk new` to register later - it is idempotent and never drops other MCP servers. `rsk destroy` removes the registration.
 
 The server exposes, over stdio:
 
@@ -172,10 +172,10 @@ The server exposes, over stdio:
 
 Recommended flow: `project_profile` → propose to the user → `install_skills` once approved. Installed skills appear automatically in the client's skill list, so no extra skill is needed to discover them.
 
-**Approval is on the client, not the server.** The server marks `install_skills` with `anthropic/requiresUserInteraction`, so Claude Code forces its approval prompt on every call — this holds even if the model never read this skill. Never install skills yourself without the user's confirmation; state which skills and which scope.
+**Approval is on the client, not the server.** The server marks `install_skills` with `anthropic/requiresUserInteraction`, so Claude Code forces its approval prompt on every call - this holds even if the model never read this skill. Never install skills yourself without the user's confirmation; state which skills and which scope.
 
 The server is launched by the client, so **`rsk` must be on PATH**. `rsk new` warns and skips registration when it is not.
 
 ## Full reference
 
-For the complete CLI specification — exhaustive flag list, `config.json` shape, catalog overrides, discovery rules, edge-case behavior — see `docs/SPECS.md` in the [ralvaskills](https://github.com/ralvarezdev/ralvaskills) repo.
+For the complete CLI specification - exhaustive flag list, `config.json` shape, catalog overrides, discovery rules, edge-case behavior - see `docs/SPECS.md` in the [ralvaskills](https://github.com/ralvarezdev/ralvaskills) repo.

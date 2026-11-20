@@ -3,9 +3,9 @@ set -euo pipefail
 
 # Check for Go function/method declarations whose entire body sits on one line.
 # Pattern: func ...(...) ... { <non-empty body> }
-# Empty bodies (func Foo() {}) are allowed — this only catches one-liners with logic.
+# Empty bodies (func Foo() {}) are allowed - this only catches one-liners with logic.
 #
-# go-architect asset — wire into your task runner as an opt-in check, not the
+# go-architect asset - wire into your task runner as an opt-in check, not the
 # main lint gate: golangci-lint has no linter for this, and existing codebases
 # may have violations that need a separate cleanup pass (see SKILL.md §14).
 

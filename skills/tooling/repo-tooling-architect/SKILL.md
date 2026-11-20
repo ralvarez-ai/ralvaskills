@@ -1,7 +1,7 @@
 ---
 name: repo-tooling-architect
-version: 1.6.3
-description: Repo-root developer tooling — .editorconfig, .gitignore, version pinning (mise), task runner (Task), CI (GitHub Actions, act), pre-commit, env vars, Renovate, AGENTS.md. Use when scaffolding or auditing a repo's tooling layer or naming tasks.
+version: 1.6.4
+description: Repo-root developer tooling - .editorconfig, .gitignore, version pinning (mise), task runner (Task), CI (GitHub Actions, act), pre-commit, env vars, Renovate, AGENTS.md. Use when scaffolding or auditing a repo's tooling layer or naming tasks.
 ---
 
 # Repo Tooling Architecture
@@ -12,7 +12,7 @@ Productivity files that live at the repo root, are language-agnostic, and shape 
 
 Add a tool when **all three** are true:
 
-1. **It pays back on day one.** Not "useful eventually" — useful from the first PR.
+1. **It pays back on day one.** Not "useful eventually" - useful from the first PR.
 2. **The cost of installing it is smaller than the cost of going without it.** A 30-second install is fine; a 30-minute setup that breaks once per OS is not.
 3. **There's no language-native option that already covers it.** `go test` doesn't need a Makefile wrapper. `uv run` doesn't need `task` for one-language projects.
 
@@ -52,7 +52,7 @@ Always include. Curate per language; never copy a 500-line GitHub default that c
 - **Trim aggressively.** A clean `.gitignore` is documentation; a noisy one is noise.
 - **Local-only exclusions** (`.idea/`, `.vscode/settings.json`) go in `.git/info/exclude` per-developer or `~/.gitignore_global`, not the repo's `.gitignore`.
 
-## 3. Tool version pinning — mise (default), proto (alternative)
+## 3. Tool version pinning - mise (default), proto (alternative)
 
 The problem: "works on my machine" because each dev has different Go / Python / Node versions. CI uses yet another version. Fix: pin every tool the repo needs in a file, install with one command.
 
@@ -83,11 +83,11 @@ Same key-value shape, file named `.prototools`, install with `proto install`. Pi
 
 **Either way:** the pinned-versions file is committed; CI installs the same versions; nobody runs "whatever's on their machine."
 
-## 4. Task runner — Task (default) or just (alternative)
+## 4. Task runner - Task (default) or just (alternative)
 
-The problem: every project has 5–15 commands a contributor needs to know (`go build`, `go test --race`, `docker compose up -d db`, `task generate-contracts`, etc.). Without a runner, they live in stale README sections.
+The problem: every project has 5-15 commands a contributor needs to know (`go build`, `go test --race`, `docker compose up -d db`, `task generate-contracts`, etc.). Without a runner, they live in stale README sections.
 
-**Default: skip a task runner for single-language projects.** `go build`, `uv run`, `npm` are enough. Don't wrap them in `task build:` aliases — that's ceremony.
+**Default: skip a task runner for single-language projects.** `go build`, `uv run`, `npm` are enough. Don't wrap them in `task build:` aliases - that's ceremony.
 
 **Add a task runner when:** multi-language repo, multi-service compose stack, or a meaningful number of multi-step commands.
 
@@ -98,15 +98,15 @@ Sample `Taskfile.yml`: [RECIPES.md](RECIPES.md#4-sample-taskfileyml).
 - **Why Task as default:** built-in `sources:` / `generates:` for incremental builds, `--watch` mode, first-class Windows support (ships its own POSIX-sh interpreter), built-in `dotenv:` loading.
 - **Discoverability:** `task --list` shows every task with its `desc`.
 
-**Naming: `module[:submodule…]:verb[:target|mode]`.** Name tasks after the thing they act on, then the action — `proto:generate`, `git:update:recursive`, `docker:up:dev` — not the reverse (`generate-proto`, `run-tests`). Environment and service are **targets after the verb** (`docker:up:dev`, not `docker:dev:up`). Cross-cutting actions use the inverse family, `verb:target` (`test:backend`, `scan:fs`). Reserve unprefixed names (`default`, `build`, `lint`) for repo-wide entry points that don't belong to a single module.
+**Naming: `module[:submodule…]:verb[:target|mode]`.** Name tasks after the thing they act on, then the action - `proto:generate`, `git:update:recursive`, `docker:up:dev` - not the reverse (`generate-proto`, `run-tests`). Environment and service are **targets after the verb** (`docker:up:dev`, not `docker:dev:up`). Cross-cutting actions use the inverse family, `verb:target` (`test:backend`, `scan:fs`). Reserve unprefixed names (`default`, `build`, `lint`) for repo-wide entry points that don't belong to a single module.
 
-**The full grammar, the canonical verb/module vocabulary, the aggregate/atomic rule, include rules, and the standard Go-library task set are in [TASKFILE.md](TASKFILE.md).** Read it before adding or renaming a task — the audit of the active repos found the same drift (git submodule names, env ordering, `gen`/`generate`, `cover`/`coverage`, `be`/`fe`) everywhere, and TASKFILE.md is the single answer to it.
+**The full grammar, the canonical verb/module vocabulary, the aggregate/atomic rule, include rules, and the standard Go-library task set are in [TASKFILE.md](TASKFILE.md).** Read it before adding or renaming a task - the audit of the active repos found the same drift (git submodule names, env ordering, `gen`/`generate`, `cover`/`coverage`, `be`/`fe`) everywhere, and TASKFILE.md is the single answer to it.
 
-For a large enough module to warrant its own file, promote the prefix to a real namespace with `includes:` — Task auto-prefixes every task in the included file, so `docker:up` becomes `task docker:up` whether it's a flat key or defined in `Taskfile.docker.yml`:
+For a large enough module to warrant its own file, promote the prefix to a real namespace with `includes:` - Task auto-prefixes every task in the included file, so `docker:up` becomes `task docker:up` whether it's a flat key or defined in `Taskfile.docker.yml`:
 
 Example: [RECIPES.md](RECIPES.md#4-includes-example).
 
-Stay flat until a module earns its own file — see [TASKFILE.md](TASKFILE.md) §6.
+Stay flat until a module earns its own file - see [TASKFILE.md](TASKFILE.md) §6.
 
 ### Alternative: just with `justfile`
 
@@ -114,13 +114,13 @@ Makefile-style brevity over YAML; recipes look like shell. Add `set windows-shel
 
 **Settle on one per repo.** Don't mix `Taskfile.yml` and `justfile`.
 
-## 5. Pre-commit hooks — minimal, opt-in
+## 5. Pre-commit hooks - minimal, opt-in
 
 The problem: minor issues (trailing whitespace, committed secrets, large files) reach CI when they could have been blocked locally. Fix: a tiny pre-commit hook set that catches *only* what can't be caught later or that's genuinely fast.
 
 **Strong opinions exist.** Some teams love pre-commit; some find it slows commits / blocks WIP commits. The minimal-hook stance is the compromise: catch real risks, never run language-specific linters or formatters in commit hooks (those run in editor-on-save and again in CI).
 
-### `.pre-commit-config.yaml` — minimal set
+### `.pre-commit-config.yaml` - minimal set
 
 Sample config: [RECIPES.md](RECIPES.md).
 
@@ -136,18 +136,18 @@ The problem: secrets and config diverge across machines, leak into git, or get e
 ### Pattern
 
 - **Non-secret config: `.env` + `.env.local`**, loaded by Task's `dotenv:` directive.
-  - `.env` is committed (defaults safe for any contributor — `LOG_LEVEL=info`, `DB_HOST=localhost`).
-  - `.env.local` is git-ignored (per-developer overrides — `LOG_LEVEL=debug`).
+  - `.env` is committed (defaults safe for any contributor - `LOG_LEVEL=info`, `DB_HOST=localhost`).
+  - `.env.local` is git-ignored (per-developer overrides - `LOG_LEVEL=debug`).
 - **Real secrets: external secret manager.** Never in `.env`, never committed:
-  - **1Password CLI** (`op run --env-file=.env.template -- task up`) — solo / small team
-  - **doppler** (`doppler run -- task up`) — team
-  - **Cloud secret manager** (AWS Secrets Manager, GCP Secret Manager) — production injection at runtime
+  - **1Password CLI** (`op run --env-file=.env.template -- task up`) - solo / small team
+  - **doppler** (`doppler run -- task up`) - team
+  - **Cloud secret manager** (AWS Secrets Manager, GCP Secret Manager) - production injection at runtime
 - **No `direnv`** unless you need automatic activation when you `cd` into a directory. Task's `dotenv:` covers the common case without a second tool.
 
 ### `.env` shape
 
 ```
-# .env — committed, safe defaults
+# .env - committed, safe defaults
 LOG_LEVEL=info
 APP_PORT=8080
 DB_HOST=localhost
@@ -156,14 +156,14 @@ DB_NAME=myapp_dev
 ```
 
 ```
-# .env.local — git-ignored, per-developer overrides + dev secrets
+# .env.local - git-ignored, per-developer overrides + dev secrets
 LOG_LEVEL=debug
 DB_PASSWORD=dev-only-not-a-real-secret
 ```
 
 **`.gitignore` must include `.env.local`.** Audit any `.env*` pattern: only ignore variants that hold secrets; commit the safe ones.
 
-## 7. Dependency updates — Renovate (default), Dependabot (acceptable)
+## 7. Dependency updates - Renovate (default), Dependabot (acceptable)
 
 The problem: dependency updates accumulate until they hit a security advisory or a breaking version, then a week of catch-up is needed. Automate it.
 
@@ -174,18 +174,18 @@ The problem: dependency updates accumulate until they hit a security advisory or
 Sample `renovate.json`: [RECIPES.md](RECIPES.md#7-renovatejson).
 
 - **Why Renovate:** grouping rules, scheduled batches, broader ecosystem coverage (Go modules, Python, npm, Docker tags, GitHub Actions, Terraform).
-- **Group minor + patch updates** into one weekly PR — review-bandwidth-friendly.
-- **Security updates land immediately** — never queued.
-- **Major bumps stay separate, labeled, never auto-merged** — they deserve a human read.
+- **Group minor + patch updates** into one weekly PR - review-bandwidth-friendly.
+- **Security updates land immediately** - never queued.
+- **Major bumps stay separate, labeled, never auto-merged** - they deserve a human read.
 
 ### Acceptable: Dependabot
 
 For tiny single-language repos where Renovate's flexibility is overkill, GitHub's built-in Dependabot is fine. Same pattern (security immediate, minor grouped, major labeled).
 
-## 8. CI — GitHub Actions (default), act for local/free runs
+## 8. CI - GitHub Actions (default), act for local/free runs
 
 The problem: GitHub Actions minutes aren't free once the included allowance
-is exceeded (or a payment/spending-limit issue blocks the account) —
+is exceeded (or a payment/spending-limit issue blocks the account) -
 Docker-heavy jobs (multi-platform builds, image scans) burn through them
 fastest.
 
@@ -198,7 +198,7 @@ file locally via [`act`](https://github.com/nektos/act) instead of writing
 a second pipeline. `act` reads `.github/workflows/*.yml` and runs each job
 as a sibling Docker container, using a runner image
 (`catthehacker/ubuntu:act-latest` covers most `ubuntu-latest` jobs) that
-closely mirrors GitHub's actual runner — including Docker-in-Docker-style
+closely mirrors GitHub's actual runner - including Docker-in-Docker-style
 builds, since that image ships the Docker CLI against the host daemon.
 
 Config (`.actrc`, `.secrets.example`), the `ci:local` task and the act gotchas (artifact server, secrets, tag events, same-host registry push) are in [RECIPES.md](RECIPES.md#8-act-config-task-wiring-and-gotchas).
@@ -207,10 +207,10 @@ Config (`.actrc`, `.secrets.example`), the `ci:local` task and the act gotchas (
   before pushing is on the developer, not enforced (a pre-push git hook
   can close this gap if it becomes a real problem in practice).
 - **Don't reimplement the pipeline as shell scripts instead.** `act` runs
-  the *actual* workflow file — no second definition to drift out of sync
+  the *actual* workflow file - no second definition to drift out of sync
   with the first.
 
-## 9. Agent instructions — `AGENTS.md` (source), `CLAUDE.md` (thin)
+## 9. Agent instructions - `AGENTS.md` (source), `CLAUDE.md` (thin)
 
 Files that brief coding agents on the repo. Add them once the repo has commands or conventions an agent cannot infer from the code.
 
@@ -222,10 +222,10 @@ Files that brief coding agents on the repo. Add them once the repo has commands 
 What belongs, in this order:
 
 1. One-paragraph purpose of the repo.
-2. **Commands** — build, test, lint, run, using the task runner names from section 4.
-3. **Layout** — top-level directories and what each owns.
-4. **Conventions that are non-obvious** — what a good engineer would still get wrong.
-5. **Boundaries** — always / ask first / never (publishing, migrations, secrets, generated files).
+2. **Commands** - build, test, lint, run, using the task runner names from section 4.
+3. **Layout** - top-level directories and what each owns.
+4. **Conventions that are non-obvious** - what a good engineer would still get wrong.
+5. **Boundaries** - always / ask first / never (publishing, migrations, secrets, generated files).
 6. **Pointers** to `docs/` (ADRs, backlog) instead of copying them; see `docs-architect` for the snippet.
 
 What does not belong: anything derivable from the code or `git log`, tutorials, full API docs, secrets, private details of other projects.
@@ -240,6 +240,6 @@ This skill is opinionated about *adding* tools, but the strongest opinion is **d
 - **Solo throwaway project:** `.editorconfig` and `.gitignore`. That's it.
 - **Documentation-only repo:** `.editorconfig`, `.gitignore`, optional pre-commit for trailing whitespace.
 - **Library / SDK with one entry point:** language-native tooling + Renovate. No Task, no mise needed.
-- **Multi-language monorepo / multi-service compose stack:** the full stack — `.editorconfig`, `.gitignore`, `mise.toml` (or `.prototools`), `Taskfile.yml`, `pre-commit-config.yaml`, `renovate.json`, `docker-compose.yaml`, `AGENTS.md`.
+- **Multi-language monorepo / multi-service compose stack:** the full stack - `.editorconfig`, `.gitignore`, `mise.toml` (or `.prototools`), `Taskfile.yml`, `pre-commit-config.yaml`, `renovate.json`, `docker-compose.yaml`, `AGENTS.md`.
 
 Default to less. Add when the friction is real.

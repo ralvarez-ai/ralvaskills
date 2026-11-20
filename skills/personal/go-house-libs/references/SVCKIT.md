@@ -1,6 +1,6 @@
 # svckit
 
-`github.com/ralvarezdev/svckit` — server and service lifecycle for Go: a bind failure fails the process, shutdown is graceful, sibling services stop together, and the exit code says why. Standard library only; gRPC goes through a three-method interface that `*grpc.Server` satisfies, so svckit never imports grpc. Reach for it before writing `go srv.ListenAndServe()` plus `<-ctx.Done()`.
+`github.com/ralvarezdev/svckit` - server and service lifecycle for Go: a bind failure fails the process, shutdown is graceful, sibling services stop together, and the exit code says why. Standard library only; gRPC goes through a three-method interface that `*grpc.Server` satisfies, so svckit never imports grpc. Reach for it before writing `go srv.ListenAndServe()` plus `<-ctx.Done()`.
 
 ## Packages
 

@@ -1,6 +1,6 @@
 # identitygin
 
-`github.com/ralvarezdev/identitygin` — the gin adapter for identity: the auth middleware and cookie handling every gin app on identity would otherwise copy. `*app.App` from identity satisfies its `Authenticator` directly.
+`github.com/ralvarezdev/identitygin` - the gin adapter for identity: the auth middleware and cookie handling every gin app on identity would otherwise copy. `*app.App` from identity satisfies its `Authenticator` directly.
 
 ## What it gives you
 

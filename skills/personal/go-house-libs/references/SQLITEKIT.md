@@ -1,6 +1,6 @@
 # sqlitekit
 
-`github.com/ralvarezdev/sqlitekit` — one correct way to open SQLite from Go with the pure Go `modernc.org/sqlite` driver (no cgo): WAL, foreign keys and a busy timeout on every pooled connection, a single-connection default, an in-memory opener for tests and embedded goose migrations. The SQLite counterpart of [PGKIT](PGKIT.md).
+`github.com/ralvarezdev/sqlitekit` - one correct way to open SQLite from Go with the pure Go `modernc.org/sqlite` driver (no cgo): WAL, foreign keys and a busy timeout on every pooled connection, a single-connection default, an in-memory opener for tests and embedded goose migrations. The SQLite counterpart of [PGKIT](PGKIT.md).
 
 ## Packages
 

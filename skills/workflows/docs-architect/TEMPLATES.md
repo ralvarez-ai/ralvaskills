@@ -41,8 +41,8 @@ project: global
 <Forces and constraints. Why a decision is needed now.>
 
 ## Options considered
-- **<A>** — <trade-off>
-- **<B>** — <trade-off>
+- **<A>** - <trade-off>
+- **<B>** - <trade-off>
 
 ## Decision
 <What we chose and the deciding reason.>
@@ -85,7 +85,7 @@ related: []
 <In / out.>
 
 ## Phases
-1. <phase> — <outcome>
+1. <phase> - <outcome>
 
 ## Exit criteria
 - [ ] <observable condition>
@@ -110,7 +110,7 @@ related: []
 <Only what a reader needs to implement or review.>
 
 ## Risks
-- <risk> — <mitigation>
+- <risk> - <mitigation>
 ```
 
 ## review.md
@@ -126,7 +126,7 @@ related: []
 # <What was reviewed>
 
 ## Findings
-- **<severity>** <finding> — <evidence>
+- **<severity>** <finding> - <evidence>
 
 ## Follow-ups
 - <backlog item, linked>
@@ -210,7 +210,7 @@ For `CLAUDE.md` / `AGENTS.md`. Keep it this short; do not copy the conventions i
 ```md
 ## Documentation
 - Structure and conventions: `docs/README.md`
-- Architecture decisions: `docs/adr/` — read before structural changes; never edit the body of an accepted ADR
+- Architecture decisions: `docs/adr/` - read before structural changes; never edit the body of an accepted ADR
 - Pending work: `docs/backlog/<project>.md` (queue layout) or `docs/backlog/pending/` (item layout); loose ideas go to `docs/backlog/inbox.md`
 - New docs start from `docs/templates/` and carry frontmatter
 - On a relevant change: update `CHANGELOG.md` and, if warranted, add `docs/changes/`

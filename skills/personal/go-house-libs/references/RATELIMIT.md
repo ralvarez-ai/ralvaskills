@@ -1,6 +1,6 @@
 # ratelimit
 
-`github.com/ralvarezdev/ratelimit` — throttling of how often a key (user, IP, API key) may act. A port plus token-bucket adapters; nothing in the root package knows about gin, `net/http` or a backing store.
+`github.com/ralvarezdev/ratelimit` - throttling of how often a key (user, IP, API key) may act. A port plus token-bucket adapters; nothing in the root package knows about gin, `net/http` or a backing store.
 
 ## Packages
 

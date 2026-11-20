@@ -1,10 +1,10 @@
-# URU Paper Format — Reference Templates & Checklists
+# URU Paper Format - Reference Templates & Checklists
 
 Reference formats by source type, article type definitions, and the full review checklist. Load on demand once the interview (SKILL.md §2) is complete.
 
 ## 1. Reference formats by source type
 
-Each reference is numbered in brackets, in order of first appearance in the text. Classify the source before applying a template — the fields and punctuation differ per type.
+Each reference is numbered in brackets, in order of first appearance in the text. Classify the source before applying a template - the fields and punctuation differ per type.
 
 ### Book
 
@@ -102,7 +102,7 @@ artificial]. Google Play, 2022. Disponible en: https://play.google.com/store/app
 
 ## 2. Article type definitions
 
-Use these to confirm the user's content actually fits the chosen type — the norms distinguish by method and intent, not just subject matter.
+Use these to confirm the user's content actually fits the chosen type - the norms distinguish by method and intent, not just subject matter.
 
 | Tipo | Definición |
 |---|---|
@@ -134,5 +134,5 @@ Before handing off the manuscript spec:
 - [ ] Citas textuales largas (≥40 palabras) en bloque con sangría de 1.25 cm
 - [ ] Toda referencia usa el template correcto para su tipo de fuente (§1 arriba)
 - [ ] Referencias numeradas en orden de aparición en el texto, no alfabético
-- [ ] Ningún campo fue inventado — todo dato proviene del usuario o una fuente que aportó (campos faltantes marcados `[FALTA: ...]`)
+- [ ] Ningún campo fue inventado - todo dato proviene del usuario o una fuente que aportó (campos faltantes marcados `[FALTA: ...]`)
 - [ ] Checklist de ética y originalidad de SKILL.md §9 revisado

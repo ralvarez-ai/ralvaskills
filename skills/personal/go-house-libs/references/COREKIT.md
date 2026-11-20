@@ -1,6 +1,6 @@
 # corekit
 
-`github.com/ralvarezdev/corekit` — the transport-neutral error vocabulary the house Go kits share, plus the domain-agnostic conversions in `xconv`. A domain classifies its failures once (`domain.ErrNotFound -> KindNotFound`); each transport renders the same typed error through its own table: an HTTP status for a REST problem, a `codes.Code` in [GRPCKIT](GRPCKIT.md), a `connect.Code` in [CONNECTRPCKIT](CONNECTRPCKIT.md), a safe message for an MCP tool error. The root is stdlib-only and imports no HTTP, gRPC, Connect or MCP package. Current tag v0.3.0. Reach for it before hand-writing a per-transport error switch or a project-local error code.
+`github.com/ralvarezdev/corekit` - the transport-neutral error vocabulary the house Go kits share, plus the domain-agnostic conversions in `xconv`. A domain classifies its failures once (`domain.ErrNotFound -> KindNotFound`); each transport renders the same typed error through its own table: an HTTP status for a REST problem, a `codes.Code` in [GRPCKIT](GRPCKIT.md), a `connect.Code` in [CONNECTRPCKIT](CONNECTRPCKIT.md), a safe message for an MCP tool error. The root is stdlib-only and imports no HTTP, gRPC, Connect or MCP package. Current tag v0.3.0. Reach for it before hand-writing a per-transport error switch or a project-local error code.
 
 ## Packages
 
@@ -22,7 +22,7 @@ The `Kind` set (zero value `KindUnknown`, so an unclassified failure is safe by 
 | `KindPrecondition` | `precondition_failed`, 412, "the resource changed since it was read" |
 | `KindUnknown` | `unknown`, 500, "internal error" |
 
-`ClassOf(k)` returns the `Class` and never panics — an unknown or out-of-range Kind gives the `KindUnknown` class. `Kind.HTTPStatus()`, `DefaultMessage()`, `Retryable()` and `String()` read it back.
+`ClassOf(k)` returns the `Class` and never panics - an unknown or out-of-range Kind gives the `KindUnknown` class. `Kind.HTTPStatus()`, `DefaultMessage()`, `Retryable()` and `String()` read it back.
 
 ## Recipe
 

@@ -1,19 +1,19 @@
 ---
 name: secrets-architect
-version: 1.2.0
-description: Secret-handling standards for one external store consumed by reference — consumer decision matrix (Compose secrets, *_FILE, systemd LoadCredential, plain bind mount, CI), permission/uid rules, naming, migration workflow, live verification, pitfalls. Use when wiring a credential into a repo, container, systemd unit or CI job, migrating secrets out of .env or git, or auditing a secrets store.
+version: 1.2.1
+description: Secret-handling standards for one external store consumed by reference - consumer decision matrix (Compose secrets, *_FILE, systemd LoadCredential, plain bind mount, CI), permission/uid rules, naming, migration workflow, live verification, pitfalls. Use when wiring a credential into a repo, container, systemd unit or CI job, migrating secrets out of .env or git, or auditing a secrets store.
 ---
 
 # Secrets Architect
 
-**Every credential lives in one secrets store, outside every repo. Consumers read it by reference — never a copied value.** No secret value in git, in a `.env`, or in a container environment.
+**Every credential lives in one secrets store, outside every repo. Consumers read it by reference - never a copied value.** No secret value in git, in a `.env`, or in a container environment.
 
-Targets **`$SECRETS_DIR`** (default `~/Secrets`) as the store. The canonical long-form walkthrough — the full narrative, verification log and instance layout — lives in the chezmoi repo's `docs/secrets-methodology.md`; this skill is the portable, agent-facing core.
+Targets **`$SECRETS_DIR`** (default `~/Secrets`) as the store. The canonical long-form walkthrough - the full narrative, verification log and instance layout - lives in the chezmoi repo's `docs/secrets-methodology.md`; this skill is the portable, agent-facing core.
 
 ## 1. Principles
 
 - **One store, many consumers.** `$SECRETS_DIR` is the single source of truth; repos reference paths, never values.
-- **Match the mechanism to the consumer** (see §3). The consumer's shape — file reader, env app, oneshot, shell, writable state, CI — picks the mechanism.
+- **Match the mechanism to the consumer** (see §3). The consumer's shape - file reader, env app, oneshot, shell, writable state, CI - picks the mechanism.
 - **Paths have a default.** Build from `${SECRETS_DIR:-$HOME/Secrets}` so a stack works without a per-secret variable being defined.
 - **Least privilege, but respect the reader's uid.** Default `600`, except files a non-root process opens directly.
 - **Verify against the running system, not just the source.** The deployed artifact can lag the repo.
@@ -34,16 +34,16 @@ $SECRETS_DIR/                  # 0700
 ├── ssh/  gpg/  bitwarden/  vpn/wireguard/  ...
 ```
 
-- **Dirs `700`, files `600`**, enforced by a `secrets:perms` task that walks the *whole* store (never a hardcoded list), then audits `find -perm /022` and `find -type f ! -name '*.pub' ! -name known_hosts -perm /044` — a clean store prints nothing.
+- **Dirs `700`, files `600`**, enforced by a `secrets:perms` task that walks the *whole* store (never a hardcoded list), then audits `find -perm /022` and `find -type f ! -name '*.pub' ! -name known_hosts -perm /044` - a clean store prints nothing.
 - **Direct-open `644` exceptions** (enclosing `0700` dirs still contain them): public keys / `known_hosts`, and **any file a non-root container reads directly** through a Compose-secret bind mount. cloudflared (`65532`) and the finance-platform backend (`65532`) both read their secrets this way, so `600` is unreadable to them. Check the reader's uid (`docker inspect <ctr> --format '{{.Config.User}}'`) before choosing the mode, and list the directory in `secrets:perms`'s `644` set.
-- **Verify a secret's content**, not its filename — a public key saved as the private key silently breaks push.
+- **Verify a secret's content**, not its filename - a public key saved as the private key silently breaks push.
 
 ## 3. Consumer decision matrix
 
 | Consumer | Mechanism | Key details |
 |---|---|---|
 | Container reads a file (runtime) | **Compose `secrets:`** | `secrets: <name> { file: ${SECRETS_DIR}/… }`; container sets `<VAR>_FILE: /run/secrets/<name>`. |
-| Docker **build** reads a secret | Compose `build.secrets` → **`environment: VAR`** | **Never `file:` outside the build context** — BuildKit/Bake's `fs.read` sandbox refuses it on `docker compose build` (`additional privileges requested: pass --allow=fs.read=…`). Source from the environment. |
+| Docker **build** reads a secret | Compose `build.secrets` → **`environment: VAR`** | **Never `file:` outside the build context** - BuildKit/Bake's `fs.read` sandbox refuses it on `docker compose build` (`additional privileges requested: pass --allow=fs.read=…`). Source from the environment. |
 | App reads env vars, supports `_FILE` | **`<VAR>_FILE`** | Read `<VAR>_FILE` → set `<VAR>`. Verify the *image* supports it. |
 | Postgres | `POSTGRES_PASSWORD_FILE` | Supported by the official / timescale image. |
 | systemd oneshot | **`LoadCredential=`** | `LoadCredential=id:%h/Secrets/…`; script reads `$CREDENTIALS_DIRECTORY/id`. tmpfs, `0400`, unit-only. |
@@ -65,9 +65,9 @@ secrets:
     file: ${SECRETS_DIR}/personal/cloudflare/tunnels/homelab-shared
 ```
 
-**Build vs runtime secrets.** A `file:` secret works at *runtime* (the daemon bind-mounts the host file) but not as a *build* secret when the path is outside the build context — Bake refuses to read it. For `build.secrets`, use `environment: VAR` and have the caller export `VAR` (chezmoi's shell does). Two scopes are usually needed: Go modules want `contents:read` (`GH_PRIVATE_MODULES_TOKEN`), npm `@scope/*` packages want `read:packages` (`NODE_AUTH_TOKEN`) — separate secrets.
+**Build vs runtime secrets.** A `file:` secret works at *runtime* (the daemon bind-mounts the host file) but not as a *build* secret when the path is outside the build context - Bake refuses to read it. For `build.secrets`, use `environment: VAR` and have the caller export `VAR` (chezmoi's shell does). Two scopes are usually needed: Go modules want `contents:read` (`GH_PRIVATE_MODULES_TOKEN`), npm `@scope/*` packages want `read:packages` (`NODE_AUTH_TOKEN`) - separate secrets.
 
-**Path preference:** put the default in the compose file (`${SECRETS_DIR}/…`) and keep `SECRETS_DIR=${SECRETS_DIR:-$HOME/Secrets}` once in the stack `.env` — then `.env` needs no per-secret variable. Nested defaults `${A:-${B:-C}}` work in Compose.
+**Path preference:** put the default in the compose file (`${SECRETS_DIR}/…`) and keep `SECRETS_DIR=${SECRETS_DIR:-$HOME/Secrets}` once in the stack `.env` - then `.env` needs no per-secret variable. Nested defaults `${A:-${B:-C}}` work in Compose.
 
 **systemd unit shape:**
 
@@ -85,9 +85,9 @@ LoadCredential=ddns-token:%h/Secrets/personal/cloudflare/dns/ddns
 
 ## 5. Migration workflow (per secret)
 
-1. **Inventory the consumer** — `git grep` the token/var; classify: container file / env app / systemd / shell / writable state / CI.
+1. **Inventory the consumer** - `git grep` the token/var; classify: container file / env app / systemd / shell / writable state / CI.
 2. **Place the secret** under `<kind>/<owner>/<name>`, `600`.
-3. **Decide the mechanism** from §3. For a container, check the reader's uid (§2) → choose `600` or `644`. For a *build* secret, never `file:` outside the context — source from the environment.
+3. **Decide the mechanism** from §3. For a container, check the reader's uid (§2) → choose `600` or `644`. For a *build* secret, never `file:` outside the context - source from the environment.
 4. **Wire the consumer** to `${SECRETS_DIR}/…` (Compose secret / `LoadCredential` / `*_FILE`).
 5. **Remove the value** from `.env` / repo; leave only the path (or nothing, if compose has the default).
 6. **Verify** (§6). **Document** in the repo's Secrets section. **Commit** per repo.
@@ -97,18 +97,18 @@ LoadCredential=ddns-token:%h/Secrets/personal/cloudflare/dns/ddns
 - **Config renders:** `docker compose -f <stack>/compose.yml config` (with `SECRETS_DIR` unset) → `file:` resolves to the store path, container `*_FILE` is set.
 - **Permissions suffice for the reader:** the container uid can open the file (`600` needs owner uid; non-root → `644`).
 - **Recreate + observe:** `up -d` → logs show `Registered tunnel connection`, `listening`, healthy.
-- **Prove the credential path, not a fallback:** run under systemd with the fallback pointed at `/nonexistent` — success means the credential path was taken.
+- **Prove the credential path, not a fallback:** run under systemd with the fallback pointed at `/nonexistent` - success means the credential path was taken.
 - **Compare store vs live without printing values:** `sha256sum` of the trimmed file vs the container env var.
 - **Round-trip the data path:** run the real job and confirm the off-box upload.
-- **Build secret reachable:** run `docker compose build` (not just `config`) — a `file:` build secret outside the context fails with `additional privileges requested`, an `environment:`-sourced one succeeds.
+- **Build secret reachable:** run `docker compose build` (not just `config`) - a `file:` build secret outside the context fails with `additional privileges requested`, an `environment:`-sourced one succeeds.
 
 ## 7. Pitfalls
 
 1. **The deployed image can lag the repo.** `_FILE` support in the working tree but in no tag / published image means it isn't there. Check the artifact (`git tag --contains`, image symbols). If it lags, keep a transitional inline fallback and mark it for removal.
-2. **Compose `secrets:` on non-swarm is a bind mount.** The container reads the host file *directly* with its own uid; `mode:`/`uid:`/`gid:` are ignored — only the host file mode matters.
-3. **systemd `EnvironmentFile` does not expand variables.** `$SECRETS_DIR` stays literal — use `%h/Secrets/…`, or `LoadCredential`.
+2. **Compose `secrets:` on non-swarm is a bind mount.** The container reads the host file *directly* with its own uid; `mode:`/`uid:`/`gid:` are ignored - only the host file mode matters.
+3. **systemd `EnvironmentFile` does not expand variables.** `$SECRETS_DIR` stays literal - use `%h/Secrets/…`, or `LoadCredential`.
 4. **`LoadCredential` specifiers:** `%h` expands in a real unit but *not* via `systemd-run -p LoadCredential=…` ("Credential source is invalid").
-5. **Moving a bind-mounted file doesn't affect a running container** — it keeps the pinned inode until recreated, so "it still works" is not proof.
+5. **Moving a bind-mounted file doesn't affect a running container** - it keeps the pinned inode until recreated, so "it still works" is not proof.
 6. **Don't blanket `chmod 600`.** One non-root reader (cloudflared `65532`) breaks.
 7. **`.env` interpolation is inconsistent.** Compose expands `${VAR}` (and nested defaults); go-task supports `{{.HOME}}`; systemd does not expand at all.
 8. **Verify secret content**, not the filename (§2).

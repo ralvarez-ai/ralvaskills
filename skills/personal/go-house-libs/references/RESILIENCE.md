@@ -1,6 +1,6 @@
 # resilience
 
-`github.com/ralvarezdev/resilience` — retry with backoff, a stateful backoff and a panic-safe restart supervisor. Standard library only; import the subpackage you need, the root exports nothing. Reach for it before hand-writing a retry loop, an exponential delay or a "restart the goroutine" supervisor.
+`github.com/ralvarezdev/resilience` - retry with backoff, a stateful backoff and a panic-safe restart supervisor. Standard library only; import the subpackage you need, the root exports nothing. Reach for it before hand-writing a retry loop, an exponential delay or a "restart the goroutine" supervisor.
 
 ## Packages
 

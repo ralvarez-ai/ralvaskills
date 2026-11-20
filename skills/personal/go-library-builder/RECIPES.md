@@ -1,4 +1,4 @@
-# Go Library Builder — Skeletons & Reference
+# Go Library Builder - Skeletons & Reference
 
 Load on demand when scaffolding. Tooling files (`Taskfile.yml`, `mise.toml`, `.editorconfig`, `renovate.json`, `.golangci.doccheck.yml`, `.gitignore`, `.github/workflows/ci.yml`) are ready to copy from [assets/](assets). This file holds the Go-source skeletons and the four folder trees (flat, vertical-slice, toolkit, framework-adapter).
 
@@ -11,7 +11,7 @@ Load on demand when scaffolding. Tooling files (`Taskfile.yml`, `mise.toml`, `.e
 ├── <name>.go              # domain: value objects, Config, Result, sentinel errors, package doc
 ├── <port>.go              # the port interface (may be merged into <name>.go for a single port)
 ├── <name>_test.go         # black-box tests (package <name>_test)
-├── memory/                # in-memory adapter — the reusable test double
+├── memory/                # in-memory adapter - the reusable test double
 │   ├── <port>.go
 │   └── <port>_test.go
 ├── <tech>/                # production adapter (smtp, valkey, postgres, …)
@@ -35,7 +35,7 @@ Load on demand when scaffolding. Tooling files (`Taskfile.yml`, `mise.toml`, `.e
 <name>/
 ├── <context>/                     # one bounded context (user, auth, …)
 │   ├── <context>.go               #   domain: entities, VOs, sentinel errors
-│   ├── store.go                   #   driven port(s) — segregated + composed
+│   ├── store.go                   #   driven port(s) - segregated + composed
 │   ├── service.go                 #   domain service (concrete *Service) + driving port
 │   ├── <concept>.go               #   one file per port group (rbac.go, throttle.go, …)
 │   └── <tech>/                    #   adapter subpackage (postgres/, jwt/, cache/, …)
@@ -84,7 +84,7 @@ Pin the core at the version you built against; a consumer's `go.mod` resolves th
 
 ## 2. Config & constructors
 
-Plain struct, `setDefaults()` over `Default*` constants, validate in `New`. **No functional options** — the house style favors explicit, exhaustively-initialized structs (`exhaustruct` scoped to `Config` forces every field at every literal, which is the point). The only concession to "options" is `setDefaults()` filling zero values.
+Plain struct, `setDefaults()` over `Default*` constants, validate in `New`. **No functional options** - the house style favors explicit, exhaustively-initialized structs (`exhaustruct` scoped to `Config` forces every field at every literal, which is the point). The only concession to "options" is `setDefaults()` filling zero values.
 
 ```go
 const DefaultBurst = 10
@@ -112,7 +112,7 @@ func (c Config) Validate() error {
 }
 ```
 
-The library never resolves config from env/files — the consuming app passes plain values. For a service constructor with real dependencies: `func New(secret []byte, accessTTL, refreshTTL time.Duration) *Issuer`.
+The library never resolves config from env/files - the consuming app passes plain values. For a service constructor with real dependencies: `func New(secret []byte, accessTTL, refreshTTL time.Duration) *Issuer`.
 
 ## 3. Domain package skeleton (port + value object + errors)
 
@@ -142,7 +142,7 @@ func NewAddress(addr, name string) (Address, error) {
 	return Address{name: name, email: addr}, nil
 }
 
-// Mailer is the port. One method — grow by composition, never past ~3.
+// Mailer is the port. One method - grow by composition, never past ~3.
 type Mailer interface {
 	Send(ctx context.Context, msg Message) error
 }

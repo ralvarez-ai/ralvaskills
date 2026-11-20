@@ -9,7 +9,7 @@ Implementation standards for accessible, consistent, responsive frontends: WCAG 
 - Contrast: 4.5:1 for normal text, 3:1 for large text and UI components.
 - Every input has a `<label htmlFor>`. Placeholder text is not a label.
 - ARIA only where semantic HTML cannot say it. `aria-label` on icon-only buttons; `aria-hidden` on decorative icons.
-- Respect `prefers-reduced-motion`. Motion is functional only; 100–300 ms; 0 ms under reduce.
+- Respect `prefers-reduced-motion`. Motion is functional only; 100-300 ms; 0 ms under reduce.
 - Use Radix primitives, Tailwind 4, and shadcn/ui recipes. Components live in your repo.
 - Centralize visual decisions as semantic design tokens (OKLCH colors, 4 px spacing scale).
 - Mobile-first; container queries when layout depends on the container; touch targets 44×44 px.

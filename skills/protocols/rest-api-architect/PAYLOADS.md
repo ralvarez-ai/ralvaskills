@@ -15,10 +15,10 @@ GET /v1/orders?limit=20&cursor=eyJpZCI6IjAxOTI...
 }
 ```
 
-- **Cursor is opaque** — usually a base64-encoded `{last_id, last_sort_key}` tuple. Clients pass it back unmodified.
+- **Cursor is opaque** - usually a base64-encoded `{last_id, last_sort_key}` tuple. Clients pass it back unmodified.
 - **`limit` is a hint with a server-enforced max** (e.g. 100). Advertise the max in OpenAPI.
-- **No total count by default.** Total counts on large tables are expensive — expose a separate `/count` endpoint only if a real consumer needs it.
-- **Stable sort key is mandatory** — usually `(created_at DESC, id DESC)` so equal timestamps don't oscillate.
+- **No total count by default.** Total counts on large tables are expensive - expose a separate `/count` endpoint only if a real consumer needs it.
+- **Stable sort key is mandatory** - usually `(created_at DESC, id DESC)` so equal timestamps don't oscillate.
 
 ## 2. RFC 9457 problem details
 
@@ -35,7 +35,7 @@ Standard error shape (`application/problem+json`):
 }
 ```
 
-- **`type` is a stable URL** identifying the error class — clients switch on it. Never change a type URL once published.
+- **`type` is a stable URL** identifying the error class - clients switch on it. Never change a type URL once published.
 - **`title` is short, human-readable, fixed per type.** `detail` is the specific message for this instance.
 - **`instance`** is the request URI that produced the error.
 - **`correlation_id`** ties this response to server logs. Required on `5xx`.
@@ -73,4 +73,4 @@ Retry-After: 60     // on 429 / 503 only
 
 - `RateLimit-Reset` is seconds until the window resets (RFC 9331 draft).
 - `Retry-After` may be seconds or an HTTP-date. Clients use this for backoff.
-- Limit per *caller* (API key, user id), not per IP — IPs aren't reliable identity.
+- Limit per *caller* (API key, user id), not per IP - IPs aren't reliable identity.

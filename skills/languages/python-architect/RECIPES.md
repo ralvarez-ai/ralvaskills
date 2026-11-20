@@ -1,4 +1,4 @@
-# Python Architect — Recipes
+# Python Architect - Recipes
 
 ## Database access: SQL files + `importlib.resources` (§10)
 

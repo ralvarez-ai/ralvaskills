@@ -1,4 +1,4 @@
-# Token Economy — Recipes
+# Token Economy - Recipes
 
 Templates referenced from [SKILL.md](SKILL.md). Copy, then adjust names and caps.
 
@@ -135,14 +135,14 @@ Write to `docs/` (if the project keeps notes there) or a scratch file, then tell
 Goal: <one sentence>.
 Context: <what you already know; what is ruled out>.
 Look at: <paths, symbols, docs>. Out of scope: <what not to touch or read>.
-Return: <shape — list of file:line, or a summary> in at most <N> words.
+Return: <shape - list of file:line, or a summary> in at most <N> words.
 Say "not found" rather than guessing.
 ```
 
 ## 6. Tool setup
 
 Verified against each project's README on 2026-11-06; check the README again before
-installing, since all three move fast. **Ask the user before running any of these** — they
+installing, since all three move fast. **Ask the user before running any of these** - they
 change global agent config.
 
 | Tool | Install | Wire into agents | Check |

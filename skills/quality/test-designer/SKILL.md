@@ -1,7 +1,7 @@
 ---
 name: test-designer
-version: 1.1.0
-description: Test suite design — separate logic tests (fast, in-process, deterministic) from e2e tests (few, real boundaries), ban sleep-based waits, injectable clocks, readiness polling, redundancy pruning, flake triage. Use when designing, splitting, reviewing or fixing a test suite, or when tests sleep, wait fixed times or flake.
+version: 1.1.1
+description: Test suite design - separate logic tests (fast, in-process, deterministic) from e2e tests (few, real boundaries), ban sleep-based waits, injectable clocks, readiness polling, redundancy pruning, flake triage. Use when designing, splitting, reviewing or fixing a test suite, or when tests sleep, wait fixed times or flake.
 ---
 
 # Test Designer
@@ -36,9 +36,9 @@ A test must never pass or fail because of how long it waited.
 
 - **Banned:** `sleep(n)`, fixed `setTimeout`/`waitForTimeout`, "retry 3 times with 1s pause then assert", asserting elapsed wall-clock time.
 - **Replace with the thing you were actually waiting for**, in this order:
-  1. **Await the signal** — a returned promise/future, a joined thread, a closed channel, a callback, an event the code under test emits.
-  2. **Control the clock** — inject a fake clock and advance it explicitly (section 4).
-  3. **Poll a condition with a deadline** — loop on the observable state (row exists, port accepts, element visible) with short intervals and one generous overall timeout. The deadline is a failure bound, never the expected duration.
+  1. **Await the signal** - a returned promise/future, a joined thread, a closed channel, a callback, an event the code under test emits.
+  2. **Control the clock** - inject a fake clock and advance it explicitly (section 4).
+  3. **Poll a condition with a deadline** - loop on the observable state (row exists, port accepts, element visible) with short intervals and one generous overall timeout. The deadline is a failure bound, never the expected duration.
 - **Timeouts are ceilings.** A passing test should finish as soon as the condition holds; the timeout only bounds a hang. Name it (`READY_TIMEOUT`), keep it in one place.
 - **Assertion framework waits count.** Web-first auto-waiting assertions (`expect(locator).toBeVisible()`) are condition polling and fine; a hand-written `wait 2000` before them is not.
 
@@ -89,11 +89,11 @@ More tests is not more safety. Each test costs run time and maintenance, so it m
 
 When a test is intermittent, classify before touching it:
 
-1. **Hidden wait** — sleep or timeout standing in for a signal. Fix: section 3.
-2. **Shared state** — order dependence, leaked data, reused port. Fix: isolate per test.
-3. **Ambient time/randomness** — midnight, DST, month-end, unseeded RNG. Fix: section 4.
-4. **Real race in the product** — the test is right and the code is wrong. Fix the code.
-5. **Environment** — resource starvation, version drift. Fix the environment, pin versions.
+1. **Hidden wait** - sleep or timeout standing in for a signal. Fix: section 3.
+2. **Shared state** - order dependence, leaked data, reused port. Fix: isolate per test.
+3. **Ambient time/randomness** - midnight, DST, month-end, unseeded RNG. Fix: section 4.
+4. **Real race in the product** - the test is right and the code is wrong. Fix the code.
+5. **Environment** - resource starvation, version drift. Fix the environment, pin versions.
 
 Never "fix" by raising a timeout or adding a retry unless the diagnosis is that the ceiling was too low for a genuinely slow, signalled operation.
 

@@ -1,6 +1,6 @@
 # mcpkit
 
-`github.com/ralvarezdev/mcpkit` — the helpers an MCP server built on the official `modelcontextprotocol/go-sdk` needs and the SDK does not provide. Extracted from one MCP server; it stays v0.x until a second server adopts it. Current tag v0.4.1 (go-sdk v1.8.0, Go 1.27.1).
+`github.com/ralvarezdev/mcpkit` - the helpers an MCP server built on the official `modelcontextprotocol/go-sdk` needs and the SDK does not provide. Extracted from one MCP server; it stays v0.x until a second server adopts it. Current tag v0.4.1 (go-sdk v1.8.0, Go 1.27.1).
 
 ## What it gives you
 

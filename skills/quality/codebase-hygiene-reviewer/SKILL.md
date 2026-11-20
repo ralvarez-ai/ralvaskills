@@ -1,7 +1,7 @@
 ---
 name: codebase-hygiene-reviewer
-version: 1.2.1
-description: Evidence-based declutter audit — dead code, unused exports, duplication, oversized files/functions, modularization candidates; shared libraries with several consumers. Proposes, never edits. Use when cleaning up a repo or library, hunting dead code, or sizing a split.
+version: 1.2.2
+description: Evidence-based declutter audit - dead code, unused exports, duplication, oversized files/functions, modularization candidates; shared libraries with several consumers. Proposes, never edits. Use when cleaning up a repo or library, hunting dead code, or sizing a split.
 ---
 
 # Codebase Hygiene Reviewer
@@ -20,7 +20,7 @@ Not for expression-level polish ([logic-cleaner](../../refactoring/logic-cleaner
 
 1. **Roots.** Audit tracked files only (`git ls-files`). Exclude generated code (sqlc output, `*.gen.ts`, `schema.d.ts`, `dist/`, vendored) from findings, and note the exclusion in the report.
 2. **Consumers.** For a library, enumerate real consumers *before* calling anything dead. "This repo does not use it" is not "nobody uses it".
-3. **Tests.** Decide per run whether tests count as roots. Default: yes — otherwise every test helper looks dead.
+3. **Tests.** Decide per run whether tests count as roots. Default: yes - otherwise every test helper looks dead.
 
 ## 3. Keep the categories apart
 
@@ -38,7 +38,7 @@ Mixing them produces reports that recommend deleting public API.
 
 Prefer the language's own graph over grep. Concrete commands per ecosystem in [RECIPES § 1](RECIPES.md#1-tool-matrix).
 
-- **Go:** `deadcode -test` for reachability; `-filter` and `go list -deps` to measure per-consumer usage. `unused` only sees unexported symbols — see [go-architect § 14](../../languages/go-architect/SKILL.md#14-tooling).
+- **Go:** `deadcode -test` for reachability; `-filter` and `go list -deps` to measure per-consumer usage. `unused` only sees unexported symbols - see [go-architect § 14](../../languages/go-architect/SKILL.md#14-tooling).
 - **TypeScript/React:** `knip` for unused files, exports and duplicate exports; `tsc --noEmit` as the health gate first. See [react-architect § 10](../../frameworks/react-architect/SKILL.md#10-testing).
 - **Any:** `git ls-files`, `wc -l`, `md5sum` (byte-identical generated files across modules), `jscpd` for clones across modules and non-code files ([RECIPES § 5](RECIPES.md#5-cross-module-duplication-with-jscpd)).
 
@@ -50,7 +50,7 @@ Verify every hit before it reaches the report.
 - Do not flag migration `Down`/`Status`/`Version` functions because no service calls them.
 - Do not flag interface implementations that exist only to satisfy an interface.
 - Never recommend hand-editing generated code; fix the generator input or exclude it.
-- A removal can orphan the next symbol — re-run the tool after each deletion batch and say so in the report.
+- A removal can orphan the next symbol - re-run the tool after each deletion batch and say so in the report.
 
 ## 6. Size is a signal, not a target
 
@@ -68,6 +68,6 @@ One report per run, written to the OS temp dir (`$TMPDIR` or `/tmp`) as `hygiene
 
 ## 9. Cross-skill ties
 
-- [logic-cleaner](../../refactoring/logic-cleaner/SKILL.md) — expression-level duplication inside a function.
-- [go-architect](../../languages/go-architect/SKILL.md), [react-architect](../../frameworks/react-architect/SKILL.md) — language standards the findings are judged against.
-- [performance-reviewer](../performance-reviewer/SKILL.md) — sibling reviewer; same "no finding without evidence" rule.
+- [logic-cleaner](../../refactoring/logic-cleaner/SKILL.md) - expression-level duplication inside a function.
+- [go-architect](../../languages/go-architect/SKILL.md), [react-architect](../../frameworks/react-architect/SKILL.md) - language standards the findings are judged against.
+- [performance-reviewer](../performance-reviewer/SKILL.md) - sibling reviewer; same "no finding without evidence" rule.

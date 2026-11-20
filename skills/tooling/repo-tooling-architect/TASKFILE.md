@@ -11,8 +11,8 @@ namespace families**, and a namespace belongs to exactly one:
 
 | Family | Grammar | Examples |
 |---|---|---|
-| **Domain** — a module owns the tasks | `module[:submodule…]:verb[:target\|mode]` | `git:update:recursive`, `docker:up:dev`, `codesys:templates:check:exec` |
-| **Action** — one action spans modules | `verb[:target[:mode]]` | `test:backend`, `lint:python`, `scan:fs`, `clean:docker` |
+| **Domain** - a module owns the tasks | `module[:submodule…]:verb[:target\|mode]` | `git:update:recursive`, `docker:up:dev`, `codesys:templates:check:exec` |
+| **Action** - one action spans modules | `verb[:target[:mode]]` | `test:backend`, `lint:python`, `scan:fs`, `clean:docker` |
 
 Rules:
 
@@ -48,8 +48,8 @@ One word per concept. Do not invent a synonym for a concept that already has one
 | Dependency check | `deps:check` | bare `deps` |
 | Submodule at pins | `git:init` | `git:init:submodules` |
 | Submodule at remote | `git:update` / `git:update:recursive` | `submodules:update` |
-| Local CI via act | `ci:local` | — |
-| CI gate aggregate | `ci` | — |
+| Local CI via act | `ci:local` | - |
+| CI gate aggregate | `ci` | - |
 
 ## 3. Canonical module vocabulary
 
@@ -57,17 +57,17 @@ One word per concept. Do not invent a synonym for a concept that already has one
 |---|---|---|
 | Containers | `docker` | `compose` |
 | Submodules | `git` | `submodules` |
-| Protobuf | `proto` | — |
+| Protobuf | `proto` | - |
 | OpenAPI | `openapi` | `api` (for spec codegen) |
 | sqlc | `sqlc` | `db:sqlc`, `db:generate` |
 | Goose migrations | `migrate` | `db:migrate` |
-| Database lifecycle | `db` (backup/up/down/status/reset) | — |
+| Database lifecycle | `db` (backup/up/down/status/reset) | - |
 | Web app | `frontend` | `ui`, `web` |
 | API service | `backend` | `be` |
-| Docs | `docs` | — |
-| Benchmarks | `bench` | — |
-| Struct alignment | `align` | — |
-| Security scan | `scan` | — |
+| Docs | `docs` | - |
+| Benchmarks | `bench` | - |
+| Struct alignment | `align` | - |
+| Security scan | `scan` | - |
 
 Include keys use the **full** module name (`backend`, not `be`).
 
@@ -115,7 +115,7 @@ intact and adds the module on top.
 - **Stay flat** until a module earns its own file (5+ tasks, or config distinct
   enough to warrant separation). Splitting a two-task module is ceremony the flat
   `module:verb` key already avoids.
-- **Include keys are full module names** — `backend`/`frontend`, not `be`/`fe`.
+- **Include keys are full module names** - `backend`/`frontend`, not `be`/`fe`.
 - **Prefer `flatten: true`** for domain files so each key carries its own
   namespace. When flattened, the sub-Taskfile must use fully-qualified keys
   (`hailo:lint`, not `lint`), so include order can never decide a winner.
@@ -135,12 +135,12 @@ intact and adds the module on top.
 - **Vars:** shared vars live at the root. A var a caller may override is written
   as its own default (`VAR: '{{.VAR | default "…"}}'`) so a CLI `VAR=x` still
   wins over an included file's global.
-- **Env:** `dotenv:` only at the root — Task forbids it in included files. `.env`
+- **Env:** `dotenv:` only at the root - Task forbids it in included files. `.env`
   is committed (safe defaults); `.env.local` is git-ignored. Real secrets never
   enter either; they come from the external secret manager (§6 of SKILL.md).
 - **Helpers:** mark with `internal: true` and prefix `_` (e.g. `_dev:parallel`).
 - **Renames:** keep the old name as an alias for one cycle with
-  `desc: "Deprecated — use <new>"`, then delete it in the next sweep.
+  `desc: "Deprecated - use <new>"`, then delete it in the next sweep.
 
 ## 8. Anti-patterns
 

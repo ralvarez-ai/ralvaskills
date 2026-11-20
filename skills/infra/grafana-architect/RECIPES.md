@@ -1,4 +1,4 @@
-# Grafana — Reference Templates
+# Grafana - Reference Templates
 
 Layouts, panel reference, and Grizzly alert YAML for the rules in [SKILL.md](SKILL.md). Loaded on demand.
 
@@ -53,7 +53,7 @@ Orders                    ← service folder
 ## 4. Grizzly alert rule
 
 ```yaml
-# observability/dashboards/orders/orders-slo.alerts.yaml — Grizzly format
+# observability/dashboards/orders/orders-slo.alerts.yaml - Grizzly format
 apiVersion: grizzly.grafana.com/v1alpha1
 kind: AlertRuleGroup
 metadata:
@@ -62,7 +62,7 @@ spec:
   folder: Orders
   interval: 1m
   rules:
-    - title: "Orders API — fast burn (2% in 1h)"
+    - title: "Orders API - fast burn (2% in 1h)"
       condition: B
       data: [...]
       noDataState: NoData
@@ -77,8 +77,8 @@ spec:
 ```
 
 - A panel and its alert rule are version-controlled together.
-- `for:` is mandatory — minimum `2m` on noisy signals; `5m`+ for slow burns.
-- `runbook_url` annotation is mandatory — the first thing on-call clicks.
+- `for:` is mandatory - minimum `2m` on noisy signals; `5m`+ for slow burns.
+- `runbook_url` annotation is mandatory - the first thing on-call clicks.
 
 ## 5. Common pitfalls
 

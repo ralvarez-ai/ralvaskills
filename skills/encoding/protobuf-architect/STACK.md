@@ -12,7 +12,7 @@ This skill pins the **language-agnostic** proto toolchain. Per-language code-gen
 | protovalidate-go (Go runtime) | 1.2 | Runtime validation for Go-generated code |
 | protoc-gen-go (plugin) | 1.36.11 | Go message generator (referenced from `buf.gen.yaml`) |
 | protoc-gen-go-grpc (plugin) | 1.6.2 | Go gRPC service generator |
-| google.golang.org/protobuf | 1.36 | Go runtime — see [go-architect](../../languages/go-architect/STACK.md) |
+| google.golang.org/protobuf | 1.36 | Go runtime - see [go-architect](../../languages/go-architect/STACK.md) |
 
 ## Notes
 

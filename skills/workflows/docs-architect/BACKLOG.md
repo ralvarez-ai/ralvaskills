@@ -37,8 +37,8 @@ Every item has a project tag, a priority (P1/P2/P3) and, once it leaves the inbo
 
 | Section | Limit | Meaning |
 |---|---|---|
-| Doing | 1–2 | In progress now |
-| Next | 3–5 | Ready to pick up; linked to an approved design |
+| Doing | 1-2 | In progress now |
+| Next | 3-5 | Ready to pick up; linked to an approved design |
 | Later | none | Wanted, not scheduled |
 | Someday | none | Maybe never |
 
@@ -50,7 +50,7 @@ Take each inbox line and do exactly one of: delete it; append it to the project 
 
 ### Pruning (monthly)
 
-- Items in `Later` for 2–3 months without moving: delete, or demote to `Someday`. Do not archive them.
+- Items in `Later` for 2-3 months without moving: delete, or demote to `Someday`. Do not archive them.
 - Closed items move to `done/YYYY-MM.md` with the close date, keeping the origin link.
 
 ### Closing an item
@@ -140,14 +140,14 @@ git mv docs/backlog/pending/k7f3qz-verify-ton-timers.md docs/backlog/archive/   
 | `done/` | Closed, with the evidence in the body | `git mv` on the day it closes |
 | `archive/` | Decided against, or obsolete | `git mv`, plus `resolution: dropped` when it was dropped |
 
-`done/` never empties and is never rewritten: a mistake is a new item that links the old one. `archive/` is not a graveyard for finished work — that is `done/`.
+`done/` never empties and is never rewritten: a mistake is a new item that links the old one. `archive/` is not a graveyard for finished work - that is `done/`.
 
 ### Triage, pruning and closing
 
-- **Triage** — the same weekly pass: an idea becomes a `pending/` file with a title, a priority and a section; if it needs thought, it becomes an `ideas/` doc first and the item links it.
-- **Pruning (monthly)** — a `pending/` item untouched for 2–3 months is deleted (it is in git) or moved to `archive/` with `resolution: dropped`. A `blocked_by` that no longer resolves is an error, not a warning: fix the reference or drop the item.
-- **Closing** — `git mv` to `done/` and write in the body what closed it (commit, command, document). The same commit sets the originating plan or design to `status: done`; the doc moves to `archive/` at the monthly pass.
-- **In progress limit** — keep `active/` to what a person is actually doing (1–2 each). Nothing enforces it; the folder is the promise.
+- **Triage** - the same weekly pass: an idea becomes a `pending/` file with a title, a priority and a section; if it needs thought, it becomes an `ideas/` doc first and the item links it.
+- **Pruning (monthly)** - a `pending/` item untouched for 2-3 months is deleted (it is in git) or moved to `archive/` with `resolution: dropped`. A `blocked_by` that no longer resolves is an error, not a warning: fix the reference or drop the item.
+- **Closing** - `git mv` to `done/` and write in the body what closed it (commit, command, document). The same commit sets the originating plan or design to `status: done`; the doc moves to `archive/` at the monthly pass.
+- **In progress limit** - keep `active/` to what a person is actually doing (1-2 each). Nothing enforces it; the folder is the promise.
 
 ### References across backlogs
 

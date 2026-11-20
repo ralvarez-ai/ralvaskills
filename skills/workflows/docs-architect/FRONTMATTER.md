@@ -16,7 +16,7 @@ related: [adr/0003-slug.md, plans/2026-10-12-topic.md]
 - `status` lifecycle: `draft` → `active` → `done` → `obsolete`. Moving a doc to `archive/` accompanies `done` or `obsolete`.
 - `date` is the day the doc was created, not last edited. `guides/` and `methodology/` keep it for provenance but their filenames are undated.
 - `related` holds paths relative to `docs/`. Origins go here: a review that produced a backlog item is listed on the item and the item is listed on the review.
-- `reviews/` and `changes/` are snapshots — normally written once with `status: done`.
+- `reviews/` and `changes/` are snapshots - normally written once with `status: done`.
 
 ## ADRs
 

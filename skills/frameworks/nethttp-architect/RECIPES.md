@@ -14,7 +14,7 @@ internal/
 ├── auth/                        # JWT verify, current-user middleware
 ├── users/
 │   ├── handlers.go              # http.Handler / HandlerFunc per route
-│   ├── service.go               # business logic — no net/http imports
+│   ├── service.go               # business logic - no net/http imports
 │   ├── repo.go                  # sqlx + queries/*.sql
 │   ├── dto.go                   # request / response structs with validate tags
 │   └── queries/
@@ -42,7 +42,7 @@ func Register(mux *http.ServeMux, prefix string, svc *Service) {
 }
 ```
 
-## Graceful shutdown — `http.Server` with all timeouts
+## Graceful shutdown - `http.Server` with all timeouts
 
 ```go
 func Run(handler http.Handler, cfg *config.Config) {
@@ -98,7 +98,7 @@ handler := Chain(mux,
 )
 ```
 
-## Auth — in-house JWT middleware (Pattern A)
+## Auth - in-house JWT middleware (Pattern A)
 
 ```go
 func AuthRequired(secret []byte) Middleware {
@@ -124,7 +124,7 @@ func AuthRequired(secret []byte) Middleware {
 }
 ```
 
-**Pattern B — external IdP**: `jwt.ParseWithClaims` with a `Keyfunc` that resolves keys via cached JWKS. Verify `aud` and `iss` explicitly.
+**Pattern B - external IdP**: `jwt.ParseWithClaims` with a `Keyfunc` that resolves keys via cached JWKS. Verify `aud` and `iss` explicitly.
 
 ## Per-route authorization
 
@@ -169,7 +169,7 @@ func Write(w http.ResponseWriter, r *http.Request, p Problem) {
 }
 ```
 
-## Testing — `httptest.NewRecorder`
+## Testing - `httptest.NewRecorder`
 
 ```go
 func TestCreateUser(t *testing.T) {
@@ -188,7 +188,7 @@ func TestCreateUser(t *testing.T) {
 }
 ```
 
-## Concurrency — detached work
+## Concurrency - detached work
 
 Go has no `BackgroundTasks`; detach with `context.Background()`, log errors, set timeouts.
 

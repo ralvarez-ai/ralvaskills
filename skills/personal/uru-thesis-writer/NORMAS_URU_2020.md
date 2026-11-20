@@ -102,11 +102,11 @@ Destaca el origen, los objetivos, el significado del estudio en el avance del ca
 
 Divisiones mayores del trabajo. Estructura mínima de cuatro capítulos:
 
-- Capítulo I — El Problema
-- Capítulo II — Marco Teórico
-- Capítulo III — Marco Metodológico
-- Capítulo IV — Análisis de Resultados
-- Capítulo V — La propuesta (cuando se deba presentar un Manual)
+- Capítulo I - El Problema
+- Capítulo II - Marco Teórico
+- Capítulo III - Marco Metodológico
+- Capítulo IV - Análisis de Resultados
+- Capítulo V - La propuesta (cuando se deba presentar un Manual)
 
 Los resultados pueden desagregarse en varios capítulos según la extensión de la temática; el título queda a potestad del investigador. El trabajo se presenta como una sola unidad con continuidad entre capítulos: cada capítulo nuevo inicia en la página siguiente, **sin hojas de división ni de identificación**.
 
@@ -116,7 +116,7 @@ Deducciones lógicas de la investigación, redactadas con base en los resultados
 
 - **Máximo tres páginas**. Cuidar redacción, ortografía y presentación.
 - Sistematizar como lista con viñetas (recomendado).
-- Sin número específico — se ajusta a los resultados que demuestran o niegan la hipótesis.
+- Sin número específico - se ajusta a los resultados que demuestran o niegan la hipótesis.
 
 Encabezado: `CONCLUSIONES` en mayúsculas sostenidas, centrado, en negritas, a **4 cm** del borde superior.
 
@@ -189,7 +189,7 @@ Normas de redacción del texto:
 - **Blanco y negro**, legibles y de calidad profesional. Color sólo si la ilustración o fotografía lo requiere indispensablemente.
 - Numeración consecutiva por orden de aparición. Se incluyen en la misma página o en la siguiente al nombrarlas, con leyenda **arriba si es tabla** y **abajo si es figura**.
 - Denominación **`Figura`** para toda ilustración, fotografía, mapa, trazado o esquema gráfico. No usar `Cuadro`, `Lista`, etc. Figuras nítidas y originales. Si se toman de otro trabajo, fuente y autores entre paréntesis (parte inferior en tablas, final del título en figuras). Si las generó el investigador, **no se incluye fuente ni la frase "Elaboración propia"**.
-- **Título único** por tabla o figura — sin repeticiones.
+- **Título único** por tabla o figura - sin repeticiones.
 - Si una tabla o figura ocupa más de una página, el título va sólo en la primera; en las siguientes, el número seguido de `Continuación`, y se repiten los encabezados de columna.
 - Ecuaciones: parte del texto; mismo tipo y tamaño de letra (salvo super/subíndices). Numeración consecutiva, número entre paréntesis al margen derecho. Símbolos claros y legibles; super/subíndices bien ubicados.
 
@@ -250,7 +250,7 @@ Toda fuente citada en el texto aparece en la lista de referencias bibliográfica
 
 Para fuentes en áreas como arte, arquitectura, ingeniería o comunicación, incluir: autor(es), año, título o nombre de la obra, y cualquier dato que permita su localización. **No se aceptan referencias cuyo único dato sea la dirección electrónica.**
 
-**Citas indirectas — ejemplos de redacción:**
+**Citas indirectas - ejemplos de redacción:**
 
 1. `Torres (2013) encontró que el mantenimiento en obras civiles ...`
    *(El apellido forma parte de la narrativa; sólo el año va entre paréntesis.)*

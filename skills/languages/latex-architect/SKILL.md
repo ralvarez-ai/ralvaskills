@@ -1,14 +1,14 @@
 ---
 name: latex-architect
-version: 1.1.1
-description: LaTeX document standards on TeX Live 2026 — latexmk-only builds, preamble and package-order discipline, biblatex + biber bibliographies, semantic cross-references (cleveref, siunitx, booktabs), float and math conventions, chktex/latexindent gates. Use when writing, building, structuring, or reviewing LaTeX documents, papers, reports, or theses.
+version: 1.1.2
+description: LaTeX document standards on TeX Live 2026 - latexmk-only builds, preamble and package-order discipline, biblatex + biber bibliographies, semantic cross-references (cleveref, siunitx, booktabs), float and math conventions, chktex/latexindent gates. Use when writing, building, structuring, or reviewing LaTeX documents, papers, reports, or theses.
 ---
 
 # LaTeX Architect
 
-LaTeX conventions for documents you control — papers, reports, theses, preprints. Targets **TeX Live 2026** with **pdfLaTeX** as the default engine and **latexmk** as the only build entry point. Full skeletons (project tree, `.latexmkrc`, preamble, CI workflow, `.gitignore`) live in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md).
+LaTeX conventions for documents you control - papers, reports, theses, preprints. Targets **TeX Live 2026** with **pdfLaTeX** as the default engine and **latexmk** as the only build entry point. Full skeletons (project tree, `.latexmkrc`, preamble, CI workflow, `.gitignore`) live in [RECIPES.md](RECIPES.md); pinned versions in [STACK.md](STACK.md).
 
-Venue-specific formatting (page limits, anonymization, conference style files) is **not** this skill's job — see [ml-paper-format](../../academic/ml-paper-format/SKILL.md).
+Venue-specific formatting (page limits, anonymization, conference style files) is **not** this skill's job - see [ml-paper-format](../../academic/ml-paper-format/SKILL.md).
 
 ## 1. Scope & defaults
 
@@ -17,25 +17,25 @@ Venue-specific formatting (page limits, anonymization, conference style files) i
 | Distribution | TeX Live 2026 | Never for CI. Use Tectonic for hermetic/reproducible builds where package coverage allows |
 | Engine | `pdflatex` | `lualatex` when you need system fonts, real Unicode input, or microtype-heavy typography. `xelatex` only for legacy font pipelines |
 | Build driver | `latexmk` | Never |
-| Bibliography | `biblatex` + `biber` | Venue templates that ship `natbib` — see [§8](#8-bibliography) |
-| Document classes | `article`, `report`, `book`, institutional thesis classes | — |
+| Bibliography | `biblatex` + `biber` | Venue templates that ship `natbib` - see [§8](#8-bibliography) |
+| Document classes | `article`, `report`, `book`, institutional thesis classes | - |
 
-**Never hand-run `pdflatex` twice.** Rerun logic (cross-refs, bibliography, ToC convergence) is exactly what `latexmk` exists to solve. A build recipe that calls `pdflatex && biber && pdflatex && pdflatex` is a bug waiting to happen — it silently under-runs on the documents that need a fourth pass.
+**Never hand-run `pdflatex` twice.** Rerun logic (cross-refs, bibliography, ToC convergence) is exactly what `latexmk` exists to solve. A build recipe that calls `pdflatex && biber && pdflatex && pdflatex` is a bug waiting to happen - it silently under-runs on the documents that need a fourth pass.
 
 ## 2. Project layout
 
-One file per chapter or section, assembled by `\input` from a thin root file. The root holds the preamble and the `\input` list and nothing else — this keeps merge conflicts confined and lets you comment out a chapter with one line while drafting.
+One file per chapter or section, assembled by `\input` from a thin root file. The root holds the preamble and the `\input` list and nothing else - this keeps merge conflicts confined and lets you comment out a chapter with one line while drafting.
 
-- `main.tex` — documentclass, preamble, `\input` list only.
-- `sections/` (or `chapters/`) — one `.tex` per unit, no preamble, no `\documentclass`.
-- `figures/` — source images. `tables/` if tables are large enough to warrant their own files.
-- `refs.bib` — one bibliography database. Split only past ~200 entries.
-- `preamble/` — split the preamble into `packages.tex` + `macros.tex` once it passes ~100 lines.
+- `main.tex` - documentclass, preamble, `\input` list only.
+- `sections/` (or `chapters/`) - one `.tex` per unit, no preamble, no `\documentclass`.
+- `figures/` - source images. `tables/` if tables are large enough to warrant their own files.
+- `refs.bib` - one bibliography database. Split only past ~200 entries.
+- `preamble/` - split the preamble into `packages.tex` + `macros.tex` once it passes ~100 lines.
 
 Rules that make this survive collaborators:
 
 - **`\input` over `\include`** unless you specifically need `\includeonly` and per-chapter `.aux` files (long theses). `\include` forces a page break; `\input` does not.
-- **No file extensions in `\includegraphics`** — `\includegraphics{figures/plot}` lets the engine pick `.pdf` over `.png`. Hardcoding `.png` locks you out of vector output.
+- **No file extensions in `\includegraphics`** - `\includegraphics{figures/plot}` lets the engine pick `.pdf` over `.png`. Hardcoding `.png` locks you out of vector output.
 - **Forward slashes and relative paths only.** `C:\Users\...` or `\graphicspath` with absolute paths breaks every other machine, including CI.
 - **Vector figures (PDF/EPS) for anything plotted.** Raster only for photographs, at 300 dpi minimum.
 
@@ -43,12 +43,12 @@ Tree and root-file skeleton in [RECIPES §1](RECIPES.md#1-project-tree--root-fil
 
 ## 3. Build
 
-`.latexmkrc` committed at the repo root is the contract — it encodes the engine, the bibliography backend, and the output directory so that `latexmk` alone reproduces the build on any machine and in CI. Nobody should need to remember flags.
+`.latexmkrc` committed at the repo root is the contract - it encodes the engine, the bibliography backend, and the output directory so that `latexmk` alone reproduces the build on any machine and in CI. Nobody should need to remember flags.
 
 - Build into `build/` (`$out_dir`), never the source tree. Keeps `git status` clean and makes cleanup a directory delete.
 - Set `$pdf_mode` and `$bibtex_use` explicitly rather than relying on latexmk's defaults.
 - `latexmk -C` for a full clean; `-c` leaves the PDF.
-- Commit `.latexmkrc`; gitignore `build/` and every generated artifact (`.aux`, `.bbl`, `.fls`, `.synctex.gz`, …). **Exception:** journals that demand a `.bbl` in the submission tarball — generate it at submission time, don't track it.
+- Commit `.latexmkrc`; gitignore `build/` and every generated artifact (`.aux`, `.bbl`, `.fls`, `.synctex.gz`, …). **Exception:** journals that demand a `.bbl` in the submission tarball - generate it at submission time, don't track it.
 
 `.latexmkrc` and `.gitignore` in [RECIPES §2](RECIPES.md#2-latexmkrc--gitignore).
 
@@ -61,16 +61,16 @@ Tree and root-file skeleton in [RECIPES §1](RECIPES.md#1-project-tree--root-fil
 3. Math: `amsmath`, `amssymb`, then `mathtools` (which patches amsmath and must follow it).
 4. Content: `graphicx`, `booktabs`, `siunitx`, `listings`/`minted`.
 5. Bibliography: `biblatex`.
-6. **`hyperref` second-to-last** — it redefines a large surface of internal commands and must see the final versions.
-7. **`cleveref` last** — it must load after `hyperref`. This one ordering constraint causes more silent breakage than any other.
+6. **`hyperref` second-to-last** - it redefines a large surface of internal commands and must see the final versions.
+7. **`cleveref` last** - it must load after `hyperref`. This one ordering constraint causes more silent breakage than any other.
 
 Additional rules:
 
 - **`microtype` always.** One line, measurably better justification and fewer overfull boxes. There is no reason to skip it.
 - **Define semantic macros, not visual ones.** `\newcommand{\model}{\textsc{Orion}}` survives a rename; `\newcommand{\bs}{\boldsymbol}` just aliases a primitive and buys nothing.
-- **`\newcommand` over `\def`** — it errors on redefinition instead of silently clobbering a package's internals.
-- **No `\usepackage{times}`, `{mathptmx}`, `{pslatex}`** — obsolete font packages. Use `newtxtext`/`newtxmath` if a Times clone is mandated.
-- Don't load `inputenc` under LuaLaTeX/XeLaTeX (UTF-8 is native), and don't load `subfigure` ever — it has been deprecated for two decades in favor of `subcaption`.
+- **`\newcommand` over `\def`** - it errors on redefinition instead of silently clobbering a package's internals.
+- **No `\usepackage{times}`, `{mathptmx}`, `{pslatex}`** - obsolete font packages. Use `newtxtext`/`newtxmath` if a Times clone is mandated.
+- Don't load `inputenc` under LuaLaTeX/XeLaTeX (UTF-8 is native), and don't load `subfigure` ever - it has been deprecated for two decades in favor of `subcaption`.
 
 Preamble skeleton in [RECIPES §3](RECIPES.md#3-preamble-skeleton).
 
@@ -79,51 +79,51 @@ Preamble skeleton in [RECIPES §3](RECIPES.md#3-preamble-skeleton).
 The rule underneath all of these: **write meaning, let packages render it.** Anything you type as literal formatting becomes a manual-update liability when the document is restructured.
 
 - **`\cref`/`\Cref` (cleveref) over hand-written `Figure~\ref{...}`.** The package emits the right word and the right capitalization, and `\cref{fig:a,fig:b}` handles ranges and lists automatically. Never write the word "Figure" next to a `\ref` by hand.
-- **`\label` immediately after `\caption`**, never before — a label placed before the caption picks up the enclosing section's counter instead of the float's, producing references to the wrong number with no error.
+- **`\label` immediately after `\caption`**, never before - a label placed before the caption picks up the enclosing section's counter instead of the float's, producing references to the wrong number with no error.
 - **Label prefixes by type**: `fig:`, `tab:`, `eq:`, `sec:`, `alg:`, `app:`. Makes `\cref` misuse visible on sight.
-- **`siunitx` for every number with a unit** — `\SI{9.8}{\meter\per\second\squared}`, `\num{1e-3}`. Consistent spacing, correct minus signs, and one place to switch decimal separator.
-- **`booktabs` rules only** (`\toprule`, `\midrule`, `\bottomrule`). No `\hline`, no vertical rules — vertical rules in tables are a typographic error, not a preference.
+- **`siunitx` for every number with a unit** - `\SI{9.8}{\meter\per\second\squared}`, `\num{1e-3}`. Consistent spacing, correct minus signs, and one place to switch decimal separator.
+- **`booktabs` rules only** (`\toprule`, `\midrule`, `\bottomrule`). No `\hline`, no vertical rules - vertical rules in tables are a typographic error, not a preference.
 - **`~` before every reference and citation** (`Figure~\ref`, `Smith~\cite{x}`) to prevent a line break between the word and its number.
-- Quotes: `` `single' `` and ` ``double'' `` — never the `"` character, which renders as two right-quotes.
+- Quotes: `` `single' `` and ` ``double'' `` - never the `"` character, which renders as two right-quotes.
 - Dashes: `-` hyphen, `--` numeric range, `---` em dash.
 
 ## 6. Floats
 
-- **Placement specifier `[t]` or `[tb]`.** Never `[h]` alone (LaTeX may ignore it entirely) and never `[H]` unless `float` is loaded and you have a real reason — forcing exact placement fights the algorithm and produces half-empty pages.
+- **Placement specifier `[t]` or `[tb]`.** Never `[h]` alone (LaTeX may ignore it entirely) and never `[H]` unless `float` is loaded and you have a real reason - forcing exact placement fights the algorithm and produces half-empty pages.
 - **Reference every float in the text** before it appears. A float nothing points to has no defined position in the reading order.
 - **Caption above tables, below figures.** This is convention, not taste; follow it unless a venue's style file overrides.
-- **One `\centering` inside the float environment**, not `\begin{center}` — the latter adds vertical space that misaligns the float.
+- **One `\centering` inside the float environment**, not `\begin{center}` - the latter adds vertical space that misaligns the float.
 - Fighting float placement at draft stage is wasted effort. Write first; place at the end, when the text is final.
 
 ## 7. Math
 
-- **`\[ ... \]` or `equation`/`align`. Never `$$`; `eqnarray` is banned (use `align`)** — reasons in the §10 table.
+- **`\[ ... \]` or `equation`/`align`. Never `$$`; `eqnarray` is banned (use `align`)** - reasons in the §10 table.
 - `align` for multi-line, `split` inside `equation` for one numbered equation across lines, `gather` for unrelated centered lines.
 - **Don't number equations you never reference.** Use the starred forms (`align*`, `equation*`).
 - `\text{}` (amsmath) for words inside math, not `\mbox` or bare italics.
-- Operator names: `\newcommand{\argmax}{\operatorname*{arg\,max}}`, not `\text{argmax}` — spacing and limit placement differ.
+- Operator names: `\newcommand{\argmax}{\operatorname*{arg\,max}}`, not `\text{argmax}` - spacing and limit placement differ.
 
 ## 8. Bibliography
 
 **Default: `biblatex` + `biber`.** Unicode-correct sorting, real field handling, `\autocite` and friends, no `.bst` archaeology. Set `backend=biber` explicitly.
 
 - One `.bib` file, entries keyed consistently (`author-year-keyword`), exported from a manager (Zotero/JabRef) rather than hand-typed.
-- **Clean the exported entries.** Publisher exports carry wrong-cased titles, missing DOIs, and arXiv preprints for papers that were later published in a venue — cite the published version.
+- **Clean the exported entries.** Publisher exports carry wrong-cased titles, missing DOIs, and arXiv preprints for papers that were later published in a venue - cite the published version.
 - **Protect capitals with braces** in titles: `{B}ayesian`, `{L}aTeX`. Style files that lowercase titles will mangle proper nouns otherwise.
 - `\autocite` for the common case; `\textcite` when the author is part of the sentence.
 
-**natbib carve-out.** Conference and journal templates ship their own `.sty` with `natbib` wired in and a matching `.bst`. **Do not convert them to biblatex** — you break the venue's citation rendering and risk desk rejection. In that case: keep `natbib`, use `\citep`/`\citet`, and run `bibtex` (set `$bibtex_use = 2` in `.latexmkrc`). The rule is scoped by ownership: your document, biblatex; their template, whatever it ships.
+**natbib carve-out.** Conference and journal templates ship their own `.sty` with `natbib` wired in and a matching `.bst`. **Do not convert them to biblatex** - you break the venue's citation rendering and risk desk rejection. In that case: keep `natbib`, use `\citep`/`\citet`, and run `bibtex` (set `$bibtex_use = 2` in `.latexmkrc`). The rule is scoped by ownership: your document, biblatex; their template, whatever it ships.
 
 biblatex config and both `.latexmkrc` variants in [RECIPES §4](RECIPES.md#4-bibliography-configuration).
 
 ## 9. Quality gates
 
-- **`chktex`** — lints for the mechanical errors above (missing `~`, `$$`, bad quotes, space after abbreviations). Run it in CI; suppress specific warnings with a committed `.chktexrc`, never by disabling the tool.
-- **`latexindent`** — deterministic formatting. Commit `.latexindent.yaml` and run in pre-commit so diffs stay reviewable.
+- **`chktex`** - lints for the mechanical errors above (missing `~`, `$$`, bad quotes, space after abbreviations). Run it in CI; suppress specific warnings with a committed `.chktexrc`, never by disabling the tool.
+- **`latexindent`** - deterministic formatting. Commit `.latexindent.yaml` and run in pre-commit so diffs stay reviewable.
 - **Zero tolerance for `Overfull \hbox` over ~5pt** in the final pass.
-- **`\usepackage[l2tabu, orthodox]{nag}`** while drafting — warns on obsolete commands directly during compilation. Remove before submission.
+- **`\usepackage[l2tabu, orthodox]{nag}`** while drafting - warns on obsolete commands directly during compilation. Remove before submission.
 - **CI builds the PDF on every push** and uploads it as an artifact. A LaTeX repo where `main` doesn't compile is worse than useless, and it's a 20-line workflow.
-- **One sentence per line** in source. Line-level diffs become sentence-level diffs, making review and merges tractable. Never reflow paragraphs — it produces diffs nobody can read.
+- **One sentence per line** in source. Line-level diffs become sentence-level diffs, making review and merges tractable. Never reflow paragraphs - it produces diffs nobody can read.
 
 CI workflow and `latexindent` config in [RECIPES §5](RECIPES.md#5-quality-gates--ci).
 

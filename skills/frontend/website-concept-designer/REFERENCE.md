@@ -20,13 +20,13 @@ Templates moved out of [SKILL.md](SKILL.md).
 <tree of pages/sections, max 2 levels deep>
 
 ## Homepage strategy
-<what the homepage does in 2-3 sentences — first impression, primary action, what the visitor leaves knowing>
+<what the homepage does in 2-3 sentences - first impression, primary action, what the visitor leaves knowing>
 
 ## Sample copy voice
-<2-3 sentences in the chosen voice — about section opener, or homepage tagline + subhead>
+<2-3 sentences in the chosen voice - about section opener, or homepage tagline + subhead>
 
 ## What this concept sacrifices
-<honest list of what's deprioritized vs. the other concepts — every concept trades something>
+<honest list of what's deprioritized vs. the other concepts - every concept trades something>
 
 ## Ascii homepage wireframe
 <see §9>

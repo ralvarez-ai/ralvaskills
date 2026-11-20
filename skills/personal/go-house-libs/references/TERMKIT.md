@@ -1,6 +1,6 @@
 # termkit
 
-`github.com/ralvarezdev/termkit` — presentation primitives for Go CLIs: an adaptive light/dark theme, capability detection, tables, charts, typed parameter forms, an interactive session shell over a cobra tree, and output in table/json/yaml/csv. Reach for it before hand-writing table alignment, ANSI-aware truncation, a color theme, or a flags-to-form prompt.
+`github.com/ralvarezdev/termkit` - presentation primitives for Go CLIs: an adaptive light/dark theme, capability detection, tables, charts, typed parameter forms, an interactive session shell over a cobra tree, and output in table/json/yaml/csv. Reach for it before hand-writing table alignment, ANSI-aware truncation, a color theme, or a flags-to-form prompt.
 
 ## Packages
 

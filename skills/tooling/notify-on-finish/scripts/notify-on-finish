@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# notify-on-finish — run a command detached and notify when it ends.
-# Prototype v0.1.0 — POSIX-ish, no deps beyond a notification daemon.
+# notify-on-finish - run a command detached and notify when it ends.
+# Prototype v0.1.0 - POSIX-ish, no deps beyond a notification daemon.
 set -u
 
 PROG=${0##*/}
@@ -51,7 +51,7 @@ notify() { # notify <title> <body> <urgency> <icon>
   return 1
 }
 
-chime() { # chime ok|fail  — best effort, never fatal
+chime() { # chime ok|fail  - best effort, never fatal
   name=complete
   [ "$1" = fail ] && name=bell
   if command -v canberra-gtk-play >/dev/null 2>&1; then
@@ -213,7 +213,7 @@ doctor() {
 
 usage() {
   cat <<EOF
-$PROG — run a command detached, notify when it ends
+$PROG - run a command detached, notify when it ends
 
   $PROG --label "go test ./..." -- go test ./...
   $PROG --label build --quiet -- task build      # no sound

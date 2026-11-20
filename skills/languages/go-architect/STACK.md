@@ -3,14 +3,14 @@
 | Dependency | Pinned version | Purpose |
 |---|---|---|
 | go | 1.27.3 | Language |
-| log/slog | stdlib (tracks Go) | Structured logging — **default** for new code |
+| log/slog | stdlib (tracks Go) | Structured logging - **default** for new code |
 | spf13/viper | 1.21 | Layered config (env + file + flag) |
 | go-playground/validator | 10.30 | Struct-tag validation |
 | spf13/cobra | 1.10 | CLI command framework |
 | spf13/pflag | 1.0 | POSIX-style flags |
 | gin-gonic/gin | 1.12 | HTTP router (REST) |
-| sqlc-dev/sqlc | 1.29 | Schema-first SQL codegen — **default** for DB access |
-| jmoiron/sqlx | 1.4 | SQL extensions — used with `//go:embed` for `.sql` files, for cases sqlc can't express |
+| sqlc-dev/sqlc | 1.29 | Schema-first SQL codegen - **default** for DB access |
+| jmoiron/sqlx | 1.4 | SQL extensions - used with `//go:embed` for `.sql` files, for cases sqlc can't express |
 | google.golang.org/protobuf | 1.36 | Protocol Buffers runtime |
 | google.golang.org/grpc | 1.81 | gRPC |
 | stretchr/testify | 1.11 | Assertions, mocks, suites |
@@ -22,7 +22,7 @@
 
 ## Notes
 
-- **`log/slog` is the logging default.** Reach for `uber-go/zap` or `rs/zerolog` only when slog's allocator performance is provably insufficient — start with slog.
+- **`log/slog` is the logging default.** Reach for `uber-go/zap` or `rs/zerolog` only when slog's allocator performance is provably insufficient - start with slog.
 - **No ORM.** Database access defaults to `sqlc`-generated queries against the real migrated schema; `sqlx` with raw SQL in `.sql` files embedded via `//go:embed` is the alternative for runtime-composed queries sqlc can't express. This is an architectural opinion enforced by `go-architect`.
 - **Dependency injection:** `uber-go/fx` is the default for larger graphs. `google/wire` is acceptable when compile-time-only wiring is preferred.
 

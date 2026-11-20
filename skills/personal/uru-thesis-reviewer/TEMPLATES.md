@@ -1,11 +1,11 @@
-# URU Thesis Reviewer — File Templates
+# URU Thesis Reviewer - File Templates
 
 Boilerplate for the per-session output files. Used by [SKILL.md](SKILL.md) §4 (output structure) and §5 (file templates). Loaded on demand.
 
 ## 1. `01-index.md`
 
 ```markdown
-# Revisión URU — YYYY-MM-DD
+# Revisión URU - YYYY-MM-DD
 
 **Source:** `<absolute path to .docx>`
 **Scope:** <full thesis | Capítulo II | grammar only | ...>
@@ -26,31 +26,31 @@ Boilerplate for the per-session output files. Used by [SKILL.md](SKILL.md) §4 (
 
 ## Mapa de archivos
 
-Every file this session produced, tagged by type — not just severity-tagged review files.
+Every file this session produced, tagged by type - not just severity-tagged review files.
 
-- `02-resumen.md` [review] — 3 observaciones
-- `03-abstract.md` [review] — sin observaciones
-- `04-introduccion.md` [review] — 7 observaciones (1 blocking)
-- `redaccion-cap-ii-antecedentes.md` [redacción] — borrador de reescritura para §2.3, pendiente de que el autor lo pegue en el `.docx`
-- `00-handoff.md` [handoff] — pendientes para la próxima sesión
+- `02-resumen.md` [review] - 3 observaciones
+- `03-abstract.md` [review] - sin observaciones
+- `04-introduccion.md` [review] - 7 observaciones (1 blocking)
+- `redaccion-cap-ii-antecedentes.md` [redacción] - borrador de reescritura para §2.3, pendiente de que el autor lo pegue en el `.docx`
+- `00-handoff.md` [handoff] - pendientes para la próxima sesión
 - ...
 
 ## Seguimiento de issues
 
-Running record across **all** sessions, not just this one. Carry every row forward from the previous session's `01-index.md` (§4.2 of SKILL.md) — update status in place, never delete a row (use `rechazado` instead of removing it).
+Running record across **all** sessions, not just this one. Carry every row forward from the previous session's `01-index.md` (§4.2 of SKILL.md) - update status in place, never delete a row (use `rechazado` instead of removing it).
 
 | ID | Chapter | Resumen | Severidad | Estado | Sesión origen | Última sesión | Por qué se revirtió |
 |---|---|---|---|---|---|---|---|
 | `2026-06-06-cap-ii-mcp-como-agente` | Cap. II | MCP descrito como agente de IA, no como protocolo | blocking | resuelto-en-borrador | 2026-06-06 | 2026-07-19 | |
-| `2026-07-10-metodologia-acl-write-scope` | Cap. III | Extensión de ACL/write-scope propuesta y luego retirada | suggest | rechazado | 2026-07-10 | 2026-07-19 | Autor decidió mantener alcance original — la extensión ampliaba el scope más allá de los objetivos específicos |
+| `2026-07-10-metodologia-acl-write-scope` | Cap. III | Extensión de ACL/write-scope propuesta y luego retirada | suggest | rechazado | 2026-07-10 | 2026-07-19 | Autor decidió mantener alcance original - la extensión ampliaba el scope más allá de los objetivos específicos |
 | ... | | | | | | | |
 
-Estado values: `abierto` → `resuelto-en-borrador` → `aplicado` (only the author confirms this) → `rechazado` / `needs-decision`. When a row's status moves backward (e.g. `aplicado` → `abierto` because a later check found it wasn't actually fixed) or a prior decision is overturned outright, fill **Por qué se revirtió** — a diff alone isn't a record of *why*.
+Estado values: `abierto` → `resuelto-en-borrador` → `aplicado` (only the author confirms this) → `rechazado` / `needs-decision`. When a row's status moves backward (e.g. `aplicado` → `abierto` because a later check found it wasn't actually fixed) or a prior decision is overturned outright, fill **Por qué se revirtió** - a diff alone isn't a record of *why*.
 
 ## Temas transversales
 
 <Recurring issues to fix everywhere, not section-specific.
- e.g. "Uso inconsistente de primera persona en Cap. II y IV — la norma exige tercera persona.">
+ e.g. "Uso inconsistente de primera persona en Cap. II y IV - la norma exige tercera persona.">
 
 ## Recomendaciones de orden
 
@@ -59,17 +59,17 @@ Estado values: `abierto` → `resuelto-en-borrador` → `aplicado` (only the aut
 3. Bibliografía: 4 fuentes débiles identificadas, ver `11-referencias.md`.
 ```
 
-## 2. `nn-section.md` — one per reviewed section
+## 2. `nn-section.md` - one per reviewed section
 
 ```markdown
 # <Section name as it appears in thesis>
 
-**Ubicación:** página N–M, §X.Y
+**Ubicación:** página N-M, §X.Y
 **Observaciones:** total N (blocking: A, suggest: B, nit: C)
 
 ---
 
-## [blocking] <one-line summary> — §X.Y, párrafo N
+## [blocking] <one-line summary> - §X.Y, párrafo N
 
 **Norma:** `NORMAS §V. CITAS > Cita textual de larga extensión`
 
@@ -79,11 +79,11 @@ Estado values: `abierto` → `resuelto-en-borrador` → `aplicado` (only the aut
 - "El autor menciona que la productividad aumento un 30%, según un estudio reciente."
 + "Según Ramírez (2021, p. 47), la productividad aumentó un 30% en el período evaluado."
 
-**Por qué:** Falta autor y año en la cita indirecta (norma URU exige `Apellido, año` para toda referencia parafraseada). Además, "aumento" sin tilde es error ortográfico (RAE — verbo en pretérito).
+**Por qué:** Falta autor y año en la cita indirecta (norma URU exige `Apellido, año` para toda referencia parafraseada). Además, "aumento" sin tilde es error ortográfico (RAE - verbo en pretérito).
 
 ---
 
-## [suggest] <one-line summary> — §X.Y, párrafo N
+## [suggest] <one-line summary> - §X.Y, párrafo N
 
 > Original:
 > "..."
@@ -103,7 +103,7 @@ Estado values: `abierto` → `resuelto-en-borrador` → `aplicado` (only the aut
 **Por qué:** <reasoning>
 ```
 
-## 3. `11-referencias.md` — bibliography section
+## 3. `11-referencias.md` - bibliography section
 
 ```markdown
 # Referencias bibliográficas
@@ -113,7 +113,7 @@ Estado values: `abierto` → `resuelto-en-borrador` → `aplicado` (only the aut
 
 ## [blocking] Fuentes citadas pero no listadas
 
-- "Pérez (2019)" — citada en Cap. II §2.3, ausente de la lista.
+- "Pérez (2019)" - citada en Cap. II §2.3, ausente de la lista.
 - ...
 
 ## [blocking] Fuentes en la lista pero no citadas
@@ -129,7 +129,7 @@ Estado values: `abierto` → `resuelto-en-borrador` → `aplicado` (only the aut
 
 **Alternativa sugerida:**
 + Hernández, R., Fernández, C. y Baptista, P. (2014). *Metodología de la investigación* (6ª ed.). México: McGraw-Hill.
-  — Referencia estándar en metodología, citada en >50,000 trabajos académicos.
+  - Referencia estándar en metodología, citada en >50,000 trabajos académicos.
 
 ### <next weak source>
 ...
@@ -148,8 +148,8 @@ When the issue is substantive (not a textual fix), the `+` side is a **prompt** 
 
 ```
 - "El presente estudio busca conocer la situación del mantenimiento en la empresa."
-+ "<reformular como objetivo medible — e.g.: 'Analizar las prácticas actuales de mantenimiento
-   preventivo en la planta X durante el período 2024–2025, identificando desviaciones respecto
++ "<reformular como objetivo medible - e.g.: 'Analizar las prácticas actuales de mantenimiento
+   preventivo en la planta X durante el período 2024-2025, identificando desviaciones respecto
    al estándar ISO 55000.' Confirmar alcance temporal y referencia normativa con el tutor.>"
 
 **Por qué:** "Conocer la situación" no es un objetivo verificable (NORMAS §III: lenguaje preciso;
@@ -157,7 +157,7 @@ metodológicamente, no permite definir cuándo se ha cumplido). Requiere verbo a
 delimitado + criterio de éxito.
 ```
 
-The author makes the substantive call — Claude doesn't write the thesis.
+The author makes the substantive call - Claude doesn't write the thesis.
 
 ## 5. Folder layout (numbered, thesis order)
 
@@ -182,8 +182,8 @@ The author makes the substantive call — Claude doesn't write the thesis.
 Rules:
 
 - Numbering reflects **thesis order**, not severity.
-- Skip a section file entirely if it has zero feedback — note "sin observaciones" in `01-index.md` instead of creating an empty file.
-- Small sections with few items may be merged with their neighbor (`02-resumen-y-abstract.md`) — note merges in the index.
+- Skip a section file entirely if it has zero feedback - note "sin observaciones" in `01-index.md` instead of creating an empty file.
+- Small sections with few items may be merged with their neighbor (`02-resumen-y-abstract.md`) - note merges in the index.
 - `referencias` always second-to-last (or last if no anexos).
-- Handoff notes always use the exact name `00-handoff.md` — never a variant (e.g. not `09-pendientes-proxima-sesion.md`). Sorts first so the next session reads it before anything else.
+- Handoff notes always use the exact name `00-handoff.md` - never a variant (e.g. not `09-pendientes-proxima-sesion.md`). Sorts first so the next session reads it before anything else.
 - File names: `nn-section-name.md`, kebab-case (lowercase, dash-separated), no accents (filesystem safety). `00-handoff.md` and `redaccion-*.md` are the only unnumbered/differently-prefixed names permitted, and both must still be listed in `01-index.md`'s Mapa de archivos.

@@ -1,6 +1,6 @@
 # pgkit
 
-`github.com/ralvarezdev/pgkit` — small helpers for services built on pgx and sqlc: value conversion, transactions, embedded goose migrations, the Postgres `Idempotency-Key` store, pool metrics and a test container. Each heavy dependency lives in exactly one subpackage.
+`github.com/ralvarezdev/pgkit` - small helpers for services built on pgx and sqlc: value conversion, transactions, embedded goose migrations, the Postgres `Idempotency-Key` store, pool metrics and a test container. Each heavy dependency lives in exactly one subpackage.
 
 ## Packages
 

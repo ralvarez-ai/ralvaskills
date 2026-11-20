@@ -5,7 +5,7 @@
 | go | 1.27.3 | Language |
 | gin-gonic/gin | 1.12 | HTTP framework |
 | go-playground/validator | 10.30 | Struct-tag request validation |
-| jmoiron/sqlx | 1.4 | DB access — see [sql-architect](../../databases/sql-architect/STACK.md) and [go-architect](../../languages/go-architect/STACK.md) |
+| jmoiron/sqlx | 1.4 | DB access - see [sql-architect](../../databases/sql-architect/STACK.md) and [go-architect](../../languages/go-architect/STACK.md) |
 | golang-jwt/jwt/v5 | 5.3 | JWT issuance + verification (auth pattern A) |
 | golang.org/x/crypto | 0.51 | Argon2id password hashing (`argon2.IDKey`) |
 | swaggo/swag | 1.16 | OpenAPI generation via annotation comments (default) |
@@ -16,7 +16,7 @@
 - **Inherits the `go-architect` stack.** This file pins what is *specific* or *additionally required* for Gin services. Shared canonical libraries (viper, sqlx, slog, golangci-lint, etc.) live in [go-architect/STACK.md](../../languages/go-architect/STACK.md).
 - **Authentication library by pattern** (see [rest-api-architect/AUTH_PATTERNS.md](../../protocols/rest-api-architect/AUTH_PATTERNS.md)):
   - Pattern A (in-house JWT): `golang-jwt/jwt/v5` + `golang.org/x/crypto/argon2`
-  - Pattern B (external IdP): `golang-jwt/jwt/v5` only — keys come from JWKS
+  - Pattern B (external IdP): `golang-jwt/jwt/v5` only - keys come from JWKS
 - **OpenAPI library choice:** `swaggo/swag` is the default for speed; switch to `getkin/kin-openapi` once you need OpenAPI 3.1 features (oneOf, discriminators, runtime validation).
 - **Data access:** `sqlx + //go:embed` per [go-architect §12](../../languages/go-architect/SKILL.md#12-database-access--sqlc-default-sqlx--goembed-alternative). No ORM.
 

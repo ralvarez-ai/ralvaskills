@@ -9,7 +9,7 @@ Go 1.27.3: enums, struct layout, interfaces, concurrency, errors, DB access, pac
 - A literal used twice becomes a named constant.
 - Order struct fields largest → smallest; `New...` constructors; functional options for complex setup.
 - Typed structs over `map[string]any`; prefer stdlib (`cmp`, `slices`, `maps`, `iter`, `log/slog`); host:port via `net.JoinHostPort`, never `fmt.Sprintf`.
-- Define interfaces where used, 1–3 methods; accept interfaces, return concrete types.
+- Define interfaces where used, 1-3 methods; accept interfaces, return concrete types.
 - `iter.Seq[T]` for large, short-circuitable or cursor-backed sequences; `[]T` for small bounded results.
 - Embed `sync.RWMutex` directly above the fields it guards; `sync.WaitGroup.Go`; `time.Minute`, not `time.Second * 60`.
 - `context.Context` first parameter for blocking or I/O; `signal.NotifyContext` for shutdown.

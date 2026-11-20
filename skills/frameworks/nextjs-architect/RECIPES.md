@@ -11,7 +11,7 @@ app/
 ├── loading.tsx                       # default loading UI for /
 ├── error.tsx                         # error UI for /
 ├── not-found.tsx                     # 404 UI
-├── (auth)/                           # route group — doesn't add to URL
+├── (auth)/                           # route group - doesn't add to URL
 │   ├── login/page.tsx                # /login
 │   └── signup/page.tsx               # /signup
 ├── dashboard/
@@ -32,7 +32,7 @@ app/
 - `loading.tsx` wraps the route in Suspense automatically.
 - `error.tsx` is a client component that wraps the route in an ErrorBoundary.
 - Route groups `(name)` organize without adding URL segments.
-- `@slot` is a parallel route — independent loading/error states, rendered into named slots in the parent layout.
+- `@slot` is a parallel route - independent loading/error states, rendered into named slots in the parent layout.
 
 ## Edge runtime declaration
 
@@ -45,7 +45,7 @@ export async function GET(req: Request) {
 }
 ```
 
-- Default is `node` — full Node API, npm packages with native modules, deepest compatibility.
+- Default is `node` - full Node API, npm packages with native modules, deepest compatibility.
 - `runtime = "edge"` for low-latency, geographic-edge routes (auth verification, redirects, feature flags, A/B routing).
 - Edge restrictions: no Node-only modules (`fs`, `child_process`), no native bindings, smaller bundle limit (~1 MB).
 - Standard Postgres drivers don't work on edge; use HTTP-based drivers (Neon serverless, Cloudflare D1, Turso libsql).
@@ -60,16 +60,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const user = await getUser(id);
   return {
-    title: user ? `${user.name} — Users` : "User not found",
+    title: user ? `${user.name} - Users` : "User not found",
     description: user?.bio,
     openGraph: { images: user?.avatarUrl ? [user.avatarUrl] : [] },
   };
 }
 ```
 
-- Per-route `generateMetadata` — async, runs on the server, has access to params.
+- Per-route `generateMetadata` - async, runs on the server, has access to params.
 - Root `metadata` export in `app/layout.tsx` for defaults (title template, OG defaults).
-- Don't hand-write `<head>` — Next manages it for SEO + social embed correctness.
+- Don't hand-write `<head>` - Next manages it for SEO + social embed correctness.
 
 ## Cache layers reference
 
@@ -89,7 +89,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 Server component fetches data and passes it to a client leaf for interactivity. The `"use client"` directive sits on the leaf, not the page.
 
 ```tsx
-// app/dashboard/users/page.tsx — server component (default)
+// app/dashboard/users/page.tsx - server component (default)
 import { db } from "@/lib/db";
 import { UserListClient } from "./UserListClient";
 
@@ -100,7 +100,7 @@ export default async function UsersPage() {
 ```
 
 ```tsx
-// app/dashboard/users/UserListClient.tsx — client component (opt-in)
+// app/dashboard/users/UserListClient.tsx - client component (opt-in)
 "use client";
 import { useState } from "react";
 

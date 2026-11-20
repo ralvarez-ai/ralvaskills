@@ -14,7 +14,7 @@ is the `rsk mcp` server; `registry/` is the generated index served at
 
 - `task build` — build the CLI; `task cli:build`, `task cli:run -- <args>`, `task cli:lint`,
   `task cli:fmt`, `task cli:tag` (release)
-- Gates: `task lint`, `task fmt`, `task lint:oneliners`, `task lint:separators`,
+- Gates: `task lint`, `task fmt`, `task lint:oneliners`, `task lint:separators`, `task lint:dashes`,
   `task lint:doccheck`, `task deadcode`, `task deps:check`
 - Registry: `task registry:generate`, `registry:sync-index`, `registry:check`, `registry:clean`,
   `registry:remove[*]`, `registry:lint`, `registry:fmt`

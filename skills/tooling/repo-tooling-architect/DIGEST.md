@@ -6,10 +6,10 @@ Repo-root tooling: `.editorconfig`, `.gitignore`, version pins, task runner, min
 - Add a tool only when it pays back on day one, costs less than going without, and no language-native option covers it; when in doubt, skip.
 - Always include `.editorconfig` and `.gitignore`; trim `.gitignore` per language, starting from github/gitignore.
 - Local-only exclusions go in `.git/info/exclude` or `~/.gitignore_global`, not the repo `.gitignore`.
-- Pin tools in one committed file — `mise.toml` by default, `.prototools` as alternative; CI installs the same versions.
+- Pin tools in one committed file - `mise.toml` by default, `.prototools` as alternative; CI installs the same versions.
 - Skip a task runner for single-language projects; add one for multi-language, multi-service, or many multi-step commands.
 - Task (`Taskfile.yml`) is the default, just (`justfile`) the alternative; settle on one per repo.
-- Task names: `module[:submodule…]:verb[:target|mode]` — verb after the module, env and service as targets, unprefixed only for repo-wide entry points (grammar in `TASKFILE.md`). Stay flat until a module has 5+ tasks.
+- Task names: `module[:submodule…]:verb[:target|mode]` - verb after the module, env and service as targets, unprefixed only for repo-wide entry points (grammar in `TASKFILE.md`). Stay flat until a module has 5+ tasks.
 - Pre-commit stays minimal: whitespace, EOF, large files, merge conflicts, YAML/JSON, gitleaks; language linters run in the editor and CI.
 - Non-secret config: committed `.env` plus git-ignored `.env.local`, loaded by Task `dotenv:`. Real secrets come from an external secret manager.
 - `.gitignore` must include `.env.local`; audit any `.env*` pattern. No `direnv` unless you need auto-activation on `cd`.

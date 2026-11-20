@@ -1,7 +1,7 @@
 ---
 name: uru-thesis-reviewer
-version: 0.3.0
-description: Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) theses. Emits ordered `.md` diff files (- old / + new) the author applies manually — never edits the `.docx`. Covers substance, structure, prose, citations vs `NORMAS_URU_2020`. Tracks issues across sessions via stable IDs and carry-forward. Use when the user shares a thesis or chapter.
+version: 0.3.1
+description: Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) theses. Emits ordered `.md` diff files (- old / + new) the author applies manually - never edits the `.docx`. Covers substance, structure, prose, citations vs `NORMAS_URU_2020`. Tracks issues across sessions via stable IDs and carry-forward. Use when the user shares a thesis or chapter.
 ---
 
 # URU Thesis Reviewer
@@ -17,7 +17,7 @@ Iterative feedback skill for URU theses. Each invocation produces a **review ses
 Do **not** use for:
 
 - Evaluation / grading (this is improvement feedback, not a verdict).
-- Non-URU theses (use a generic editor — URU norms are baked in).
+- Non-URU theses (use a generic editor - URU norms are baked in).
 
 ## 1. Operating principles
 
@@ -27,16 +27,16 @@ Do **not** use for:
 - **Diff format, not prose.** Show the exact text to remove (`-`) and the proposed replacement (`+`).
 - **Severity-tagged.** Every block carries one of: `[blocking]` (norm violation or factual error), `[suggest]` (real improvement), `[nit]` (taste/polish).
 - **Cite the rule.** When the suggestion is driven by URU norms, link the section (e.g., `NORMAS §V. CITAS`). For language, cite RAE if relevant.
-- **Bibliography: suggest, don't fabricate.** When flagging a weak source, propose a concrete replacement using `find-docs` / `WebSearch`. If no credible alternative is found, mark as `[suggest] needs stronger source — none found in search`.
+- **Bibliography: suggest, don't fabricate.** When flagging a weak source, propose a concrete replacement using `find-docs` / `WebSearch`. If no credible alternative is found, mark as `[suggest] needs stronger source - none found in search`.
 - **Spanish output.** Feedback prose and rewrites are in Spanish. Tags, headers, and metadata stay English for grep-ability.
 
 ## 2. Inputs
 
 User provides:
 
-1. **Source path** — `.docx` (preferred) or already-converted `.md`/`.txt`.
-2. **Output base path** — directory where `YYYY-MM-DD/` session folder is created.
-3. *(Optional)* **Scope filter** — e.g., "only Capítulo II", "skip bibliography", "focus on grammar only".
+1. **Source path** - `.docx` (preferred) or already-converted `.md`/`.txt`.
+2. **Output base path** - directory where `YYYY-MM-DD/` session folder is created.
+3. *(Optional)* **Scope filter** - e.g., "only Capítulo II", "skip bibliography", "focus on grammar only".
 
 If the user only provides the `.docx` and no output path, **ask** before proceeding.
 
@@ -45,10 +45,10 @@ If the user only provides the `.docx` and no output path, **ask** before proceed
 Claude cannot Read `.docx` directly. Pick the first available path:
 
 1. **Anthropic official `docx` skill** (preferred). Preserves structure (headings, lists, tables, footnotes, comments). Check the available-skills list at session start.
-2. **Pandoc fallback** — `pandoc "<source>.docx" -t markdown -o "<source>.review.md"`.
+2. **Pandoc fallback** - `pandoc "<source>.docx" -t markdown -o "<source>.review.md"`.
 3. **Manual.** Ask the user to paste content or "Save as .txt" from Word.
 
-The intermediate `.review.md` (from pandoc) is **scratch** — don't commit it, don't put it in the session folder.
+The intermediate `.review.md` (from pandoc) is **scratch** - don't commit it, don't put it in the session folder.
 
 After ingestion, identify section boundaries by matching headings against URU's expected structure (§6.1).
 
@@ -58,29 +58,29 @@ After ingestion, identify section boundaries by matching headings against URU's 
 
 Sessions live under `<output-base>/YYYY-MM-DD/` with one numbered file per thesis section (`01-index.md`, `02-resumen.md`, …, `11-referencias.md`, `12-anexos.md`), kebab-case (lowercase, dash-separated, no accents). Full folder layout and naming rules in [TEMPLATES § 5](TEMPLATES.md#5-folder-layout-numbered-thesis-order).
 
-`01-index.md` is **mandatory every session**, even one that only drafted prose and touched no tracked issue — a 5-line index (executive summary + "sin cambios en seguimiento de issues") beats a missing one. There is no separate cross-session registry file: `01-index.md` *is* the record, session over session.
+`01-index.md` is **mandatory every session**, even one that only drafted prose and touched no tracked issue - a 5-line index (executive summary + "sin cambios en seguimiento de issues") beats a missing one. There is no separate cross-session registry file: `01-index.md` *is* the record, session over session.
 
-Any file the session produces that isn't a numbered section review — free-form drafting (`redaccion-*.md`), a handoff note — still gets listed in `01-index.md`'s Mapa de archivos, tagged by type (see [TEMPLATES § 1](TEMPLATES.md#1-01-indexmd)).
+Any file the session produces that isn't a numbered section review - free-form drafting (`redaccion-*.md`), a handoff note - still gets listed in `01-index.md`'s Mapa de archivos, tagged by type (see [TEMPLATES § 1](TEMPLATES.md#1-01-indexmd)).
 
 ### 4.2 Cross-session issue tracking
 
 Each `01-index.md` carries a **Seguimiento de issues** table (template in [TEMPLATES § 1](TEMPLATES.md#1-01-indexmd)) that is the running state of every issue ever raised, not just this session's.
 
-- **Stable IDs.** Assign each issue an ID at first discovery: `yyyy-mm-dd-<chapter>-<slug>` (e.g. `2026-06-06-cap-ii-mcp-como-agente`). On recurrence, reference the existing ID — never restate the finding as new.
-- **Status is orthogonal to severity.** Severity (`[blocking]/[suggest]/[nit]`) says how bad it is; status says where it stands: `abierto` (found, not addressed) → `resuelto-en-borrador` (fix drafted in a review file, not yet in the `.docx`) → `aplicado` (author confirmed it's in the `.docx`) → `rechazado` (author declined) → `needs-decision` (open question for the author/tutor). Only the author can move an issue to `aplicado` — Claude cannot verify the `.docx` was edited.
-- **Carry-forward, mandatory.** At the start of every session after the first, read the previous session's `01-index.md` Seguimiento table before writing anything new. Copy every issue not at `aplicado`/`rechazado` forward into this session's table unchanged unless its status actually moved. This is what makes the per-session file sufficient as a registry — skipping it is how issues silently go stale.
-- **Reversed decisions need a reason.** If this session overturns or drops a prior decision (not just a status update — an actual reversal), add a one-line `**Por qué se revirtió:**` next to that issue's row. A diff showing the old text gone is not enough.
-- **Tutor comment numbers drift.** `.docx` comment numbers renumber across edits. Always pair a referenced comment number with the verbatim quoted text it points to — never cite the number alone.
+- **Stable IDs.** Assign each issue an ID at first discovery: `yyyy-mm-dd-<chapter>-<slug>` (e.g. `2026-06-06-cap-ii-mcp-como-agente`). On recurrence, reference the existing ID - never restate the finding as new.
+- **Status is orthogonal to severity.** Severity (`[blocking]/[suggest]/[nit]`) says how bad it is; status says where it stands: `abierto` (found, not addressed) → `resuelto-en-borrador` (fix drafted in a review file, not yet in the `.docx`) → `aplicado` (author confirmed it's in the `.docx`) → `rechazado` (author declined) → `needs-decision` (open question for the author/tutor). Only the author can move an issue to `aplicado` - Claude cannot verify the `.docx` was edited.
+- **Carry-forward, mandatory.** At the start of every session after the first, read the previous session's `01-index.md` Seguimiento table before writing anything new. Copy every issue not at `aplicado`/`rechazado` forward into this session's table unchanged unless its status actually moved. This is what makes the per-session file sufficient as a registry - skipping it is how issues silently go stale.
+- **Reversed decisions need a reason.** If this session overturns or drops a prior decision (not just a status update - an actual reversal), add a one-line `**Por qué se revirtió:**` next to that issue's row. A diff showing the old text gone is not enough.
+- **Tutor comment numbers drift.** `.docx` comment numbers renumber across edits. Always pair a referenced comment number with the verbatim quoted text it points to - never cite the number alone.
 
 ## 5. File templates
 
 Three templates drive the output:
 
-- **`01-index.md`** — executive summary, severity counts, file map, cross-cutting themes, and the cross-session Seguimiento de issues table (§4.2). Template in [TEMPLATES § 1](TEMPLATES.md#1-01-indexmd).
-- **`nn-section.md`** — per-section diffs grouped by severity. Template + diff shape in [TEMPLATES § 2](TEMPLATES.md#2-nn-sectionmd--one-per-reviewed-section).
-- **`11-referencias.md`** — bibliography-specific structure (missing/orphan sources, weak-source replacements, format fixes). Template in [TEMPLATES § 3](TEMPLATES.md#3-11-referenciasmd--bibliography-section).
+- **`01-index.md`** - executive summary, severity counts, file map, cross-cutting themes, and the cross-session Seguimiento de issues table (§4.2). Template in [TEMPLATES § 1](TEMPLATES.md#1-01-indexmd).
+- **`nn-section.md`** - per-section diffs grouped by severity. Template + diff shape in [TEMPLATES § 2](TEMPLATES.md#2-nn-sectionmd--one-per-reviewed-section).
+- **`11-referencias.md`** - bibliography-specific structure (missing/orphan sources, weak-source replacements, format fixes). Template in [TEMPLATES § 3](TEMPLATES.md#3-11-referenciasmd--bibliography-section).
 
-For substantive issues, the `+` side is a **prompt** for the author, not rewritten text — see [TEMPLATES § 4](TEMPLATES.md#4-substantive-feedback-diff-shape).
+For substantive issues, the `+` side is a **prompt** for the author, not rewritten text - see [TEMPLATES § 4](TEMPLATES.md#4-substantive-feedback-diff-shape).
 
 ## 6. Review dimensions (what to check, in order)
 
@@ -88,8 +88,8 @@ For each section, walk these dimensions in order. Stop reading prose once a `[bl
 
 Dimensions split into two groups:
 
-- **Substantive** (§6.1–6.2 below): does the research itself hold up? This is the headline value of the review.
-- **Formal & linguistic** ([CHECKS.md](CHECKS.md)): URU norms, prose quality, citation hygiene. Six checklists — formal aspects (URU §IV), redacción (URU §III), grammar/RAE, semantics & clarity, citations (URU §V), bibliography (URU §VI).
+- **Substantive** (§6.1-6.2 below): does the research itself hold up? This is the headline value of the review.
+- **Formal & linguistic** ([CHECKS.md](CHECKS.md)): URU norms, prose quality, citation hygiene. Six checklists - formal aspects (URU §IV), redacción (URU §III), grammar/RAE, semantics & clarity, citations (URU §V), bibliography (URU §VI).
 
 ### 6.1 Structural compliance (URU §II)
 
@@ -102,7 +102,7 @@ Dimensions split into two groups:
 
 Evaluate the thesis on its own merits as a piece of research, independent of URU formatting. Read each chapter as a domain reviewer would.
 
-**Cap. I — El Problema**
+**Cap. I - El Problema**
 
 - Problem clearly defined and bounded? Can the reader state it back in one sentence?
 - Justification specific and evidence-backed, or generic ("este tema es muy importante")?
@@ -110,23 +110,23 @@ Evaluate the thesis on its own merits as a piece of research, independent of URU
 - Objetivos específicos: decompose the general into independently-verifiable steps? Actionable verbs (`analizar`, `diseñar`, `evaluar`), not vague (`estudiar`, `conocer`)?
 - Delimitación: clear scope boundaries.
 
-**Cap. II — Marco Teórico**
+**Cap. II - Marco Teórico**
 
 - Antecedentes: *actually* relevant to this thesis's problem, or padding? Each should connect explicitly.
 - Bases teóricas: depth matches the thesis's needs (not textbook summary, not off-topic monograph).
-- Currency: dominant sources reasonably recent (varies by field — flag pre-2010 in fast-moving areas).
+- Currency: dominant sources reasonably recent (varies by field - flag pre-2010 in fast-moving areas).
 - Coverage gaps: obvious schools, key authors, recent developments missing?
 - Operational definitions: key terms defined precisely and consistently.
 
-**Cap. III — Marco Metodológico**
+**Cap. III - Marco Metodológico**
 
 - Tipo y nivel: chosen design (descriptiva / explicativa / correlacional) appropriate for the objectives? Mismatches are `[blocking]`.
-- Diseño: experimental / no-experimental / documental — justified or just declared?
+- Diseño: experimental / no-experimental / documental - justified or just declared?
 - Población y muestra: defined, sampling method explained, size justified (statistically or by saturation).
 - Instrumentos: validated? Reliability reported? If self-built, validation process described?
 - Procedimiento: replicable from the description alone.
 
-**Cap. IV — Resultados**
+**Cap. IV - Resultados**
 
 - Do results actually address each objetivo específico? Cross-check explicitly.
 - Claims proportional to the evidence? Flag overreach ("se demuestra que…" when data only suggests).
@@ -134,7 +134,7 @@ Evaluate the thesis on its own merits as a piece of research, independent of URU
 - Statistical / analytical method appropriate for the data type.
 - Discussion: results contextualized against the marco teórico.
 
-**Cap. V — Propuesta (if present)**
+**Cap. V - Propuesta (if present)**
 
 - Derived from the results, not pre-decided.
 - Feasibility addressed (resources, time, constraints).
@@ -143,7 +143,7 @@ Evaluate the thesis on its own merits as a piece of research, independent of URU
 **Conclusiones**
 
 - One conclusion per objetivo específico (URU expects this alignment).
-- Each conclusion supported by results — no new claims introduced.
+- Each conclusion supported by results - no new claims introduced.
 - No overreach beyond the studied population/scope.
 
 **Recomendaciones**
@@ -167,11 +167,11 @@ Full per-dimension checklists: [CHECKS.md](CHECKS.md) (six, listed above).
 2. **Ingest.** `.docx` → reviewable text via §3. Identify section boundaries.
 3. **Inventory.** List every section found. Compare against URU expected structure (§6.1). Flag missing/extra sections as `[blocking]`.
 4. **Scope.** If the user specified a filter, restrict to those sections.
-5. **Substantive pass first.** Walk §6.1 then §6.2 across all chapters before touching prose. Substantive `[blocking]` issues reshape downstream work — surface them early.
-6. **Per-section formal/linguistic pass.** Walk [CHECKS.md](CHECKS.md) §1–5 in order. Skip deep prose review on any section flagged with a substantive `[blocking]` (see §6).
-7. **Bibliography pass.** Run [CHECKS § 6](CHECKS.md#6-bibliography-uru-vi) at the end — needs the full source list and may require web searches.
+5. **Substantive pass first.** Walk §6.1 then §6.2 across all chapters before touching prose. Substantive `[blocking]` issues reshape downstream work - surface them early.
+6. **Per-section formal/linguistic pass.** Walk [CHECKS.md](CHECKS.md) §1-5 in order. Skip deep prose review on any section flagged with a substantive `[blocking]` (see §6).
+7. **Bibliography pass.** Run [CHECKS § 6](CHECKS.md#6-bibliography-uru-vi) at the end - needs the full source list and may require web searches.
 8. **Write files.** Create `YYYY-MM-DD/` folder. Write section files in order. Write `01-index.md` last, including the carried-forward + updated Seguimiento de issues table. The `Resumen ejecutivo` leads with substantive impression before formal observations. If the session hands off open work, write it as `00-handoff.md`.
-9. **Report.** Brief message to user: session path, severity totals, recommended starting point. Do NOT dump the diffs into chat — point to the files.
+9. **Report.** Brief message to user: session path, severity totals, recommended starting point. Do NOT dump the diffs into chat - point to the files.
 
 ## 8. Reference
 
@@ -182,7 +182,7 @@ Full per-dimension checklists: [CHECKS.md](CHECKS.md) (six, listed above).
 ## 9. Out of scope
 
 - Editing the `.docx` directly. Author always applies changes.
-- Rewriting entire sections from scratch — propose targeted diffs, not redrafts. If a section needs total rewrite, say so in `[blocking]` and explain why.
-- Plagiarism detection — flag suspicious unattributed phrasing as `[suggest] verificar fuente`, don't claim plagiarism.
-- Defense/jury preparation — separate skill.
-- Translating Resumen ↔ Abstract — flag mismatches, don't translate.
+- Rewriting entire sections from scratch - propose targeted diffs, not redrafts. If a section needs total rewrite, say so in `[blocking]` and explain why.
+- Plagiarism detection - flag suspicious unattributed phrasing as `[suggest] verificar fuente`, don't claim plagiarism.
+- Defense/jury preparation - separate skill.
+- Translating Resumen ↔ Abstract - flag mismatches, don't translate.

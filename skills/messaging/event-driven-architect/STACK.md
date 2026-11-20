@@ -17,9 +17,9 @@
 
 - **Schema format: Protobuf** is promoted. Same `.proto` + `buf breaking` discipline as gRPC. Optional CloudEvents envelope can wrap Protobuf payloads when consumers expect the CloudEvents contract.
 - **Broker is per-system, not per-event.** Pick one broker for a system; rebalance only when the workload genuinely demands a different shape.
-- **Outbox pattern is mandatory** for any write that emits an event — `BEGIN TX → INSERT business + INSERT outbox → COMMIT` then publish via a separate process (goroutine, sidecar, or Debezium CDC).
+- **Outbox pattern is mandatory** for any write that emits an event - `BEGIN TX → INSERT business + INSERT outbox → COMMIT` then publish via a separate process (goroutine, sidecar, or Debezium CDC).
 - **At-least-once delivery + idempotent consumers** = effective exactly-once. Don't chase protocol-level exactly-once.
-- **Per-key partitioning** for ordering — events for the same aggregate land in the same partition.
+- **Per-key partitioning** for ordering - events for the same aggregate land in the same partition.
 - **DLQ + retry policy** for every consumer. DLQ depth is a monitored, alerted metric per [observability-architect](../../infra/observability-architect/SKILL.md).
 - **Schema Registry (Confluent / BSR)** is the upgrade path for organizations publishing schemas to multiple consumer teams. Out of scope for solo / small-team use.
 

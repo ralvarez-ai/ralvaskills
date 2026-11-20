@@ -36,7 +36,7 @@ Full Conventional Commits v1.0.0 type set (Angular convention):
 * **Prose review:** For a message that reads as filler or AI boilerplate, apply the rules in [unslop](../../meta/unslop/SKILL.md); the type, subject and trailer rules above still win.
 
 ## 4.1 Merge Commits
-* **Body content:** A bare `Merge branch '...'` message is not enough when the merge brings in meaningful changes. Use the body to summarize all the changes the merge introduces — group them by type or area, and note the key behavioral changes.
+* **Body content:** A bare `Merge branch '...'` message is not enough when the merge brings in meaningful changes. Use the body to summarize all the changes the merge introduces - group them by type or area, and note the key behavioral changes.
 * **Format:** Keep the conventional `<type>(<scope>): <subject>` form (commonly `chore(merge): ...` or `feat: ...`), then list the aggregated changes in the body, hard wrapped at 72 characters.
 * **Footers:** Reference the merged branch or PR and any issues resolved by the combined work.
 
@@ -50,7 +50,7 @@ Full Conventional Commits v1.0.0 type set (Angular convention):
 
 ## 7. Execution Protocol
 
-* **User-initiated only.** This skill activates *only* when the user explicitly asks to commit — phrases like "commit this", "write the commit message", "let's commit", or invoking `/commit`. **Never volunteer to commit unprompted.** Don't propose commits at the end of a task, don't pre-emptively stage files, and don't run `git add` / `git commit` as cleanup after other work.
+* **User-initiated only.** This skill activates *only* when the user explicitly asks to commit - phrases like "commit this", "write the commit message", "let's commit", or invoking `/commit`. **Never volunteer to commit unprompted.** Don't propose commits at the end of a task, don't pre-emptively stage files, and don't run `git add` / `git commit` as cleanup after other work.
 * **Consent to execute.** When asked to draft a commit message: ask whether the user will run the commit themselves or wants you to. **Never run `git commit` without explicit go-ahead** for the specific commit being created.
 * **Scope per ask.** Permission to commit one set of changes is not blanket permission for future commits in the same session.
 * **Signing:** Delegated commits must be GPG signed if configured, unless the user explicitly opts out.

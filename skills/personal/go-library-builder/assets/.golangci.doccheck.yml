@@ -1,4 +1,4 @@
-# .golangci.doccheck.yml — on-demand doc-comment coverage.
+# .golangci.doccheck.yml - on-demand doc-comment coverage.
 # The main .golangci.yml disables these as too noisy for the standard gate.
 # Run explicitly: `task lint:doccheck` (golangci-lint run -c .golangci.doccheck.yml ./...).
 version: "2"

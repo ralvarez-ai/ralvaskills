@@ -1,7 +1,7 @@
 ---
 name: website-concept-designer
-version: 2.0.0
-description: Walk the user through designing a website concept before any code — purpose, audience, content inventory, tone, visual archetype, structure — and output 2-3 distinct concept directions plus an ASCII homepage wireframe. Use when planning a new personal site, portfolio, or marketing page upstream of implementation. Hands off to ui-ux-architect / frontend-design.
+version: 2.0.1
+description: Walk the user through designing a website concept before any code - purpose, audience, content inventory, tone, visual archetype, structure - and output 2-3 distinct concept directions plus an ASCII homepage wireframe. Use when planning a new personal site, portfolio, or marketing page upstream of implementation. Hands off to ui-ux-architect / frontend-design.
 ---
 
 # Website Concept Designer
@@ -10,11 +10,11 @@ Pre-code concept design for personal sites, portfolios, and landing pages. This 
 
 ## When to use
 
-User is starting a new website and wants to decide *what it is* before writing code. Not for redesigns of working sites unless the brief is "rethink from scratch". Not for component-level UI decisions — those belong to ui-ux-architect.
+User is starting a new website and wants to decide *what it is* before writing code. Not for redesigns of working sites unless the brief is "rethink from scratch". Not for component-level UI decisions - those belong to ui-ux-architect.
 
-## 1. Operating principle — walk, don't dump
+## 1. Operating principle - walk, don't dump
 
-Run the six stages **interactively, one at a time**. After each stage, present the menu, pause, wait for the user's pick, then advance. Never collapse multiple stages into a single question. Never skip stages even if the user volunteers info — surface what they said as a pre-selected default and confirm.
+Run the six stages **interactively, one at a time**. After each stage, present the menu, pause, wait for the user's pick, then advance. Never collapse multiple stages into a single question. Never skip stages even if the user volunteers info - surface what they said as a pre-selected default and confirm.
 
 The point of the walk is to force decisions the user would otherwise defer. Skipping a stage means a vague concept doc later.
 
@@ -29,32 +29,32 @@ The point of the walk is to force decisions the user would otherwise defer. Skip
 | 5 | Visual direction | What does it look like? | 1 archetype (ranked suggestions, full list shown) |
 | 6 | Synthesis | Concept docs | 2-3 distinct concept directions + ASCII wireframe |
 
-## 3. Stage 1 — Purpose
+## 3. Stage 1 - Purpose
 
 Present these archetypes. User picks 1-2 (combinable, e.g. *portfolio + writing hub*):
 
-- **Portfolio / showcase** — work artifacts are the point; projects are the spine of the IA.
-- **Writing hub** — essays / blog / notes are the spine; everything else is navigation.
-- **Professional calling card** — single-page or near-single-page; recruiters / clients land, learn, contact.
-- **Digital garden** — evergreen interlinked notes; structure is the network, not chronology.
-- **Project launcher** — a specific product or project is the hero; "about me" is a footnote.
-- **Experimental playground** — site is itself a creative artifact; convention is the enemy.
+- **Portfolio / showcase** - work artifacts are the point; projects are the spine of the IA.
+- **Writing hub** - essays / blog / notes are the spine; everything else is navigation.
+- **Professional calling card** - single-page or near-single-page; recruiters / clients land, learn, contact.
+- **Digital garden** - evergreen interlinked notes; structure is the network, not chronology.
+- **Project launcher** - a specific product or project is the hero; "about me" is a footnote.
+- **Experimental playground** - site is itself a creative artifact; convention is the enemy.
 
-If user picks **2 incompatible archetypes** (e.g. *experimental playground* + *professional calling card*), flag it and ask which wins on the homepage — the loser becomes a subsection.
+If user picks **2 incompatible archetypes** (e.g. *experimental playground* + *professional calling card*), flag it and ask which wins on the homepage - the loser becomes a subsection.
 
-## 4. Stage 2 — Audience
+## 4. Stage 2 - Audience
 
 Picks shape **how much explanation things need** and **what voice fits**.
 
-- **Recruiters / clients** — fast skim, credentials-first, low jargon, contact obvious.
-- **Fellow devs / peers** — assumes shared vocab, tolerates density, code samples land.
-- **Friends / community** — informal, personality-forward, in-jokes OK.
-- **Future-you / archive** — built for searching your own past, density over polish.
-- **The open web** — generic visitor, must self-explain, SEO matters.
+- **Recruiters / clients** - fast skim, credentials-first, low jargon, contact obvious.
+- **Fellow devs / peers** - assumes shared vocab, tolerates density, code samples land.
+- **Friends / community** - informal, personality-forward, in-jokes OK.
+- **Future-you / archive** - built for searching your own past, density over polish.
+- **The open web** - generic visitor, must self-explain, SEO matters.
 
-Multi-audience is normal. If they pick 3+, ask which one the homepage is optimized for — the rest get accommodated on subpages.
+Multi-audience is normal. If they pick 3+, ask which one the homepage is optimized for - the rest get accommodated on subpages.
 
-## 5. Stage 3 — Content inventory
+## 5. Stage 3 - Content inventory
 
 Present this menu. User checks what they want; offer to add custom items.
 
@@ -78,7 +78,7 @@ Present this menu. User checks what they want; offer to add custom items.
 
 For each picked section, ask one follow-up: **does this exist yet?** Sections without content get marked `[deferred]` in the concept doc so the user doesn't ship empty pages.
 
-## 6. Stage 4 — Tone & personality
+## 6. Stage 4 - Tone & personality
 
 Pick 2-3 adjectives. These anchor stage 5's visual suggestions and stage 6's copy voice.
 
@@ -93,9 +93,9 @@ Present as **opposing pairs** so picks force tradeoffs:
 - fast / scannable ↔ contemplative / long-form
 - confident ↔ self-deprecating
 
-A user who picks *minimal + playful + warm* gets very different suggestions than *dense + serious + clinical*. Record the picks verbatim — they go into the concept doc as the brief.
+A user who picks *minimal + playful + warm* gets very different suggestions than *dense + serious + clinical*. Record the picks verbatim - they go into the concept doc as the brief.
 
-## 7. Stage 5 — Visual direction
+## 7. Stage 5 - Visual direction
 
 Eight archetypes. **Rank the top 3 by fit** based on stages 1-4, but show the full list so the user can override.
 
@@ -112,7 +112,7 @@ Eight archetypes. **Rank the top 3 by fit** based on stages 1-4, but show the fu
 
 Show the ranking with one-sentence rationale per pick, e.g. *"Terminal/CLI fits because you picked dev audience + minimal + raw."* User picks one; if they override the ranking, ask why and record it (the override often reveals a constraint not surfaced earlier).
 
-## 8. Stage 6 — Synthesis
+## 8. Stage 6 - Synthesis
 
 Produce **2-3 distinct concept directions**, not one. Even if the user is decided, alternatives expose what they're trading off.
 
@@ -125,7 +125,7 @@ Template: [REFERENCE.md](REFERENCE.md#concept-doc-template-8).
 The three directions should differ on **a real axis**, not be cosmetic variants:
 - **Concept A** = the obvious read of the user's picks
 - **Concept B** = optimizes harder for the primary audience (often more minimal)
-- **Concept C** = a deliberate stretch — what if the experimental dial went one click further?
+- **Concept C** = a deliberate stretch - what if the experimental dial went one click further?
 
 If two of the three end up nearly identical, drop one and explain why.
 
@@ -141,21 +141,21 @@ Wireframes are about **proportion and hierarchy**, not pixel layout. No colors, 
 
 - **Skipping stages because "the user already said".** Surface their input as a default and confirm; don't assume. Half the value is forcing the user to look at what they didn't say.
 - **One concept doc instead of 2-3.** Alternatives are how the user understands what they're choosing. Single-concept output is a failed run.
-- **Visual archetype before tone is locked.** Stage order matters — visual is downstream of purpose/audience/tone, not parallel.
-- **Filling in content for `[deferred]` sections.** If the user hasn't written the essays, don't invent topic lists — the concept doc commits to *structure*, not *content*.
-- **Wireframes with implementation details.** No "use shadcn Card here" — that's ui-ux-architect's job. Wireframes show what goes where.
+- **Visual archetype before tone is locked.** Stage order matters - visual is downstream of purpose/audience/tone, not parallel.
+- **Filling in content for `[deferred]` sections.** If the user hasn't written the essays, don't invent topic lists - the concept doc commits to *structure*, not *content*.
+- **Wireframes with implementation details.** No "use shadcn Card here" - that's ui-ux-architect's job. Wireframes show what goes where.
 - **Generic suggestions.** "A clean modern portfolio" is not a concept. Every concept doc must commit to specific picks on every axis.
 
 ## 11. Hand-off
 
 Once the user picks one of the 2-3 concepts, the concept doc is the brief for:
-- [ui-ux-architect](../ui-ux-architect/SKILL.md) — for tokens, components, accessibility, the four required states.
-- Built-in `frontend-design` skill — for the actual code if going production-grade.
+- [ui-ux-architect](../ui-ux-architect/SKILL.md) - for tokens, components, accessibility, the four required states.
+- Built-in `frontend-design` skill - for the actual code if going production-grade.
 
 The concept doc should be saved to the project repo (e.g. `docs/concept.md`) so it survives as the design rationale.
 
 ## 12. Cross-skill ties
 
-- [ui-ux-architect](../ui-ux-architect/SKILL.md) — implementation-level standards; this skill feeds it the brief.
-- [demo-deck-designer](../demo-deck-designer/SKILL.md) — similar interactive walk-through structure, different domain.
-- [demo-script-designer](../demo-script-designer/SKILL.md) — narrative principles (audience-first, progressive reveal) apply to homepage copy too.
+- [ui-ux-architect](../ui-ux-architect/SKILL.md) - implementation-level standards; this skill feeds it the brief.
+- [demo-deck-designer](../demo-deck-designer/SKILL.md) - similar interactive walk-through structure, different domain.
+- [demo-script-designer](../demo-script-designer/SKILL.md) - narrative principles (audience-first, progressive reveal) apply to homepage copy too.

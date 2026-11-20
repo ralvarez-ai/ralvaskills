@@ -1,6 +1,6 @@
 # ginkit
 
-`github.com/ralvarezdev/ginkit` — the gin glue for restkit: responders, validation, request-id, logger, recovery, body cap, ETag replies, idempotency, CORS, rate limiting, health probes, page params and a bearer gate. Its own module so restkit stays free of gin.
+`github.com/ralvarezdev/ginkit` - the gin glue for restkit: responders, validation, request-id, logger, recovery, body cap, ETag replies, idempotency, CORS, rate limiting, health probes, page params and a bearer gate. Its own module so restkit stays free of gin.
 
 ## What it gives you
 

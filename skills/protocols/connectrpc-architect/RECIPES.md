@@ -17,7 +17,7 @@ service UserService {
 ```
 
 ```yaml
-# buf.gen.yaml — paths=source_relative keeps generated files beside the proto tree
+# buf.gen.yaml - paths=source_relative keeps generated files beside the proto tree
 version: v2
 plugins:
   - remote: buf.build/protocolbuffers/go
@@ -109,7 +109,7 @@ func validationError(requestID string, fields []*errdetails.BadRequest_FieldViol
 }
 ```
 
-## Interceptors — recovery + request-id
+## Interceptors - recovery + request-id
 
 ```go
 type ctxKey int
@@ -157,7 +157,7 @@ func (s *userServer) WatchUsers(
     req *connect.Request[usersv1.WatchUsersRequest],
     stream *connect.ServerStream[usersv1.UserEvent],
 ) error {
-    after := req.Msg.GetStartAfterId() // resume token — reconnect from a known point
+    after := req.Msg.GetStartAfterId() // resume token - reconnect from a known point
     for {
         select {
         case <-ctx.Done():
@@ -215,7 +215,7 @@ func TestUserServiceConformance(t *testing.T) {
     t.Parallel()
     transports := []transport{
         {"connect", newConnectClient},
-        {"grpc", newGRPCBufconnClient},  // bufconn — see grpc-architect
+        {"grpc", newGRPCBufconnClient},  // bufconn - see grpc-architect
         {"grpcweb", newGRPCWebClient},
     }
     for _, tc := range transports {
@@ -246,10 +246,10 @@ func TestUserServiceConformance(t *testing.T) {
 | `CodePermissionDenied` | 403 | authenticated but not authorized |
 | `CodeNotFound` | 404 | resource doesn't exist |
 | `CodeAlreadyExists` | 409 | unique-constraint or idempotency-key collision |
-| `CodeAborted` | 409 | concurrency conflict (ETag-equivalent) — re-fetch and retry |
+| `CodeAborted` | 409 | concurrency conflict (ETag-equivalent) - re-fetch and retry |
 | `CodeResourceExhausted` | 429 | rate limit; per-tenant quota |
-| `CodeDeadlineExceeded` | 504 | the request didn't complete in time — set by the runtime |
-| `CodeUnavailable` | 503 | transient — load-balancer drained, restart in progress; client retries |
+| `CodeDeadlineExceeded` | 504 | the request didn't complete in time - set by the runtime |
+| `CodeUnavailable` | 503 | transient - load-balancer drained, restart in progress; client retries |
 | `CodeUnimplemented` | 404 | method exists in proto but server doesn't handle it (rollout) |
 | `CodeInternal` | 500 | unexpected server-side failure |
 | `CodeDataLoss` | 500 | corrupted or lost data |

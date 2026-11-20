@@ -14,7 +14,7 @@ Iterative feedback on URU thesis `.docx`/`.md`: numbered `.md` diff files per se
 - Carry forward the previous `01-index.md` Seguimiento table at session start. Keep every issue not `aplicado`/`rechazado` unless its status moved.
 - A reversed prior decision needs a one-line `**Por qué se revirtió:**` on its row.
 - Pair any tutor comment number with its verbatim quoted text.
-- Bibliography: propose a concrete replacement via search, or mark `[suggest] needs stronger source — none found in search`.
+- Bibliography: propose a concrete replacement via search, or mark `[suggest] needs stronger source - none found in search`.
 - Review order: substantive (structure, then content) before prose. Defer prose on a section with a substantive `[blocking]`.
 - Feedback prose in Spanish; tags, headers and metadata in English.
 - Ingest `.docx` via the docx skill, else pandoc into scratch `.review.md` (never in the session folder).

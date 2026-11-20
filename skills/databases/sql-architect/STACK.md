@@ -3,10 +3,10 @@
 | Dependency | Pinned version | Purpose |
 |---|---|---|
 | postgresql | 18.4 | **Primary** target engine; native `uuidv7()`, declarative partitioning, RLS |
-| mysql | 9.7 | Secondary — covered with inline notes where it diverges |
-| sqlite | 3.53 | Secondary — embedded / single-process use |
-| golang-migrate | 4.19 | Migration runner for Go projects — raw `.sql` files, forward-only |
-| alembic | 1.18 | Migration runner for Python projects — raw `.sql` files supported |
+| mysql | 9.7 | Secondary - covered with inline notes where it diverges |
+| sqlite | 3.53 | Secondary - embedded / single-process use |
+| golang-migrate | 4.19 | Migration runner for Go projects - raw `.sql` files, forward-only |
+| alembic | 1.18 | Migration runner for Python projects - raw `.sql` files supported |
 | pgbouncer | 1.24 | Connection pooler in front of Postgres (transaction mode for OLTP) |
 
 ## Notes

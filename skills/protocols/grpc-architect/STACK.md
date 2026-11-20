@@ -5,12 +5,12 @@ This skill pins **protocol-level** versions (gRPC spec, codes) and **Go-specific
 | Dependency | Pinned version | Purpose |
 |---|---|---|
 | gRPC protocol | HTTP/2 + Protobuf wire format | Spec |
-| google.golang.org/grpc | 1.81 | Go runtime — see [go-architect](../../languages/go-architect/STACK.md) |
+| google.golang.org/grpc | 1.81 | Go runtime - see [go-architect](../../languages/go-architect/STACK.md) |
 | protoc-gen-go-grpc | 1.6.2 | Go service stub generator (referenced from `buf.gen.yaml`) |
 | buf.build/go/protovalidate (Go) | 1.2 | Server-side request validation via interceptor |
 | google.golang.org/grpc/cmd/protoc-gen-go-grpc | 1.6.2 | gRPC code generation plugin |
 | grpcurl | 1.9 | Command-line client for ad-hoc requests + reflection debugging |
-| grpc-health-protocol | v1 | `grpc.health.v1.Health` service — always on |
+| grpc-health-protocol | v1 | `grpc.health.v1.Health` service - always on |
 
 ## Notes
 

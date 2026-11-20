@@ -2,10 +2,10 @@
 set -euo pipefail
 
 # Check for decorative separator-style comments (// ──, // ═══, # ──, /* ──, etc.).
-# These add visual noise without conveying information — prefer a blank line
+# These add visual noise without conveying information - prefer a blank line
 # between logical groups, or a short comment stating the group's purpose.
 #
-# go-architect asset — wire into your task runner as an opt-in check, not the
+# go-architect asset - wire into your task runner as an opt-in check, not the
 # main lint gate: golangci-lint has no linter for this (see SKILL.md §14).
 
 EXIT_CODE=0

@@ -4,7 +4,7 @@ Reference scaffolds extracted from [SKILL.md](SKILL.md). Load on demand when you
 
 ## Feature-based project structure
 
-Mirrors [fastapi-architect](../fastapi-architect/SKILL.md#1-project-structure--feature-based) and [gin-architect](../gin-architect/SKILL.md#1-project-structure--feature-based) — same shape, different language.
+Mirrors [fastapi-architect](../fastapi-architect/SKILL.md#1-project-structure--feature-based) and [gin-architect](../gin-architect/SKILL.md#1-project-structure--feature-based) - same shape, different language.
 
 ```
 src/
@@ -32,7 +32,7 @@ src/
 ```
 
 - **A feature folder owns its UI, hooks, types, schemas, and API queries.** A component from `features/users/components/` is only imported within `features/users/`. Cross-feature reuse moves to `src/components/`.
-- **`schemas.ts` per feature** — Zod schemas for every request body and response shape. Parse at the API boundary; throw on parse failure.
+- **`schemas.ts` per feature** - Zod schemas for every request body and response shape. Parse at the API boundary; throw on parse failure.
 - **`index.ts` exports the public surface** of each feature. Importing from `features/users/components/UserList` is cheating; import from `features/users` and re-export deliberately.
 
 ## Built-in hooks reference
@@ -42,14 +42,14 @@ src/
 | `useState` | Component-local state |
 | `useReducer` | Component-local state with non-trivial transitions or many setters |
 | `useContext` | Cross-tree state that's read often, written rarely (auth, theme, locale) |
-| `useEffect` | **Synchronization** with external systems (subscribe/unsubscribe to a non-React store, set up a non-React UI listener). **Not** for fetching — TanStack Query handles that. |
+| `useEffect` | **Synchronization** with external systems (subscribe/unsubscribe to a non-React store, set up a non-React UI listener). **Not** for fetching - TanStack Query handles that. |
 | `useLayoutEffect` | DOM measurement before paint (rare; usually wrong) |
 | `useId` | Stable unique IDs for `htmlFor`/`aria-labelledby` |
 | `useTransition` | Mark non-urgent updates so urgent ones don't block |
 | `useDeferredValue` | Same idea, value-side |
-| `use` (React 19) | Unwrap a promise inside a component (with Suspense) — preferred over manual loading state where it fits |
+| `use` (React 19) | Unwrap a promise inside a component (with Suspense) - preferred over manual loading state where it fits |
 
-## `tsconfig.json` — strict baseline
+## `tsconfig.json` - strict baseline
 
 Every flag earns its place. `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` together close most of TypeScript's safety gaps.
 
@@ -70,7 +70,7 @@ Every flag earns its place. `noUncheckedIndexedAccess` and `exactOptionalPropert
 }
 ```
 
-## Component skeleton — `Props` type + loading/error guard
+## Component skeleton - `Props` type + loading/error guard
 
 ```tsx
 // features/users/components/UserCard.tsx
@@ -99,7 +99,7 @@ export function UserCard({ userId, onEdit }: UserCardProps) {
 
 ## Compound vs. configuration component shape
 
-Configuration shape (fragile — every new feature is a new prop):
+Configuration shape (fragile - every new feature is a new prop):
 
 ```tsx
 <DataTable
@@ -114,7 +114,7 @@ Configuration shape (fragile — every new feature is a new prop):
 />
 ```
 
-Composition shape (extensible — slots compose):
+Composition shape (extensible - slots compose):
 
 ```tsx
 <DataTable rows={...}>
@@ -124,7 +124,7 @@ Composition shape (extensible — slots compose):
 </DataTable>
 ```
 
-## Zustand store — focused, single-purpose
+## Zustand store - focused, single-purpose
 
 A multi-step checkout flow modeled as one store. Selectors at the call site let consumers subscribe to just the slice they read.
 

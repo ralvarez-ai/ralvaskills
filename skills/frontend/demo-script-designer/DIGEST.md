@@ -10,7 +10,7 @@ Presenter-centric demo scripts: narrative flow, visual cues, progressive reveals
 - Progress basic → complex → combined → edge cases. Stack elements only for a new insight.
 - Conversational: contractions, direct address ("Watch", "Notice", "Observe"), short sentences.
 - Commentary interprets significance, not mechanics; sets up the next question. Bridge narration connects each demo to the next with a *why*.
-- Each demo has six parts: Demo Setup, Visual Cue, Action/Query, Processing (2–3 sentences), Expected Responses (per system state), Commentary.
+- Each demo has six parts: Demo Setup, Visual Cue, Action/Query, Processing (2-3 sentences), Expected Responses (per system state), Commentary.
 
 ## Hard constraints
 - Never point to something the audience can't see on screen.

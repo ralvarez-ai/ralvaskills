@@ -1,6 +1,6 @@
 # restkit
 
-`github.com/ralvarezdev/restkit` — the framework-free half of the house REST conventions. Standard library only, so a gin service, a `net/http` service, a CLI client and an MCP server share one wire contract.
+`github.com/ralvarezdev/restkit` - the framework-free half of the house REST conventions. Standard library only, so a gin service, a `net/http` service, a CLI client and an MCP server share one wire contract.
 
 ## Packages
 

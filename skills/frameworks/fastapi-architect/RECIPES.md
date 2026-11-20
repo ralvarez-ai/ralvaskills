@@ -23,7 +23,7 @@ src/myapp/
 └── tests/
 ```
 
-## Pydantic schemas — three shapes per resource
+## Pydantic schemas - three shapes per resource
 
 ```python
 class UserCreate(BaseModel):          # request body for POST
@@ -75,7 +75,7 @@ class Settings(BaseSettings):
 def get_settings() -> Settings: return Settings()
 ```
 
-## Auth — Pattern A (in-house OAuth2 + JWT)
+## Auth - Pattern A (in-house OAuth2 + JWT)
 
 ```python
 oauth2 = OAuth2PasswordBearer(tokenUrl="/v1/auth/login")
@@ -98,7 +98,7 @@ async def get_current_user(
 CurrentUser = Annotated[User, Depends(get_current_user)]
 ```
 
-**Pattern B — external IdP**: `pyjwt`'s `PyJWKClient` for JWKS verification; cache the client (`@lru_cache`) so JWKS isn't fetched per request. Verify `aud` and `iss` explicitly.
+**Pattern B - external IdP**: `pyjwt`'s `PyJWKClient` for JWKS verification; cache the client (`@lru_cache`) so JWKS isn't fetched per request. Verify `aud` and `iss` explicitly.
 
 ## Authorization per route
 

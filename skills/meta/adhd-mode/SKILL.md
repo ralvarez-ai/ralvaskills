@@ -1,7 +1,7 @@
 ---
 name: adhd-mode
 version: 1.0.3
-description: Output shaped for a reader with ADHD — next action first, numbered steps, restated state, time estimates, no tangents. Use when the user says "adhd mode" or "I have ADHD", or invokes /adhd-mode; stays until "stop adhd mode".
+description: Output shaped for a reader with ADHD - next action first, numbered steps, restated state, time estimates, no tangents. Use when the user says "adhd mode" or "I have ADHD", or invokes /adhd-mode; stays until "stop adhd mode".
 ---
 
 # ADHD mode

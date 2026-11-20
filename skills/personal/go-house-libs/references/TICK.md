@@ -1,6 +1,6 @@
 # tick
 
-`github.com/ralvarezdev/tick` — one tested periodic runner for background jobs (reapers, pruners, refresh loops). Standard library only. Reach for it before writing `ticker := time.NewTicker(...)` with a `select` on `ctx.Done()` and `ticker.C`.
+`github.com/ralvarezdev/tick` - one tested periodic runner for background jobs (reapers, pruners, refresh loops). Standard library only. Reach for it before writing `ticker := time.NewTicker(...)` with a `select` on `ctx.Done()` and `ticker.C`.
 
 ## Packages
 

@@ -1,7 +1,7 @@
 ---
 name: caveman
 version: 1.1.2
-description: Ultra-compressed communication mode — drops filler, articles, pleasantries while keeping technical accuracy. Use when user says "caveman mode", "talk like caveman", "less tokens", "be brief", or invokes /caveman.
+description: Ultra-compressed communication mode - drops filler, articles, pleasantries while keeping technical accuracy. Use when user says "caveman mode", "talk like caveman", "less tokens", "be brief", or invokes /caveman.
 ---
 
 Respond terse like smart caveman. All technical substance stay. Only fluff die.

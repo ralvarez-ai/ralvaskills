@@ -1,4 +1,4 @@
-# Concurrency Control — `ETag` + `If-Match` Reference
+# Concurrency Control - `ETag` + `If-Match` Reference
 
 Every editable resource exposes an `ETag` on read. Every `PUT` and `PATCH` requires `If-Match`. This file is the implementation reference; the rule itself is stated in [SKILL.md](SKILL.md) §9.
 
@@ -65,16 +65,16 @@ Server-side, the ETag is derived from one of:
 | `updated_at` timestamp | No new column | Sub-millisecond collisions possible under high concurrency |
 | Hash of canonical representation (SHA-256 of normalized JSON) | Truly content-based; survives no-op writes | Expensive on large resources |
 
-**Default: monotonic version column.** Bump it in the same statement as the update (`SET ..., version = version + 1 WHERE id = ? AND version = ?`). The `WHERE version = ?` clause is itself the concurrency guard — `0` rows updated → `412`.
+**Default: monotonic version column.** Bump it in the same statement as the update (`SET ..., version = version + 1 WHERE id = ? AND version = ?`). The `WHERE version = ?` clause is itself the concurrency guard - `0` rows updated → `412`.
 
 ## Strong vs weak ETags
 
-- **Strong** (`ETag: "v7-abc123"`) — bytes match exactly. Default.
-- **Weak** (`ETag: W/"v7-abc123"`) — semantically equivalent (same after canonicalization). Use when you serve the same resource with different gzip compression / whitespace.
+- **Strong** (`ETag: "v7-abc123"`) - bytes match exactly. Default.
+- **Weak** (`ETag: W/"v7-abc123"`) - semantically equivalent (same after canonicalization). Use when you serve the same resource with different gzip compression / whitespace.
 
 Most APIs use strong. Don't reach for weak unless you have a clear reason.
 
-## `If-None-Match` on GET — free 304 caching
+## `If-None-Match` on GET - free 304 caching
 
 Clients can send the last ETag they have on a `GET` request:
 
@@ -99,11 +99,11 @@ When a `412` happens, the client must:
 2. Re-apply its intended change against the new state
 3. PUT/PATCH again with the new `If-Match`
 
-If the change is irreconcilable with the new state (the resource transitioned to a state where the change no longer makes sense), surface a domain error — not another retry.
+If the change is irreconcilable with the new state (the resource transitioned to a state where the change no longer makes sense), surface a domain error - not another retry.
 
 ## Common mistakes
 
-- **Forgetting `If-Match` on `PATCH`.** Easy to omit because PATCH "feels small." Enforce at the framework layer — reject the request if absent for any editable resource.
+- **Forgetting `If-Match` on `PATCH`.** Easy to omit because PATCH "feels small." Enforce at the framework layer - reject the request if absent for any editable resource.
 - **Generating the ETag *after* the response body is serialized.** Race: client gets ETag `X`, but the DB row was already at version `X+1` between read and serialization. Always compute ETag from the same query/transaction that produced the body.
 - **Strong ETag on a JSON response with map field ordering that varies.** The bytes change, ETags mismatch, clients see "stale" on identical content. Use canonical serialization (sorted keys) or switch to a version-column derived ETag.
 - **No `Vary: Accept-Encoding`.** A proxy caches the gzipped representation, returns it to a client that didn't send `Accept-Encoding: gzip`, ETag matches but bytes don't.

@@ -6,7 +6,7 @@ Snapshot; the live list is `rsk catalog bundles`.
 
 | Bundle | Source | Use for |
 |---|---|---|
-| `global` | local | Every machine — universal workflow + meta skills |
+| `global` | local | Every machine - universal workflow + meta skills |
 | `docs` | official | Document creation (docx/xlsx/pdf/pptx/find-docs) |
 | `design` | mixed | Frontend / UI projects |
 | `go-grpc` | local | Go gRPC services |

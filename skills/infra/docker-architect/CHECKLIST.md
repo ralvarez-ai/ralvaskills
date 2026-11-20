@@ -73,4 +73,4 @@ Use this checklist when scaffolding a new project with Docker and Compose. Answe
 
 ---
 
-**Before first deployment, review [SKILL.md](SKILL.md) § 1–11 and language-specific recipes in [RECIPES.md](RECIPES.md).**
+**Before first deployment, review [SKILL.md](SKILL.md) § 1-11 and language-specific recipes in [RECIPES.md](RECIPES.md).**

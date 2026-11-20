@@ -8,18 +8,18 @@ Implementation skeletons for the two canonical CLI stacks. See [SKILL.md](SKILL.
 |---|---|
 | `0` | Success |
 | `1` | Generic / unspecified failure |
-| `2` | Misuse — bad flag, missing required arg, invalid subcommand |
-| `64`–`78` | sysexits.h categories — useful for shell scripts to dispatch on |
+| `2` | Misuse - bad flag, missing required arg, invalid subcommand |
+| `64`-`78` | sysexits.h categories - useful for shell scripts to dispatch on |
 | `126` | Command found but not executable (rare for user CLIs) |
 | `127` | Command not found |
-| `130` | Killed by SIGINT (Ctrl-C) — runtime handles this |
+| `130` | Killed by SIGINT (Ctrl-C) - runtime handles this |
 | custom | Domain-specific (`tool deploy` could return `10` for "deploy refused: dirty tree", `11` for "deploy refused: missing approval") |
 
 - Document every non-standard exit code in `--help` or a dedicated `tool help exit-codes` page.
-- Don't reuse codes across categories within one tool — once `10` means "dirty tree", it can't later mean something else.
+- Don't reuse codes across categories within one tool - once `10` means "dirty tree", it can't later mean something else.
 - Misuse vs failure: parsing errors are 2; the tool worked but the operation failed is 1 or a custom non-zero.
 
-## Output discipline — stdout/stderr separation
+## Output discipline - stdout/stderr separation
 
 ```bash
 tool list > items.json       # writes data only to items.json
@@ -27,7 +27,7 @@ tool list 2> tool.log         # writes logs only to tool.log
 tool list | jq '.[] | .name'  # pipes data into jq; logs still visible on the terminal
 ```
 
-- Data → stdout. The thing the user wants — JSON, the filename created, the resource ID, the table.
+- Data → stdout. The thing the user wants - JSON, the filename created, the resource ID, the table.
 - Logs, progress, errors → stderr.
 - Errors that prevent producing data exit non-zero.
 
@@ -41,8 +41,8 @@ tool get user 01J9... -o json      # short form
 ```
 
 - `-o` short form is standard (`kubectl`, `gh`, `oc`).
-- JSON output is stable and documented — clients depend on it. Schema changes are breaking.
-- Don't pretty-print JSON by default — emit JSONL for list operations so `tool list -o json | grep` works.
+- JSON output is stable and documented - clients depend on it. Schema changes are breaking.
+- Don't pretty-print JSON by default - emit JSONL for list operations so `tool list -o json | grep` works.
 - Use `--output yaml` for human eyeballing of complex nested data; rarely useful for pipes.
 
 ## Error message format
@@ -71,7 +71,7 @@ tool 1.2.3 (rev abc1234, built 2026-05-21, go1.27.3)
 
 Version + git short SHA + build date + runtime version. The SHA is critical for dev builds. `tool version --output json` for scripting.
 
-## Go — cobra + pflag + viper
+## Go - cobra + pflag + viper
 
 Canonical per [go-architect §11](../../languages/go-architect/SKILL.md#11-dependencies--logging).
 
@@ -107,11 +107,11 @@ func init() {
 ```
 
 - **Viper for config loading**: `viper.SetEnvPrefix("TOOL")`, `viper.SetConfigName("config")`, `viper.SetConfigType("toml")`, then `viper.AddConfigPath(xdg.ConfigHome())`. Wires the SKILL.md §3 precedence automatically.
-- **`charmbracelet/log`** for prettier human output when slog's default text handler feels too sparse — keeps structure, adds color and alignment.
+- **`charmbracelet/log`** for prettier human output when slog's default text handler feels too sparse - keeps structure, adds color and alignment.
 - **`charmbracelet/lipgloss`** for tables, boxes, padded layouts in `text` output mode.
-- **Completions:** `cobra` generates them — register a `completion` subcommand following the cobra docs.
+- **Completions:** `cobra` generates them - register a `completion` subcommand following the cobra docs.
 
-## Python — typer (+ rich)
+## Python - typer (+ rich)
 
 Canonical per [python-architect §10](../../languages/python-architect/SKILL.md#11-tooling).
 
@@ -142,6 +142,6 @@ if __name__ == "__main__":
 
 - **`typer.echo`** for stdout; `Console(stderr=True)` (rich) for logs.
 - **Config loading:** `tomllib` (stdlib, Python 3.11+) for reading; resolve XDG paths via the `platformdirs` package or hand-rolled.
-- **`rich`** for tables, progress bars, color — auto-detects TTY, respects `NO_COLOR`, integrates with Python logging.
-- **Completions:** `typer` generates them — `tool --install-completion`.
+- **`rich`** for tables, progress bars, color - auto-detects TTY, respects `NO_COLOR`, integrates with Python logging.
+- **Completions:** `typer` generates them - `tool --install-completion`.
 - **Distribution:** `uv tool install <package>` is the cleanest install path for Python CLIs in 2026; `pipx` is the legacy default.

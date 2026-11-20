@@ -1,4 +1,4 @@
-# CI/CD — GitHub Actions Recipes
+# CI/CD - GitHub Actions Recipes
 
 Concrete YAML for the principles in [SKILL.md](SKILL.md). Each section is anchored to a SKILL.md reference; jump in via the body links, not by reading top-to-bottom.
 
@@ -8,12 +8,12 @@ Pinned action / tool versions live in [STACK.md](STACK.md). Action SHAs in examp
 
 1. [Workflow file layout](#1-workflow-file-layout)
 2. [Concurrency and triggers](#2-concurrency-and-triggers)
-3. [Composite action — language setup](#3-composite-action--language-setup)
+3. [Composite action - language setup](#3-composite-action--language-setup)
 4. [Action pinning + Renovate](#4-action-pinning--renovate)
 5. [OIDC cloud auth](#5-oidc-cloud-auth)
 6. [Language caching](#6-language-caching)
 7. [Matrix strategy](#7-matrix-strategy)
-8. [Reusable workflow — CI gate](#8-reusable-workflow--ci-gate)
+8. [Reusable workflow - CI gate](#8-reusable-workflow--ci-gate)
 9. [Build & push image](#9-build--push-image)
 10. [release-please](#10-release-please)
 11. [Deploy with environment approval](#11-deploy-with-environment-approval)
@@ -37,7 +37,7 @@ Pinned action / tool versions live in [STACK.md](STACK.md). Action SHAs in examp
 └── dependabot.yaml          # or renovate.json at repo root
 ```
 
-One concern per workflow. Keep job names stable — branch-protection rules reference them by name.
+One concern per workflow. Keep job names stable - branch-protection rules reference them by name.
 
 ---
 
@@ -66,7 +66,7 @@ permissions:
 name: scheduled-scan
 on:
   schedule:
-    - cron: '17 4 * * 1'   # Monday 04:17 UTC — off-peak, off-hour
+    - cron: '17 4 * * 1'   # Monday 04:17 UTC - off-peak, off-hour
   workflow_dispatch:        # always allow manual rerun
 
 concurrency:
@@ -76,7 +76,7 @@ concurrency:
 
 ---
 
-## 3. Composite action — language setup
+## 3. Composite action - language setup
 
 Factor out common setup steps when ≥3 jobs share them.
 
@@ -156,7 +156,7 @@ jobs:
 
 ## 5. OIDC cloud auth
 
-**AWS — no static keys in repo secrets:**
+**AWS - no static keys in repo secrets:**
 
 ```yaml
 permissions:
@@ -195,9 +195,9 @@ AWS trust policy on the role (`gha-deploy`):
 }
 ```
 
-Tighten the `sub` claim — `repo:owner/repo:ref:refs/heads/main` is broader than `repo:owner/repo:environment:prod`. Use the narrowest claim the workflow needs.
+Tighten the `sub` claim - `repo:owner/repo:ref:refs/heads/main` is broader than `repo:owner/repo:environment:prod`. Use the narrowest claim the workflow needs.
 
-**GCP — workload identity federation:**
+**GCP - workload identity federation:**
 
 ```yaml
 - uses: google-github-actions/auth@v2
@@ -208,13 +208,13 @@ Tighten the `sub` claim — `repo:owner/repo:ref:refs/heads/main` is broader tha
 
 ### Private dependency tokens
 
-**Private deps need scoped tokens, and the scopes differ.** A build that fetches private Go modules needs `contents:read`; one that fetches private `@scope/*` npm packages needs `read:packages`. With *fine-grained* tokens that means two, passed as distinct build secrets (`--secret id=github_token,env=GH_PRIVATE_MODULES_TOKEN`, `--secret id=packages_token,env=NODE_AUTH_TOKEN`); a *classic* token carrying `repo` + `read:packages` covers both scopes in one — simpler to wire into every job, at the cost of read/write on every repo the owner can reach. Either way the runner's `GITHUB_TOKEN` grants neither for *other* repos, so a secret is unavoidable. Confirm a token's scopes with `curl -sI -H "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit | grep -i x-oauth-scopes`.
+**Private deps need scoped tokens, and the scopes differ.** A build that fetches private Go modules needs `contents:read`; one that fetches private `@scope/*` npm packages needs `read:packages`. With *fine-grained* tokens that means two, passed as distinct build secrets (`--secret id=github_token,env=GH_PRIVATE_MODULES_TOKEN`, `--secret id=packages_token,env=NODE_AUTH_TOKEN`); a *classic* token carrying `repo` + `read:packages` covers both scopes in one - simpler to wire into every job, at the cost of read/write on every repo the owner can reach. Either way the runner's `GITHUB_TOKEN` grants neither for *other* repos, so a secret is unavoidable. Confirm a token's scopes with `curl -sI -H "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit | grep -i x-oauth-scopes`.
 
 ---
 
 ## 6. Language caching
 
-**Go** — `setup-go` handles modules + build cache automatically:
+**Go** - `setup-go` handles modules + build cache automatically:
 
 ```yaml
 - uses: actions/setup-go@v5
@@ -223,7 +223,7 @@ Tighten the `sub` claim — `repo:owner/repo:ref:refs/heads/main` is broader tha
     cache: true        # caches ~/go/pkg/mod and the build cache
 ```
 
-**Python (uv)** — `setup-python` with `cache: 'pip'` works for pip; uv has native cache support:
+**Python (uv)** - `setup-python` with `cache: 'pip'` works for pip; uv has native cache support:
 
 ```yaml
 - uses: actions/setup-python@v5
@@ -236,7 +236,7 @@ Tighten the `sub` claim — `repo:owner/repo:ref:refs/heads/main` is broader tha
 - run: uv sync --frozen
 ```
 
-**Node** — `setup-node` with `cache: 'pnpm'` (or `'npm'`, `'yarn'`):
+**Node** - `setup-node` with `cache: 'pnpm'` (or `'npm'`, `'yarn'`):
 
 ```yaml
 - uses: pnpm/action-setup@v4
@@ -248,7 +248,7 @@ Tighten the `sub` claim — `repo:owner/repo:ref:refs/heads/main` is broader tha
 - run: pnpm install --frozen-lockfile
 ```
 
-**Docker layer cache** — GitHub Actions cache (`type=gha`) for ephemeral, registry cache for production:
+**Docker layer cache** - GitHub Actions cache (`type=gha`) for ephemeral, registry cache for production:
 
 ```yaml
 - uses: docker/build-push-action@v6
@@ -284,7 +284,7 @@ Use `fail-fast: false` for compatibility surveys; default `true` saves runner mi
 
 ---
 
-## 8. Reusable workflow — CI gate
+## 8. Reusable workflow - CI gate
 
 Define once, call from many repos.
 
@@ -476,7 +476,7 @@ Run the real workflow locally instead of on billed runners. Keep the hosted
 workflow `workflow_dispatch`-only so a push never starts a runner.
 
 ```yaml
-# .github/workflows/ci.yml — the same file act runs
+# .github/workflows/ci.yml - the same file act runs
 on:
   workflow_dispatch:
 ```
@@ -491,7 +491,7 @@ act workflow_dispatch \
   --env-file /dev/null                # don't leak the local .env into jobs
 ```
 
-`.actrc` (committed — holds no secrets):
+`.actrc` (committed - holds no secrets):
 
 ```
 -P ubuntu-latest=catthehacker/ubuntu:act-latest
@@ -503,7 +503,7 @@ Notes:
 - `~/.cache/actcache` is act's cache server; `actions/cache` and `setup-*`
   steps persist there, so check they restore (SKILL.md §6).
 - `--concurrent-jobs 1` is a workaround for act's parallel action-clone race,
-  not a default — use it only while warming `~/.cache/act`, then drop it.
+  not a default - use it only while warming `~/.cache/act`, then drop it.
 - For `docker/build-push-action` under act, `cache-to: type=registry` writes to
   a registry the builder can reach; add `driver-opts: network=host` to
   `docker/setup-buildx-action` when that registry is on the host.

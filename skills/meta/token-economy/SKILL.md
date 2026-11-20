@@ -1,7 +1,7 @@
 ---
 name: token-economy
 version: 1.1.3
-description: Token and cost control for coding agents — context and cache hygiene, batching, subagents for mechanical work, escalation, session measurement, guardrails, RTK/CodeGraph audit. Use when saving tokens, cost or context.
+description: Token and cost control for coding agents - context and cache hygiene, batching, subagents for mechanical work, escalation, session measurement, guardrails, RTK/CodeGraph audit. Use when saving tokens, cost or context.
 ---
 
 # Token Economy
@@ -17,12 +17,12 @@ project is [rsk-guide](../rsk-guide/SKILL.md).
 
 ## 1. When to invoke
 
-- **Measure / audit / setup** — "where did my tokens go", a surprising bill, new machine or
+- **Measure / audit / setup** - "where did my tokens go", a surprising bill, new machine or
   project, installing context-mode, RTK or CodeGraph, sessions hitting limits early.
-- **Working** — before a broad exploration, before a refactor, audit or edit that repeats over
+- **Working** - before a broad exploration, before a refactor, audit or edit that repeats over
   many files, when choosing a model or subagent, before polling a job, when a session has
   grown long or drifted across tasks, when a cheap model starts looping.
-- **Not this skill** — "just be terse" is [caveman](../caveman/SKILL.md).
+- **Not this skill** - "just be terse" is [caveman](../caveman/SKILL.md).
 
 ## 2. Where tokens go
 

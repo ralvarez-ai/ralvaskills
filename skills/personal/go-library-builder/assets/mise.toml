@@ -1,4 +1,4 @@
-# mise.toml — toolchain pinning for a ralvarezdev Go library.
+# mise.toml - toolchain pinning for a ralvarezdev Go library.
 # Run `mise install` after copying. Drop sqlc/goose if the library has no DB adapter.
 [tools]
 go = "1.27.3"

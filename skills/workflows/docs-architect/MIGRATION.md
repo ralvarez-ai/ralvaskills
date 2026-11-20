@@ -43,10 +43,10 @@ Goal: leave only what is still pending.
 
 For each item in each backlog, decide one of:
 
-- **Resolved** — evidence found. Record the evidence: a commit hash, a file or symbol that now exists, a merged PR, a passing check. Move to `done/YYYY-MM.md` using the evidence date.
-- **Pending** — keep, with project tag, priority and origin link.
-- **Doubtful** — cannot be verified from the repo. Do not delete; list it for the user.
-- **Stale** — in `Later` 2–3 months with no movement, or superseded by another item. Delete or demote to `Someday`.
+- **Resolved** - evidence found. Record the evidence: a commit hash, a file or symbol that now exists, a merged PR, a passing check. Move to `done/YYYY-MM.md` using the evidence date.
+- **Pending** - keep, with project tag, priority and origin link.
+- **Doubtful** - cannot be verified from the repo. Do not delete; list it for the user.
+- **Stale** - in `Later` 2-3 months with no movement, or superseded by another item. Delete or demote to `Someday`.
 
 A ticked box or a "done" note in the backlog is a claim, not evidence. Verify against the code and `git log` before moving anything. Deleting is irreversible outside git: work on a branch or leave it uncommitted so the diff can be reviewed.
 
@@ -61,8 +61,8 @@ Then apply only the verdicts the user approved.
 
 While cleaning the backlog, decide its layout ([BACKLOG.md](BACKLOG.md)):
 
-- **Queue** — keep it when there are fewer than ~20 items and one branch at a time touches them.
-- **Item files** — move to it when items run into the dozens, when several branches or agents add items in parallel, or when a tool indexes the backlog. The list conflicts line by line; one file per item does not.
+- **Queue** - keep it when there are fewer than ~20 items and one branch at a time touches them.
+- **Item files** - move to it when items run into the dozens, when several branches or agents add items in parallel, or when a tool indexes the backlog. The list conflicts line by line; one file per item does not.
 
 The conversion is mechanical and loses no text:
 
@@ -70,7 +70,7 @@ The conversion is mechanical and loses no text:
 2. Tables are not items: `git mv` a tracker to `docs/plans/` with frontmatter and convert only the bullet items; a row that points at another repo's queue stays in the tracker.
 3. With the portal's CLI: `rdk migrate docs/backlog/<project>.md --project <slug> --root docs/backlog`, then `git rm` the list and `rdk check --root docs/backlog` until it prints `ok`.
 4. Item files are one level deeper: every relative link gains a `../`.
-5. Report what the conversion changed — a title split into title and body, a dropped prose block, a hashtag turned into a section — in the commit message.
+5. Report what the conversion changed - a title split into title and body, a dropped prose block, a hashtag turned into a section - in the commit message.
 
 The reverse is not supported: a list cannot hold ids, per-item history or parallel branches without conflicts.
 

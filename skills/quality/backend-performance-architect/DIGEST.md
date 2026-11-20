@@ -7,7 +7,7 @@ Impact-ordered latency and throughput playbook: remove work, query shape, hops, 
 - Order by impact: remove work (cache, precompute, off the hot path) → query and index shape → fewer or parallel hops → tail controls → transport/framework → micro-optimization.
 - Measure first: p50/p95/p99 per endpoint, `EXPLAIN (ANALYZE, BUFFERS)`, `pg_stat_statements`, pprof, a trace of the slow request. No profile, no change.
 - Stop a rung when the profile stops showing that layer. Never change the transport while a query dominates the endpoint.
-- Cache in layers — in-process (bounded + TTL), shared (Valkey/Redis), CDN/HTTP — with an explicit invalidation story; version keys; never cache an authorization decision without revocation.
+- Cache in layers - in-process (bounded + TTL), shared (Valkey/Redis), CDN/HTTP - with an explicit invalidation story; version keys; never cache an authorization decision without revocation.
 - Coalesce concurrent misses (`singleflight`), jitter TTLs so a fleet does not expire together, and cache negatives briefly.
 - Move email, push, audit, exports and webhooks behind a queue or outbox; return `202` and let a worker do the work.
 - Index every FK not covered by a composite index, and every `WHERE`/`JOIN` column; composite most-selective-first; partial index for soft delete; read the plan first.

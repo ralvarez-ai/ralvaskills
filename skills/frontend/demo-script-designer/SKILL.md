@@ -1,7 +1,7 @@
 ---
 name: demo-script-designer
-version: 2.0.0
-description: Design and refine presenter-centric demo scripts — narrative flow over feature lists, visual-cue mapping, progressive capability reveals, query-to-explanation alignment, redundancy audits. Use when creating live demos, structured walkthroughs, or turning specs into engaging narratives.
+version: 2.0.1
+description: Design and refine presenter-centric demo scripts - narrative flow over feature lists, visual-cue mapping, progressive capability reveals, query-to-explanation alignment, redundancy audits. Use when creating live demos, structured walkthroughs, or turning specs into engaging narratives.
 ---
 
 # Demo Script Designer
@@ -17,7 +17,7 @@ Creating live demonstration scripts; building structured walkthroughs of systems
 - **Narrative over features.** Each section builds on previous learning; bridge narration explains the *why*. Story arc: observe → understand → apply → verify. Conversational, not documentation-style.
 - **Element documentation.** Always include element purpose when referenced: `YI-100 (pump status indicator)`. Help the audience understand what they're looking at.
 - **Visual guidance mapping.** Map abstract references to actual visible elements. Data field `"status"` → point to the status icon/light. **Never point to something the audience can't see on screen.**
-- **Query-to-explanation alignment.** The explanation must accurately describe what's being queried — don't claim "context-learning" if tags are explicit. Explain the mechanism (parallelization, routing, lookup) and set up expectation for the response.
+- **Query-to-explanation alignment.** The explanation must accurately describe what's being queried - don't claim "context-learning" if tags are explicit. Explain the mechanism (parallelization, routing, lookup) and set up expectation for the response.
 - **No redundancy.** Don't repeat the same query/capability in consecutive demos. Build progressive revelation: basic → complex → combined → edge cases. Stack elements only when combining for a *new insight*.
 - **Conversational tone.** Use contractions ("it's", "we've"). Direct the audience ("Watch", "Notice", "Observe"). Short punchy sentences over long lists. Tell a story.
 - **Commentary interprets, doesn't restate.** Explains *significance*, not mechanics; sets up the next logical question.
@@ -59,7 +59,7 @@ Wrong/right pairs (explanation/query mismatch, pointing to invisible, robotic na
 ## 6. Output deliverables
 
 1. **Structured script** with the six-part narrative sections (§2).
-2. **Visual element map** — reference → visible screen element.
+2. **Visual element map** - reference → visible screen element.
 3. **Demo flow diagram** showing connections and progression.
-4. **Redundancy audit** — what was removed/consolidated and why.
-5. **Presenter notes** — what to watch for, where to point, what to emphasize.
+4. **Redundancy audit** - what was removed/consolidated and why.
+5. **Presenter notes** - what to watch for, where to point, what to emphasize.

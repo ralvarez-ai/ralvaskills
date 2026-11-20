@@ -1,10 +1,10 @@
-# ML Paper Format — Reference Implementations
+# ML Paper Format - Reference Implementations
 
 Skeletons referenced from [SKILL.md](SKILL.md). General LaTeX skeletons (project tree, `.latexmkrc`, CI) live in [latex-architect/RECIPES.md](../../languages/latex-architect/RECIPES.md) and are not repeated here.
 
 ## 1. Root file per venue
 
-The structure is identical across venues; only the style-file line and the final-mode toggle change. Download the `.sty` from the official source — see [assets/VENUE_TEMPLATES.md](assets/VENUE_TEMPLATES.md).
+The structure is identical across venues; only the style-file line and the final-mode toggle change. Download the `.sty` from the official source - see [assets/VENUE_TEMPLATES.md](assets/VENUE_TEMPLATES.md).
 
 **NeurIPS.** One option controls all three modes; the default (no option) is anonymous submission:
 
@@ -50,7 +50,7 @@ The structure is identical across venues; only the style-file line and the final
 \icmltitlerunning{Short Title}
 ```
 
-**ICLR.** Final mode is a command, not an option — putting it in the wrong place silently does nothing:
+**ICLR.** Final mode is a command, not an option - putting it in the wrong place silently does nothing:
 
 ```latex
 \usepackage{iclr2025_conference, times}
@@ -73,7 +73,7 @@ Place at the end of the introduction. Each bullet is a claim the paper substanti
 \end{itemize}
 ```
 
-Note `\model{}` with braces before a space — without them the macro swallows the following space.
+Note `\model{}` with braces before a space - without them the macro swallows the following space.
 
 ## 3. Results table
 
@@ -106,13 +106,13 @@ Mechanical checks, runnable from the repo root before upload:
 # Page count of the main text (subtract appendix pages manually)
 pdfinfo build/main.pdf | grep Pages
 
-# Every font embedded — AAAI rejects on non-embedded fonts
+# Every font embedded - AAAI rejects on non-embedded fonts
 pdffonts build/main.pdf | awk 'NR>2 && $NF=="no" {print "NOT EMBEDDED:", $1}'
 
 # Author metadata leaked from the editor or OS
 pdfinfo build/main.pdf | grep -Ei 'Author|Creator|Producer|Title'
 
-# Unresolved references compile to "?" — catch them in the log, not the PDF
+# Unresolved references compile to "?" - catch them in the log, not the PDF
 grep -Ei 'undefined (reference|citation)|LaTeX Warning: Reference' build/main.log
 
 # Deanonymization slips in the source
@@ -136,7 +136,7 @@ Then the manual pass:
 
 ## 5. Reviewer response letter
 
-For rebuttals and revisions, `latexdiff` produces a marked-up PDF showing exactly what changed between submission and revision — reviewers consistently rate this as reducing effort:
+For rebuttals and revisions, `latexdiff` produces a marked-up PDF showing exactly what changed between submission and revision - reviewers consistently rate this as reducing effort:
 
 ```bash
 latexdiff --flatten submitted/main.tex revised/main.tex > diff.tex

@@ -1,6 +1,6 @@
 # Repo layouts for Go projects
 
-There is no single correct layout — only better fits for a project's shape. This file is a
+There is no single correct layout - only better fits for a project's shape. This file is a
 catalogue to **review per project** and to revisit when the project changes. [SKILL.md](SKILL.md)
 §10, §16 and §17 hold the rules; this file holds the options, trade-offs and a review checklist.
 
@@ -24,7 +24,7 @@ catalogue to **review per project** and to revisit when the project changes. [SK
 | Several deployables, separate teams or release cadence | 6. Multi-module workspace (§16) |
 | Tightly entangled contexts, one team, one binary | 7. Layer-first |
 
-Module count, process types, generated code, tests and ownership are orthogonal to this choice — see the sections after the layouts.
+Module count, process types, generated code, tests and ownership are orthogonal to this choice - see the sections after the layouts.
 
 ## Layouts
 
@@ -55,8 +55,8 @@ Cost: model and use cases share a package, so purity is by convention and by tes
 ### 4. Feature-first, escalated
 ```
 <feature>/
-    core/                 model, rules, ports the rules declare — no framework imports
-    <use-case layer>/     operations | usecase | application — named for what it holds
+    core/                 model, rules, ports the rules declare - no framework imports
+    <use-case layer>/     operations | usecase | application - named for what it holds
     adapters/<tech>/      everything touching a technology
 ```
 Use for domain-heavy features only (real invariants, 2+ adapters per port, a model that must be
@@ -68,15 +68,15 @@ platform/<ctx>/     group named for the area, not a generic `contexts/`
 billing/<ctx>/
 pkg/  contracts/  cmd/  internal/
 ```
-Introduce groups past ~7 contexts so the root stays at a handful of folders; cap groups at ~5–7.
+Introduce groups past ~7 contexts so the root stays at a handful of folders; cap groups at ~5-7.
 Keep reserved names (`pkg`, `contracts`, `cmd`, `internal`) distinct from group names. With
 fewer contexts, put them straight at the root. `**/` path patterns make the rank rule
 indifferent to grouping.
 
 ### 6. Multi-module workspace
 `go.work` with one module per context or per group; heavy or shared adapters can be their own
-module (`<ctx>-<tech>`) so `go.mod` — not a test — forbids the import. Extract a group once it
-passes ~8–10 contexts or gets its own team. See SKILL.md §16.
+module (`<ctx>-<tech>`) so `go.mod` - not a test - forbids the import. Extract a group once it
+passes ~8-10 contexts or gets its own team. See SKILL.md §16.
 
 ### 7. Layer-first
 ```
@@ -111,7 +111,7 @@ The layouts above describe the model. The process shape on top differs:
 
 ## Generated code and SQL
 
-- **Where:** next to the consumer that owns the schema — `<feature>/<impl>/db` for sqlc output and `//go:embed` SQL, `contracts/<name>/gen` for proto/OpenAPI. A central `gen/` is fine when output is shared by many features.
+- **Where:** next to the consumer that owns the schema - `<feature>/<impl>/db` for sqlc output and `//go:embed` SQL, `contracts/<name>/gen` for proto/OpenAPI. A central `gen/` is fine when output is shared by many features.
 - **Committed or not:** commit generated code when consumers must build without the generator; otherwise generate in CI. Pick one rule per repo and write it down.
 - **Tooling:** exclude generated paths from the rank test, linters and coverage by pattern (`**/gen/**`, `*.pb.go`, `*.sql.go`), and mark files `// Code generated ... DO NOT EDIT.`
 - **Migrations:** per-service next to the schema owner, one numbered sequence per database, not per feature.
@@ -120,8 +120,8 @@ The layouts above describe the model. The process shape on top differs:
 
 - **Integration events and shared contract types** live in the publishing context's contract package (or `contracts/` when wire-only). Consumers depend on the contract, never on the publisher's model.
 - **Shared vocabulary stays tiny and deliberate:** value objects and pure rules only, no behaviour that one context would want to change alone. Name it for what it provides (`finance`, `money`, `permission`), not a catch-all (`shared`, `common`, `types`); DDD's `kernel`/`domain` are acceptable but generic. Prefer the focused name when the domain word is already a context, split it when it holds unrelated clusters, and keep vocabulary-free helpers in `internal/` unless an external module imports them (then `pkg/`).
-- **Port signatures are part of the boundary.** An interface or func type may use the shared vocabulary, `pkg` and the standard library, never a sibling context's exported type — even when the import itself is allowlisted. Put the shared type in the vocabulary package or declare a consumer-local interface. Enforce it with an AST test over the context root; the import-level rank test cannot see this leak.
-- **Cross-repo sharing is a library, not a copied package.** When the same vocabulary is needed by independently versioned modules, publish it as a small library (`corekit`-style error kinds, a contracts module) and let each app compose it; do not fork a `kernel` into every repo. Inside one module, a `domain/<concept>/` tree is the same idea split by concept — keep each subpackage small and named for its concept.
+- **Port signatures are part of the boundary.** An interface or func type may use the shared vocabulary, `pkg` and the standard library, never a sibling context's exported type - even when the import itself is allowlisted. Put the shared type in the vocabulary package or declare a consumer-local interface. Enforce it with an AST test over the context root; the import-level rank test cannot see this leak.
+- **Cross-repo sharing is a library, not a copied package.** When the same vocabulary is needed by independently versioned modules, publish it as a small library (`corekit`-style error kinds, a contracts module) and let each app compose it; do not fork a `kernel` into every repo. Inside one module, a `domain/<concept>/` tree is the same idea split by concept - keep each subpackage small and named for its concept.
 - **Rule:** a context never imports another context's `core/`, feature root or adapters. If two contexts need the same type, either the shared vocabulary owns it or each defines its own and a translator sits at the boundary.
 
 ## Adapter names: role and protocol
@@ -144,7 +144,7 @@ level:
   per resource).
 - **Servers stay at the application level.** `internal/api` (HTTP), `internal/grpcserver` and
   `internal/<mcp>` own the listeners, auth, error mapping and lifecycle; the context packages are
-  handlers. When a context owns inbound handlers, `<ctx>/mcp` — later `<ctx>/rest`, `<ctx>/grpc` —
+  handlers. When a context owns inbound handlers, `<ctx>/mcp` - later `<ctx>/rest`, `<ctx>/grpc` -
   is the whole name.
 - **`rpc` names an RPC layer you own; stock gRPC is `grpc`.** etcd `v3rpc`, CockroachDB `pkg/rpc`
   and Consul `agent/rpc` are in-house RPC/endpoint surfaces; a generated gRPC client is
@@ -177,11 +177,11 @@ Layout follows team boundaries. Align top-level directories with `CODEOWNERS` en
 
 ## Non-Go parts of the repo
 
-- **Polyglot monorepo:** keep the Go module in one place with `go.mod` (or `go.work`) at its root, so Go tooling and module paths are unambiguous. The repo root (shape A) and a `backend/` subtree (shape B) both do — see *App repo with a SPA* below.
+- **Polyglot monorepo:** keep the Go module in one place with `go.mod` (or `go.work`) at its root, so Go tooling and module paths are unambiguous. The repo root (shape A) and a `backend/` subtree (shape B) both do - see *App repo with a SPA* below.
 - **Ops and tooling:** `deploy/`, `scripts/`, `tools/` (build-time Go tools, pinned via `tools.go` or the `tool` directive), `docs/`. Keep them out of `cmd/` and `internal/`.
-- **The root** holds `go.mod`/`go.work`, the task runner file, `README`, `AGENTS.md`, CI config and `CODEOWNERS` — little else.
+- **The root** holds `go.mod`/`go.work`, the task runner file, `README`, `AGENTS.md`, CI config and `CODEOWNERS` - little else.
 
-### App repo with a SPA — two shapes
+### App repo with a SPA - two shapes
 
 Most app repos pair a Go module with a JavaScript/TypeScript single-page app. Two shapes fit that;
 neither is universal, and the ecosystem does not settle it: of ~30 active Go repos with a SPA
@@ -189,7 +189,7 @@ checked, roughly nine in ten put the module at the repo root, and the rest use a
 subtree. Pick per repo from the signals below and **write the choice down** (an ADR or the repo's
 `AGENTS.md`).
 
-#### Shape A — the module at the repo root
+#### Shape A - the module at the repo root
 
 ```
 repo/
@@ -215,7 +215,7 @@ repo, and the SPA is a compiled asset the binary serves. Costs: a browser-facing
 sits beside `cmd/` and `internal/`; a large repo needs its contexts grouped (layout 5) so the root
 stays readable.
 
-#### Shape B — `backend/` with a sibling `frontend/`
+#### Shape B - `backend/` with a sibling `frontend/`
 
 ```
 repo/
@@ -268,9 +268,9 @@ Docker, docs) and changes no behaviour.
    binary a shared root is enough; with two or more, give each its own so one lifecycle cannot
    disturb another.
 5. **Contexts stay flat** at the module root, implementations as sibling subpackages named by role
-   and protocol (`postgres/`, `client/<protocol>/`, and `<protocol>/` for inbound handlers — see
+   and protocol (`postgres/`, `client/<protocol>/`, and `<protocol>/` for inbound handlers - see
    [Adapter names](#adapter-names-role-and-protocol)). Group under `ledger/`, `billing/` only past
-   ~7 contexts — see layout 5.
+   ~7 contexts - see layout 5.
 6. **Operational directories exist once, at the repo root:** `config/`, `bin/`, `scripts/`, `docs/`,
    `deploy/`. A `backend/scripts/` next to a root `scripts/` is two homes for one concern, and
    `backend/config/` splits configuration by language instead of by scope.
@@ -278,7 +278,7 @@ Docker, docs) and changes no behaviour.
    live under `internal/`.** Do not mirror `contracts/openapi/` as a second `openapi/` at the module
    root: put the merged artefact and its `embed.go` in `internal/<name>/` so the two are not
    mistaken for each other.
-8. **The frontend build reaches the binary one of two ways — pick one and record it.** `//go:embed`
+8. **The frontend build reaches the binary one of two ways - pick one and record it.** `//go:embed`
    cannot escape its package directory, so the SPA has two valid routes:
    - **Copy:** `cp -r web/dist internal/webui/dist` in the task runner, CI and the Dockerfile.
      Simple, but the step lives in three places that must stay in step.
@@ -308,7 +308,7 @@ are used by about a third each, and the rest name the product (`site/`, `console
 
 | Directory | Reads as | Use when |
 |---|---|---|
-| `frontend/` | the other toolchain | the Go module is under `backend/` — the pair is the point |
+| `frontend/` | the other toolchain | the Go module is under `backend/` - the pair is the point |
 | `web/` | the web face of the product | the module is at the repo root and the SPA is a compiled asset |
 | `ui/` | the UI of this tool | the SPA is embedded with `//go:embed` (desktop-ish or single-binary tools) |
 | `site/` `console/` `portal/` `dashboard/` | a product surface with its own name | the product has several, or the name is part of the vocabulary |
@@ -322,7 +322,7 @@ progress. Keep the pair consistent, and rename the *pair*, not one half.
 - Packages named `utils`, `common`, `helpers`, `models`, `types`, `shared`.
 - One global `domain/` or `models/` holding every context.
 - `pkg/` used as a dumping ground for anything "reusable" with a single consumer.
-- Directories nested deeper than about 3–4 levels, or one package per type.
+- Directories nested deeper than about 3-4 levels, or one package per type.
 - A package with hundreds of files and no internal structure (god package), or two packages that always change together.
 - Import cycles worked around with interfaces in a third package instead of moving the code.
 - Rank-rule exceptions that only grow.
@@ -348,12 +348,12 @@ progress. Keep the pair consistent, and rename the *pair*, not one half.
   inside ends one level deeper for no gain, and the folder becomes where unrelated things land. Name each
   package for what it does (`internal/obligations`, `internal/filesync`) and let `internal/` be the privacy
   boundary. A layer folder is meaningful *inside* a feature (`<feature>/core`, `<feature>/adapters`) because it
-  groups that feature's own pieces — the rule is about the root bucket across contexts. If a bucket is
+  groups that feature's own pieces - the rule is about the root bucket across contexts. If a bucket is
   unavoidable, its children must be domains (`pkg/services/alerting`, as Grafana does), never "misc".
 
 ## What large Go codebases tend to do
 
-Component- or subsystem-first with flat, concept-named packages — not a fixed per-context layer
+Component- or subsystem-first with flat, concept-named packages - not a fixed per-context layer
 triplet. The component root holds model, logic and interfaces; implementations are sibling
 subpackages by variant; subpackages are split by concern only when self-contained; big packages
 are organized by file prefix before folders; `internal/` holds unstable helpers; shared types or
@@ -362,7 +362,7 @@ mechanically (import-restriction files, `depguard`, custom `go list` tests). Non
 `application/` or `app/` layer at the root: Grafana groups application services under `pkg/services/<domain>`,
 Gitea uses `services/`, and Argo CD (controller/server/reposerver), Prometheus, Vault, etcd, Tailscale and Moby
 name the domain or the role instead. Staying flat forever
-ends in a god package — that is the signal to extract a concern or escalate the feature, not a
+ends in a god package - that is the signal to extract a concern or escalate the feature, not a
 reason to adopt layers up front.
 
 ## Migrating an existing tree

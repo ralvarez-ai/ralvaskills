@@ -31,7 +31,7 @@ const count = 3;
 - **A `<script>` inside a component is hoisted to the page head and rendered
   once**, no matter how many instances of the component exist. It cannot
   reference per-instance props or local state.
-- **`is:inline` opts out completely** — no bundling, no TypeScript, no import.
+- **`is:inline` opts out completely** - no bundling, no TypeScript, no import.
   Use it for the pre-paint theme guard below and for third-party snippets you
   don't control.
 
@@ -154,7 +154,7 @@ const { Content } = await render(project);
   `entry.render()`.
 - **`z.coerce.date()`** normalizes YAML date parsing, which otherwise varies by
   parser.
-- **Import Zod from `astro/zod`** — a bare `zod` import can create duplicate
+- **Import Zod from `astro/zod`** - a bare `zod` import can create duplicate
   instances and break schema resolution.
 
 ### Filtering, sorting, projecting
@@ -165,7 +165,7 @@ import { getCollection } from 'astro:content';
 
 const all = await getCollection('projects');
 
-// Filter in the query — returns a narrowed type and skips work.
+// Filter in the query - returns a narrowed type and skips work.
 const pinned = await getCollection('projects', ({ data }) => data.pinned);
 
 // getCollection is unsorted; sort on every query that renders a list.
@@ -179,7 +179,7 @@ const byCategory = all.reduce<Record<string, typeof all>>((acc, p) => {
   return acc;
 }, {});
 
-// `undefined` keys are empty buckets — filter before rendering the separator.
+// `undefined` keys are empty buckets - filter before rendering the separator.
 const activeCategories = Object.entries(byCategory).filter(([, v]) => v.length > 0);
 ---
 
@@ -292,7 +292,7 @@ const { title } = Astro.props;
 ```
 
 ```css
-/* src/styles/tokens.css — global, imported from the layout */
+/* src/styles/tokens.css - global, imported from the layout */
 :root,
 [data-theme='tokyo-night'] {
   --bg: #1a1b26;
@@ -323,7 +323,7 @@ const { title } = Astro.props;
 </style>
 
 <style is:global>
-  /* Escapes scoping — use for token definitions and resets. */
+  /* Escapes scoping - use for token definitions and resets. */
 </style>
 ```
 
@@ -351,13 +351,13 @@ export const server = {
       message: z.string().min(10).max(2000),
     }),
     handler: async (input, context) => {
-      // Re-verify auth here — the calling context is not a trust boundary.
+      // Re-verify auth here - the calling context is not a trust boundary.
       const session = await context.session?.get('user');
       if (!session) {
         return { ok: false, error: 'Not authenticated' } as const;
       }
 
-      await deliverEmail(input); // server-only — never bundled
+      await deliverEmail(input); // server-only - never bundled
       return { ok: true, received: input.email } as const;
     },
   }),
@@ -371,7 +371,7 @@ import { actions } from 'astro:actions';
 
 const result = Astro.getActionResult(actions.contact);
 if (result && !result.error) {
-  // POST / redirect / GET — prevents resubmission on refresh.
+  // POST / redirect / GET - prevents resubmission on refresh.
   return Astro.redirect('/thanks');
 }
 const errors = result?.error?.fields;
@@ -411,7 +411,7 @@ import Chart from '../components/Chart.svelte';
 ```
 
 - **Every directive except `client:only` renders to static HTML first**, then
-  hydrates. Prefer those — you get content without JS and avoid a layout shift.
+  hydrates. Prefer those - you get content without JS and avoid a layout shift.
 - **`client:only` needs an explicit framework string** and ships no server HTML.
   It is the only correct use for components that crash on `window` during SSR.
 - **Before adding any island**, check whether a processed `<script>` or a CSS
@@ -426,7 +426,7 @@ import type { APIRoute } from 'astro';
 export const POST: APIRoute = async ({ request }) => {
   const body = await request.json();
   // Prefer Actions (SKILL.md §5). Reach for a bare endpoint only when a
-  // non-Astro consumer must POST here — webhooks, external clients.
+  // non-Astro consumer must POST here - webhooks, external clients.
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
@@ -448,7 +448,7 @@ pnpm astro dev --background     # start detached
 pnpm astro dev status          # is it up, on what port
 pnpm astro dev logs            # tail its output
 pnpm astro dev stop            # stop it
-pnpm check                     # astro check — TypeScript, run before commit
+pnpm check                     # astro check - TypeScript, run before commit
 pnpm build                     # production build to dist/
-pnpm preview                   # serve dist/ locally — what E2E should target
+pnpm preview                   # serve dist/ locally - what E2E should target
 ```

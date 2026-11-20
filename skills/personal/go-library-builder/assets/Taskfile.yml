@@ -1,4 +1,4 @@
-# Taskfile.yml — pre-commit gate for a ralvarezdev Go library (Task v3).
+# Taskfile.yml - pre-commit gate for a ralvarezdev Go library (Task v3).
 # Set MODULE to the module path so `fmt` and lint use the right local prefix.
 version: "3"
 
@@ -23,7 +23,7 @@ tasks:
       - go test -race -count=1 ./...
 
   test:short:
-    desc: Fast tests only — skips container-backed integration tests.
+    desc: Fast tests only - skips container-backed integration tests.
     cmds:
       - go test -short -count=1 ./...
 
@@ -102,7 +102,7 @@ tasks:
       - git push origin "v{{.VERSION}}"
 
   check:
-    desc: Pre-commit gate — fmt, align, lint, scan.
+    desc: Pre-commit gate - fmt, align, lint, scan.
     cmds:
       - task: fmt
       - task: align:fix

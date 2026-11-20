@@ -1,6 +1,6 @@
 # viperkit
 
-`github.com/ralvarezdev/viperkit` — file-sourced secrets for viper configs: for an environment variable `VAR`, a set `VAR_FILE` has its contents become `VAR` at config-load time. This is the `<VAR>_FILE` indirection Docker Compose `secrets:` and systemd `LoadCredential=` need. Reach for it before hand-writing `<VAR>_FILE` handling or letting a secret live only in the environment.
+`github.com/ralvarezdev/viperkit` - file-sourced secrets for viper configs: for an environment variable `VAR`, a set `VAR_FILE` has its contents become `VAR` at config-load time. This is the `<VAR>_FILE` indirection Docker Compose `secrets:` and systemd `LoadCredential=` need. Reach for it before hand-writing `<VAR>_FILE` handling or letting a secret live only in the environment.
 
 ## Packages
 
@@ -27,7 +27,7 @@ if err := viperconfig.BindEnv(v, "auth.jwt_secret", "FINANCE_AUTH_JWT_SECRET"); 
 ## Rules
 
 - **Resolve before binding.** `_FILE` resolution must run before the env bindings read the variables, so a file-sourced value and an inline one are indistinguishable to the rest of the config.
-- **Unset/empty `<VAR>_FILE` is a no-op; a set but unreadable file is an error** — fail closed rather than run without the secret. A trailing `\r\n` is trimmed.
+- **Unset/empty `<VAR>_FILE` is a no-op; a set but unreadable file is an error** - fail closed rather than run without the secret. A trailing `\r\n` is trimmed.
 - **Only the app/bootstrap layer calls it.** Domain libraries never read env or viper ([go-library-builder §5](../../go-library-builder/SKILL.md)).
 - **The root stays stdlib-only;** anything that imports viper goes in the `viperconfig` subpackage, so a consumer that only needs file resolution never compiles viper.
 - **The consumer owns the key list.** `viperkit` resolves whatever variables it is given; which keys are secrets is the app's decision.

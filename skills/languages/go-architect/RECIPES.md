@@ -1,6 +1,6 @@
 # Go Architecture Recipes
 
-Reference implementations from [SKILL.md](SKILL.md). Currently: a `go.work` multi-module workspace with two bounded contexts — `order` (a normal context) and `checkout` (an orchestrator that coordinates `order`, inventory, and payment), see §16 for the rules; and an external program behind a port (§4), at the end of this file.
+Reference implementations from [SKILL.md](SKILL.md). Currently: a `go.work` multi-module workspace with two bounded contexts - `order` (a normal context) and `checkout` (an orchestrator that coordinates `order`, inventory, and payment), see §16 for the rules; and an external program behind a port (§4), at the end of this file.
 
 ## Multi-module workspace layout
 
@@ -12,17 +12,17 @@ myworkspace/
 │   └── money/
 │       └── money.go
 │
-├── pkg/                                  # cross-cutting, shared by 2+ services — each its own module
+├── pkg/                                  # cross-cutting, shared by 2+ services - each its own module
 │   ├── problem/                          # RFC 9457 mapper
 │   ├── validation/
 │   └── obs/
 │
 ├── internal/
-│   ├── order/                            # bounded context — own module
+│   ├── order/                            # bounded context - own module
 │   │   ├── domain/
 │   │   │   └── order/
 │   │   │       ├── order.go
-│   │   │       ├── repository.go         # secondary port — lives in domain (DIP)
+│   │   │       ├── repository.go         # secondary port - lives in domain (DIP)
 │   │   │       └── errors.go
 │   │   ├── app/
 │   │   │   └── order/
@@ -35,9 +35,9 @@ myworkspace/
 │   │           └── postgres/
 │   │               └── order_repo.go
 │   │
-│   └── checkout/                          # orchestrator context — own module
+│   └── checkout/                          # orchestrator context - own module
 │       ├── app/
-│       │   ├── ports.go                   # its OWN ports — not order's
+│       │   ├── ports.go                   # its OWN ports - not order's
 │       │   └── checkout.go
 │       └── adapters/
 │           ├── primary/
@@ -48,7 +48,7 @@ myworkspace/
 │               ├── inventoryclient/
 │               └── paymentclient/
 │
-├── app/                                    # composition roots — one per deployable
+├── app/                                    # composition roots - one per deployable
 │   ├── order/wire.go
 │   └── checkout/wire.go
 │
@@ -57,9 +57,9 @@ myworkspace/
     └── checkout/main.go
 ```
 
-Every arrow points inward: `domain` imports nothing; `app` imports only `domain`; `adapters/*` import `app`+`domain` and satisfy their interfaces with compile-time assertions; `checkout` never imports `order` — only HTTP, decoded through the same `pkg/problem` mapper both services share.
+Every arrow points inward: `domain` imports nothing; `app` imports only `domain`; `adapters/*` import `app`+`domain` and satisfy their interfaces with compile-time assertions; `checkout` never imports `order` - only HTTP, decoded through the same `pkg/problem` mapper both services share.
 
-## `domain/money/money.go` — shared value object (deliberate Shared Kernel)
+## `domain/money/money.go` - shared value object (deliberate Shared Kernel)
 
 ```go
 package money
@@ -72,7 +72,7 @@ type Money struct {
 func (m Money) IsZero() bool { return m.Amount == 0 }
 ```
 
-## `internal/order/domain/order/` — pure business logic + the port
+## `internal/order/domain/order/` - pure business logic + the port
 
 ```go
 // order.go
@@ -94,7 +94,7 @@ type Order struct {
 ```
 
 ```go
-// repository.go — secondary port; DIP requires this live in domain, not app
+// repository.go - secondary port; DIP requires this live in domain, not app
 package order
 
 import "context"
@@ -117,9 +117,9 @@ var (
 )
 ```
 
-## `internal/order/app/order/place_order.go` — thin orchestration
+## `internal/order/app/order/place_order.go` - thin orchestration
 
-No explicit primary port here: `PlaceOrderService` has exactly one production caller (the HTTP handler below), so per [hexagonal-architecture §7](../../design/hexagonal-architecture/SKILL.md#7-when-not-to-use-it) an interface would be ceremony without payoff. Introduce one (`PlaceOrderer`, declared here since this is the layer offering the capability) only when a second caller genuinely needs to swap it — e.g. a handler test injecting a fake.
+No explicit primary port here: `PlaceOrderService` has exactly one production caller (the HTTP handler below), so per [hexagonal-architecture §7](../../design/hexagonal-architecture/SKILL.md#7-when-not-to-use-it) an interface would be ceremony without payoff. Introduce one (`PlaceOrderer`, declared here since this is the layer offering the capability) only when a second caller genuinely needs to swap it - e.g. a handler test injecting a fake.
 
 ```go
 package order
@@ -149,9 +149,9 @@ func (s *PlaceOrderService) PlaceOrder(ctx context.Context, cmd PlaceOrderComman
 }
 ```
 
-## `internal/order/adapters/secondary/postgres/order_repo.go` — driven adapter
+## `internal/order/adapters/secondary/postgres/order_repo.go` - driven adapter
 
-Default: `sqlc`-generated queries (`db.Queries`, built from `query.sql` + the migrated schema — see §12). The repo adapter is a thin translation layer between `db.Order` (generated row struct) and `domain.Order` (the aggregate).
+Default: `sqlc`-generated queries (`db.Queries`, built from `query.sql` + the migrated schema - see §12). The repo adapter is a thin translation layer between `db.Order` (generated row struct) and `domain.Order` (the aggregate).
 
 ```go
 package postgres
@@ -199,9 +199,9 @@ func (r *OrderRepo) FindByID(ctx context.Context, id domain.ID) (domain.Order, e
 }
 ```
 
-## `internal/order/adapters/primary/http/handler.go` — driving adapter
+## `internal/order/adapters/primary/http/handler.go` - driving adapter
 
-RFC 9457 is applied exactly at this boundary — the domain and app layers never format a wire response.
+RFC 9457 is applied exactly at this boundary - the domain and app layers never format a wire response.
 
 ```go
 package http
@@ -225,7 +225,7 @@ func (h *Handler) PlaceOrder(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-## `internal/checkout/app/ports.go` — the orchestrator's own ports
+## `internal/checkout/app/ports.go` - the orchestrator's own ports
 
 Unlike `order`'s optional primary port, these are load-bearing from day one: `checkout` has no other way to reach `order`/inventory/payment, and each port already has two real implementations (the HTTP client below, and a fake used to unit-test the orchestration logic without booting three services).
 
@@ -271,7 +271,7 @@ func (s *CheckoutService) Checkout(ctx context.Context, cmd CheckoutCommand) err
 }
 ```
 
-## `internal/checkout/adapters/secondary/orderclient/client.go` — crosses the real service boundary
+## `internal/checkout/adapters/secondary/orderclient/client.go` - crosses the real service boundary
 
 An anticorruption layer per [ddd-architect §8](../../design/ddd-architect/SKILL.md#8-anticorruption-layers-acl): translates at the boundary, never lets `order`'s wire model leak into `checkout`.
 
@@ -298,7 +298,7 @@ func (c *Client) CreateOrder(ctx context.Context, customer string, total money.M
 }
 ```
 
-## `app/order/wire.go` — composition root
+## `app/order/wire.go` - composition root
 
 ```go
 package app
@@ -312,7 +312,7 @@ func Run(ctx context.Context, cfg Config) error {
 }
 ```
 
-## `cmd/order/main.go` — thin entrypoint
+## `cmd/order/main.go` - thin entrypoint
 
 ```go
 func main() {
@@ -340,7 +340,7 @@ internal/execution/fake/       # in-process adapter, scripted; the second adapte
 internal/execution/executiontest/  # one conformance suite, run against every adapter
 ```
 
-### `internal/execution/execution.go` — the port and its types
+### `internal/execution/execution.go` - the port and its types
 
 ```go
 package execution
@@ -413,7 +413,7 @@ var ErrCanceled = errors.New("execution canceled")
 func (c CancelInfo) Error() string { return c.By + ": " + c.Reason }
 ```
 
-### `internal/execution/vendorcli/executor.go` — the adapter is the anti-corruption layer
+### `internal/execution/vendorcli/executor.go` - the adapter is the anti-corruption layer
 
 ```go
 package vendorcli
@@ -437,7 +437,7 @@ func (e *Executor) Execute(ctx context.Context, req execution.Request, sink exec
 }
 ```
 
-### `internal/execution/executiontest/conformance.go` — one suite, every adapter
+### `internal/execution/executiontest/conformance.go` - one suite, every adapter
 
 ```go
 // Conformance asserts what any Executor must do. Each adapter's test file calls it with its own
@@ -516,7 +516,7 @@ internal/userrepo/
 ├── repo.go
 ├── sqlc.yaml
 ├── query.sql
-└── db/              # generated: models.go, query.sql.go, db.go — never hand-edit
+└── db/              # generated: models.go, query.sql.go, db.go - never hand-edit
 ```
 
 ### sqlx + `//go:embed` (alternative)

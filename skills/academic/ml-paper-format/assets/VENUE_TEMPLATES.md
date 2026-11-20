@@ -15,21 +15,21 @@ Download per submission, from the venue, for the target year.
 
 | Venue | Where |
 |---|---|
-| NeurIPS | Author kit linked from the current CFP at `neurips.cc` — provides `neurips_<year>.sty`, `neurips_<year>.tex`, and the paper checklist |
-| ICML | Author instructions at `icml.cc` — `icml<year>.sty`, `icml<year>.bst`, example paper |
-| ICLR | `github.com/ICLR/Master-Template` — per-year `iclr<year>_conference.sty` and `.bst` |
-| AAAI | AAAI author kit from the current AAAI conference site — includes `aaai<yy>.sty`, `aaai<yy>.bst`, and the formatting instructions PDF, which must be read in full |
+| NeurIPS | Author kit linked from the current CFP at `neurips.cc` - provides `neurips_<year>.sty`, `neurips_<year>.tex`, and the paper checklist |
+| ICML | Author instructions at `icml.cc` - `icml<year>.sty`, `icml<year>.bst`, example paper |
+| ICLR | `github.com/ICLR/Master-Template` - per-year `iclr<year>_conference.sty` and `.bst` |
+| AAAI | AAAI author kit from the current AAAI conference site - includes `aaai<yy>.sty`, `aaai<yy>.bst`, and the formatting instructions PDF, which must be read in full |
 
-Verification before you start writing: compile the venue's **unmodified example paper** first. If that fails, the problem is your toolchain, not your document — solve it before there is any content to lose.
+Verification before you start writing: compile the venue's **unmodified example paper** first. If that fails, the problem is your toolchain, not your document - solve it before there is any content to lose.
 
 ## Classic NIPS 2017 look
 
-The single-column Times layout of the NIPS 2017 proceedings — the *Attention Is All You Need* look — is a common target for preprints, technical reports, and internal write-ups where no venue template applies.
+The single-column Times layout of the NIPS 2017 proceedings - the *Attention Is All You Need* look - is a common target for preprints, technical reports, and internal write-ups where no venue template applies.
 
 **This is an approximation, not the real `nips_2017.sty`.** It reproduces the page geometry and font choice, not the exact title block, author formatting, or footer. Two consequences:
 
-- For an **actual submission to any venue**, this is wrong by definition — use that venue's current style file.
-- For a **preprint or report**, prefer a current venue template in `preprint` mode (NeurIPS supports `\usepackage[preprint]{neurips_<year>}`) — it gets you a nearly identical look, actively maintained, with a working title block.
+- For an **actual submission to any venue**, this is wrong by definition - use that venue's current style file.
+- For a **preprint or report**, prefer a current venue template in `preprint` mode (NeurIPS supports `\usepackage[preprint]{neurips_<year>}`) - it gets you a nearly identical look, actively maintained, with a working title block.
 
 Use the approximation only when neither applies:
 

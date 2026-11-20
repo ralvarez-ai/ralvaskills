@@ -1,10 +1,10 @@
 ---
 name: notify-on-finish
-version: 0.1.0
+version: 0.1.1
 allowed-tools:
   - Bash(${CLAUDE_SKILL_DIR}/scripts/notify-on-finish *)
   - Bash(notify-on-finish *)
-description: Native desktop notifications for long-running work — runs a command detached, captures exit code and duration, then plays a sound and fires a notification (notify-send/D-Bus, osascript, log-only fallback). Use when a command will take more than a minute, when asked to leave something in the background and tell me when it finishes, or when waiting on a build, test suite, migration, benchmark or download.
+description: Native desktop notifications for long-running work - runs a command detached, captures exit code and duration, then plays a sound and fires a notification (notify-send/D-Bus, osascript, log-only fallback). Use when a command will take more than a minute, when asked to leave something in the background and tell me when it finishes, or when waiting on a build, test suite, migration, benchmark or download.
 ---
 
 # Notify On Finish
@@ -22,7 +22,7 @@ One command, detached, notifies when it ends. The skill exists so the agent neve
 | Short command (< 60 s) | just run it; a notification is noise |
 | The user wants the output in this turn | run it normally, no notification |
 
-Announce it in one line when you launch — the label, and how to check:
+Announce it in one line when you launch - the label, and how to check:
 
 ```bash
 ${CLAUDE_SKILL_DIR}/scripts/notify-on-finish --label "go test ./..." -- go test ./...
@@ -31,7 +31,7 @@ ${CLAUDE_SKILL_DIR}/scripts/notify-on-finish --label "go test ./..." -- go test 
 
 Claude Code substitutes `${CLAUDE_SKILL_DIR}` here and in the `allowed-tools` rule, and the match is what lets the script run without a prompt. Other clients do not expand it: use the skill's own path (`<skill dir>/scripts/notify-on-finish`) or put the script on `PATH`.
 
-Then tell the user: *"Running in the background; I'll check with `notify-on-finish --status`."* Do **not** follow it with `sleep 120` — that defeats the point.
+Then tell the user: *"Running in the background; I'll check with `notify-on-finish --status`."* Do **not** follow it with `sleep 120` - that defeats the point.
 
 ## 2. Command contract
 
@@ -57,7 +57,7 @@ notify-on-finish --status          # TSV: STATE  CODE  DURATION  LABEL  LOG
 notify-on-finish --status --json   # same, for scripts
 ```
 
-`STATE` is `running`, `done`, `failed` (exit 1–127) or `killed` (signal, code ≥ 128). The log path is in the last column: read the tail of it, never the whole file, when reporting a failure.
+`STATE` is `running`, `done`, `failed` (exit 1-127) or `killed` (signal, code ≥ 128). The log path is in the last column: read the tail of it, never the whole file, when reporting a failure.
 
 Report back as: outcome, duration, the one line that matters (last error line on failure), and the log path. Nothing else.
 
@@ -75,7 +75,7 @@ Report back as: outcome, duration, the one line that matters (last error line on
 ## 5. Anti-patterns
 
 ```bash
-# BAD — blocks the turn, loses `code`, dies with the process group, and the
+# BAD - blocks the turn, loses `code`, dies with the process group, and the
 # notification only fires if the sound device works.
 sleep 5 && pw-play complete.oga && notify-send "Prueba" "Terminó"
 
@@ -84,7 +84,7 @@ notify-on-finish --label "prueba: sleep 5" -- sleep 5
 ```
 
 ```bash
-# BAD — backgrounding by hand inside a tool call.
+# BAD - backgrounding by hand inside a tool call.
 ( ./long-build.sh & ) ; notify-send "started"
 
 # GOOD

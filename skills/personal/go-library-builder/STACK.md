@@ -12,8 +12,8 @@ Inherits the full Go stack from [go-architect/STACK.md](../../languages/go-archi
 | goimports | 0.48.0 | Formatting with `-local` module prefix |
 | betteralign | 0.14.0 | Struct field alignment (`align:check/fix`) |
 | trivy | 0.72.0 | FS + secret scanning (`scan`) |
-| sqlc | 1.31.1 | Typed SQL codegen (pgx/v5) — DB adapters only |
-| goose | v3 | SQL migrations (`//go:embed`) — DB adapters only |
+| sqlc | 1.31.1 | Typed SQL codegen (pgx/v5) - DB adapters only |
+| goose | v3 | SQL migrations (`//go:embed`) - DB adapters only |
 
 ## Default libraries
 
@@ -31,7 +31,7 @@ Inherits the full Go stack from [go-architect/STACK.md](../../languages/go-archi
 ## Notes
 
 - **CI is manual-dispatch only** (`assets/.github/workflows/ci.yml`): it runs locally through `act`, and `golangci-lint` there matches the version above.
-- **No functional-options, no ORM, no in-library config resolution** — architectural opinions enforced by this skill, not just the linters (see SKILL §5, §11).
+- **No functional-options, no ORM, no in-library config resolution** - architectural opinions enforced by this skill, not just the linters (see SKILL §5, §11).
 - **`exhaustruct` scoped to `Config` structs** and `interfacebloat` capped at 3 are the two golangci settings this skill tunes beyond go-architect's template.
 - **`.golangci.yml`** is copied from [go-architect/assets/golangci.yml](../../languages/go-architect/assets/golangci.yml); only `goimports.local-prefixes` and the `exhaustruct` scope change per repo. The doc-coverage config ships separately as `.golangci.doccheck.yml`.
 

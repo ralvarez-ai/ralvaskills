@@ -1,4 +1,4 @@
-# LaTeX Architect — Reference Implementations
+# LaTeX Architect - Reference Implementations
 
 Skeletons referenced from [SKILL.md](SKILL.md). Load on demand.
 
@@ -98,7 +98,7 @@ Commit `.latexmkrc`, `.chktexrc`, `.latexindent.yaml`, `refs.bib`, and everythin
 
 ## 3. Preamble skeleton
 
-`preamble/packages.tex` — order matters; see [SKILL.md §4](SKILL.md#4-preamble-discipline).
+`preamble/packages.tex` - order matters; see [SKILL.md §4](SKILL.md#4-preamble-discipline).
 
 ```latex
 % --- encoding & fonts -------------------------------------------------
@@ -134,7 +134,7 @@ Commit `.latexmkrc`, `.chktexrc`, `.latexindent.yaml`, `refs.bib`, and everythin
 
 While drafting, add `\usepackage[l2tabu, orthodox]{nag}` at the very top and remove it before submission.
 
-`preamble/macros.tex` — semantic only:
+`preamble/macros.tex` - semantic only:
 
 ```latex
 \newcommand{\model}{\textsc{Orion}}          % rename in one place
@@ -160,7 +160,7 @@ A well-formed entry, with capitals brace-protected and the published venue rathe
 }
 ```
 
-**natbib carve-out** — for venue templates that ship `natbib` + a `.bst`. Do not convert these to biblatex.
+**natbib carve-out** - for venue templates that ship `natbib` + a `.bst`. Do not convert these to biblatex.
 
 ```latex
 \usepackage[numbers,sort&compress]{natbib}   % usually already in the venue .sty
@@ -168,7 +168,7 @@ A well-formed entry, with capitals brace-protected and the published venue rathe
 \bibliography{refs}
 ```
 
-Matching `.latexmkrc` line — bibtex instead of biber:
+Matching `.latexmkrc` line - bibtex instead of biber:
 
 ```perl
 $bibtex_use = 2;
@@ -179,11 +179,11 @@ Citation commands differ: `\citep{x}` parenthetical, `\citet{x}` textual. `\auto
 
 ## 5. Quality gates & CI
 
-`.chktexrc` — suppress only what you have deliberately reviewed:
+`.chktexrc` - suppress only what you have deliberately reviewed:
 
 ```
 % Suppress: 8 (wrong dash), 46 (\rm etc.) are kept ON deliberately.
-CmdLine { -n 3 }   % "You should put a space in front of parenthesis" — noisy
+CmdLine { -n 3 }   % "You should put a space in front of parenthesis" - noisy
 ```
 
 `.latexindent.yaml`:
@@ -222,7 +222,7 @@ jobs:
           path: build/main.pdf
 ```
 
-Pin the container to a dated tag (`texlive/texlive:TL2026-2026-04-01`) once the document is near submission — `latest` will roll to the next TeX Live and can change output.
+Pin the container to a dated tag (`texlive/texlive:TL2026-2026-04-01`) once the document is near submission - `latest` will roll to the next TeX Live and can change output.
 
 ## 6. Table and figure patterns
 

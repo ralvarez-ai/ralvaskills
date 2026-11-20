@@ -1,4 +1,4 @@
-# Reveal.js Architect — Recipes
+# Reveal.js Architect - Recipes
 
 Reference implementations. Load on demand when the user actually needs a skeleton.
 
@@ -53,13 +53,13 @@ Reveal.initialize({
 });
 ```
 
-**Fixed-height slide canvas** (full-bleed background, or a scrollable body panel) — `<section>` never has a set height, so an inner wrapper must use a px height matching `Reveal.initialize`'s `height`, not `%`:
+**Fixed-height slide canvas** (full-bleed background, or a scrollable body panel) - `<section>` never has a set height, so an inner wrapper must use a px height matching `Reveal.initialize`'s `height`, not `%`:
 
 ```css
 :root { --slide-height: 720px; } /* keep in sync with Reveal.initialize({ height: 720 }) */
 
 .slide-inner {
-  height: var(--slide-height); /* not 100% — <section> has no set height to inherit */
+  height: var(--slide-height); /* not 100% - <section> has no set height to inherit */
   display: flex;
   flex-direction: column;
 }
@@ -91,7 +91,7 @@ Reveal.initialize({
 });
 ```
 
-**The 6.0.1 package `exports` map has no `dist/` prefix and no `.esm.js` suffix** on these subpaths — `reveal.js/dist/reveal.css` and `reveal.js/plugin/notes/notes.esm.js` (patterns that work with the CDN build above) both 404 under npm/Vite. Verify with `npm view reveal.js@6.0.1 exports` before assuming a path.
+**The 6.0.1 package `exports` map has no `dist/` prefix and no `.esm.js` suffix** on these subpaths - `reveal.js/dist/reveal.css` and `reveal.js/plugin/notes/notes.esm.js` (patterns that work with the CDN build above) both 404 under npm/Vite. Verify with `npm view reveal.js@6.0.1 exports` before assuming a path.
 
 ## React project skeleton
 
@@ -126,4 +126,4 @@ export function App() {
 }
 ```
 
-Vertical slides nest a `<Slide>` array under a parent group per the library's own grouping prop — check `@revealjs/react`'s current API surface (0.2.x is pre-1.0 and the grouping API may still shift) before relying on it for a production deck.
+Vertical slides nest a `<Slide>` array under a parent group per the library's own grouping prop - check `@revealjs/react`'s current API surface (0.2.x is pre-1.0 and the grouping API may still shift) before relying on it for a production deck.

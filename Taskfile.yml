@@ -147,6 +147,7 @@ tasks:
     cmds:
       - golangci-lint run --config .golangci.yml ./...
       - task: lint:oneliners
+      - task: lint:dashes
 
   deadcode:
     desc: Report functions unreachable from any main or test
@@ -178,6 +179,15 @@ tasks:
     desc: Check for decorative comment separators (// ──, # ──, etc. — opt-in)
     cmds:
       - bash skills/languages/go-architect/assets/check-no-separator-comments.sh
+
+  lint:dashes:
+    desc: Fail when an em dash or en dash appears under skills/ (unslop rule 13); LICENSE.upstream keeps upstream text verbatim
+    cmds:
+      - |
+        if LC_ALL=C grep -rnP '\xE2\x80[\x93\x94]' skills --exclude=LICENSE.upstream; then
+          echo "lint:dashes: replace each em or en dash with a period, a comma, ' - ' or a range hyphen" >&2
+          exit 1
+        fi
 
   fmt:
     desc: Format everything

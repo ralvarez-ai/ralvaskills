@@ -1,7 +1,7 @@
 ---
 name: docs-architect
 version: 1.2.2
-description: Project documentation system — a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, backlog as a queue or as one file per item, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.
+description: Project documentation system - a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, backlog as a queue or as one file per item, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.
 ---
 
 # Docs Architect
@@ -12,9 +12,9 @@ Suggestion-mode: the tree is a default. Adopt the folders a project actually nee
 
 ## 1. Modes
 
-- **Scaffold** — no `docs/` yet. Create `docs/README.md` and `docs/templates/`; create every other folder lazily, when its first doc exists.
-- **Write-doc** — pick the folder by the doc's job ([§2](#2-where-a-doc-goes)), copy the template, fill the frontmatter, link it to its origin.
-- **Migrate** — a `docs/` exists in another shape. Classify, propose moves and renames, wait for approval, then move ([MIGRATION.md](MIGRATION.md)).
+- **Scaffold** - no `docs/` yet. Create `docs/README.md` and `docs/templates/`; create every other folder lazily, when its first doc exists.
+- **Write-doc** - pick the folder by the doc's job ([§2](#2-where-a-doc-goes)), copy the template, fill the frontmatter, link it to its origin.
+- **Migrate** - a `docs/` exists in another shape. Classify, propose moves and renames, wait for approval, then move ([MIGRATION.md](MIGRATION.md)).
 
 ## 2. Where a doc goes
 
@@ -24,14 +24,14 @@ Suggestion-mode: the tree is a default. Adopt the folders a project actually nee
 | `ideas/` | Not yet a plan | `YYYY-MM-DD-project-topic.md` | Yes, while `draft` |
 | `plans/` | Scope, phases, exit criteria | dated | Yes |
 | `designs/` | How it is built; links ADRs instead of repeating them | dated | Yes |
-| `reviews/` | Findings of one review or audit — a snapshot | dated | No |
-| `changes/` | What changed and why — migrations, impact | dated | No |
+| `reviews/` | Findings of one review or audit - a snapshot | dated | No |
+| `changes/` | What changed and why - migrations, impact | dated | No |
 | `guides/` | Current procedures and runbooks | `topic.md` | Yes, always current |
 | `methodology/` | Working rules and standards | `topic.md` | Yes |
 | `backlog/` | A queue (`inbox.md`, `<project>.md`, `done/YYYY-MM.md`) or one file per item (`project.md`, `pending/`, `active/`, `done/`, `archive/`) | see [BACKLOG.md](BACKLOG.md) | Yes |
 | `archive/` | Finished or obsolete | keeps its name | No |
 
-`guides/` and `methodology/` are living documents and carry no date; everything else describes a moment and does. Reviews and changes are history — never rewrite them, add a new one.
+`guides/` and `methodology/` are living documents and carry no date; everything else describes a moment and does. Reviews and changes are history - never rewrite them, add a new one.
 
 ## 3. Flow
 
@@ -47,7 +47,7 @@ Suggestion-mode: the tree is a default. Adopt the folders a project actually nee
 - One decision per ADR, one page: Context, Options considered, Decision, Consequences.
 - Numbering is sequential and never reused. Take the next number by scanning `adr/`.
 - Whether something deserves an ADR is decided by the three-part test in [ADR_FORMAT.md](../grill-with-docs/ADR_FORMAT.md) (hard to reverse, surprising, real trade-off). This skill adds the mandatory frontmatter and the supersede mechanics on top of it.
-- Changing a decision: write a new ADR with `supersedes: N`, then set the old one to `status: superseded` and fill its `superseded_by`.- ADRs are cross-cutting: a decision spanning projects uses `project: global`. Keep `adr/` flat — the number already orders it.
+- Changing a decision: write a new ADR with `supersedes: N`, then set the old one to `status: superseded` and fill its `superseded_by`.- ADRs are cross-cutting: a decision spanning projects uses `project: global`. Keep `adr/` flat - the number already orders it.
 - Designs link ADRs (`[ADR 0002](../adr/0002-slug.md)`) instead of restating the reasoning.
 
 ## 5. Links and frontmatter
@@ -65,17 +65,17 @@ Every doc except `README.md`, `inbox.md` and `templates/` carries frontmatter ([
 | Weekly | Triage the inbox; review what is next (`Next` or `pending/`) | 10 min |
 | Monthly | Prune what has not moved, close to `done/`, archive obsolete, promote or delete drafts older than 2 months | 15 min |
 
-A backlog item that has not moved for 2–3 months is deleted or demoted (`Later` → `Someday` in the queue layout, `archive/` with `resolution: dropped` in the item layout) — prune, don't archive. If the project tracks work in GitHub Issues, the backlog lives there and only the docs stay here.
+A backlog item that has not moved for 2-3 months is deleted or demoted (`Later` → `Someday` in the queue layout, `archive/` with `resolution: dropped` in the item layout) - prune, don't archive. If the project tracks work in GitHub Issues, the backlog lives there and only the docs stay here.
 
 ## 7. Scale rules
 
 - A per-project subfolder inside a type (`designs/<project>/`) only after ~10 files of that type. Never for `adr/`.
 - Several repos: `docs/` per repo by default; a central docs repo only when projects cross-reference heavily. Then `project:` is mandatory and filters the views.
-- Keep `CLAUDE.md` / `AGENTS.md` short and pointing at `docs/` — snippet in [TEMPLATES.md](TEMPLATES.md#agent-pointer-section). Do not duplicate the conventions there.
+- Keep `CLAUDE.md` / `AGENTS.md` short and pointing at `docs/` - snippet in [TEMPLATES.md](TEMPLATES.md#agent-pointer-section). Do not duplicate the conventions there.
 
 ## 8. Linter
 
-`python3 scripts/docs_lint.py [docs-dir]` — stdlib only, read-only, exit code 1 on errors. Checks frontmatter schema and enums, ADR numbering and supersede symmetry, broken relative links, orphans, drafts older than 60 days, backlog size limits, and the `project.md` of the item layout. In the item layout the full item schema (ids, priorities, sections, `blocked_by`) is `rdk check --root docs/backlog` when the project has the portal's CLI. `--index` prints a generated index to stdout. Run it before declaring a docs change done and in the monthly routine.
+`python3 scripts/docs_lint.py [docs-dir]` - stdlib only, read-only, exit code 1 on errors. Checks frontmatter schema and enums, ADR numbering and supersede symmetry, broken relative links, orphans, drafts older than 60 days, backlog size limits, and the `project.md` of the item layout. In the item layout the full item schema (ids, priorities, sections, `blocked_by`) is `rdk check --root docs/backlog` when the project has the portal's CLI. `--index` prints a generated index to stdout. Run it before declaring a docs change done and in the monthly routine.
 
 ## 9. Output naming
 
@@ -87,4 +87,4 @@ Docs this skill generates use kebab-case, lowercase, no accents: `0004-use-nats.
 - **Requirement → design → slices** → [feature-planner](../feature-planner/SKILL.md)
 - **Commit messages and `CHANGELOG.md` wording** → [commit-author](../commit-author/SKILL.md)
 - **Prose review of a doc's wording** → [unslop](../../meta/unslop/SKILL.md)
-- **Root `README.md` / `CHANGELOG.md` authoring** — the user-facing entry points are not generated here; `changes/` entries may link a changelog line.
+- **Root `README.md` / `CHANGELOG.md` authoring** - the user-facing entry points are not generated here; `changes/` entries may link a changelog line.

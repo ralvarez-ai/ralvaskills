@@ -1,4 +1,4 @@
-# Token Economy — Claude Code Guardrails
+# Token Economy - Claude Code Guardrails
 
 Settings, permission rules and hooks that enforce [SKILL.md](SKILL.md) section 7 instead of
 asking for it. Order of preference: a setting (paid once, always applies), then a hook (runs

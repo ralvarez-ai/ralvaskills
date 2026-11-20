@@ -1,6 +1,6 @@
 # contracts
 
-`github.com/ralvarezdev/contracts` — the platform's protobuf contract module: the common message shapes every service and app speaks (cursor pagination, machine-readable error details, exact money, calendar dates) plus the APIs of the shared platform services (identity, notifier), kept in one reviewed place instead of drifting across repos. It is a Buf proto module and a Go module at once; generated Go (messages, gRPC and Connect stubs) is committed and imported directly, so there is no registry. Reach for it before re-declaring a `PageRequest`, an `ErrorDetail` or a `Money` in your own proto, and to get a platform service's client stubs without importing the service module.
+`github.com/ralvarezdev/contracts` - the platform's protobuf contract module: the common message shapes every service and app speaks (cursor pagination, machine-readable error details, exact money, calendar dates) plus the APIs of the shared platform services (identity, notifier), kept in one reviewed place instead of drifting across repos. It is a Buf proto module and a Go module at once; generated Go (messages, gRPC and Connect stubs) is committed and imported directly, so there is no registry. Reach for it before re-declaring a `PageRequest`, an `ErrorDetail` or a `Money` in your own proto, and to get a platform service's client stubs without importing the service module.
 
 ## Packages
 
@@ -17,7 +17,7 @@
 | `Money` (`currency`, `amount`) | exact money: ISO 4217 code plus a decimal amount string, never a float |
 | `Date` (`year`, `month`, `day`) | a calendar day with no time zone |
 
-Instants and spans are not redefined: use `google.protobuf.Timestamp` and `google.protobuf.Duration`. The module is a leaf — its Go side imports only `google.golang.org/protobuf`.
+Instants and spans are not redefined: use `google.protobuf.Timestamp` and `google.protobuf.Duration`. The module is a leaf - its Go side imports only `google.golang.org/protobuf`.
 
 ## Recipe
 
@@ -55,7 +55,7 @@ Regenerate with `task proto:generate` (Buf, remote plugins; needs network) and c
 - **A contract lands here when a platform service owns it or two or more repos consume it.** App-private contracts stay with the app; do not add one app's shapes here.
 - **Field numbers are reserved, never reused** (`buf breaking` `FILE`): a removal or renumber is a breaking change even when the wire format still decodes.
 - **Cursors are opaque.** A client echoes `PageInfo.next_cursor` back and never parses or builds one; there is no offset variant, because offset drifts under concurrent writes.
-- **`Money.amount` is a decimal string, not a float** — no exponent notation and no grouping separators; a leading sign is allowed. Binary floating point cannot represent decimal money exactly.
+- **`Money.amount` is a decimal string, not a float** - no exponent notation and no grouping separators; a leading sign is allowed. Binary floating point cannot represent decimal money exactly.
 - **`ErrorDetail.code` is the contract**, a stable dotted `lower_snake` code owned by the producer; clients branch on it, never on the human-readable `message`.
 - **Timestamps are well-known types.** `Date` means a calendar day only; an instant is `google.protobuf.Timestamp` and a span is `google.protobuf.Duration`.
 

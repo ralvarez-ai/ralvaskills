@@ -14,7 +14,7 @@ internal/
 ├── auth/                        # JWT issue/verify, current-user middleware
 ├── users/
 │   ├── handlers.go              # gin.HandlerFunc per route
-│   ├── service.go               # business logic — no gin imports
+│   ├── service.go               # business logic - no gin imports
 │   ├── repo.go                  # sqlx + queries/*.sql
 │   ├── dto.go                   # request / response structs with validate tags
 │   └── queries/
@@ -70,7 +70,7 @@ func Run(r *gin.Engine, cfg *config.Config) {
 }
 ```
 
-## Auth middleware — Pattern A (in-house JWT)
+## Auth middleware - Pattern A (in-house JWT)
 
 ```go
 func AuthRequired(secret []byte) gin.HandlerFunc {
@@ -96,7 +96,7 @@ func AuthRequired(secret []byte) gin.HandlerFunc {
 }
 ```
 
-**Pattern B — external IdP**: `jwt.ParseWithClaims` with a `jwt.Keyfunc` resolving keys via a JWKS client. Cache the JWKS in-process with TTL.
+**Pattern B - external IdP**: `jwt.ParseWithClaims` with a `jwt.Keyfunc` resolving keys via a JWKS client. Cache the JWKS in-process with TTL.
 
 ## Authorization per route
 
@@ -159,7 +159,7 @@ func TestCreateUser(t *testing.T) {
 Outermost first; order matters.
 
 ```go
-r := gin.New()  // not gin.Default — we set logging ourselves
+r := gin.New()  // not gin.Default - we set logging ourselves
 r.Use(
     middleware.RequestID(),             // 1. assign correlation_id
     middleware.SLog(),                  // 2. structured access log

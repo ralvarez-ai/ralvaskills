@@ -1,4 +1,4 @@
-# Token Economy — Tools
+# Token Economy - Tools
 
 What each token tool cuts, how it is wired, and what it costs in turn. Referenced from
 [SKILL.md](SKILL.md) section 8; install commands in [RECIPES §6](RECIPES.md#6-tool-setup).
@@ -8,7 +8,7 @@ What each token tool cuts, how it is wired, and what it costs in turn. Reference
 | context-mode | tool outputs (sandboxed, indexed, searched) | plugin | `opencode plugin add context-mode` | `ctx doctor`; `opencode plugin list` |
 | RTK | shell command output | `rtk init -g --hook-only` (PreToolUse on Bash) | `rtk init -g --opencode --hook-only` | `rtk gain` |
 | CodeGraph | grep + read for structure questions | `codegraph install -t claude`, `codegraph init` per repo | `codegraph install -t opencode` | `codegraph status`, `.codegraph/` |
-| caveman | reply prose | skill | skill | — |
+| caveman | reply prose | skill | skill | - |
 
 ## What the tools themselves load
 

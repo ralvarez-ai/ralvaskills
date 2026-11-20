@@ -1,6 +1,6 @@
 # webpush
 
-`github.com/ralvarezdev/webpush` — Web Push notifications to browser subscriptions: the `Sender` and `SubscriptionStore` ports, a VAPID sender and a Postgres store. Infrastructure, the same category as email; not an identity concern.
+`github.com/ralvarezdev/webpush` - Web Push notifications to browser subscriptions: the `Sender` and `SubscriptionStore` ports, a VAPID sender and a Postgres store. Infrastructure, the same category as email; not an identity concern.
 
 ## Packages
 

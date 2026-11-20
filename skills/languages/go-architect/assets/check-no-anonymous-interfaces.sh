@@ -12,7 +12,7 @@ set -euo pipefail
 # files, gen/ and vendor/). Empty interfaces (interface{} / any) are not
 # reported: any is the right spelling for a truly unconstrained value.
 #
-# go-architect asset — wire into your task runner as an opt-in check, not the
+# go-architect asset - wire into your task runner as an opt-in check, not the
 # main lint gate: golangci-lint has no linter for this (see SKILL.md §4, §14).
 #
 # Usage: check-no-anonymous-interfaces.sh [-tests] [dir]

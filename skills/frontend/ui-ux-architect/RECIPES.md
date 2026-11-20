@@ -1,11 +1,11 @@
-# UI/UX — Reference Implementations
+# UI/UX - Reference Implementations
 
 Component recipes and token templates referenced by [SKILL.md](SKILL.md). Loaded on demand.
 
 ## 1. Radix + shadcn dialog wrapper
 
 ```tsx
-// components/ui/dialog.tsx — shadcn/ui-style Radix wrapper
+// components/ui/dialog.tsx - shadcn/ui-style Radix wrapper
 "use client";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
@@ -33,15 +33,15 @@ export function DialogContent({ className, children, ...props }: DialogPrimitive
 }
 ```
 
-- Components live in your repo, not as a dep — you own and adapt them.
+- Components live in your repo, not as a dep - you own and adapt them.
 - Never style by overriding library internals. If Radix doesn't expose the part you need, file an issue / find another primitive.
 
 ## 2. Tailwind 4 `@theme` design tokens
 
 ```css
-/* app/globals.css — Tailwind 4 with native CSS variables */
+/* app/globals.css - Tailwind 4 with native CSS variables */
 @theme {
-  /* Colors — semantic naming, OKLCH for perceptually uniform palettes */
+  /* Colors - semantic naming, OKLCH for perceptually uniform palettes */
   --color-background: oklch(1 0 0);
   --color-foreground: oklch(0.15 0 0);
   --color-primary: oklch(0.55 0.18 250);
@@ -57,7 +57,7 @@ export function DialogContent({ className, children, ...props }: DialogPrimitive
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
 
-  /* Spacing scale — 4px base */
+  /* Spacing scale - 4px base */
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-4: 1rem;
@@ -74,11 +74,11 @@ export function DialogContent({ className, children, ...props }: DialogPrimitive
 ```
 
 - **Semantic over literal names.** `--color-primary` not `--color-blue-500`.
-- **OKLCH** — perceptually uniform, future-proof, wider gamut. `oklch(L C H)`.
+- **OKLCH** - perceptually uniform, future-proof, wider gamut. `oklch(L C H)`.
 - **Spacing on a 4 px base.** Don't introduce one-off values.
 - **Type scale** centralized too (`--text-sm`, `--text-base`, etc.).
 
-## 3. Required UI states — shape contract
+## 3. Required UI states - shape contract
 
 Every async surface needs **loading / error / empty / success**. Concrete shapes:
 
@@ -91,7 +91,7 @@ Every async surface needs **loading / error / empty / success**. Concrete shapes
 - Plain language: "We couldn't load your orders." Not "Error 503".
 - Retry button (most errors are transient).
 - Correlation ID visible for support: "If this keeps happening, reference `req_01J9…`".
-- No stack traces in the UI — log server-side, show the ID.
+- No stack traces in the UI - log server-side, show the ID.
 - Differentiate: network → retry, auth → redirect to login, validation → highlight field.
 
 ### Empty
@@ -102,27 +102,27 @@ Every async surface needs **loading / error / empty / success**. Concrete shapes
 
 ### Success / data
 - Tabular data uses `<table>` with `<th scope="col">`, `<caption>`.
-- Pagination matches [rest-api-architect §5](../../protocols/rest-api-architect/SKILL.md#5-pagination--cursor-not-offset) cursors — "Load more" or intersection-observer infinite scroll.
+- Pagination matches [rest-api-architect §5](../../protocols/rest-api-architect/SKILL.md#5-pagination--cursor-not-offset) cursors - "Load more" or intersection-observer infinite scroll.
 - Refetch indicator near the title; no full-screen overlay.
 
 ## 4. Design system maturity ladder
 
 | Level | What | Tooling |
 |---|---|---|
-| 0 — Ad hoc | Tailwind utilities everywhere, no shared components | Tailwind alone |
-| 1 — Primitives | Shared `Button`, `Input`, `Card`, `Dialog` in `components/ui/` (shadcn-style) | + Radix + shadcn recipes |
-| 2 — Tokens | Design tokens centralized, dark mode, semantic colors | + design tokens in `@theme` |
-| 3 — Patterns | Composed `<UserCard>`, `<OrderList>` published as feature components | (no new tooling — convention) |
-| 4 — Documented system | Storybook / docs published, visual regression tests | + Storybook + Chromatic |
+| 0 - Ad hoc | Tailwind utilities everywhere, no shared components | Tailwind alone |
+| 1 - Primitives | Shared `Button`, `Input`, `Card`, `Dialog` in `components/ui/` (shadcn-style) | + Radix + shadcn recipes |
+| 2 - Tokens | Design tokens centralized, dark mode, semantic colors | + design tokens in `@theme` |
+| 3 - Patterns | Composed `<UserCard>`, `<OrderList>` published as feature components | (no new tooling - convention) |
+| 4 - Documented system | Storybook / docs published, visual regression tests | + Storybook + Chromatic |
 
-- **Start at Level 1** for any non-throwaway project — refactoring up later costs more.
-- **Climb to Level 2** when >1 developer is touching styles — tokens prevent visual drift.
+- **Start at Level 1** for any non-throwaway project - refactoring up later costs more.
+- **Climb to Level 2** when >1 developer is touching styles - tokens prevent visual drift.
 - **Level 4** when you have a design-system team or many product teams consuming the same components.
 
 ## 5. Accessibility testing setup
 
 ```ts
-// vitest.setup.ts — axe in every render
+// vitest.setup.ts - axe in every render
 import { expect } from "vitest";
 import { toHaveNoViolations } from "jest-axe";
 expect.extend({ toHaveNoViolations });

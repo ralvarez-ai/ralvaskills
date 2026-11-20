@@ -1,4 +1,4 @@
-# Backend Performance — Reference Tables and Recipes
+# Backend Performance - Reference Tables and Recipes
 
 Loaded on demand. Measurement commands, SQL, Go snippets, and the decision tables behind §7 of [SKILL.md](SKILL.md).
 
@@ -13,7 +13,7 @@ Loaded on demand. Measurement commands, SQL, Go snippets, and the decision table
 
 ## 1. Measurement recipes
 
-**Postgres — the plan, not the guess.**
+**Postgres - the plan, not the guess.**
 
 ```sql
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE)
@@ -26,7 +26,7 @@ LIMIT 50;
 
 Read in this order: `Seq Scan` on a large table → missing index; `Sort Method: external merge` → the sort does not fit `work_mem`; `actual rows` off by orders of magnitude from `plan rows` → stale statistics (`ANALYZE`); `Buffers: shared read` high → cache misses at the storage layer.
 
-**Postgres — where the time goes fleet-wide.**
+**Postgres - where the time goes fleet-wide.**
 
 ```sql
 SELECT queryid, calls,
@@ -37,9 +37,9 @@ ORDER BY total_exec_time DESC
 LIMIT 20;
 ```
 
-If the top query is not the endpoint you are investigating, keep looking — the endpoint is probably calling it N times.
+If the top query is not the endpoint you are investigating, keep looking - the endpoint is probably calling it N times.
 
-**Go — profiles.**
+**Go - profiles.**
 
 ```bash
 curl -s -o cpu.pprof 'http://127.0.0.1:6060/debug/pprof/profile?seconds=30'
@@ -51,7 +51,7 @@ go tool pprof -sample_index=alloc_space -http=:8081 heap.pprof
 
 CPU profile under realistic load, not at idle. `alloc_space` finds allocation hot paths; `inuse_space` finds caches and leaks. Mutex/block profiles answer "where are requests waiting", which is usually the p99 question.
 
-**Go — benchmarks that survive review.**
+**Go - benchmarks that survive review.**
 
 ```bash
 go test -run='^$' -bench=. -benchmem -count=6 ./... > new.txt
@@ -60,7 +60,7 @@ benchstat old.txt new.txt
 
 `-count=6` + `benchstat` because a single run cannot distinguish a 5% change from noise. `-benchmem` because allocations are the cost that compounds.
 
-**Load — shape over volume.**
+**Load - shape over volume.**
 
 ```bash
 k6 run --vus 64 --duration 3m script.js   # mixed reads/writes
@@ -164,7 +164,7 @@ func jitter(base time.Duration, spread float64) time.Duration {
 |---|---|
 | Public, rarely changes | `Cache-Control: public, max-age=3600, stale-while-revalidate=60` |
 | Public, must revalidate | `Cache-Control: no-cache` + `ETag` (answer `304` on match) |
-| Per-user | `Cache-Control: private, no-store` — do not let a CDN hold it |
+| Per-user | `Cache-Control: private, no-store` - do not let a CDN hold it |
 | Immutable asset | `Cache-Control: public, max-age=31536000, immutable` |
 
 **What not to cache:** authorization decisions without revocation, anything keyed by a shared key that includes a user id, and writes that must be read-after-write consistent.
@@ -304,12 +304,12 @@ Compare p50/p99, throughput and CPU. If the baseline is already waiting on the d
 Before changing code, answer these. Any "no" sends you back up a rung.
 
 1. Which endpoint, measured how (p50/p99, load shape)?
-2. Where does the trace say the time goes — database, a hop, CPU, queueing?
+2. Where does the trace say the time goes - database, a hop, CPU, queueing?
 3. Is the offending query's plan known, and does an index explain it?
 4. Would a cache remove a query, and what is its invalidation story?
 5. Can the work leave the request (queue, outbox, precompute)?
 6. Are independent hops already parallel, and are their clients pooled?
 7. Does every outbound call have a deadline, and does every retry have a budget?
-8. What happens at 3x traffic — bounded queues or OOM?
+8. What happens at 3x traffic - bounded queues or OOM?
 9. Is the proposed change at the rung the profile points to?
 10. What measurement proves it worked, and what will you revert if it does not?

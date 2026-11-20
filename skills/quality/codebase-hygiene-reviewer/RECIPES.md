@@ -1,4 +1,4 @@
-# Codebase Hygiene Reviewer — Reference
+# Codebase Hygiene Reviewer - Reference
 
 Commands and the report template. Loaded on demand.
 
@@ -73,7 +73,7 @@ Raise `--min-tokens` if the output is mostly boilerplate (error handling, struct
 ## 6. Report template
 
 ```markdown
-# Hygiene report — <repo> — <date>
+# Hygiene report - <repo> - <date>
 
 Scope: <tracked files, excluded paths, tests as roots yes/no, consumers audited>
 

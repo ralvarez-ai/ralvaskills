@@ -1,6 +1,6 @@
 # Stack Versions
 
-Venue style files are released annually. This table records the template generation this skill was written against — it exists so `rsk status --stack` and a yearly manual review surface drift before a deadline does.
+Venue style files are released annually. This table records the template generation this skill was written against - it exists so `rsk status --stack` and a yearly manual review surface drift before a deadline does.
 
 | Dependency | Pinned version | Purpose |
 |---|---|---|
@@ -16,9 +16,9 @@ Base LaTeX toolchain (TeX Live, latexmk, biber, chktex) is inherited from
 
 ## Notes
 
-- **`natbib`, not `biblatex`** — this is the explicit carve-out from [latex-architect §8](../../languages/latex-architect/SKILL.md#8-bibliography). Venue templates ship `natbib` plus a matching `.bst`; converting them breaks the venue's citation rendering.
+- **`natbib`, not `biblatex`** - this is the explicit carve-out from [latex-architect §8](../../languages/latex-architect/SKILL.md#8-bibliography). Venue templates ship `natbib` plus a matching `.bst`; converting them breaks the venue's citation rendering.
 - All four venues assume **pdfLaTeX**. AAAI additionally requires Type 1 fonts and enforces embedding mechanically.
-- Style files are **not vendored into this skill** — download them per submission from the official sources in [assets/VENUE_TEMPLATES.md](assets/VENUE_TEMPLATES.md).
+- Style files are **not vendored into this skill** - download them per submission from the official sources in [assets/VENUE_TEMPLATES.md](assets/VENUE_TEMPLATES.md).
 
 _Last reviewed: 2026-07-30_
 _Skill version at last review: 1.0.0_

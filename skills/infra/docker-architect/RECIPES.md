@@ -70,7 +70,7 @@ ENTRYPOINT ["node", "dist/index.js"]
   ```dockerfile
   RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen
   ```
-- **Secret mounts** — never `COPY` secrets into layers:
+- **Secret mounts** - never `COPY` secrets into layers:
   ```dockerfile
   RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
   ```
@@ -117,4 +117,4 @@ services:
         condition: service_healthy
 ```
 
-This requires `db` to define a working `healthcheck`. `depends_on` without `condition:` only orders startup — doesn't wait for readiness.
+This requires `db` to define a working `healthcheck`. `depends_on` without `condition:` only orders startup - doesn't wait for readiness.

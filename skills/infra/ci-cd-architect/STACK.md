@@ -1,6 +1,6 @@
 # Stack Versions
 
-Lean stack — this skill is principles-first; the rows below track the third-party actions and tools referenced in [RECIPES.md](RECIPES.md). `rsk status --stack` uses this to surface drift when an action major bump changes behavior.
+Lean stack - this skill is principles-first; the rows below track the third-party actions and tools referenced in [RECIPES.md](RECIPES.md). `rsk status --stack` uses this to surface drift when an action major bump changes behavior.
 
 | Dependency | Pinned version | Purpose |
 |---|---|---|
@@ -15,8 +15,8 @@ Lean stack — this skill is principles-first; the rows below track the third-pa
 | docker/build-push-action | v6 | Build + push + SBOM + provenance attestations |
 | docker/login-action | v3 | Registry login (ghcr.io, Docker Hub, etc.) |
 | docker/metadata-action | v5 | Tag + label generation from refs |
-| aws-actions/configure-aws-credentials | v4 | OIDC role assumption — AWS |
-| google-github-actions/auth | v2 | OIDC workload identity — GCP |
+| aws-actions/configure-aws-credentials | v4 | OIDC role assumption - AWS |
+| google-github-actions/auth | v2 | OIDC workload identity - GCP |
 | googleapis/release-please-action | v4 | Manifest-driven release PRs + tags |
 | aquasecurity/trivy-action | 0.28 | Image + filesystem vulnerability scanning |
 | gitleaks/gitleaks-action | v2 | Secret scanning |
@@ -27,9 +27,9 @@ Lean stack — this skill is principles-first; the rows below track the third-pa
 ## Notes
 
 - **Principles-first skill.** SKILL.md is platform-agnostic; STACK.md tracks only the actions/tools cited in RECIPES.md so `rsk status --stack` can surface drift.
-- **First-party actions (`actions/*`, `docker/*`)** pinned by major tag (`@v5`) in recipes — a common compromise. SHA-pin if your threat model warrants it.
+- **First-party actions (`actions/*`, `docker/*`)** pinned by major tag (`@v5`) in recipes - a common compromise. SHA-pin if your threat model warrants it.
 - **Third-party actions** SHOULD be SHA-pinned in real workflows; the recipe examples show major tags for readability with a note pointing to §4 for the Renovate-managed SHA pattern.
-- **Cosign + OIDC** is the default signing path — no long-lived keys checked in.
+- **Cosign + OIDC** is the default signing path - no long-lived keys checked in.
 - Image base / runtime versions belong to [docker-architect/STACK.md](../docker-architect/STACK.md); not duplicated here.
 
 _Last reviewed: 2026-05-22_

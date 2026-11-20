@@ -1,15 +1,15 @@
-# Design Patterns — Detailed Catalog
+# Design Patterns - Detailed Catalog
 
 Detail beyond the SKILL.md summary. Loaded on demand when you need code snippets or the full anti-pattern rationale.
 
-## 1. Patterns worth knowing — detail
+## 1. Patterns worth knowing - detail
 
 ### Repository
 
-**One per aggregate root.** Abstracts persistence behind collection semantics (`find_by_id`, `add`, `remove`). Depth lives in [ddd-architect §5](../../design/ddd-architect/SKILL.md#5-repositories). Implementation lives in [sql-architect](../../databases/sql-architect/SKILL.md) — raw SQL via `psycopg`/`sqlx`, no ORM.
+**One per aggregate root.** Abstracts persistence behind collection semantics (`find_by_id`, `add`, `remove`). Depth lives in [ddd-architect §5](../../design/ddd-architect/SKILL.md#5-repositories). Implementation lives in [sql-architect](../../databases/sql-architect/SKILL.md) - raw SQL via `psycopg`/`sqlx`, no ORM.
 
 - **Use when:** the domain has aggregates with identity that need persistence.
-- **Skip when:** there's no domain layer — just functions that read and write rows.
+- **Skip when:** there's no domain layer - just functions that read and write rows.
 
 ### Adapter (ports & adapters)
 
@@ -20,7 +20,7 @@ Wrap an external dependency in an interface that the consumer defines. Full patt
 
 ### Strategy
 
-A behavior parameter that varies at runtime. In Go and Python, **a function value** is usually enough — no need for a `Strategy` class hierarchy.
+A behavior parameter that varies at runtime. In Go and Python, **a function value** is usually enough - no need for a `Strategy` class hierarchy.
 
 ```python
 def sort_users(users: list[User], compare: Callable[[User, User], int]) -> list[User]:
@@ -38,17 +38,17 @@ func SortUsers(users []User, less func(a, b User) bool) {
 
 ### Decorator (middleware-style wrapping)
 
-Wrap a function or handler to add cross-cutting concerns (logging, timing, retry, auth). Idiomatic in both languages — Python `@decorator`; Go `func(http.Handler) http.Handler` middleware chain (per [nethttp-architect §7](../../frameworks/nethttp-architect/SKILL.md#7-middleware--function-wrapping)).
+Wrap a function or handler to add cross-cutting concerns (logging, timing, retry, auth). Idiomatic in both languages - Python `@decorator`; Go `func(http.Handler) http.Handler` middleware chain (per [nethttp-architect §7](../../frameworks/nethttp-architect/SKILL.md#7-middleware--function-wrapping)).
 
 - **Use when:** the concern is genuinely cross-cutting and orthogonal to the wrapped logic.
-- **Skip when:** there's only one wrapped function — just inline the concern.
+- **Skip when:** there's only one wrapped function - just inline the concern.
 
 ### Observer / pub-sub
 
 Notify many subscribers when something happens. Modern shape: **domain events** ([ddd-architect §6](../../design/ddd-architect/SKILL.md#6-domain-events)) for in-process or via a message bus for cross-service.
 
 - **Use when:** multiple unknown consumers care about a state change, or you want to decouple producers from consumers.
-- **Skip when:** there's exactly one consumer — call it directly.
+- **Skip when:** there's exactly one consumer - call it directly.
 
 ### Builder (only when construction is complex)
 
@@ -62,17 +62,17 @@ For objects with many optional parameters where the constructor would have 12 ar
 A function that decides which concrete type to return based on input. Useful for parsing (parse this config blob into the right handler type), plugin systems, and discriminated unions.
 
 - **Use when:** the caller can't know the concrete type at compile time.
-- **Skip when:** the caller knows — just call the constructor directly.
+- **Skip when:** the caller knows - just call the constructor directly.
 
 ### Iterator (already a language feature)
 
-Go has `iter.Seq[T]` (1.23+). Python has generators. **Don't reach for an Iterator pattern as a separate class** — use the language feature. Detail in [go-architect §6](../../languages/go-architect/SKILL.md#6-iterators-go-123).
+Go has `iter.Seq[T]` (1.23+). Python has generators. **Don't reach for an Iterator pattern as a separate class** - use the language feature. Detail in [go-architect §6](../../languages/go-architect/SKILL.md#6-iterators-go-123).
 
-## 2. Patterns to avoid (or replace) — detail
+## 2. Patterns to avoid (or replace) - detail
 
 ### Singleton
 
-**Never.** Globals are anti-patterns per [go-architect §11](../../languages/go-architect/SKILL.md#11-dependencies--logging) and [python-architect §3](../../languages/python-architect/SKILL.md#4-interfaces--di). Use dependency injection — pass the instance to constructors. The "convenience" of `Singleton.getInstance()` makes tests painful and hides the dependency graph.
+**Never.** Globals are anti-patterns per [go-architect §11](../../languages/go-architect/SKILL.md#11-dependencies--logging) and [python-architect §3](../../languages/python-architect/SKILL.md#4-interfaces--di). Use dependency injection - pass the instance to constructors. The "convenience" of `Singleton.getInstance()` makes tests painful and hides the dependency graph.
 
 **Exceptions:** language-runtime singletons you don't control (`os.Stdout`, `logging.getLogger()`). Even those are usually accessed via a small DI-friendly wrapper.
 
@@ -103,7 +103,7 @@ Centralizes communication between objects "to reduce coupling." Usually grows in
 
 ### Template Method (inheritance-based)
 
-`AbstractClass.run()` calls `step1()` / `step2()` / `step3()`, subclasses override the steps. Replaced by **composition + functions/strategies passed in**. Inheritance for behavior reuse is a code smell — prefer interface satisfaction.
+`AbstractClass.run()` calls `step1()` / `step2()` / `step3()`, subclasses override the steps. Replaced by **composition + functions/strategies passed in**. Inheritance for behavior reuse is a code smell - prefer interface satisfaction.
 
 ### Prototype / Memento
 
@@ -119,12 +119,12 @@ When the smell appears, the named pattern is often (not always) the right escape
 | Constructor with 8+ arguments, many optional | Builder (Python keyword args usually enough) / functional options (Go) |
 | Five copies of "do thing X, log it, time it, retry it, do thing X again" | Decorator / middleware |
 | Multiple places do the same DB query | Repository method |
-| Cross-cutting "every service needs to handle authentication" | Decorator / middleware on the entry handlers — not in every service |
-| One class with 30 methods of unrelated concerns | Decompose into per-concern modules — not a Facade |
+| Cross-cutting "every service needs to handle authentication" | Decorator / middleware on the entry handlers - not in every service |
+| One class with 30 methods of unrelated concerns | Decompose into per-concern modules - not a Facade |
 | Several similar callbacks fired on the same event | Observer / domain event |
 | Global state that "needs to be accessed everywhere" | Inject it; the urge to make it global is the bug |
 | Subclass hierarchy with one method overridden per subclass | Strategy via function value, not inheritance |
-| Manual switch on type to dispatch behavior | Interface method + polymorphism (Go) / `match` (Python) — not Factory |
+| Manual switch on type to dispatch behavior | Interface method + polymorphism (Go) / `match` (Python) - not Factory |
 
 The pattern is the *option*, not the answer. Always check the decision rules in [SKILL §5](SKILL.md#5-decision-rules) first.
 
@@ -132,14 +132,14 @@ The pattern is the *option*, not the answer. Always check the decision rules in 
 
 ### Go
 
-- **`interface{}` (now `any`) used liberally** — kills type safety; usually a sign of premature abstraction. Stay typed unless you genuinely need dynamic dispatch.
-- **Empty struct receivers** (`func (Receiver) Method() {}`) used to "namespace" functions — just use package-level functions.
-- **Mutex + atomic mixed in the same struct** — pick one consistency model per field.
-- **Returning interface types from constructors** — go-architect §4 says return concrete types; let callers narrow. Returning interfaces forces every adapter to satisfy them.
+- **`interface{}` (now `any`) used liberally** - kills type safety; usually a sign of premature abstraction. Stay typed unless you genuinely need dynamic dispatch.
+- **Empty struct receivers** (`func (Receiver) Method() {}`) used to "namespace" functions - just use package-level functions.
+- **Mutex + atomic mixed in the same struct** - pick one consistency model per field.
+- **Returning interface types from constructors** - go-architect §4 says return concrete types; let callers narrow. Returning interfaces forces every adapter to satisfy them.
 
 ### Python
 
-- **`@staticmethod` everywhere on a class with no state** — it's a module, not a class. Use module-level functions.
-- **Inheritance for behavior reuse** — prefer composition + Protocol satisfaction.
-- **Metaclasses for "magic" registration** — fragile, surprising. Explicit registration is clearer.
-- **`*args, **kwargs` passthrough that hides the actual signature** — make the contract explicit.
+- **`@staticmethod` everywhere on a class with no state** - it's a module, not a class. Use module-level functions.
+- **Inheritance for behavior reuse** - prefer composition + Protocol satisfaction.
+- **Metaclasses for "magic" registration** - fragile, surprising. Explicit registration is clearer.
+- **`*args, **kwargs` passthrough that hides the actual signature** - make the contract explicit.

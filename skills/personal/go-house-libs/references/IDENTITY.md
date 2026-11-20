@@ -2,7 +2,7 @@
 
 > **v2.** The module path is `github.com/ralvarezdev/identity/v2`; `app.App` became `identity.Service` (`identity.New`, `identity.Config`, `identity.Deps`). The wiring below still reads as v1 names; map them with the rename table in the module's CHANGELOG (2.0.0). Pools, applications, service accounts and asymmetric tokens (2.1 to 2.3) are in [Tenancy and tokens](#tenancy-and-tokens-v21-to-v23).
 
-`github.com/ralvarezdev/identity` — one bounded context: who a user is and how they prove it. User accounts, authentication, sessions, TOTP/2FA, WebAuthn, RBAC and Personal Access Tokens. Do not write a users table, password hashing, JWT issuing or a session store in an app; wire this.
+`github.com/ralvarezdev/identity` - one bounded context: who a user is and how they prove it. User accounts, authentication, sessions, TOTP/2FA, WebAuthn, RBAC and Personal Access Tokens. Do not write a users table, password hashing, JWT issuing or a session store in an app; wire this.
 
 ## Slices
 

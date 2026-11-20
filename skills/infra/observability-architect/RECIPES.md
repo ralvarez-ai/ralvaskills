@@ -1,4 +1,4 @@
-# Observability — Implementation Recipes
+# Observability - Implementation Recipes
 
 Wiring code for the signals enforced in [SKILL.md](SKILL.md). Loaded on demand.
 
@@ -34,7 +34,7 @@ func (h *traceHandler) Handle(ctx context.Context, r slog.Record) error {
 }
 ```
 
-## 2. Full instrumentation stack — Go
+## 2. Full instrumentation stack - Go
 
 ```go
 import (
@@ -53,19 +53,19 @@ var httpRequests = prometheus.NewCounterVec(prometheus.CounterOpts{
     Help:      "HTTP requests by method, route, status.",
 }, []string{"method", "route", "status"})
 
-// Tracing — auto-instrument outbound HTTP and the server
+// Tracing - auto-instrument outbound HTTP and the server
 tp := initTracerProvider()
 otel.SetTracerProvider(tp)
 client := &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
 mux := http.NewServeMux()
 handler := otelhttp.NewHandler(mux, "orders-api")
 
-// Logging — slog with trace context (see §1)
+// Logging - slog with trace context (see §1)
 logger := slog.New(traceHandler{inner: slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo})})
 slog.SetDefault(logger)
 ```
 
-## 3. Full instrumentation stack — Python
+## 3. Full instrumentation stack - Python
 
 ```python
 import structlog
@@ -83,7 +83,7 @@ http_requests = Counter(
 # Tracing
 FastAPIInstrumentor().instrument_app(app)
 
-# Logging — structlog with trace context (see §1)
+# Logging - structlog with trace context (see §1)
 structlog.configure(
     processors=[
         structlog.contextvars.merge_contextvars,
@@ -98,7 +98,7 @@ structlog.configure(
 
 ## 4. Default histogram buckets
 
-For latency histograms, choose buckets explicitly — don't accept defaults.
+For latency histograms, choose buckets explicitly - don't accept defaults.
 
 ```
 [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]   // seconds
@@ -106,13 +106,13 @@ For latency histograms, choose buckets explicitly — don't accept defaults.
 
 Tune at the edges for the service's actual latency distribution; the middle bands are usually fine across services.
 
-## 5. Sampling — env-var configuration
+## 5. Sampling - env-var configuration
 
 ```
 OTEL_TRACES_SAMPLER=parentbased_traceidratio
 OTEL_TRACES_SAMPLER_ARG=0.1
 ```
 
-- Deterministic per `trace_id` — a request is either fully sampled or fully dropped.
+- Deterministic per `trace_id` - a request is either fully sampled or fully dropped.
 - Override to `1.0` in dev/staging.
 - Pair with span processors that force-sample on error status for 100% error-trace retention.

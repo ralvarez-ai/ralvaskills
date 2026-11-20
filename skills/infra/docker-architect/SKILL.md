@@ -1,7 +1,7 @@
 ---
 name: docker-architect
-version: 1.4.0
-description: Docker standards — multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2. Use when writing or reviewing Dockerfiles or Compose files.
+version: 1.4.1
+description: Docker standards - multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2. Use when writing or reviewing Dockerfiles or Compose files.
 ---
 
 # Docker Architecture & Container Standards
@@ -24,14 +24,14 @@ Per-language defaults:
 | Language | Default base | Why |
 |---|---|---|
 | **Go** | `gcr.io/distroless/static-debian12:nonroot` | Static binary, ~2 MB image, non-root by default, no shell (smaller attack surface). Reach for `scratch` only after auditing CA certs + tzdata yourself. |
-| **Python** | `python:3.14-slim` (debian slim) | `uv` in a builder stage, copy `.venv` to runtime. Avoid alpine — musl breaks several scientific wheels. |
+| **Python** | `python:3.14-slim` (debian slim) | `uv` in a builder stage, copy `.venv` to runtime. Avoid alpine - musl breaks several scientific wheels. |
 | **Node** | `node:22-slim` (debian slim) | Alpine breaks too many native modules. LTS only in production. |
 
 **Always pin by digest in production:** `FROM python:3.14-slim@sha256:abc...`. Tags are mutable; digests aren't. Refresh digests via Renovate / Dependabot and review the diff.
 
 ## 3. BuildKit features
 
-BuildKit is the default builder in Docker 29 — use **cache mounts** (survive layer invalidation), **secret mounts** (never `COPY` secrets into layers), **bind mounts** (read source without `COPY`), and **here-docs** (multi-line scripts) deliberately. Snippets in [RECIPES.md](RECIPES.md).
+BuildKit is the default builder in Docker 29 - use **cache mounts** (survive layer invalidation), **secret mounts** (never `COPY` secrets into layers), **bind mounts** (read source without `COPY`), and **here-docs** (multi-line scripts) deliberately. Snippets in [RECIPES.md](RECIPES.md).
 
 - **Build secrets come from the environment, not a `file:` outside the context.** A Compose `build.secrets` entry whose `file:` is outside the build context trips BuildKit/Bake's `fs.read` sandbox on `docker compose build` (`additional privileges requested: pass --allow=fs.read=…`). Use `environment: VAR` (the caller exports it); runtime `file:` secrets are unaffected.
 
@@ -44,14 +44,14 @@ BuildKit is the default builder in Docker 29 — use **cache mounts** (survive l
 
 ## 5. Multi-arch builds
 
-Always build `linux/amd64` + `linux/arm64`. Cloud is largely arm64-friendly now (Graviton, Ampere); local dev on Apple Silicon is arm64-native. `docker buildx build --platform linux/amd64,linux/arm64 ...` — full command + cache options in [RECIPES.md](RECIPES.md).
+Always build `linux/amd64` + `linux/arm64`. Cloud is largely arm64-friendly now (Graviton, Ampere); local dev on Apple Silicon is arm64-native. `docker buildx build --platform linux/amd64,linux/arm64 ...` - full command + cache options in [RECIPES.md](RECIPES.md).
 
 ## 6. Compose patterns (v2)
 
 - **File name:** `docker-compose.yaml` (long extension), with `docker-compose.override.yaml` for dev-only additions. Compose auto-merges them.
-- **Command:** `docker compose up` (v2 plugin, integrated). The legacy `docker-compose` standalone binary is deprecated — don't use it.
+- **Command:** `docker compose up` (v2 plugin, integrated). The legacy `docker-compose` standalone binary is deprecated - don't use it.
 - **No `version:` key.** Compose v2 ignores it; remove from any file you touch.
-- **`depends_on` with conditions** (example in [RECIPES.md](RECIPES.md#compose-depends_on-with-conditions)) requires `db` to define a working `healthcheck`. `depends_on` without `condition:` only orders startup — doesn't wait for readiness.
+- **`depends_on` with conditions** (example in [RECIPES.md](RECIPES.md#compose-depends_on-with-conditions)) requires `db` to define a working `healthcheck`. `depends_on` without `condition:` only orders startup - doesn't wait for readiness.
 - **Named volumes for stateful data** (`db-data:`), bind mounts only for source-code hot-reload in dev.
 - **Networks:** declare them explicitly; don't rely on the default network for anything non-trivial.
 - **Secrets and configs:** use `secrets:` and `configs:` top-level blocks for production-shaped local runs. A secret read by a **non-root** container is a bind mount it opens directly, so the host file must be `644`, not `600`. A frontend stage that fetches a private registry must `COPY` its `.npmrc` (and `pnpm-workspace.yaml`) **before** `pnpm install`, or the token/policy is missing at install time.
@@ -61,13 +61,13 @@ Always build `linux/amd64` + `linux/arm64`. Cloud is largely arm64-friendly now 
 - **Resource limits** on every service (`deploy.resources.limits.memory`, `cpus`). Unbounded containers eat hosts.
 - **Logging driver:** `json-file` with size + count rotation, or `journald` on Linux hosts. Production typically forwards to a log aggregator.
 - **Restart policy:** `unless-stopped` for long-running services; `no` for batch jobs.
-- **Init process:** single-process containers; no init system unless the app forks. When the app spawns child processes, add `--init` / `tini` (or `init: true` in Compose) — prevents zombie processes.
+- **Init process:** single-process containers; no init system unless the app forks. When the app spawns child processes, add `--init` / `tini` (or `init: true` in Compose) - prevents zombie processes.
 - **TZ:** set `TZ=Etc/UTC` explicitly in the image; never rely on host timezone.
 
 ## 8. Dev vs prod
 
-- `docker-compose.yaml` — production-shaped baseline (images by digest, no source bind mounts, prod env defaults).
-- `docker-compose.override.yaml` — dev-only additions: bind-mount source for hot reload, expose ports for debuggers, pull secrets from `.env.local`.
+- `docker-compose.yaml` - production-shaped baseline (images by digest, no source bind mounts, prod env defaults).
+- `docker-compose.override.yaml` - dev-only additions: bind-mount source for hot reload, expose ports for debuggers, pull secrets from `.env.local`.
 - Compose loads both automatically with `docker compose up`. To run *prod-only*, use `docker compose -f docker-compose.yaml up` (skip the override).
 - **Never bake dev conveniences into the main file.** That's how mounting `./` into prod ships.
 
@@ -75,15 +75,15 @@ Always build `linux/amd64` + `linux/arm64`. Cloud is largely arm64-friendly now 
 
 - **Production deploys reference image digests** (`@sha256:...`), not tags. Tags are for humans; digests are for machines.
 - **Human-facing tags follow semver** (`1.2.3`) plus a moving `latest` and `1.2` major/minor aliases for local convenience.
-- **CI also pushes `:<short-sha>`** for traceability — easy to roll back to a specific commit.
+- **CI also pushes `:<short-sha>`** for traceability - easy to roll back to a specific commit.
 - **Sign images** with Cosign for prod-bound registries. Verify on pull in the deployment platform.
 
-## 10. Vulnerability scanning — Trivy
+## 10. Vulnerability scanning - Trivy
 
 - **Default scanner: `aquasecurity/trivy`.** Open-source, fast, scans images + filesystems + IaC.
-- **CI step on every push** (`trivy image --severity HIGH,CRITICAL --exit-code 1 ...`) — full command in [RECIPES.md](RECIPES.md).
-- **Ignore file** (`.trivyignore`) for documented, accepted exceptions — never silent allowlists.
-- **SBOM:** `trivy image --format spdx-json --output sbom.json ...` — attach to releases. Required for supply-chain compliance.
+- **CI step on every push** (`trivy image --severity HIGH,CRITICAL --exit-code 1 ...`) - full command in [RECIPES.md](RECIPES.md).
+- **Ignore file** (`.trivyignore`) for documented, accepted exceptions - never silent allowlists.
+- **SBOM:** `trivy image --format spdx-json --output sbom.json ...` - attach to releases. Required for supply-chain compliance.
 
 ## 11. Language-specific recipes
 
