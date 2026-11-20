@@ -56,3 +56,6 @@ docs/internal/
 
 # CodeGraph local index
 .codegraph/
+
+# rsk skill links (generated)
+.opencode/
