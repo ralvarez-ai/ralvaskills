@@ -1,6 +1,6 @@
 ---
 name: token-economy
-version: 1.1.2
+version: 1.1.3
 description: Token and cost control for coding agents — context and cache hygiene, batching, subagents for mechanical work, escalation, session measurement, guardrails, RTK/CodeGraph audit. Use when saving tokens, cost or context.
 ---
 
@@ -67,7 +67,7 @@ to paste the block from [RECIPES §1](RECIPES.md#1-agentsmd-rules-block). Its su
   agent run the command, or write it to a file and read a range. Crop screenshots.
 - **Replies lead with the result.** No recap, no narration. Code, commits and docs in full prose.
 - **One task per session**, carried across in a handoff note, not the transcript.
-- **Two-failure rule.** Second failed attempt at the same thing: stop, escalate (section 5).
+- **Two-failure rule.** Second failed attempt at the same thing: stop, escalate (section 5). Before a third fix, write down the premise the failed fixes share (the one sentence each assumed) and test it directly; if it fails, change the premise instead of adding another fix.
 
 ## 4. Delegating to subagents
 
@@ -202,3 +202,7 @@ unasked hook output (and `prompt`/`agent` hook handlers, which spend tokens on e
 - Importing whole `SKILL.md` bodies at start; every skill installed in every project.
 - Adding or removing MCP servers mid-session.
 - Quoting a tool's savings percentage without measuring it here.
+
+---
+
+_Includes material adapted from [cursor/plugins pstack `principle-attack-the-premise`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/principle-attack-the-premise) by Lauren Tan (MIT). Changed for this workspace._

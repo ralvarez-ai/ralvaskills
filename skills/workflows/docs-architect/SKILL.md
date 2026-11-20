@@ -1,6 +1,6 @@
 ---
 name: docs-architect
-version: 1.2.1
+version: 1.2.2
 description: Project documentation system — a folder-per-doc-type docs/ tree (ADRs, backlog, ideas, plans, designs, reviews, changes, guides), mandatory frontmatter, lifecycle by moving files, backlog as a queue or as one file per item, weekly/monthly routine, and a stdlib linter. Scaffold, write-doc and migrate modes. Use when setting up docs/, writing a plan/design/ADR/review, triaging a backlog, or reorganizing an existing docs folder.
 ---
 
@@ -86,4 +86,5 @@ Docs this skill generates use kebab-case, lowercase, no accents: `0004-use-nats.
 - **`CONTEXT.md` glossary and when to offer an ADR** → [grill-with-docs](../grill-with-docs/SKILL.md)
 - **Requirement → design → slices** → [feature-planner](../feature-planner/SKILL.md)
 - **Commit messages and `CHANGELOG.md` wording** → [commit-author](../commit-author/SKILL.md)
+- **Prose review of a doc's wording** → [unslop](../../meta/unslop/SKILL.md)
 - **Root `README.md` / `CHANGELOG.md` authoring** — the user-facing entry points are not generated here; `changes/` entries may link a changelog line.

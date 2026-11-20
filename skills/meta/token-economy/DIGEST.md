@@ -12,7 +12,7 @@ Spend tokens where they buy accuracy. Cut what persists (context, cache, always-
 - No pasted long output: run the command, or write to a file and read a range. Crop screenshots.
 - Replies lead with the result; no recap, no narration.
 - One task per session; carry it over in a handoff note, not the transcript.
-- Two-failure rule: second failed attempt at the same thing, stop and escalate.
+- Two-failure rule: second failed attempt at the same thing, stop and escalate. Before a third fix, write down the premise the failed fixes share and test it directly.
 - Lookups of 1-3 tool calls stay inline; delegate only with a brief (goal, ruled out, where to look, output shape, word cap).
 - Mechanical work (renames, checklist audits, repeated edits): script first, else cheap worker per batch. Verify with a command, not the worker's word.
 - Default Sonnet at medium effort; escalate via subagent, then fresh session with handoff note. Switch model in place only while context is small.

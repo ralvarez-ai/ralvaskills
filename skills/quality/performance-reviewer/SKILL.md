@@ -1,6 +1,6 @@
 ---
 name: performance-reviewer
-version: 1.1.0
+version: 1.2.0
 description: Cross-language perf review — N+1, missing indexes, blocking I/O in async, allocation hot paths, unbounded memory, slow algorithms. Findings grounded in EXPLAIN / pprof / py-spy / metrics. Use when reviewing for perf or investigating a slow endpoint.
 ---
 
@@ -95,6 +95,8 @@ Tools that ground the findings — full reference in [RECIPES § 3](RECIPES.md#3
 
 Quick picks: **SQL** → `EXPLAIN (ANALYZE, BUFFERS)` + `pg_stat_statements`. **Go** → `pprof`. **Python** → `py-spy`. **Bench** → `hyperfine` (CLI), `go test -bench`, `pytest-benchmark`. **Load** → `wrk` / `k6`. **Symptom** → Grafana RED+USE.
 
+Before reporting or acting on a measured number (a speedup, a regression, a benchmark), vet it with the seven questions in [BENCHMARKS.md](BENCHMARKS.md): limiter, tuning, limits, errors, reproducibility, relevance, and whether the work happened.
+
 ## 6. What this skill does NOT do
 
 - **Load testing.** Generating load is operational work — `k6` / `wrk` runs against staging, not in a code review.
@@ -108,3 +110,7 @@ Quick picks: **SQL** → `EXPLAIN (ANALYZE, BUFFERS)` + `pg_stat_statements`. **
 - [grafana-architect](../../infra/grafana-architect/SKILL.md) — burn rate / SLO dashboards trigger reviews.
 - [rest-api-architect §5](../../protocols/rest-api-architect/SKILL.md#5-pagination--cursor-not-offset) / [§14](../../protocols/rest-api-architect/SKILL.md#14-rate-limiting) — cursor pagination, rate limiting at the API layer.
 - [improve-codebase-architecture](../../refactoring/improve-codebase-architecture/SKILL.md) — when a finding requires structural change, promote to architecture review.
+
+---
+
+_Includes material adapted from [cursor/plugins pstack `benchmark-checklist`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/benchmark-checklist) and [`principle-explain-the-number`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/principle-explain-the-number) by Lauren Tan (MIT). Changed for this workspace._

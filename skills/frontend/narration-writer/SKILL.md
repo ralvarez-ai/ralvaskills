@@ -1,6 +1,6 @@
 ---
 name: narration-writer
-version: 2.0.0
+version: 2.0.1
 description: Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) — short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.
 ---
 
@@ -86,6 +86,8 @@ Provider choice, cost, privacy and voice rights belong to the owner. Keys live i
 - [ ] Every claim traces to a source shown or cited with the video.
 - [ ] Anything not recorded is said to be an illustration.
 - [ ] No key, token or private detail is in any file.
+
+For prose outside the spoken script (notes, READMEs, reports), review the wording with [unslop](../../meta/unslop/SKILL.md); the spoken-form and sentence limits above take precedence for narration.
 
 ---
 

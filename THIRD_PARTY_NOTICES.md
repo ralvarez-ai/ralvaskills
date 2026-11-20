@@ -12,6 +12,8 @@ Some skills in `skills/` are adapted from other people's work. Each adapted skil
 | `blast-radius-reviewer` | [cursor/plugins pstack `skills/blast-radius`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/blast-radius) | Lauren Tan | MIT |
 | `unslop` | [cursor/plugins pstack `skills/unslop`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/unslop) | Lauren Tan | MIT |
 | `guardrail-builder` | [cursor/plugins pstack `skills/correct`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/correct) | Lauren Tan | MIT |
+| `performance-reviewer` | [cursor/plugins pstack `skills/benchmark-checklist`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/benchmark-checklist) and [`skills/principle-explain-the-number`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/principle-explain-the-number) | Lauren Tan | MIT |
+| `token-economy` | [cursor/plugins pstack `skills/principle-attack-the-premise`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/principle-attack-the-premise) | Lauren Tan | MIT |
 
 `adhd-mode` upstream itself credits *The Adult ADHD Tool Kit* by J. Russell Ramsay and Anthony L. Rostain as a loose basis.
 

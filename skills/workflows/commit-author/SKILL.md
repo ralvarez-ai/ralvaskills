@@ -1,6 +1,6 @@
 ---
 name: commit-author
-version: 1.12.1
+version: 1.12.2
 description: Generate concise Conventional Commits messages from a staged diff. Enforces full type set, imperative subject lines, no AI co-author attribution. Use when user wants to commit, asks for a commit message, mentions "commit", or invokes /commit.
 ---
 
@@ -33,6 +33,7 @@ Full Conventional Commits v1.0.0 type set (Angular convention):
 ## 4. Body
 * **Content:** Explain *why* the change was made, not *what* changed. Do not write line-by-line file summaries.
 * **Formatting:** Hard wrap lines at 72 characters.
+* **Prose review:** For a message that reads as filler or AI boilerplate, apply the rules in [unslop](../../meta/unslop/SKILL.md); the type, subject and trailer rules above still win.
 
 ## 4.1 Merge Commits
 * **Body content:** A bare `Merge branch '...'` message is not enough when the merge brings in meaningful changes. Use the body to summarize all the changes the merge introduces — group them by type or area, and note the key behavioral changes.
