@@ -4,11 +4,13 @@ pinned = ["rsk-guide", "token-economy", "commit-author", "repo-tooling-architect
 
 [skills]
   adhd-mode = "*"
+  blast-radius-reviewer = "*"
   ci-cd-architect = "*"
   cli-tool-architect = "*"
   commit-author = "*"
   docs-architect = "*"
   go-architect = "*"
+  guardrail-builder = "*"
   landing-page-designer = "*"
   logic-cleaner = "*"
   repo-tooling-architect = "*"
@@ -16,3 +18,4 @@ pinned = ["rsk-guide", "token-economy", "commit-author", "repo-tooling-architect
   skill-builder = "*"
   test-designer = "*"
   token-economy = "*"
+  unslop = "*"
