@@ -1,6 +1,6 @@
 ---
 name: improve-codebase-architecture
-version: 1.2.2
+version: 1.2.3
 description: Find deepening and consolidation opportunities in a codebase, informed by CONTEXT.md and docs/adr/. Use when asked to improve architecture, make code more testable or AI-navigable.
 ---
 
@@ -87,4 +87,4 @@ Once the design is settled, deepen the module per [DEEPENING.md](DEEPENING.md): 
 
 ---
 
-_Adapted from [mattpocock/skills `improve-codebase-architecture`](https://github.com/mattpocock/skills/tree/main/skills/engineering/improve-codebase-architecture) by Matt Pocock (MIT). Changed for this workspace._
+_Adapted from [mattpocock/skills `improve-codebase-architecture`](https://github.com/mattpocock/skills/tree/62f43a18177be6ec82da242e59ffbc490a4c22ea/skills/engineering/improve-codebase-architecture) by Matt Pocock (MIT). Changed for this workspace._

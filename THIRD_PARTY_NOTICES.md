@@ -4,11 +4,11 @@ Some skills in `skills/` are adapted from other people's work. Each adapted skil
 
 | Skill | Source | Author | License |
 | --- | --- | --- | --- |
-| `tdd` | [mattpocock/skills `engineering/tdd`](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd) | Matt Pocock | MIT |
-| `grill-with-docs` | [mattpocock/skills `engineering/grill-with-docs`](https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs) | Matt Pocock | MIT |
-| `improve-codebase-architecture` | [mattpocock/skills `engineering/improve-codebase-architecture`](https://github.com/mattpocock/skills/tree/main/skills/engineering/improve-codebase-architecture) | Matt Pocock | MIT |
-| `caveman` | [JuliusBrussee/caveman `skills/caveman`](https://github.com/JuliusBrussee/caveman/tree/main/skills/caveman) | Julius Brussee | Apache-2.0 |
-| `adhd-mode` | [ayghri/i-have-adhd `skills/i-have-adhd`](https://github.com/ayghri/i-have-adhd/tree/main/skills/i-have-adhd) | Ayoub Ghriss | MIT |
+| `tdd` | [mattpocock/skills `engineering/tdd`](https://github.com/mattpocock/skills/tree/62f43a18177be6ec82da242e59ffbc490a4c22ea/skills/engineering/tdd) | Matt Pocock | MIT |
+| `grill-with-docs` | [mattpocock/skills `engineering/grill-with-docs`](https://github.com/mattpocock/skills/tree/e74f0061bb67222181640effa98c675bdb2fdaa7/skills/engineering/grill-with-docs) | Matt Pocock | MIT |
+| `improve-codebase-architecture` | [mattpocock/skills `engineering/improve-codebase-architecture`](https://github.com/mattpocock/skills/tree/62f43a18177be6ec82da242e59ffbc490a4c22ea/skills/engineering/improve-codebase-architecture) | Matt Pocock | MIT |
+| `caveman` | [JuliusBrussee/caveman `skills/caveman`](https://github.com/JuliusBrussee/caveman/tree/a192894723a8f47e7f504c7b5041967ff1f18e55/skills/caveman) | Julius Brussee | Apache-2.0 |
+| `adhd-mode` | [ayghri/i-have-adhd `skills/i-have-adhd`](https://github.com/ayghri/i-have-adhd/tree/1ecea1993b7fce257ffbd686c070948b5e07eda6/skills/i-have-adhd) | Ayoub Ghriss | MIT |
 | `blast-radius-reviewer` | [cursor/plugins pstack `skills/blast-radius`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/blast-radius) | Lauren Tan | MIT |
 | `unslop` | [cursor/plugins pstack `skills/unslop`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/unslop) | Lauren Tan | MIT |
 | `guardrail-builder` | [cursor/plugins pstack `skills/correct`](https://github.com/cursor/plugins/tree/0b46ec399d55f2829e88822998f53b84944837d3/pstack/skills/correct) | Lauren Tan | MIT |
@@ -50,3 +50,5 @@ SOFTWARE.
 ## Apache-2.0 notice (`caveman`)
 
 Caveman, Copyright 2026 Julius Brussee. Licensed under the Apache License, Version 2.0; a copy is at <http://www.apache.org/licenses/LICENSE-2.0> and in the upstream repository's `LICENSE`. The skill here is a modified version: its text was shortened and reworded, and the footer, versioning and `DIGEST.md` are this repository's. Distributed on an "AS IS" basis, without warranties or conditions of any kind.
+
+Pinned commits: `tdd` and `improve-codebase-architecture` match upstream `62f43a1` exactly at their first import, and `grill-with-docs` is closest to `e74f006` (similarity 0.97). The text of `caveman` and `adhd-mode` has been rewritten too far to match any upstream commit, so their pins are the upstream HEAD when the notices were added (`a192894` and `1ecea19`). `caveman`'s `LICENSE.upstream` also carries the upstream `NOTICE` (Apache-2.0 section 4d) and `LICENSE-MIT`, which upstream keeps for contributions made before 3.0.0.

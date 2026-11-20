@@ -1,6 +1,6 @@
 ---
 name: caveman
-version: 1.1.1
+version: 1.1.2
 description: Ultra-compressed communication mode — drops filler, articles, pleasantries while keeping technical accuracy. Use when user says "caveman mode", "talk like caveman", "less tokens", "be brief", or invokes /caveman.
 ---
 
@@ -47,4 +47,4 @@ Example -- destructive op:
 
 ---
 
-_Adapted from [JuliusBrussee/caveman `caveman`](https://github.com/JuliusBrussee/caveman/tree/main/skills/caveman) by Julius Brussee (Apache-2.0). Changed for this workspace._
+_Adapted from [JuliusBrussee/caveman `caveman`](https://github.com/JuliusBrussee/caveman/tree/a192894723a8f47e7f504c7b5041967ff1f18e55/skills/caveman) by Julius Brussee (Apache-2.0). Changed for this workspace._

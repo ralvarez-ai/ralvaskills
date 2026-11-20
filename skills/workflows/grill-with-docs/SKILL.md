@@ -1,6 +1,6 @@
 ---
 name: grill-with-docs
-version: 1.1.2
+version: 1.1.3
 description: Grilling session that stress-tests an existing plan against the project's domain model and updates CONTEXT.md and ADRs as decisions crystallise. Use when a plan exists and needs challenging.
 ---
 
@@ -60,4 +60,4 @@ If any of the three is missing, skip the ADR. Use the format in [ADR_FORMAT.md](
 
 ---
 
-_Adapted from [mattpocock/skills `grill-with-docs`](https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs) by Matt Pocock (MIT). Changed for this workspace._
+_Adapted from [mattpocock/skills `grill-with-docs`](https://github.com/mattpocock/skills/tree/e74f0061bb67222181640effa98c675bdb2fdaa7/skills/engineering/grill-with-docs) by Matt Pocock (MIT). Changed for this workspace._

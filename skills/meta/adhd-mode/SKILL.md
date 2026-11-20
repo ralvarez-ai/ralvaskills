@@ -1,6 +1,6 @@
 ---
 name: adhd-mode
-version: 1.0.2
+version: 1.0.3
 description: Output shaped for a reader with ADHD — next action first, numbered steps, restated state, time estimates, no tangents. Use when the user says "adhd mode" or "I have ADHD", or invokes /adhd-mode; stays until "stop adhd mode".
 ---
 
@@ -64,8 +64,8 @@ Then: if the reader read only the first and last line, would they know what to d
 
 ## Credits
 
-Adapted from [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) by Ayoub Ghriss, MIT License, Copyright (c) 2026 Ayoub Ghriss (`skills/i-have-adhd/SKILL.md`). Rules, structure and the "what ADHD changes" framing come from there; this version is rewritten and changed for this workspace (the composition section, the harness and `AGENTS.md` precedence, state-restating through task tools, minute-level estimates tied to who executes). Upstream credits *The Adult ADHD Tool Kit* by J. Russell Ramsay and Anthony L. Rostain as its loose basis, adapted for how an LLM should respond. The full notice is in the repository's `THIRD_PARTY_NOTICES.md`.
+Adapted from [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd/tree/1ecea1993b7fce257ffbd686c070948b5e07eda6/skills/i-have-adhd) by Ayoub Ghriss, MIT License, Copyright (c) 2026 Ayoub Ghriss (`skills/i-have-adhd/SKILL.md`). Rules, structure and the "what ADHD changes" framing come from there; this version is rewritten and changed for this workspace (the composition section, the harness and `AGENTS.md` precedence, state-restating through task tools, minute-level estimates tied to who executes). Upstream credits *The Adult ADHD Tool Kit* by J. Russell Ramsay and Anthony L. Rostain as its loose basis, adapted for how an LLM should respond. The full notice is in the repository's `THIRD_PARTY_NOTICES.md`.
 
 ---
 
-_Adapted from [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) (MIT)._
+_Adapted from [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd/tree/1ecea1993b7fce257ffbd686c070948b5e07eda6/skills/i-have-adhd) (MIT)._

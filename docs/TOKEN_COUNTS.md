@@ -19,7 +19,7 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 | What | When loaded | Estimated tokens |
 |---|---|---:|
-| All `SKILL.md` bodies | Only when invoked | ~166093 |
+| All `SKILL.md` bodies | Only when invoked | ~166162 |
 | All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~197718 |
 | All `description:` fields (every skill) | Every turn, if all installed | ~8141 |
 
@@ -27,7 +27,7 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 Budgets: **global ≤ 1500** desc tokens (paid by every project), **session ≤ 2200** desc tokens (global + one project bundle). Status: `ok` < 90% · `warn` ≥ 90% · `OVER` ≥ 100%.
 
-**Global baseline** (`rsk install global --global`): 18 skills · ~1334 / 1500 desc tokens every turn (`ok`) · ~32036 body tokens if all invoked.
+**Global baseline** (`rsk install global --global`): 18 skills · ~1334 / 1500 desc tokens every turn (`ok`) · ~32105 body tokens if all invoked.
 
 Per-project bundle additions on top of the global baseline:
 
@@ -98,10 +98,10 @@ These skills are not part of any bundle. They are installed individually with `r
 | quality | 7 | ~14687 | ~762 | ~10544 |
 | languages | 3 | ~13482 | ~406 | ~16535 |
 | infra | 5 | ~11702 | ~517 | ~11926 |
-| meta | 6 | ~10644 | ~456 | ~8820 |
+| meta | 6 | ~10686 | ~456 | ~8820 |
 | tooling | 3 | ~7600 | ~310 | ~7662 |
-| workflows | 6 | ~7402 | ~531 | ~10889 |
-| refactoring | 4 | ~6628 | ~278 | ~8125 |
+| workflows | 6 | ~7420 | ~531 | ~10889 |
+| refactoring | 4 | ~6637 | ~278 | ~8125 |
 | academic | 2 | ~5097 | ~270 | ~9400 |
 | design | 2 | ~4365 | ~149 | ~2471 |
 | messaging | 1 | ~2770 | ~83 | ~3179 |
@@ -115,7 +115,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 
 | Bundle | Local | External | Missing | ~Body tkns (local) | ~Desc tkns (local) |
 |---|---:|---:|---:|---:|---:|
-| `global` | 18 | 0 | 0 | ~32036 | ~1334 |
+| `global` | 18 | 0 | 0 | ~32105 | ~1334 |
 | `docs` | 1 | 5 | 0 | ~780 | ~94 |
 | `design` | 3 | 1 | 0 | ~8155 | ~313 |
 | `go-grpc` | 5 | 0 | 0 | ~15526 | ~580 |
@@ -185,7 +185,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 48 | `docker-architect` | infra | 7397 | ~1850 | ~89 | ~333 | ~786 | ~1480 |
 | 49 | `design-patterns` | refactoring | 7310 | ~1828 | ~65 | ~0 | ~0 | ~2650 |
 | 50 | `protobuf-architect` | encoding | 7271 | ~1818 | ~84 | ~474 | ~914 | ~479 |
-| 51 | `improve-codebase-architecture` | refactoring | 7210 | ~1803 | ~60 | ~0 | ~0 | ~4488 |
+| 51 | `improve-codebase-architecture` | refactoring | 7246 | ~1812 | ~60 | ~0 | ~0 | ~4488 |
 | 52 | `uru-thesis-defense-designer` | personal | 7107 | ~1777 | ~132 | ~0 | ~1525 | ~500 |
 | 53 | `manim-architect` | frameworks | 7103 | ~1776 | ~198 | ~284 | ~1471 | ~2678 |
 | 54 | `explainer-designer` | frontend | 6946 | ~1737 | ~187 | ~0 | ~1255 | ~1146 |
@@ -194,21 +194,21 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 57 | `docs-architect` | workflows | 6649 | ~1663 | ~144 | ~0 | ~0 | ~5829 |
 | 58 | `uru-thesis-writer` | personal | 6637 | ~1660 | ~114 | ~0 | ~1697 | ~5465 |
 | 59 | `notify-on-finish` | tooling | 5422 | ~1445 | ~136 | ~0 | ~0 | ~490 |
-| 60 | `adhd-mode` | meta | 5483 | ~1371 | ~75 | ~0 | ~0 | ~343 |
+| 60 | `adhd-mode` | meta | 5613 | ~1404 | ~75 | ~0 | ~0 | ~343 |
 | 61 | `codebase-hygiene-reviewer` | quality | 4745 | ~1187 | ~90 | ~0 | ~1032 | ~428 |
 | 62 | `blast-radius-reviewer` | quality | 4337 | ~1085 | ~91 | ~0 | ~0 | ~327 |
-| 63 | `tdd` | workflows | 4169 | ~1073 | ~69 | ~0 | ~0 | ~1781 |
+| 63 | `tdd` | workflows | 4205 | ~1082 | ~69 | ~0 | ~0 | ~1781 |
 | 64 | `demo-script-designer` | frontend | 3635 | ~939 | ~96 | ~0 | ~0 | ~794 |
 | 65 | `commit-author` | workflows | 3570 | ~893 | ~81 | ~0 | ~0 | ~409 |
 | 66 | `mockup-architect` | frontend | 3540 | ~885 | ~136 | ~0 | ~0 | ~474 |
 | 67 | `pi-iteration-workflow` | personal | 3511 | ~878 | ~108 | ~0 | ~387 | ~394 |
 | 68 | `unslop` | meta | 3119 | ~780 | ~94 | ~0 | ~0 | ~284 |
-| 69 | `grill-with-docs` | workflows | 3084 | ~771 | ~63 | ~0 | ~0 | ~1965 |
+| 69 | `grill-with-docs` | workflows | 3120 | ~780 | ~63 | ~0 | ~0 | ~1965 |
 | 70 | `guardrail-builder` | workflows | 3056 | ~764 | ~108 | ~0 | ~0 | ~311 |
 | 71 | `logic-cleaner` | refactoring | 2379 | ~595 | ~93 | ~0 | ~0 | ~405 |
-| 72 | `caveman` | meta | 1789 | ~448 | ~71 | ~0 | ~0 | ~272 |
+| 72 | `caveman` | meta | 1825 | ~457 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 661365 body bytes · ~166093 body tokens · ~8141 desc tokens · ~197718 side tokens
+**Totals:** 661639 body bytes · ~166162 body tokens · ~8141 desc tokens · ~197718 side tokens
 
 ## Topic files
 

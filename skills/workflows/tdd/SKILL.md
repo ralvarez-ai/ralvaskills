@@ -1,6 +1,6 @@
 ---
 name: tdd
-version: 1.1.2
+version: 1.1.3
 description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
 ---
 
@@ -97,4 +97,4 @@ After all tests pass, look for [refactor candidates](REFACTORING.md):
 
 ---
 
-_Adapted from [mattpocock/skills `tdd`](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd) by Matt Pocock (MIT). Changed for this workspace._
+_Adapted from [mattpocock/skills `tdd`](https://github.com/mattpocock/skills/tree/62f43a18177be6ec82da242e59ffbc490a4c22ea/skills/engineering/tdd) by Matt Pocock (MIT). Changed for this workspace._
