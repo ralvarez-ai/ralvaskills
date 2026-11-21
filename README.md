@@ -121,18 +121,6 @@ Skills about authoring/operating the toolkit itself, plus communication modes th
 - **`adhd-mode`** — Reply shape for a reader with ADHD: next action first, numbered steps, restated state, one next step.
 - **`token-economy`** — Token-saving habits and setup for Claude Code and OpenCode: always-on rules, subagent exploration, model escalation and handoff, cheap-model guidance, and an audit of context-mode, RTK and CodeGraph.
 
-### `personal/` — author-specific, not bundle-installable
-
-These are personal to me and excluded from bundle installs. Listed here for transparency; not intended for reuse.
-
-- **`pi-iteration-workflow`** — Windows-to-Pi SSH edit-test loop for the `voldemorbot` robot codebase: pixi/ROS2 rebuild triggers, `screen` for flaky-WiFi survival, PowerShell SSH quoting pitfalls, Pi Zero sudo caching.
-- **`uru-thesis-writer`** — Interview-first, section-by-section drafter for URU thesis (TEG) chapters, Spanish output, URU chapter order, never fabricates data. Complements `uru-thesis-reviewer`.
-- **`uru-thesis-reviewer`** — Continuous-feedback reviewer for URU (Universidad Rafael Urdaneta) Trabajos Especiales de Grado. Produces ordered `.md` diff files; never edits the source `.docx`.
-- **`uru-thesis-defense-designer`** — URU-style thesis defense deck specs: fixed institutional slide structure, Spanish-only content, logo placement rules. Outputs `.md` only.
-- **`uru-paper-format`** — Manuscript formatting for Revista Tecnocientífica URU: typography rules, IMRyD-derived structure by article type, citation/reference formats. Outputs one `.md` manuscript spec.
-- **`go-library-builder`** — Scaffolds reusable Go 1.27.3 library modules in the ralvarezdev house style (flat, vertical-slice, toolkit or framework-adapter shapes): domain-pure root package, narrow ports, technology-named adapter subpackages (prod/dev/test), config structs over options, testcontainers over mocks, mise + Task + golangci tooling. Module namespace is a parameter.
-- **`go-house-libs`** — Maps a need to the ralvarezdev shared Go modules (restkit, ginkit, pgkit, mcpkit, contracts, connectrpckit, identity, identitygin, ratelimit, email, webpush, termkit, svckit, tick, sqlitekit, resilience): a router plus one `references/` file per module with its package layout, a recipe and the gotchas; the consumer-side companion of `go-library-builder`.
-
 ---
 
 ## `rsk` CLI

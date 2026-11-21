@@ -904,7 +904,8 @@
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-house-libs@v0.7.1/go-house-libs-v0.7.1.tar.gz"
         }
-      }
+      },
+      "deprecated": true
     },
     "go-library-builder": {
       "name": "go-library-builder",
@@ -937,7 +938,8 @@
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-library-builder@v1.2.1/go-library-builder-v1.2.1.tar.gz"
         }
-      }
+      },
+      "deprecated": true
     },
     "grafana-architect": {
       "name": "grafana-architect",
@@ -1569,7 +1571,8 @@
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/pi-iteration-workflow@v1.1.1/pi-iteration-workflow-v1.1.1.tar.gz"
         }
-      }
+      },
+      "deprecated": true
     },
     "protobuf-architect": {
       "name": "protobuf-architect",
@@ -2170,7 +2173,8 @@
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-paper-format@v2.0.1/uru-paper-format-v2.0.1.tar.gz"
         }
-      }
+      },
+      "deprecated": true
     },
     "uru-scientific-paper-architect": {
       "name": "uru-scientific-paper-architect",
@@ -2265,7 +2269,8 @@
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-defense-designer@v2.0.1/uru-thesis-defense-designer-v2.0.1.tar.gz"
         }
-      }
+      },
+      "deprecated": true
     },
     "uru-thesis-reviewer": {
       "name": "uru-thesis-reviewer",
@@ -2298,7 +2303,8 @@
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-reviewer@v0.3.1/uru-thesis-reviewer-v0.3.1.tar.gz"
         }
-      }
+      },
+      "deprecated": true
     },
     "uru-thesis-writer": {
       "name": "uru-thesis-writer",
@@ -2316,7 +2322,8 @@
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/uru-thesis-writer@v1.0.1/uru-thesis-writer-v1.0.1.tar.gz"
         }
-      }
+      },
+      "deprecated": true
     },
     "wails-architect": {
       "name": "wails-architect",
