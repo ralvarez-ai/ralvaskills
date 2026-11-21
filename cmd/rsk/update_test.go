@@ -62,8 +62,6 @@ func writeLinkedSkill(t *testing.T, dir, name, version, body string) {
 // but left .rsk/SKILLS.md holding the previous digest until the next `rsk pin`:
 // a changed DIGEST.md must land in the generated file, and the call must be a
 // silent no-op outside a project.
-//
-//nolint:paralleltest // t.Chdir changes the process-wide working directory
 func TestRefreshPinnedDigest(t *testing.T) {
 	projDir := t.TempDir()
 	t.Chdir(projDir)
@@ -147,8 +145,6 @@ func TestWithLockedNames(t *testing.T) {
 
 // TestProjectLockedVersions checks that the lock is read from the project and
 // ignored for a global run, where no single project owns the state.
-//
-//nolint:paralleltest // t.Chdir changes the process-wide working directory
 func TestProjectLockedVersions(t *testing.T) {
 	projDir := t.TempDir()
 	t.Chdir(projDir)

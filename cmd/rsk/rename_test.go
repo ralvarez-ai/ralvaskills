@@ -111,7 +111,6 @@ func TestMigrateProjectRenames(t *testing.T) {
 	}
 }
 
-//nolint:paralleltest // t.Chdir forbids parallel tests
 func TestMigrateProjectRenamesNoProject(t *testing.T) {
 	t.Chdir(t.TempDir())
 

@@ -19,8 +19,6 @@ import (
 // list` emits well-formed JSON with the allow/deny rule lists, and that an
 // invalid --output value is rejected the same way list/catalog/status reject
 // theirs.
-//
-//nolint:paralleltest // t.Chdir changes the process-wide working directory
 func TestRunClaudeToolsListJSONOutput(t *testing.T) {
 	projDir := t.TempDir()
 	if err := os.MkdirAll(filepath.Join(projDir, ".claude"), 0o755); err != nil {
@@ -80,8 +78,6 @@ func TestRunClaudeToolsListJSONOutput(t *testing.T) {
 // for `rsk claude tools list`: under a term.WithCapture-wrapped context, the
 // table must land in the capture and nothing must be written to the
 // command's own writer.
-//
-//nolint:paralleltest // t.Chdir changes the process-wide working directory
 func TestRunClaudeToolsListCapture(t *testing.T) {
 	projDir := t.TempDir()
 	if err := os.MkdirAll(filepath.Join(projDir, ".claude"), 0o755); err != nil {
