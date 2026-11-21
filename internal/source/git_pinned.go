@@ -14,16 +14,26 @@ import (
 )
 
 // FindVersion returns the skill at an exact version, which a git source
-// resolves through the tag <name>@v<version> in the repository. A missing tag is
-// an error, and so is a tag whose skill declares another version. It needs the
-// network, so it is not available offline.
+// resolves in one of two ways. A full commit id selects that commit directly,
+// for a repository that has no tags. Anything else is a version, resolved
+// through the tag <name>@v<version>: a missing tag is an error, and so is a tag
+// whose skill declares another version. Both need the network, so neither is
+// available offline.
 func (g *Git) FindVersion(ctx context.Context, name, version string) (skill.Skill, error) {
+	if git.ValidateCommit(version) == nil {
+		return g.pin(ctx, name, version, "")
+	}
 	ver := strings.TrimPrefix(version, "v")
 	if !versionPattern.MatchString(ver) {
 		return skill.Skill{}, fmt.Errorf("source %s: %q is not a version a tag can name", g.spec.ID, version)
 	}
-	tag := name + "@v" + ver
-	if err := git.ValidateRef(tag); err != nil {
+	return g.pin(ctx, name, name+"@v"+ver, ver)
+}
+
+// pin fetches ref (a tag or a commit id), finds the skill in the tree it gives,
+// and extracts it. wantVersion, when set, must be what the skill declares there.
+func (g *Git) pin(ctx context.Context, name, ref, wantVersion string) (skill.Skill, error) {
+	if err := git.ValidateRef(ref); err != nil {
 		return skill.Skill{}, fmt.Errorf("source %s: %w", g.spec.ID, err)
 	}
 	if err := g.gate(g.spec.ID, g.spec.URL); err != nil {
@@ -31,18 +41,16 @@ func (g *Git) FindVersion(ctx context.Context, name, version string) (skill.Skil
 	}
 	if g.offline {
 		return skill.Skill{}, fmt.Errorf(
-			"source %s: resolving %s needs the network; run without --offline",
-			g.spec.ID,
-			tag,
+			"source %s: resolving %s needs the network; run without --offline", g.spec.ID, ref,
 		)
 	}
 
-	commit, err := g.repo.Fetch(ctx, g.remote, tag)
+	commit, err := g.repo.Fetch(ctx, g.remote, ref)
 	if errors.Is(err, git.ErrRefNotFound) {
-		return skill.Skill{}, fmt.Errorf("%w: source %s has no tag %s", ErrNotFound, g.spec.ID, tag)
+		return skill.Skill{}, fmt.Errorf("%w: source %s has no tag or commit %s", ErrNotFound, g.spec.ID, ref)
 	}
 	if err != nil {
-		return skill.Skill{}, fmt.Errorf("source %s: fetch %s: %w", g.spec.ID, tag, err)
+		return skill.Skill{}, fmt.Errorf("source %s: fetch %s: %w", g.spec.ID, ref, err)
 	}
 	entries, err := g.repo.ListTree(ctx, commit, g.spec.Roots)
 	if err != nil {
@@ -56,22 +64,18 @@ func (g *Git) FindVersion(ctx context.Context, name, version string) (skill.Skil
 		if skills[i].Name != name {
 			continue
 		}
-		if skills[i].Version != "" && skills[i].Version != ver {
+		if wantVersion != "" && skills[i].Version != "" && skills[i].Version != wantVersion {
 			return skill.Skill{}, fmt.Errorf(
-				"source %s: tag %s holds %s at version %s",
-				g.spec.ID,
-				tag,
-				name,
-				skills[i].Version,
+				"source %s: tag %s holds %s at version %s", g.spec.ID, ref, name, skills[i].Version,
 			)
 		}
 		dest, extractErr := g.materializeAt(ctx, name, skills[i].Path, commit)
 		if extractErr != nil {
 			return skill.Skill{}, fmt.Errorf("source %s: extract %q: %w", g.spec.ID, name, extractErr)
 		}
-		return g.toSkill(&skills[i], dest, commit, tag), nil
+		return g.toSkill(&skills[i], dest, commit, ref), nil
 	}
-	return skill.Skill{}, fmt.Errorf("%w: source %s has no skill %q at %s", ErrNotFound, g.spec.ID, name, tag)
+	return skill.Skill{}, fmt.Errorf("%w: source %s has no skill %q at %s", ErrNotFound, g.spec.ID, name, ref)
 }
 
 // Locked restores a skill at the commit a lock recorded, without consulting the

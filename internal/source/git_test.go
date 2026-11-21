@@ -55,7 +55,7 @@ func (f *fakeRepo) Fetch(_ context.Context, _ git.RemoteURL, ref string) (string
 	if c, ok := f.refs[ref]; ok {
 		return c, nil
 	}
-	if f.refs != nil && ref != "HEAD" && len(ref) != len(testCommit) {
+	if f.refs != nil && ref != "HEAD" {
 		return "", fmt.Errorf("%w: %s", git.ErrRefNotFound, ref)
 	}
 	return f.commit, nil

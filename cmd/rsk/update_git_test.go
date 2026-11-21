@@ -106,6 +106,7 @@ func TestPlanGitUpdatesComparesTreesNotCommits(t *testing.T) {
 		{name: "unchanged", id: "@acme/skills", commit: oldCommit, tree: oldTree},
 		{name: "changed", id: "@acme/skills", commit: oldCommit, tree: oldTree},
 		{name: "pinned", id: "@acme/skills", commit: oldCommit, tree: oldTree, constraint: "1.2.0"},
+		{name: "atcommit", id: "@acme/skills", commit: oldCommit, tree: oldTree, constraint: oldCommit},
 		{name: "gone", id: "@acme/skills", commit: oldCommit, tree: oldTree},
 	}
 	var out bytes.Buffer
@@ -118,7 +119,9 @@ func TestPlanGitUpdatesComparesTreesNotCommits(t *testing.T) {
 		t.Errorf("failed = %d; a skill that left the source is a warning, not a failure", failed)
 	}
 	text := out.String()
-	for _, want := range []string{"pinned is pinned to 1.2.0", "gone is no longer in @acme/skills"} {
+	for _, want := range []string{
+		"pinned is pinned to 1.2.0", "atcommit is pinned to 1111111", "gone is no longer in @acme/skills",
+	} {
 		if !strings.Contains(text, want) {
 			t.Errorf("output lacks %q:\n%s", want, text)
 		}

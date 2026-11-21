@@ -13,6 +13,7 @@ import (
 	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/git"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
@@ -45,6 +46,14 @@ type (
 		TreeAt(ctx context.Context, name, commit string) (string, error)
 	}
 )
+
+// pinLabel shortens a commit id used as a pin, and leaves a version as it is.
+func pinLabel(constraint string) string {
+	if git.ValidateCommit(constraint) == nil {
+		return short(constraint)
+	}
+	return constraint
+}
 
 func short(commit string) string {
 	if len(commit) > shortCommit {
@@ -175,7 +184,7 @@ func planGitUpdates(
 	for i := range installs {
 		in := &installs[i]
 		if in.constraint != "" && in.constraint != "*" {
-			ui.Info(out, fmt.Sprintf("%s is pinned to %s: not updated", in.name, in.constraint))
+			ui.Info(out, fmt.Sprintf("%s is pinned to %s: not updated", in.name, pinLabel(in.constraint)))
 			continue
 		}
 		cur, tree, ok, didFail := lister.current(ctx, in)

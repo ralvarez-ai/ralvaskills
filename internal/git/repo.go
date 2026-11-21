@@ -110,7 +110,8 @@ func (r Repo) Fetch(ctx context.Context, remote RemoteURL, ref string) (string, 
 		"fetch", "--quiet", "--no-tags", "--no-recurse-submodules", "--depth=1", "--", remote.String(), ref,
 	); err != nil {
 		var gitErr *Error
-		if errors.As(err, &gitErr) && strings.Contains(gitErr.Stderr, "couldn't find remote ref") {
+		if errors.As(err, &gitErr) && (strings.Contains(gitErr.Stderr, "couldn't find remote ref") ||
+			strings.Contains(gitErr.Stderr, "not our ref")) {
 			return "", fmt.Errorf("%w: %s", ErrRefNotFound, ref)
 		}
 		return "", err

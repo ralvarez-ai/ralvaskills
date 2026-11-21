@@ -198,3 +198,60 @@ func TestGitTreeAtReportsTheInstalledTree(t *testing.T) {
 		t.Errorf("an unknown name err = %v, want ErrNotFound", err)
 	}
 }
+
+func TestGitFindVersionAcceptsACommitWhenThereIsNoTag(t *testing.T) {
+	t.Parallel()
+	repo := baseRepo()
+	repo.refs = map[string]string{otherSHA: otherSHA}
+	h := newHarness(t, nil, repo)
+
+	// No tag exists anywhere. The full commit id is the lock selector.
+	got, err := h.g.FindVersion(t.Context(), "alpha", otherSHA)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Git == nil || got.Git.Commit != otherSHA || got.Git.Rev != otherSHA || got.Git.Tree != "t-skills/alpha" {
+		t.Errorf("git = %+v, want the commit as commit and rev", got.Git)
+	}
+	if !strings.HasSuffix(got.Path, filepath.Join("alpha", otherSHA)) {
+		t.Errorf("path = %s, want the extraction at that commit", got.Path)
+	}
+	if len(repo.fetches) != 1 || repo.fetches[0] != otherSHA {
+		t.Errorf("fetches = %v, want a fetch of the commit by id", repo.fetches)
+	}
+
+	// A commit says nothing about versions: the skill's own version is not compared.
+	if got.Version != "1.0.0" {
+		t.Errorf("version = %q, want what the skill declares at that commit", got.Version)
+	}
+}
+
+func TestGitFindVersionRefusesAnAmbiguousOrUnreachableCommit(t *testing.T) {
+	t.Parallel()
+	ctx := t.Context()
+
+	repo := baseRepo()
+	repo.refs = map[string]string{}
+	h := newHarness(t, nil, repo)
+	// A short id is ambiguous and a remote will not serve it: it is read as a
+	// version, whose tag does not exist.
+	if _, err := h.g.FindVersion(ctx, "alpha", otherSHA[:7]); !errors.Is(err, ErrNotFound) {
+		t.Errorf("a short id err = %v, want it treated as a missing tag", err)
+	}
+	if _, err := h.g.FindVersion(ctx, "alpha", otherSHA); !errors.Is(err, ErrNotFound) ||
+		!strings.Contains(err.Error(), otherSHA) {
+		t.Errorf("a commit the remote does not have err = %v, want ErrNotFound naming it", err)
+	}
+
+	h.g.offline = true
+	if _, err := h.g.FindVersion(ctx, "alpha", otherSHA); err == nil {
+		t.Error("offline FindVersion of a commit succeeded without the network")
+	}
+
+	gated := baseRepo()
+	h2 := newHarness(t, nil, gated)
+	h2.trust = errors.New("source is not trusted")
+	if _, err := h2.g.FindVersion(ctx, "alpha", otherSHA); err == nil || len(gated.fetches) != 0 {
+		t.Errorf("an untrusted source was fetched: %v %v", err, gated.fetches)
+	}
+}

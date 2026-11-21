@@ -471,3 +471,17 @@ func TestArchiveNeverTouchesAnExistingDestination(t *testing.T) {
 		t.Errorf("a refused archive deleted what was already there: %v", statErr)
 	}
 }
+
+func TestFetchOfACommitTheRemoteLacksIsRefNotFound(t *testing.T) {
+	t.Parallel()
+	f := newFixture(t)
+	if _, err := newRepo(t).Fetch(t.Context(), f.remote, strings.Repeat("9", 40)); !errors.Is(err, ErrRefNotFound) {
+		t.Errorf("err = %v, want ErrRefNotFound for a commit that is not on the remote", err)
+	}
+	// A commit that is on the remote is fetched by id, with no branch or tag.
+	want := f.commit(t)
+	got, err := newRepo(t).Fetch(t.Context(), f.remote, want)
+	if err != nil || got != want {
+		t.Errorf("Fetch(by id) = %q, %v; want %q", got, err, want)
+	}
+}
