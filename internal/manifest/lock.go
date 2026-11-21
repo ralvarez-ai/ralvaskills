@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 	"go.ralva.dev/ralvaskills/v3/internal/fsx"
+	"go.ralva.dev/ralvaskills/v3/internal/git"
 	"go.ralva.dev/ralvaskills/v3/internal/schema"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
@@ -31,6 +33,11 @@ type (
 		// Granted is the client rules rsk wrote for this skill. Revocation
 		// removes exactly these, never a rule the user added by hand.
 		Granted []string `toml:"granted,omitempty"`
+
+		// Git says where a git skill was read, and is nil for every other
+		// source. Its Commit and Tree are the integrity record: a restore must
+		// find that tree at that commit.
+		Git *skill.GitRef `toml:"-"`
 	}
 
 	// Lock is the in-memory representation of rsk.lock.
@@ -45,6 +52,8 @@ type (
 // lockFile and lockEntryFile are the on-disk shape of rsk.lock. In memory an
 // entry's name is bare and its Source a kind; on disk a version 2 file carries
 // the qualified key, the source identity and the transport.
+const transportGit = "git"
+
 type (
 	lockFile struct {
 		SchemaVersion schema.Version  `toml:"version,omitempty"`
@@ -58,6 +67,11 @@ type (
 		Permissions []string `toml:"permissions,omitempty"`
 		Granted     []string `toml:"granted,omitempty"`
 		Transport   string   `toml:"transport,omitempty"`
+		URL         string   `toml:"url,omitempty"`
+		Rev         string   `toml:"rev,omitempty"`
+		Commit      string   `toml:"commit,omitempty"`
+		Tree        string   `toml:"tree,omitempty"`
+		Path        string   `toml:"path,omitempty"`
 	}
 )
 
@@ -67,10 +81,13 @@ func transportOf(src skill.Source) string {
 	case skill.SourceRegistry:
 		return "registry"
 	case skill.SourceOfficial:
-		return "git"
+		return transportGit
 	case skill.SourceLocal:
 		return "path"
 	default:
+		if src.IsDeclared() {
+			return transportGit
+		}
 		return ""
 	}
 }
@@ -78,22 +95,22 @@ func transportOf(src skill.Source) string {
 // ReadLock decodes rsk.lock from rskDir. Returns an empty Lock if the file
 // does not exist.
 func ReadLock(rskDir string) (Lock, error) {
-	path := LockPath(rskDir)
-	if _, statErr := os.Stat(path); errors.Is(statErr, os.ErrNotExist) {
+	file := LockPath(rskDir)
+	if _, statErr := os.Stat(file); errors.Is(statErr, os.ErrNotExist) {
 		return Lock{}, nil
 	}
 
 	var f lockFile
-	if _, err := toml.DecodeFile(path, &f); err != nil {
-		return Lock{}, fmt.Errorf("read %s: %w", path, err)
+	if _, err := toml.DecodeFile(file, &f); err != nil {
+		return Lock{}, fmt.Errorf("read %s: %w", file, err)
 	}
 	if err := schema.Check(f.SchemaVersion, schema.Lock); err != nil {
 		return Lock{}, fmt.Errorf("rsk.lock: %w", err)
 	}
 
 	l := Lock{SchemaVersion: f.SchemaVersion}
-	for _, e := range f.Skills {
-		entry, err := entryFromFile(e)
+	for i := range f.Skills {
+		entry, err := entryFromFile(&f.Skills[i])
 		if err != nil {
 			return Lock{}, fmt.Errorf("rsk.lock: %w", err)
 		}
@@ -102,7 +119,7 @@ func ReadLock(rskDir string) (Lock, error) {
 	return l, nil
 }
 
-func entryFromFile(e lockEntryFile) (LockEntry, error) {
+func entryFromFile(e *lockEntryFile) (LockEntry, error) {
 	ref, err := skill.ParseKey(e.Name)
 	if err != nil {
 		return LockEntry{}, err
@@ -120,9 +137,58 @@ func entryFromFile(e lockEntryFile) (LockEntry, error) {
 			return LockEntry{}, fmt.Errorf("%s: key names source %s but source is %q", e.Name, ref.Source, e.Source)
 		}
 	}
-	return LockEntry{
+	entry := LockEntry{
 		Name: ref.Name, Version: e.Version, Source: src, Permissions: e.Permissions, Granted: e.Granted,
-	}, nil
+	}
+	if !src.IsDeclared() {
+		// Older locks recorded a machine cache path under "path". It means
+		// nothing outside a git entry, so it is dropped rather than refused.
+		e.Path = ""
+	}
+	if e.URL != "" || e.Rev != "" || e.Commit != "" || e.Tree != "" || e.Path != "" {
+		entry.Git = &skill.GitRef{URL: e.URL, Rev: e.Rev, Commit: e.Commit, Tree: e.Tree, Path: e.Path}
+	}
+	if err = checkGitFields(&entry, e.Transport); err != nil {
+		return LockEntry{}, fmt.Errorf("%s: %w", e.Name, err)
+	}
+	return entry, nil
+}
+
+// checkGitFields holds a lock entry to its source: a git entry must carry a
+// well-formed URL, commit, tree and path, and no other entry may carry any. A
+// lock file is untrusted input, since restoring from it fetches a URL it names.
+func checkGitFields(e *LockEntry, transport string) error {
+	if !e.Source.IsDeclared() {
+		if e.Git != nil {
+			return errors.New("git fields on an entry that is not from a git source")
+		}
+		return nil
+	}
+	if transport != transportGit {
+		return fmt.Errorf("a git source needs transport %q, got %q", transportGit, transport)
+	}
+	if e.Git == nil {
+		return errors.New("a git entry needs url, commit, tree and path")
+	}
+	if _, err := git.ParseRemoteURL(e.Git.URL); err != nil {
+		return err
+	}
+	for _, check := range []error{
+		git.ValidateCommit(e.Git.Commit), git.ValidateCommit(e.Git.Tree), git.ValidateRepoPath(e.Git.Path),
+	} {
+		if check != nil {
+			return check
+		}
+	}
+	if e.Git.Rev != "" {
+		if err := git.ValidateRef(e.Git.Rev); err != nil {
+			return err
+		}
+	}
+	if path.Base(e.Git.Path) != e.Name {
+		return fmt.Errorf("path %s does not end in the skill name", e.Git.Path)
+	}
+	return nil
 }
 
 // WriteLock encodes l as TOML to rskDir/rsk.lock atomically, creating parent
@@ -148,15 +214,18 @@ func WriteLock(rskDir string, l Lock) error {
 				out.Source = id
 			}
 			out.Transport = transportOf(e.Source)
+			if e.Git != nil {
+				out.URL, out.Rev, out.Commit, out.Tree, out.Path = e.Git.URL, e.Git.Rev, e.Git.Commit, e.Git.Tree, e.Git.Path
+			}
 		}
 		f.Skills[i] = out
 	}
 
-	path := LockPath(rskDir)
-	if err := os.MkdirAll(filepath.Dir(path), fsperm.Dir); err != nil {
+	file := LockPath(rskDir)
+	if err := os.MkdirAll(filepath.Dir(file), fsperm.Dir); err != nil {
 		return fmt.Errorf("create dir: %w", err)
 	}
-	return fsx.WriteAtomic(path, TempFilePattern, func(w io.Writer) error {
+	return fsx.WriteAtomic(file, TempFilePattern, func(w io.Writer) error {
 		return toml.NewEncoder(w).Encode(f)
 	})
 }

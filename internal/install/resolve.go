@@ -57,7 +57,7 @@ func Resolve(
 	var warnings []string
 
 	for _, raw := range names {
-		ref, _, err := skill.ParseRef(raw)
+		ref, version, err := skill.ParseRef(raw)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -75,6 +75,14 @@ func Resolve(
 		s, findErr := FindRef(ctx, ref, chain)
 		if findErr != nil {
 			return nil, nil, findErr
+		}
+		// A git source resolves an exact version through a tag. The other
+		// sources keep ignoring it at resolution time and only record it as a
+		// constraint, as they always have.
+		if version != "" && s.Source.IsDeclared() {
+			if s, findErr = chain.FindVersion(ctx, string(s.Source), s.Name, version); findErr != nil {
+				return nil, nil, findErr
+			}
 		}
 		skills = append(skills, s)
 	}

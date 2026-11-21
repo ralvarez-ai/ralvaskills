@@ -190,7 +190,7 @@ func TestReadRejectsWhatItCannotTrust(t *testing.T) {
 		},
 		{
 			name: "a source this rsk cannot read",
-			lock: "version = 2\n[[skills]]\n  name = \"@acme/skills-private/x\"\n  source = \"@acme/skills-private\"\n",
+			lock: "version = 2\n[[skills]]\n  name = \"x\"\n  source = \"bogus\"\n",
 		},
 		{
 			name: "a malformed key",
@@ -213,5 +213,136 @@ func TestReadRejectsWhatItCannotTrust(t *testing.T) {
 				t.Fatal("expected an error")
 			}
 		})
+	}
+}
+
+func gitRef() skill.GitRef {
+	return skill.GitRef{
+		URL: "git@github.com:acme/skills.git", Rev: "main", Path: "skills/alpha",
+		Commit: "1111111111111111111111111111111111111111", Tree: "2222222222222222222222222222222222222222",
+	}
+}
+
+func gitEntry() LockEntry {
+	ref := gitRef()
+	return LockEntry{Name: "alpha", Version: "1.0.0", Source: skill.DeclaredSource("@acme/skills"), Git: &ref}
+}
+
+func TestGitEntriesRoundTripThroughAV2Lock(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	want := gitEntry()
+	if err := WriteLock(
+		dir,
+		Lock{Skills: []LockEntry{want, {Name: "tdd", Version: "1.0.0", Source: skill.SourceRegistry}}},
+	); err != nil {
+		t.Fatal(err)
+	}
+	text := readFile(t, LockPath(dir))
+	for _, line := range []string{
+		"version = 2", `name = "@acme/skills/alpha"`, `source = "@acme/skills"`, `transport = "git"`,
+		`url = "git@github.com:acme/skills.git"`, `rev = "main"`, `path = "skills/alpha"`,
+		`commit = "1111111111111111111111111111111111111111"`, `tree = "2222222222222222222222222222222222222222"`,
+	} {
+		if !strings.Contains(text, line) {
+			t.Errorf("rsk.lock lacks %q:\n%s", line, text)
+		}
+	}
+	got, err := ReadLock(dir)
+	if err != nil || len(got.Skills) != 2 {
+		t.Fatalf("ReadLock = %+v, %v", got, err)
+	}
+	if g := got.Skills[0]; g.Name != want.Name || g.Source != want.Source || g.Version != want.Version ||
+		g.Git == nil || *g.Git != *want.Git {
+		t.Errorf("entry = %+v, want %+v", g, want)
+	}
+	if got.Skills[1].Git != nil {
+		t.Errorf("a registry entry grew git fields: %+v", got.Skills[1])
+	}
+}
+
+func TestReadLockRefusesAMalformedGitEntry(t *testing.T) {
+	t.Parallel()
+	tests := map[string]func(*skill.GitRef){
+		"no commit":        func(e *skill.GitRef) { e.Commit = "" },
+		"short commit":     func(e *skill.GitRef) { e.Commit = "abc123" },
+		"branch as commit": func(e *skill.GitRef) { e.Commit = "main" },
+		"no tree":          func(e *skill.GitRef) { e.Tree = "" },
+		"traversing path":  func(e *skill.GitRef) { e.Path = "../alpha" },
+		"path vs name":     func(e *skill.GitRef) { e.Path = "skills/beta" },
+		"hostile url":      func(e *skill.GitRef) { e.URL = "ext::sh -c id" },
+		"credential url": func(e *skill.GitRef) {
+			e.URL = "https://u:ghp_abcdefghijklmnopqrstuvwxyz0123456789@github.com/a/b.git"
+		},
+		"option as rev": func(e *skill.GitRef) { e.Rev = "--upload-pack=x" },
+		"no url":        func(e *skill.GitRef) { e.URL = "" },
+	}
+	for name, mutate := range tests {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			dir := t.TempDir()
+			e := gitRef()
+			mutate(&e)
+			// Encode through WriteLock's own shape but bypass its checks by writing
+			// the text directly: a lock file is untrusted input.
+			text := "version = 2\n[[skills]]\n  name = \"@acme/skills/alpha\"\n  version = \"1.0.0\"\n  source = \"@acme/skills\"\n" +
+				"  transport = \"git\"\n  url = " + quote(
+				e.URL,
+			) + "\n  rev = " + quote(
+				e.Rev,
+			) + "\n  commit = " + quote(
+				e.Commit,
+			) +
+				"\n  tree = " + quote(
+				e.Tree,
+			) + "\n  path = " + quote(
+				e.Path,
+			) + "\n"
+			if err := os.WriteFile(LockPath(dir), []byte(text), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := ReadLock(dir); err == nil {
+				t.Error("a malformed git entry was accepted")
+			}
+		})
+	}
+}
+
+func quote(s string) string {
+	return "\"" + strings.ReplaceAll(s, "\"", "\\\"") + "\""
+}
+
+func TestReadLockRefusesGitFieldsOnOtherSourcesAndAMissingTransport(t *testing.T) {
+	t.Parallel()
+	for name, text := range map[string]string{
+		"git fields on a registry entry":             "version = 2\n[[skills]]\n  name = \"tdd\"\n  version = \"1\"\n  source = \"@ralvarez-ai/ralvaskills\"\n  transport = \"registry\"\n  commit = \"" + strings.Repeat("a", 40) + "\"\n",
+		"a declared source without transport":        "version = 2\n[[skills]]\n  name = \"@acme/skills/alpha\"\n  version = \"1\"\n  source = \"@acme/skills\"\n",
+		"a declared source over the wrong transport": "version = 2\n[[skills]]\n  name = \"@acme/skills/alpha\"\n  version = \"1\"\n  source = \"@acme/skills\"\n  transport = \"registry\"\n",
+	} {
+		dir := t.TempDir()
+		if err := os.WriteFile(LockPath(dir), []byte(text), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := ReadLock(dir); err == nil {
+			t.Errorf("%s was accepted", name)
+		}
+	}
+}
+
+func TestModQualifiesAGitSkillsKey(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	m := Mod{Skills: map[string]string{"alpha": "1.2.0"}, Pinned: []string{"alpha"}}
+	m.SetOrigin("alpha", skill.DeclaredSource("@acme/skills"))
+	if err := WriteMod(dir, m); err != nil {
+		t.Fatal(err)
+	}
+	text := readFile(t, ModPath(dir))
+	if !strings.Contains(text, "version = 2") || !strings.Contains(text, `"@acme/skills/alpha" = "1.2.0"`) {
+		t.Errorf("rsk.mod =\n%s", text)
+	}
+	got, err := ReadMod(dir)
+	if err != nil || got.Origin["alpha"] != "@acme/skills" || got.Skills["alpha"] != "1.2.0" {
+		t.Errorf("read back %+v, %v", got, err)
 	}
 }

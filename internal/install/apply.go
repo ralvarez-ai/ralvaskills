@@ -1,7 +1,6 @@
 package install
 
 import (
-	"fmt"
 	"path/filepath"
 	"slices"
 
@@ -44,17 +43,6 @@ type Result struct {
 // reported per skill rather than aborting, so the rest of the batch still
 // lands; a manifest write failure is returned as err.
 func Apply(skills []skill.Skill, opts Options) ([]Result, error) {
-	if opts.Scope == ScopeProject {
-		for i := range skills {
-			if skills[i].Source.IsDeclared() {
-				return nil, fmt.Errorf(
-					"%s comes from the git source %s: a project install would need a lock entry for it, which is not available yet; install it with --global",
-					skills[i].Name,
-					skills[i].Source,
-				)
-			}
-		}
-	}
 	results := make([]Result, 0, len(skills))
 	linked := make([]skill.Skill, 0, len(skills))
 
@@ -118,6 +106,7 @@ func applyProject(linked []skill.Skill, opts Options) error {
 		entry.Name = s.Name
 		entry.Version = s.Version
 		entry.Source = s.Source
+		entry.Git = s.Git
 		lock = manifest.UpsertLockEntry(lock, entry)
 	}
 
