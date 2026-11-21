@@ -160,6 +160,8 @@ go.ralva.dev/lib/resilience v0.5.0 h1:WVhDv63El2W6QCnH1m6FWryuWL+a1POqG8XnBpONb9
 go.ralva.dev/lib/resilience v0.5.0/go.mod h1:QBP2if4xaUKXz6wk5qmsZfi8fpG83OHoacvYDUfV09Q=
 go.ralva.dev/lib/term v0.70.2 h1:MB4G+npk6aV9jASwgAi696aaMrnSipD8Efy7ZX7mKCA=
 go.ralva.dev/lib/term v0.70.2/go.mod h1:MZTStkFWqt/Oo8dCcaLS2lPPFk5Do4jnTy4PJM7Zel8=
+go.ralva.dev/lib/term v0.73.0 h1:aGSXlfvPR1vg9pS5D5I9dCeIe3vU2u6DBfUSvG0eBnA=
+go.ralva.dev/lib/term v0.73.0/go.mod h1:MZTStkFWqt/Oo8dCcaLS2lPPFk5Do4jnTy4PJM7Zel8=
 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
 go.yaml.in/yaml/v3 v3.0.6 h1:zcDfvjXEqTQmpjniUBLc91xYJMB2c4QOFxEF/LCEckM=
 go.yaml.in/yaml/v3 v3.0.6/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=

@@ -14,7 +14,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	go.ralva.dev/lib/lifecycle v0.6.1
 	go.ralva.dev/lib/mcpserver v0.14.0
-	go.ralva.dev/lib/term v0.70.2
+	go.ralva.dev/lib/term v0.73.0
 )
 
 require (

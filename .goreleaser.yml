@@ -23,13 +23,12 @@ builds:
       - goos: windows
         goarch: arm64
     ldflags:
-      # -X targets vars in package main by "main.<name>", not the module's
-      # full import path — the full path silently no-ops for package main,
-      # which meant these were never actually injected into release builds.
+      # -X needs the full import path of the package that owns the vars; a bare
+      # name silently no-ops, which is how an earlier stamp stayed at its default.
       - -s -w
-      - -X main.version={{ .Version }}
-      - -X main.commit={{ .ShortCommit }}
-      - -X main.buildDate={{ .Date }}
+      - -X go.ralva.dev/lib/term/cli.Version={{ .Version }}
+      - -X go.ralva.dev/lib/term/cli.Commit={{ .ShortCommit }}
+      - -X go.ralva.dev/lib/term/cli.BuildDate={{ .Date }}
 
 archives:
   - id: rsk

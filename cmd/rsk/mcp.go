@@ -6,6 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"go.ralva.dev/lib/term/cli"
+
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/mcp"
 )
@@ -29,7 +31,7 @@ speaks JSON-RPC on stdout — logs go to stderr.`,
 		if err != nil {
 			return err
 		}
-		srv := mcp.NewServer(mcp.Deps{Cfg: cfg, Logger: logger, Version: version, ReadOnly: readOnly})
+		srv := mcp.NewServer(mcp.Deps{Cfg: cfg, Logger: logger, Version: cli.Version, ReadOnly: readOnly})
 		return mcp.ServeStdio(cmd.Context(), srv)
 	},
 }

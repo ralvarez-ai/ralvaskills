@@ -6,18 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"runtime"
-	"runtime/debug"
-	"strings"
 
 	"github.com/spf13/cobra"
+
 	"go.ralva.dev/lib/lifecycle"
+	"go.ralva.dev/lib/term/cli"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
-
-const exitAborted = 130 // SIGINT + 128 per POSIX convention
 
 // Cobra group IDs for the root command's sections, in help/picker order.
 const (
@@ -28,13 +25,6 @@ const (
 	groupToolsConf = "tools"
 	groupViews     = "views"
 	groupOther     = "other"
-)
-
-// Build metadata — injected via -ldflags at release time.
-var (
-	version   = "dev"
-	commit    = "none"
-	buildDate = "unknown"
 )
 
 // rootGroups are the root command's help sections, in display order. The TUI
@@ -49,25 +39,26 @@ var rootGroups = []*cobra.Group{
 	{ID: groupOther, Title: "Other:"},
 }
 
-var rootCmd = &cobra.Command{
-	Use:           "rsk",
-	Short:         "Manage ralvaskills — install, update, and check AI skill bundles.",
-	Long:          "rsk manages your local and official AI skills for Claude Code and OpenCode.",
-	SilenceUsage:  true,
-	SilenceErrors: true,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		notice := updateNotice()
-		maybeSpawnUpdateCheck()
+var rootCmd = cli.NewRoot(cli.RootConfig{
+	Use:   "rsk",
+	Short: "Manage ralvaskills — install, update, and check AI skill bundles.",
+	Long:  "rsk manages your local and official AI skills for Claude Code and OpenCode.",
+})
 
-		if !ui.IsTTY() {
-			return printHome(cmd, notice)
-		}
-		return ui.RunSession(cmd.Context(), ui.SessionOptions{
-			Root:     cmd.Root(),
-			Runnable: sessionRunnable,
-			Notice:   notice,
-		})
-	},
+// rootRunE is a bare `rsk`: the interactive session on a TTY, the banner and
+// help otherwise.
+func rootRunE(cmd *cobra.Command, _ []string) error {
+	notice := updateNotice()
+	maybeSpawnUpdateCheck()
+
+	if !ui.IsTTY() {
+		return printHome(cmd, notice)
+	}
+	return ui.RunSession(cmd.Context(), ui.SessionOptions{
+		Root:     cmd.Root(),
+		Runnable: sessionRunnable,
+		Notice:   notice,
+	})
 }
 
 // sessionRunnable offers a command in the interactive picker unless it is
@@ -100,12 +91,7 @@ func printHome(cmd *cobra.Command, notice string) error {
 
 //nolint:gochecknoinits // init() used for root command setup
 func init() {
-	// go install and plain `go build` skip -ldflags, so version/commit/buildDate
-	// stay at their zero-value defaults; fall back to the module/VCS info Go
-	// embeds in the binary so `--version` isn't stuck reporting "dev/none/unknown".
-	if version == "dev" {
-		version, commit, buildDate = buildInfoFallback(version, commit, buildDate)
-	}
+	rootCmd.RunE = rootRunE
 
 	pf := rootCmd.PersistentFlags()
 	pf.Bool("no-color", false, "disable color output")
@@ -141,42 +127,8 @@ func init() {
 
 		return nil
 	}
-	rootCmd.Version = fmt.Sprintf(
-		"%s (rev %s, built %s, %s)",
-		version, commit, buildDate, runtime.Version(),
-	)
-	rootCmd.SetVersionTemplate("rsk {{.Version}}\n")
+	cli.SetupVersion(rootCmd, "rsk")
 	setupCommands()
-}
-
-// buildInfoFallback fills in version/commit/buildDate from runtime/debug's
-// build info when the ldflags-injected defaults were never overridden, i.e.
-// the binary wasn't produced by the release pipeline (e.g. `go install ...@latest`).
-func buildInfoFallback(curVersion, curCommit, curBuildDate string) (version, commit, buildDate string) {
-	version, commit, buildDate = curVersion, curCommit, curBuildDate
-
-	info, ok := debug.ReadBuildInfo()
-	if !ok {
-		return version, commit, buildDate
-	}
-
-	if info.Main.Version != "" && info.Main.Version != "(devel)" {
-		// Module versions carry a leading "v" (e.g. "v2.0.3"); strip it to
-		// match the unprefixed version goreleaser's ldflags inject, so
-		// `--version` reads the same regardless of install method.
-		version = strings.TrimPrefix(info.Main.Version, "v")
-	}
-
-	for _, setting := range info.Settings {
-		switch setting.Key {
-		case "vcs.revision":
-			commit = setting.Value
-		case "vcs.time":
-			buildDate = setting.Value
-		}
-	}
-
-	return version, commit, buildDate
 }
 
 // Execute runs the root command and exits on error.
@@ -191,11 +143,11 @@ func execute() int {
 
 	err := rootCmd.ExecuteContext(ctx)
 	if errors.Is(context.Cause(ctx), lifecycle.ErrInterrupted) || errors.Is(err, ui.ErrAborted) {
-		return exitAborted
+		return cli.ExitInterrupt
 	}
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "rsk: "+err.Error())
-		return 1
+		return cli.ExitCode(err)
 	}
 	return 0
 }
