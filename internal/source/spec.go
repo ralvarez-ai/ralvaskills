@@ -52,14 +52,3 @@ type Options struct {
 	// OfficialCache is where the anthropics/skills clone lives.
 	OfficialCache string
 }
-
-const (
-	// DefaultRegistryID is the canonical identity of the hosted registry.
-	DefaultRegistryID = "@ralvarez-ai/ralvaskills"
-
-	// OfficialID is the identity of the anthropics/skills cache.
-	OfficialID = "@anthropics/skills"
-
-	// LocalScope is the identity scope reserved for path sources.
-	LocalScope = "@local"
-)

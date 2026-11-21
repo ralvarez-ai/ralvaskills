@@ -1,6 +1,9 @@
 package skill
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // Source identifies where an installed skill originates.
 type Source string
@@ -24,6 +27,39 @@ func ParseSource(s string) (Source, error) {
 		return Source(s), nil
 	default:
 		return "", fmt.Errorf("unknown skill source %q", s)
+	}
+}
+
+// Identity returns the canonical identity of the source a skill kind comes
+// from. A local clone has none (neither does an unknown kind): its identity is the name of a directory on one
+// machine, which a committed file must not carry.
+func (s Source) Identity() string {
+	switch s {
+	case SourceRegistry:
+		return DefaultRegistryID
+	case SourceOfficial:
+		return OfficialID
+	default:
+		return ""
+	}
+}
+
+// SourceFromIdentity maps a source identity, or one of the older kind names
+// ("registry", "official", "local") that rsk.lock v1 wrote, to its Source. An
+// identity this rsk has no transport for is an error, never a guess.
+func SourceFromIdentity(id string) (Source, error) {
+	if src, err := ParseSource(id); err == nil {
+		return src, nil
+	}
+	switch canonical := CanonicalSourceID(id); {
+	case canonical == DefaultRegistryID:
+		return SourceRegistry, nil
+	case canonical == OfficialID:
+		return SourceOfficial, nil
+	case strings.HasPrefix(canonical, LocalScope+"/"):
+		return SourceLocal, nil
+	default:
+		return "", fmt.Errorf("source %q is not supported by this rsk", id)
 	}
 }
 

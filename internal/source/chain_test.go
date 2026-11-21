@@ -130,7 +130,7 @@ func TestChainFindBare(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := tc.chain().Find(ctx, source.Ref{Name: "x"})
+			got, err := tc.chain().Find(ctx, skill.Ref{Name: "x"})
 			if tc.wantErr != nil {
 				if !errors.Is(err, tc.wantErr) {
 					t.Fatalf("err = %v, want %v", err, tc.wantErr)
@@ -160,7 +160,7 @@ func TestChainFindQualified(t *testing.T) {
 	b := newFake("@b/b", source.KindOfficial, "x")
 	chain := source.Chain{a, b}
 
-	got, err := chain.Find(ctx, source.Ref{Source: "@b/b", Name: "x"})
+	got, err := chain.Find(ctx, skill.Ref{Source: "@b/b", Name: "x"})
 	if err != nil || got.Path != "@b/b/x" {
 		t.Fatalf("qualified find = %+v, %v; want @b/b/x", got, err)
 	}
@@ -168,11 +168,11 @@ func TestChainFindQualified(t *testing.T) {
 		t.Errorf("a qualified reference consulted another source: %v", a.calls)
 	}
 
-	if _, err = chain.Find(ctx, source.Ref{Source: "@c/c", Name: "x"}); !errors.Is(err, source.ErrUnknownSource) {
+	if _, err = chain.Find(ctx, skill.Ref{Source: "@c/c", Name: "x"}); !errors.Is(err, source.ErrUnknownSource) {
 		t.Errorf("unknown source err = %v, want ErrUnknownSource, not a fallback", err)
 	}
 
-	_, err = chain.Find(ctx, source.Ref{Source: "@a/a", Name: "missing"})
+	_, err = chain.Find(ctx, skill.Ref{Source: "@a/a", Name: "missing"})
 	if !errors.Is(err, source.ErrNotFound) {
 		t.Errorf("qualified miss err = %v, want ErrNotFound", err)
 	}
@@ -186,7 +186,7 @@ func TestChainFindLazySource(t *testing.T) {
 		t.Parallel()
 		reg := newFake("@a/a", source.KindRegistry, "x")
 		off := lazyFake{newFake("@b/b", source.KindOfficial)}
-		if _, err := (source.Chain{reg, off}).Find(ctx, source.Ref{Name: "x"}); err != nil {
+		if _, err := (source.Chain{reg, off}).Find(ctx, skill.Ref{Name: "x"}); err != nil {
 			t.Fatal(err)
 		}
 		for _, c := range off.calls {
@@ -200,7 +200,7 @@ func TestChainFindLazySource(t *testing.T) {
 		t.Parallel()
 		reg := newFake("@a/a", source.KindRegistry, "x")
 		off := lazyFake{newFake("@b/b", source.KindOfficial, "x")}
-		_, err := (source.Chain{reg, off}).Find(ctx, source.Ref{Name: "x"})
+		_, err := (source.Chain{reg, off}).Find(ctx, skill.Ref{Name: "x"})
 		if !errors.Is(err, source.ErrAmbiguous) {
 			t.Fatalf("err = %v, want ErrAmbiguous", err)
 		}
@@ -210,7 +210,7 @@ func TestChainFindLazySource(t *testing.T) {
 		t.Parallel()
 		reg := newFake("@a/a", source.KindRegistry)
 		off := &fetchingFake{fakeSource: newFake("@b/b", source.KindOfficial), fetched: "x"}
-		got, err := (source.Chain{reg, off}).Find(ctx, source.Ref{Name: "x"})
+		got, err := (source.Chain{reg, off}).Find(ctx, skill.Ref{Name: "x"})
 		if err != nil || got.Path != "@b/b/x" {
 			t.Fatalf("got %+v, %v; want the skill found after the fetch", got, err)
 		}
@@ -248,7 +248,33 @@ func TestChainSelect(t *testing.T) {
 	if len(both) != 2 {
 		t.Fatalf("Select(registry, official) kept %d sources, want 2", len(both))
 	}
-	if _, err := only.Find(context.Background(), source.Ref{Name: "x"}); !errors.Is(err, source.ErrNotFound) {
+	if _, err := only.Find(context.Background(), skill.Ref{Name: "x"}); !errors.Is(err, source.ErrNotFound) {
 		t.Errorf("a selected chain must not reach excluded sources, err = %v", err)
+	}
+}
+
+func TestChainFindQualifiedNormalisesTheSourceAndRejectsPaths(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	reg := newFake(skill.DefaultRegistryID, source.KindRegistry, "x")
+	off := newFake(skill.OfficialID, source.KindOfficial, "x")
+	chain := source.Chain{reg, off}
+
+	for _, qualified := range []string{
+		"@ralvarez-ai/ralvaskills/x", "@ralvarezdev/ralvaskills/x", "@Ralvarez-AI/RalvaSkills/x",
+	} {
+		ref, _, err := skill.ParseRef(qualified)
+		if err != nil {
+			t.Fatal(err)
+		}
+		got, findErr := chain.Find(ctx, ref)
+		if findErr != nil || got.Path != skill.DefaultRegistryID+"/x" {
+			t.Errorf("Find(%s) = %+v, %v; want the registry's skill", qualified, got, findErr)
+		}
+	}
+
+	withPath := skill.Ref{Source: skill.OfficialID, Name: "x", Path: "a/x"}
+	if _, err := chain.Find(ctx, withPath); !errors.Is(err, source.ErrUnsupported) {
+		t.Errorf("a path selection err = %v, want ErrUnsupported until a source can honor it", err)
 	}
 }

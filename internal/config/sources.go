@@ -3,12 +3,13 @@ package config
 import (
 	"path/filepath"
 
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 )
 
 // RegistrySpec describes the hosted registry in use.
 func (c Config) RegistrySpec() source.Spec {
-	return source.Spec{ID: source.DefaultRegistryID, Type: source.KindRegistry, URL: c.EffectiveRegistryURL()}
+	return source.Spec{ID: skill.DefaultRegistryID, Type: source.KindRegistry, URL: c.EffectiveRegistryURL()}
 }
 
 // LocalSpec describes the local repo clone, the source in local mode.
@@ -17,12 +18,12 @@ func (c Config) LocalSpec() source.Spec {
 	if c.RepoPath == "" || name == "." || name == string(filepath.Separator) {
 		name = "ralvaskills"
 	}
-	return source.Spec{ID: source.LocalScope + "/" + name, Type: source.KindPath, URL: c.RepoPath}
+	return source.Spec{ID: skill.LocalScope + "/" + name, Type: source.KindPath, URL: c.RepoPath}
 }
 
 // OfficialSpec describes the anthropics/skills cache.
 func (c Config) OfficialSpec() source.Spec {
-	return source.Spec{ID: source.OfficialID, Type: source.KindOfficial, URL: source.OfficialSkillsURL}
+	return source.Spec{ID: skill.OfficialID, Type: source.KindOfficial, URL: source.OfficialSkillsURL}
 }
 
 // SourceSpecs returns the sources in declaration order: the local clone in

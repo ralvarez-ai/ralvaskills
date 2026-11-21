@@ -14,6 +14,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/catalog"
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 	"go.ralva.dev/ralvaskills/v3/internal/mcp"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 )
 
@@ -174,7 +175,7 @@ func TestIndexCacheFetchesRegistryIndexAndServesOffline(t *testing.T) {
 
 	dir := t.TempDir()
 	chain, err := source.Build(
-		[]source.Spec{{ID: source.DefaultRegistryID, Type: source.KindRegistry, URL: srv.URL}},
+		[]source.Spec{{ID: skill.DefaultRegistryID, Type: source.KindRegistry, URL: srv.URL}},
 		source.Options{RegistryCache: dir},
 	)
 	if err != nil {

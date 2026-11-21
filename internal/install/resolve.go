@@ -23,7 +23,7 @@ import (
 // up in every source; a name two sources provide is an error, never resolved by
 // order, and a source that cannot be consulted fails the lookup.
 func FindSkill(ctx context.Context, name string, chain source.Chain) (skill.Skill, error) {
-	s, err := chain.Find(ctx, source.Ref{Name: name})
+	s, err := chain.Find(ctx, skill.Ref{Name: name})
 	if err == nil {
 		return s, nil
 	}
@@ -81,7 +81,7 @@ func resolveBundleSkills(
 
 	for _, ref := range bundle.Skills {
 		src, notFoundMsg := sourceForRef(ref.Source, chain)
-		s, err := src.Find(ctx, source.Ref{Name: ref.Name})
+		s, err := src.Find(ctx, skill.Ref{Name: ref.Name})
 		if err == nil {
 			skills = append(skills, s)
 			continue

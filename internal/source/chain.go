@@ -9,16 +9,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
-// Ref is a reference to a skill: a name, optionally scoped to one source.
-type Ref struct {
-	// Source is the identity of the source to resolve in. Empty means a bare
-	// name, resolved across every source in the chain.
-	Source string
-
-	// Name is the skill's name.
-	Name string
-}
-
 // Chain is an ordered set of sources. The order is the declaration order and
 // only keeps listings stable: it never decides a resolution.
 type Chain []Resolver
@@ -44,7 +34,10 @@ type cachedFinder interface {
 // A source that can fetch on demand is first asked only for what it already
 // holds, so a name another source provides never triggers a fetch. Only when no
 // source has the name is it asked to fetch.
-func (c Chain) Find(ctx context.Context, ref Ref) (skill.Skill, error) {
+func (c Chain) Find(ctx context.Context, ref skill.Ref) (skill.Skill, error) {
+	if ref.Path != "" {
+		return skill.Skill{}, fmt.Errorf("%w: selecting %q by path needs a git source", ErrUnsupported, ref.String())
+	}
 	if ref.Source != "" {
 		return c.findIn(ctx, ref)
 	}
@@ -112,9 +105,9 @@ func (c Chain) Registry() (*Registry, bool) {
 	return nil, false
 }
 
-func (c Chain) findIn(ctx context.Context, ref Ref) (skill.Skill, error) {
+func (c Chain) findIn(ctx context.Context, ref skill.Ref) (skill.Skill, error) {
 	for _, r := range c {
-		if r.Spec().ID == ref.Source {
+		if skill.CanonicalSourceID(r.Spec().ID) == skill.CanonicalSourceID(ref.Source) {
 			return r.Find(ctx, ref.Name)
 		}
 	}

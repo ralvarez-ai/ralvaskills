@@ -35,11 +35,12 @@ const (
 // build of rsk cannot read.
 var ErrUnsupported = errors.New("unsupported schema version")
 
-// Check returns an error wrapping ErrUnsupported if stored is not compatible
-// with current. Version 0 is accepted as legacy (pre-versioning) and treated
-// as equivalent to version 1.
+// Check returns an error wrapping ErrUnsupported if stored is newer than
+// current, the newest version this build reads. Every version from 0 up to
+// current is accepted, so a file written before a bump keeps loading. Version 0
+// is legacy (pre-versioning) and equivalent to version 1.
 func Check(stored, current Version) error {
-	if stored == 0 || stored == current {
+	if stored >= 0 && stored <= current {
 		return nil
 	}
 	return fmt.Errorf("%w: file version %d, rsk supports %d — upgrade rsk or re-run 'rsk init'",
