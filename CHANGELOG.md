@@ -79,6 +79,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **improve-codebase-architecture** (1.1.0): gathers hygiene evidence before exploring.
 - The docs now live in typed folders with frontmatter, and `AGENTS.md` is imported from `CLAUDE.md`.
 
+### Removed
+- **The seven `personal/` skills moved to a private repository.** `go-house-libs`, `go-library-builder`, `pi-iteration-workflow`, `uru-paper-format`, `uru-thesis-defense-designer`, `uru-thesis-reviewer` and `uru-thesis-writer` are no longer in `skills/`, the README or the live catalogue (72 skills becomes 65). Their `registry/index.json` entries are marked `deprecated` so they stop listing and installing; the release tarballs stay, so existing locks keep resolving. They were public before this change, so earlier git history, index versions and tarballs still hold their content.
+
 ### Fixed
 - **Symlink refusals name the target.** `linkTarget` called `os.Readlink` on the file's base name rather than its path, so every refusal printed `→ unknown` — the one piece of information that tells you where the link points. It takes the path now, and `refuseIfLink`/`refuseIfLinkDir` share one core so the wording no longer tells a Kimi or Antigravity user to "point CLAUDE.md at a real file".
 - **The landing page's data script counted deprecated registry entries as skills.** `site/scripts/gen-data.mjs` asserted `Object.keys(index).length === 67`, which broke the moment the rename added ten `deprecated` entries to the index (77 keys): `task site:check` and the page build failed on `main` with `expected 67 skills, found 67`, a message that hid the real mismatch. It now compares against the live entries only, and prints both counts when it fails.
