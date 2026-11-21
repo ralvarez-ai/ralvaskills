@@ -80,6 +80,27 @@ func pickOne(name string, hits []hit) (skill.Skill, error) {
 	}
 }
 
+// versionFinder is implemented by a source that can resolve an exact version.
+type versionFinder interface {
+	FindVersion(ctx context.Context, name, version string) (skill.Skill, error)
+}
+
+// FindVersion resolves name at an exact version in the source with identity id.
+// It never searches: the caller already knows which source the skill is from.
+func (c Chain) FindVersion(ctx context.Context, id, name, version string) (skill.Skill, error) {
+	for _, r := range c {
+		if skill.CanonicalSourceID(r.Spec().ID) != skill.CanonicalSourceID(id) {
+			continue
+		}
+		vf, ok := r.(versionFinder)
+		if !ok {
+			return skill.Skill{}, fmt.Errorf("%w: source %s cannot resolve a version", ErrUnsupported, id)
+		}
+		return vf.FindVersion(ctx, name, version)
+	}
+	return skill.Skill{}, fmt.Errorf("%w: %q for skill %q", ErrUnknownSource, id, name)
+}
+
 // Select returns the sources of the given kinds, in chain order.
 func (c Chain) Select(kinds ...Kind) Chain {
 	var out Chain

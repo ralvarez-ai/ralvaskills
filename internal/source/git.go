@@ -36,13 +36,16 @@ const (
 	indexTemp    = ".rsk-index-*.tmp"
 )
 
+var versionPattern = regexp.MustCompile(`^[0-9A-Za-z][0-9A-Za-z.+-]*$`)
+
 // repoOps is what Git needs from a bare clone; git.Repo is the production
 // implementation, and tests supply an in-memory one.
 //
-//nolint:interfacebloat // the four operations a git source performs on its clone
+//nolint:interfacebloat // the operations a git source performs on its clone
 type repoOps interface {
 	Fetch(ctx context.Context, remote git.RemoteURL, ref string) (string, error)
 	ListTree(ctx context.Context, commit string, roots []string) ([]git.TreeEntry, error)
+	TreeID(ctx context.Context, commit, dir string) (string, error)
 	ReadBlobs(ctx context.Context, commit string, paths []string, maxBytes int64) (map[string]git.Blob, error)
 	Archive(ctx context.Context, commit, dir, dest string, lim git.Limits) error
 }
@@ -64,6 +67,16 @@ type (
 		ttl     time.Duration
 		now     func() time.Time
 		globs   []*regexp.Regexp
+	}
+
+	// LockedSkill is what rsk.lock records about a git skill: enough to fetch
+	// the same content again without consulting the branch.
+	LockedSkill struct {
+		Name   string
+		Rev    string
+		Commit string
+		Tree   string
+		Path   string
 	}
 
 	gitIndex struct {
@@ -162,7 +175,7 @@ func (g *Git) All(ctx context.Context) ([]skill.Skill, error) {
 	}
 	skills := make([]skill.Skill, len(idx.Skills))
 	for i := range idx.Skills {
-		skills[i] = g.toSkill(&idx.Skills[i], "")
+		skills[i] = g.toSkill(&idx.Skills[i], "", idx.Commit, g.spec.Rev)
 	}
 	return skills, nil
 }
@@ -178,20 +191,13 @@ func (g *Git) Find(ctx context.Context, name string) (skill.Skill, error) {
 		if idx.Skills[i].Name != name {
 			continue
 		}
-		dest, extractErr := g.materialize(ctx, &idx.Skills[i], idx.Commit)
+		dest, extractErr := g.materializeAt(ctx, name, idx.Skills[i].Path, idx.Commit)
 		if extractErr != nil {
 			return skill.Skill{}, fmt.Errorf("source %s: extract %q: %w", g.spec.ID, name, extractErr)
 		}
-		return g.toSkill(&idx.Skills[i], dest), nil
+		return g.toSkill(&idx.Skills[i], dest, idx.Commit, g.spec.Rev), nil
 	}
 	return skill.Skill{}, fmt.Errorf("%w: source %s has no skill %q", ErrNotFound, g.spec.ID, name)
-}
-
-func (g *Git) toSkill(sk *gitSkill, dir string) skill.Skill {
-	return skill.Skill{
-		Name: sk.Name, Version: sk.Version, Description: sk.Description, Path: dir,
-		Source: skill.DeclaredSource(g.spec.ID), AllowedTools: sk.AllowedTools,
-	}
 }
 
 func (g *Git) indexPath() string {
@@ -449,11 +455,11 @@ func (g *Git) excluded(dir string) bool {
 	return false
 }
 
-// materialize extracts the skill at commit into the cache, once. If the clone
+// materializeAt extracts the skill at commit into the cache, once. If the clone
 // no longer holds the commit's objects it fetches that commit by id and tries
 // again, unless offline or the archive was refused as unsafe.
-func (g *Git) materialize(ctx context.Context, sk *gitSkill, commit string) (string, error) {
-	dest := g.extractDir(sk.Name, commit)
+func (g *Git) materializeAt(ctx context.Context, name, dir, commit string) (string, error) {
+	dest := g.extractDir(name, commit)
 	if _, err := os.Stat(filepath.Join(dest, skillFile)); err == nil {
 		return dest, nil
 	}
@@ -461,7 +467,7 @@ func (g *Git) materialize(ctx context.Context, sk *gitSkill, commit string) (str
 		return "", fmt.Errorf("clear %s: %w", dest, err)
 	}
 
-	err := g.repo.Archive(ctx, commit, sk.Path, dest, git.Limits{})
+	err := g.repo.Archive(ctx, commit, dir, dest, git.Limits{})
 	if err == nil {
 		return dest, nil
 	}
@@ -471,8 +477,16 @@ func (g *Git) materialize(ctx context.Context, sk *gitSkill, commit string) (str
 	if _, fetchErr := g.repo.Fetch(ctx, g.remote, commit); fetchErr != nil {
 		return "", fmt.Errorf("fetch %s: %w", commit, fetchErr)
 	}
-	if err = g.repo.Archive(ctx, commit, sk.Path, dest, git.Limits{}); err != nil {
+	if err = g.repo.Archive(ctx, commit, dir, dest, git.Limits{}); err != nil {
 		return "", err
 	}
 	return dest, nil
+}
+
+func (g *Git) toSkill(sk *gitSkill, dir, commit, rev string) skill.Skill {
+	return skill.Skill{
+		Name: sk.Name, Version: sk.Version, Description: sk.Description, Path: dir,
+		Source: skill.DeclaredSource(g.spec.ID), AllowedTools: sk.AllowedTools,
+		Git: &skill.GitRef{URL: g.spec.URL, Rev: rev, Commit: commit, Tree: sk.Tree, Path: sk.Path},
+	}
 }

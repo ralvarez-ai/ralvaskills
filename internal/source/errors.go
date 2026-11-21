@@ -15,6 +15,10 @@ var (
 	// name. A source is never resolved by order, so it is an error naming both.
 	ErrDuplicate = errors.New("duplicate skill name in a source")
 
+	// ErrTreeMismatch is returned when a skill restored at a locked commit does
+	// not have the tree id the lock recorded: the content is not what was locked.
+	ErrTreeMismatch = errors.New("skill content does not match the locked tree")
+
 	// ErrNeverFetched is returned when --offline asks for a source that has no
 	// index on this machine yet.
 	ErrNeverFetched = errors.New("source has never been fetched")

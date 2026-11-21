@@ -31,9 +31,19 @@ type fakeRepo struct {
 	archiveErr error
 	missing    bool // the first Archive fails as if the commit's objects were gone
 
+	refs  map[string]string // ref to commit, when a test needs tags; nil accepts any ref
+	trees map[string]string // directory to tree id; missing means "t-<dir>"
+
 	fetches  []string
 	listed   [][]string
 	archived []string
+}
+
+func (f *fakeRepo) TreeID(_ context.Context, _, dir string) (string, error) {
+	if id, ok := f.trees[dir]; ok {
+		return id, nil
+	}
+	return "t-" + dir, nil
 }
 
 func (f *fakeRepo) Fetch(_ context.Context, _ git.RemoteURL, ref string) (string, error) {
@@ -42,6 +52,12 @@ func (f *fakeRepo) Fetch(_ context.Context, _ git.RemoteURL, ref string) (string
 		return "", f.fetchErr
 	}
 	f.missing = false
+	if c, ok := f.refs[ref]; ok {
+		return c, nil
+	}
+	if f.refs != nil && ref != "HEAD" && len(ref) != len(testCommit) {
+		return "", fmt.Errorf("%w: %s", git.ErrRefNotFound, ref)
+	}
 	return f.commit, nil
 }
 
