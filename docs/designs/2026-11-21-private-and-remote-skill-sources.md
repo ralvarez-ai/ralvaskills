@@ -34,9 +34,11 @@ plus the `anthropics/skills` cache.
 - Resolution order and source construction are spread over many sites, not five:
   `install.FindSkill` (`internal/install/resolve.go:33-56`), `LocalSource` (`:26`),
   `newLocalSource` (`cmd/rsk/resolve.go:19`), `loadSkillsBySource` (`cmd/rsk/catalog.go:167`), and
-  direct `source.NewOfficial` / `NewRegistry` construction in `cmd/rsk/install.go:101,348`,
-  `new.go:297`, `update_lock.go:46`, `sync.go:234`, `update.go:313`, `internal/mcp/install_tool.go:99`
-  and `internal/mcp/server.go:56`.
+  direct `source.NewOfficial` / `NewRegistry` / `NewLocal` construction in `cmd/rsk/install.go:102,349`,
+  `new.go:298`, `update_lock.go:47`, `sync.go:229,234`, `update.go:313`, `catalog.go:182`,
+  `internal/update/check.go:132`, `internal/mcp/install_tool.go:100` and
+  `internal/mcp/server.go:53,56`. Three of them (`update.go`, `update/check.go`, `mcp/server.go`) need the
+  concrete `*Registry` for `Index`, not a `Resolver`, so the factory must hand that back too.
 - The registry client has no authentication: `NewRegistry` builds a bare `http.Client`
   (`internal/source/registry.go:73`). There is no header, token or credential concept anywhere.
 - The lock records name, version and source kind only (`internal/manifest/lock.go:22-34`), keyed by
