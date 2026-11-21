@@ -25,6 +25,7 @@ Check: `python3 <skill>/scripts/docs_lint.py docs`
 |---|---|---|
 | 0001 | [Skill names keep `-architect` as the conventions marker](adr/0001-keep-the-architect-skill-suffix.md) | superseded by 0002 |
 | 0002 | [Rename ten skills, and make a rename resolvable](adr/0002-rename-ten-skills-with-registry-aliases.md) | accepted |
+| 0003 | [One source chain, one reference grammar, and no credential in rsk](adr/0003-source-chain-and-reference-grammar.md) | accepted |
 
 ## designs/
 
