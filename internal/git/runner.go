@@ -146,7 +146,16 @@ func (r runner) prepare(ctx context.Context, dir string, args ...string) *exec.C
 // run executes a command and returns its stdout. stderr is captured, capped and
 // scrubbed instead of being forwarded to the terminal.
 func (r runner) run(ctx context.Context, dir, op string, args ...string) ([]byte, error) {
+	return r.runInput(ctx, dir, op, nil, args...)
+}
+
+// runInput is run with data written to the command's stdin. A nil input leaves
+// stdin closed.
+func (r runner) runInput(ctx context.Context, dir, op string, input []byte, args ...string) ([]byte, error) {
 	cmd := r.prepare(ctx, dir, args...)
+	if input != nil {
+		cmd.Stdin = bytes.NewReader(input)
+	}
 	var stdout bytes.Buffer
 	stderr := &cappedBuffer{limit: maxStderr}
 	cmd.Stdout = &stdout

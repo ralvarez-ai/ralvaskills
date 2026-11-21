@@ -148,9 +148,12 @@ func TestListTreeFiltersByRootsAndFlagsDangerousModes(t *testing.T) {
 	modes := map[string]string{}
 	for _, e := range entries {
 		modes[e.Path] = e.Mode
-		if !strings.HasPrefix(e.Path, "skills/") {
+		if e.Path != "skills" && !strings.HasPrefix(e.Path, "skills/") {
 			t.Errorf("%s is outside the requested root", e.Path)
 		}
+	}
+	if modes["skills/alpha"] != "040000" {
+		t.Errorf("directory entries are missing: skills/alpha mode = %q", modes["skills/alpha"])
 	}
 	if modes["skills/alpha/SKILL.md"] != "100644" || modes["skills/alpha/run.sh"] != "100755" {
 		t.Errorf("modes = %v", modes)
@@ -352,5 +355,69 @@ func TestLsRemoteResolvesARefWithoutCloning(t *testing.T) {
 	}
 	if _, err = (runner{}).lsRemote(t.Context(), f.remote, "main"); err == nil {
 		t.Error("the production runner reached a local path")
+	}
+}
+
+func TestListTreeReportsTheTreeIDOfEachDirectory(t *testing.T) {
+	t.Parallel()
+	f := newFixture(t)
+	repo := newRepo(t)
+	commit, err := repo.Fetch(t.Context(), f.remote, "main")
+	if err != nil {
+		t.Fatal(err)
+	}
+	entries, err := repo.ListTree(t.Context(), commit, []string{"skills"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, err := repo.TreeID(t.Context(), commit, "skills/alpha")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, e := range entries {
+		if e.Path == "skills/alpha" && (e.Type != "tree" || e.ObjectID != want) {
+			t.Errorf("entry = %+v, want tree %s", e, want)
+		}
+	}
+}
+
+func TestReadBlobs(t *testing.T) {
+	t.Parallel()
+	f := newFixture(t)
+	repo := newRepo(t)
+	commit, err := repo.Fetch(t.Context(), f.remote, "main")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	paths := []string{"skills/alpha/SKILL.md", "README.md", "skills/ghost/SKILL.md", "skills/beta/SKILL.md"}
+	got, err := repo.ReadBlobs(t.Context(), commit, paths, 1024)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got["skills/alpha/SKILL.md"].Data) != "alpha" || string(got["README.md"].Data) != "readme" ||
+		string(got["skills/beta/SKILL.md"].Data) != "beta" {
+		t.Errorf("blobs = %+v", got)
+	}
+	if !got["skills/ghost/SKILL.md"].Missing {
+		t.Error("a missing file was not reported as missing")
+	}
+
+	small, err := repo.ReadBlobs(t.Context(), commit, []string{"README.md", "skills/beta/SKILL.md"}, 4)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if small["README.md"].Data != nil || small["README.md"].Size != 6 {
+		t.Errorf("an oversized file must report its size and no data: %+v", small["README.md"])
+	}
+	if string(small["skills/beta/SKILL.md"].Data) != "beta" {
+		t.Errorf("a file under the limit lost its data after an oversized one: %+v", small["skills/beta/SKILL.md"])
+	}
+
+	if _, err = repo.ReadBlobs(t.Context(), commit, []string{"../x"}, 10); !errors.Is(err, ErrInvalidPath) {
+		t.Errorf("a traversing path err = %v, want ErrInvalidPath", err)
+	}
+	if got, err = repo.ReadBlobs(t.Context(), commit, nil, 10); err != nil || len(got) != 0 {
+		t.Errorf("no paths: %v, %v", got, err)
 	}
 }

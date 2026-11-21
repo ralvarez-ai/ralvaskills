@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
@@ -53,8 +54,8 @@ type Repo struct {
 	allowFile bool
 }
 
-// TreeEntry is one entry of a recursive tree listing. Directories are not
-// listed: `ls-tree -r` reports blobs and submodules.
+// TreeEntry is one entry of a recursive tree listing: a blob, a submodule, or a
+// directory (Type "tree", with the directory's own object id).
 type TreeEntry struct {
 	Mode     string
 	Type     string
@@ -153,15 +154,15 @@ func (r Repo) TreeID(ctx context.Context, commit, dir string) (string, error) {
 	return id, nil
 }
 
-// ListTree lists every file and submodule under roots at commit, without
-// checking anything out. With no roots it lists the whole tree. Callers decide
+// ListTree lists every directory, file and submodule under roots at commit,
+// without checking anything out. With no roots it lists the whole tree. Callers decide
 // what to do with the modes: ModeSymlink and ModeSubmodule entries are never
 // something to extract.
 func (r Repo) ListTree(ctx context.Context, commit string, roots []string) ([]TreeEntry, error) {
 	if err := validateCommit(commit); err != nil {
 		return nil, err
 	}
-	args := []string{"ls-tree", "-r", "-z", "--full-tree", commit}
+	args := []string{"ls-tree", "-r", "-t", "-z", "--full-tree", commit}
 	if len(roots) > 0 {
 		args = append(args, "--")
 		for _, root := range roots {
@@ -192,6 +193,74 @@ func parseTree(out []byte) ([]TreeEntry, error) {
 		entries = append(entries, TreeEntry{Mode: fields[0], Type: fields[1], ObjectID: fields[2], Path: string(name)})
 	}
 	return entries, nil
+}
+
+// Blob is the content of one file read from a commit.
+type Blob struct {
+	// Data is the file content. It is nil when the file is missing or larger
+	// than the limit given to ReadBlobs.
+	Data []byte
+
+	// Size is the file's size in bytes, when it exists.
+	Size int64
+
+	// Missing is true when the commit has no such file.
+	Missing bool
+}
+
+// ReadBlobs reads the files at paths from commit in one git process. A file
+// larger than maxBytes is reported with its Size and no Data, so a hostile
+// repository cannot make rsk hold an arbitrarily large file in memory.
+func (r Repo) ReadBlobs(ctx context.Context, commit string, paths []string, maxBytes int64) (map[string]Blob, error) {
+	if err := validateCommit(commit); err != nil {
+		return nil, err
+	}
+	var input bytes.Buffer
+	for _, p := range paths {
+		if err := ValidateRepoPath(p); err != nil {
+			return nil, err
+		}
+		input.WriteString(commit + ":" + p + "\n")
+	}
+	if input.Len() == 0 {
+		return map[string]Blob{}, nil
+	}
+	out, err := r.runner().runInput(ctx, r.Dir, "cat-file", input.Bytes(), "cat-file", "--batch")
+	if err != nil {
+		return nil, err
+	}
+	return parseBlobs(out, paths, maxBytes)
+}
+
+func parseBlobs(out []byte, paths []string, maxBytes int64) (map[string]Blob, error) {
+	blobs := make(map[string]Blob, len(paths))
+	rest := out
+	for _, p := range paths {
+		header, after, ok := bytes.Cut(rest, []byte{'\n'})
+		if !ok {
+			return nil, fmt.Errorf("cat-file output ended before %s", p)
+		}
+		fields := strings.Fields(string(header))
+		if len(fields) == 2 && fields[1] == "missing" {
+			blobs[p] = Blob{Missing: true}
+			rest = after
+			continue
+		}
+		if len(fields) != 3 || fields[1] != "blob" {
+			return nil, fmt.Errorf("unexpected cat-file header %q for %s", header, p)
+		}
+		size, err := strconv.ParseInt(fields[2], 10, 64)
+		if err != nil || size < 0 || int64(len(after)) < size+1 {
+			return nil, fmt.Errorf("bad cat-file size in %q for %s", header, p)
+		}
+		blob := Blob{Size: size}
+		if size <= maxBytes {
+			blob.Data = append([]byte(nil), after[:size]...)
+		}
+		blobs[p] = blob
+		rest = after[size+1:]
+	}
+	return blobs, nil
 }
 
 // Archive extracts the directory dir of commit into dest, with the directory
