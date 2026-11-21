@@ -23,14 +23,23 @@ import (
 // up in every source; a name two sources provide is an error, never resolved by
 // order, and a source that cannot be consulted fails the lookup.
 func FindSkill(ctx context.Context, name string, chain source.Chain) (skill.Skill, error) {
-	s, err := chain.Find(ctx, skill.Ref{Name: name})
+	return FindRef(ctx, skill.Ref{Name: name}, chain)
+}
+
+// FindRef resolves ref: a qualified reference in exactly the source it names, a
+// bare name across the whole chain.
+func FindRef(ctx context.Context, ref skill.Ref, chain source.Chain) (skill.Skill, error) {
+	s, err := chain.Find(ctx, ref)
 	if err == nil {
 		return s, nil
 	}
 	if errors.Is(err, source.ErrNotFound) {
+		if ref.Source != "" {
+			return skill.Skill{}, fmt.Errorf("skill %q not found in %s", ref.Name, ref.Source)
+		}
 		return skill.Skill{}, fmt.Errorf(
 			"skill %q not found in local repo or official cache\n  Run 'rsk catalog' to browse available skills",
-			name,
+			ref.Name,
 		)
 	}
 	return skill.Skill{}, err
@@ -48,11 +57,11 @@ func Resolve(
 	var warnings []string
 
 	for _, raw := range names {
-		bareName, _, err := ParseNameVersion(raw)
+		ref, _, err := skill.ParseRef(raw)
 		if err != nil {
 			return nil, nil, err
 		}
-		if bundle, ok := config.FindBundle(catalog, bareName); ok {
+		if bundle, ok := config.FindBundle(catalog, ref.Name); ok && ref.Source == "" {
 			bundleSkills, bundleWarnings, resolveErr := resolveBundleSkills(
 				ctx, bundle, chain,
 			)
@@ -63,7 +72,7 @@ func Resolve(
 			warnings = append(warnings, bundleWarnings...)
 			continue
 		}
-		s, findErr := FindSkill(ctx, bareName, chain)
+		s, findErr := FindRef(ctx, ref, chain)
 		if findErr != nil {
 			return nil, nil, findErr
 		}
@@ -118,21 +127,19 @@ func DedupSkills(skills []skill.Skill) []skill.Skill {
 	return result
 }
 
-// ParseNameVersion splits "name" or "name@version".
+// ParseNameVersion splits "name[@version]" or "@owner/repo/name[@version]" into
+// the skill's bare name and the version. The source of a qualified reference is
+// dropped: use skill.ParseRef when it matters.
 func ParseNameVersion(arg string) (name, version string, err error) {
-	if before, after, ok := strings.Cut(arg, "@"); ok {
-		name = before
-		version = after
-	} else {
-		name = arg
+	ref, version, err := skill.ParseRef(arg)
+	if err != nil {
+		return "", "", err
 	}
-	if name == "" {
-		return "", "", fmt.Errorf("skill name must not be empty (got %q)", arg)
-	}
-	return name, version, nil
+	return ref.Name, version, nil
 }
 
-// ConstraintsFromArgs returns name → version constraints from "name@version" args.
+// ConstraintsFromArgs returns name → version constraints from "name@version"
+// and "@owner/repo/name@version" args.
 func ConstraintsFromArgs(args []string) (map[string]string, error) {
 	constraints := make(map[string]string, len(args))
 	for _, raw := range args {

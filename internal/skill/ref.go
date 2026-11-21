@@ -53,14 +53,16 @@ type Ref struct {
 // ParseRef parses a reference with an optional "@version" suffix.
 func ParseRef(arg string) (ref Ref, version string, err error) {
 	if !strings.HasPrefix(arg, "@") {
-		name, version, _ := strings.Cut(arg, "@")
+		name, bareVersion, _ := strings.Cut(arg, "@")
 		if name == "" {
 			return Ref{}, "", fmt.Errorf("skill name must not be empty (got %q)", arg)
 		}
 		if strings.Contains(name, "/") {
-			return Ref{}, "", fmt.Errorf("skill name %q must not contain \"/\"; a qualified reference starts with \"@\"", name)
+			return Ref{}, "", fmt.Errorf(
+				"skill name %q must not contain \"/\"; a qualified reference starts with \"@\"", name,
+			)
 		}
-		return Ref{Name: name}, version, nil
+		return Ref{Name: name}, bareVersion, nil
 	}
 
 	body := arg[1:]

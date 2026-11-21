@@ -112,3 +112,40 @@ func TestResolveBundleMembersStayInTheirSource(t *testing.T) {
 		t.Errorf("warnings = %q", warnings)
 	}
 }
+
+func TestResolveQualifiedReferenceNamesItsSource(t *testing.T) {
+	t.Parallel()
+	// "both" is ambiguous bare, so the qualified form is the way out.
+	chain := localModeChain(t, []string{"both"}, []string{"both"})
+
+	got, _, err := install.Resolve(t.Context(), []string{"@anthropics/skills/both"}, nil, chain)
+	if err != nil || len(got) != 1 || got[0].Source != skill.SourceOfficial {
+		t.Fatalf("Resolve = %+v, %v; want the official skill", got, err)
+	}
+
+	_, _, err = install.Resolve(t.Context(), []string{"@acme/elsewhere/both"}, nil, chain)
+	if !errors.Is(err, source.ErrUnknownSource) {
+		t.Errorf("unknown source err = %v, want ErrUnknownSource", err)
+	}
+
+	_, _, err = install.Resolve(t.Context(), []string{"@anthropics/skills/ghost"}, nil, chain)
+	if err == nil || !strings.Contains(err.Error(), `skill "ghost" not found in @anthropics/skills`) {
+		t.Errorf("qualified miss err = %v", err)
+	}
+}
+
+func TestParseNameVersionAndConstraintsHandleQualifiedReferences(t *testing.T) {
+	t.Parallel()
+	name, version, err := install.ParseNameVersion("@anthropics/skills/xlsx@1.2.0")
+	if err != nil || name != "xlsx" || version != "1.2.0" {
+		t.Errorf("ParseNameVersion = %q, %q, %v; want xlsx, 1.2.0", name, version, err)
+	}
+
+	got, err := install.ConstraintsFromArgs([]string{"@anthropics/skills/xlsx@1.2.0", "go-grpc", "docs@2.0.0"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 2 || got["xlsx"] != "1.2.0" || got["docs"] != "2.0.0" {
+		t.Errorf("constraints = %v", got)
+	}
+}
