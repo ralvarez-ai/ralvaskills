@@ -480,6 +480,17 @@ pinned  = ["@acme/skills-private/go-architect"]
   so teammates on an older `rsk` are unaffected until they adopt a new source.
 - An older `rsk` hard-fails on a v2 file with the existing "upgrade rsk" message. That is accepted.
 
+Phase 0b settled three points the text above leaves open. **Official skills are qualified** (decided
+2026-11-21): `@anthropics/skills/<name>` in both files, so any project that installs one moves to v2; 26 of
+164 lock files on the author's machine already carry one. **A local clone keeps bare keys and the kind
+`local`**, because its identity (`@local/<dirname>`) is machine-specific and a committed key must read the
+same everywhere. **Names stay bare in memory** (a skill is unique by name within a scope, 2.3):
+`Mod.Origin` carries the source of a non-default skill and only the file encoding qualifies, so the
+two files can differ in version for a project that has not reinstalled its official skills. The `//` path
+form parses but resolving it returns `ErrUnsupported` until a git source can honor it, and the lock gains
+only `source` and `transport` for now; `url`, `rev`, `commit`, `tree`, `path` and `sha256` arrive with the
+transports that fill them.
+
 #### 5.3 `rsk.lock` v2
 
 ```toml
