@@ -198,6 +198,14 @@ Resolution rules:
    `--include personal`). Registering the source is the opt-in to install from it: no flag is
    needed per install.
 
+Phase 0a built this with two deliberate differences from the sketch above. `Resolver` has no `ID()`: it
+duplicated `Spec().ID` and tipped the interface over the repository's four-method lint. And there is no
+`Chain.All` yet: nothing needs it until listings degrade per source, so `catalog` still walks the
+sources one by one to keep its per-source warnings. One addition: a source whose `Find` may fetch (the
+official cache clones on first use) also offers `FindCached`, and the chain asks that first, so a name
+another source provides never triggers a clone. Only when no source has the name is it asked to fetch,
+which is today's behaviour on a fresh machine.
+
 Existing commands keep their flags; `newLocalSource`/`LocalSource` become thin wrappers over
 `Build(cfg.Sources, ...)`, and the direct `source.NewOfficial`/`NewRegistry` calls move behind it, so the
 dozen sites collapse to one.
