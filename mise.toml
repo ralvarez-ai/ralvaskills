@@ -1,4 +1,5 @@
 [tools]
+"go:golang.org/x/tools/cmd/goimports" = "0.53.0"
 "github:ralvarez-ai/ralvaskills" = "3.9.1"
 act = "0.2.89"
 "go:golang.org/x/tools/cmd/deadcode" = "0.53.0"
