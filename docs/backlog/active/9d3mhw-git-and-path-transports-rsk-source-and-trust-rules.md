@@ -1,6 +1,6 @@
 ---
 title: 'Git and path transports, rsk source and the trust rules (phase 1)'
-priority: p2
+priority: p1
 section: ralvaskills
 topics:
     - rsk
@@ -9,6 +9,8 @@ topics:
 Phase 1 of [private and remote skill sources](../../designs/2026-11-21-private-and-remote-skill-sources.md) (section 10), decided in [ADR 0003](../../adr/0003-source-chain-and-reference-grammar.md).
 
 Plan: [phase 1 steps 1a to 1h](../../plans/2026-11-21-source-chain-phase-1.md).
+
+Progress 2026-11-21: steps 1a to 1e are built and committed, not pushed (`4781793` hardened git runner, `3696b4c` `rsk source`, `ec6ef87` git transport for declared sources, `ac9ffd4` lock, tag pins and update for git skills, `2fdb002` lock by commit, `997870e` official source on the git transport). Remaining, one backlog item each: 1f implicit sources, `--from`, `rsk resolve` and path sources (the first releasable point); 1g `private` and the local overlay (touches `internal/tool/*`, needs approval); 1h the MCP tools. No CLI release is tagged before 1f.
 
 **Deliverable.** Extend `internal/git` (fetch, archive, hardening, redaction); git and path transports; `--from`; `rsk source`, `rsk resolve`; implicit sources with the trust prompt; the local overlay (5.7) and its adapter checks; read-only MCP tools (`list_sources`, `test_source`, `scan_source`, `resolve_reference`) and `add_source` / `remove_source`.
 
