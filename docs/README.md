@@ -52,7 +52,7 @@ Check: `python3 <skill>/scripts/docs_lint.py docs`
 | 2026-11-12 | [MCP registration for Claude Code, Codex, and OpenCode](plans/2026-11-12-mcp-client-support.md) | draft |
 | 2026-11-17 | [Permisos por skill — declarar, aplicar al instalar y reconciliar al actualizar](plans/2026-11-17-per-skill-permissions.md) | draft |
 | 2026-11-20 | [Adopt selected pstack skills, with attribution](plans/2026-11-20-adopt-pstack-skills.md) | done |
-| 2026-11-21 | [Phase 1: git and path sources, `rsk source`, and the trust rules](plans/2026-11-21-source-chain-phase-1.md) | draft |
+| 2026-11-21 | [Phase 1: git and path sources, `rsk source`, and the trust rules](plans/2026-11-21-source-chain-phase-1.md) | active |
 
 ## reviews/
 

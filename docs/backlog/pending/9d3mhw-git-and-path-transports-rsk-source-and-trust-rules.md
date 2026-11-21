@@ -8,7 +8,7 @@ topics:
 ---
 Phase 1 of [private and remote skill sources](../../designs/2026-11-21-private-and-remote-skill-sources.md) (section 10), decided in [ADR 0003](../../adr/0003-source-chain-and-reference-grammar.md).
 
-Plan: [phase 1 steps 1a to 1g](../../plans/2026-11-21-source-chain-phase-1.md).
+Plan: [phase 1 steps 1a to 1h](../../plans/2026-11-21-source-chain-phase-1.md).
 
 **Deliverable.** Extend `internal/git` (fetch, archive, hardening, redaction); git and path transports; `--from`; `rsk source`, `rsk resolve`; implicit sources with the trust prompt; the local overlay (5.7) and its adapter checks; read-only MCP tools (`list_sources`, `test_source`, `scan_source`, `resolve_reference`) and `add_source` / `remove_source`.
 
