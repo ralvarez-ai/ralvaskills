@@ -38,7 +38,11 @@ func (c Config) SourceSpecs() []source.Spec {
 
 // SourceOptions returns the cache locations the sources are built with.
 func (c Config) SourceOptions() source.Options {
-	return source.Options{RegistryCache: c.RegistryCache(), OfficialCache: c.OfficialCache}
+	return source.Options{
+		RegistryCache: c.RegistryCache(),
+		OfficialCache: c.OfficialCache,
+		CacheRoot:     filepath.Dir(c.OfficialCache),
+	}
 }
 
 // Sources builds the chain for this machine's configuration. Every command

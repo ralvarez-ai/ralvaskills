@@ -1,5 +1,7 @@
 package source
 
+import "time"
+
 // Kind names the transport a Spec is read through.
 type Kind string
 
@@ -48,11 +50,32 @@ type Spec struct {
 	Private bool
 }
 
-// Options carries what a source needs besides its Spec: where it caches.
+// Options carries what a source needs besides its Spec: where it caches, and
+// how a git source is gated.
 type Options struct {
 	// RegistryCache is where downloaded registry tarballs are extracted.
 	RegistryCache string
 
 	// OfficialCache is where the anthropics/skills clone lives.
 	OfficialCache string
+
+	// CacheRoot is the folder git sources keep their bare clones, indexes and
+	// extracted skills under. A git source cannot be built without it.
+	CacheRoot string
+
+	// Gate is called with a git source's identity and URL before anything
+	// reads or contacts it, and returns an error to refuse. A git source
+	// cannot be built without one, so no path can reach a remote ungated.
+	Gate func(id, url string) error
+
+	// Offline makes a git source answer from its existing index however old,
+	// and never contact its remote.
+	Offline bool
+
+	// IndexTTL is how long a git source's name index counts as fresh. Zero
+	// means DefaultIndexTTL.
+	IndexTTL time.Duration
+
+	// Now returns the current time. Zero means time.Now; tests inject a clock.
+	Now func() time.Time
 }

@@ -11,6 +11,14 @@ var (
 	// source. It is never resolved by order.
 	ErrAmbiguous = errors.New("skill name is ambiguous")
 
+	// ErrDuplicate is returned when one source holds two skills with the same
+	// name. A source is never resolved by order, so it is an error naming both.
+	ErrDuplicate = errors.New("duplicate skill name in a source")
+
+	// ErrNeverFetched is returned when --offline asks for a source that has no
+	// index on this machine yet.
+	ErrNeverFetched = errors.New("source has never been fetched")
+
 	// ErrUnsupported is returned when a reference asks for something no source
 	// in this build can provide yet.
 	ErrUnsupported = errors.New("unsupported reference")

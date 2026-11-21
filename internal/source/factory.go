@@ -9,14 +9,20 @@ import (
 // the update check construct their sources through it, so the rules about
 // which sources exist and how they are consulted live in one place.
 //
-// It rejects a Spec it cannot fully honor rather than ignoring a field.
+// It rejects a Spec it cannot fully honor rather than ignoring a field, and a
+// git source it cannot gate.
 //
 //nolint:ireturn // returns interface so callers depend on the resolver, not the transport
 func New(spec Spec, opts Options) (Resolver, error) {
-	if spec.Rev != "" || len(spec.Roots) > 0 || len(spec.Excludes) > 0 || spec.Private {
-		return nil, fmt.Errorf("source %s: rev, roots, excludes and private are not supported yet", spec.ID)
+	if spec.Private {
+		return nil, fmt.Errorf("source %s: private is not supported yet", spec.ID)
+	}
+	if spec.Type != KindGit && (spec.Rev != "" || len(spec.Roots) > 0 || len(spec.Excludes) > 0) {
+		return nil, fmt.Errorf("source %s: rev, roots and excludes apply to git sources only", spec.ID)
 	}
 	switch spec.Type {
+	case KindGit:
+		return newGit(spec, opts, nil)
 	case KindRegistry:
 		return newRegistry(spec, opts.RegistryCache), nil
 	case KindPath:
