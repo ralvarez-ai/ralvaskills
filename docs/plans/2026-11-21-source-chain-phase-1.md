@@ -52,6 +52,8 @@ Out: SHA-256 digests and URL transports (phase 2), `rsk registry build`, `repo i
 
 Built as planned, with these settled while building: declared **path** sources are left out of the chain until step 1f, since a path source needs its own walker; a **project** install of a git skill is refused until step 1e can lock it, while `--global` works (it only links); `install` from `rsk.mod`, `update` and `new` keep using the built-in sources, so they never depend on a declared source; a skill's `Source` holds the repository identity for a declared source (`skill.DeclaredSource`), which keeps `Skill` under the linter's copy threshold. First real run, against `cursor/plugins`: it holds `pr-review-canvas` in two plugin directories, so the duplicate-name rule refused the whole source until `--roots pr-review-canvas` narrowed it. That is the design working, and it argues for `rsk source scan` (step 1h) to show the clashes before a user hits them.
 
+> **Order changed while building.** Step 1e was built before 1d. Folding official onto per-commit extractions means an installed link must be re-pointed on update, which needs the lock to record a commit and tree and `update` to compare them: that is 1e. Done in that order, official updates never regress. Step 1e is complete; 1d follows and rests on it.
+
 ### 1d. The official cache on the git transport
 
 Decision 2: `@anthropics/skills` becomes an ordinary git source instead of its own kind, as the design already describes (2.1).
@@ -62,7 +64,7 @@ Decision 2: `@anthropics/skills` becomes an ordinary git source instead of its o
 - `rsk update --include official` fetches through the new path; the `official_cache` config key stays for the old clone and is read only to find it.
 - Bare-name resolution still queries every source, and an unreachable official source now fails closed like any other (today it is only consulted when nothing else has the name). That is a behaviour change to call out in the changelog.
 
-### 1e. Lock, mod and update for git sources (`internal/manifest`, `cmd/rsk`)
+### 1e. Lock, mod and update for git sources (`internal/manifest`, `cmd/rsk`) - done
 
 - Lock v2 entries gain `url`, `rev`, `commit`, `tree` and `path`; keys use the qualified form; restoring from a lock names a URL and still goes through the trust gate (trust rule 8) but never the chain.
 - `update` compares the skill directory's `tree` id, not `commit`, so an unrelated commit in a monorepo does not report every skill outdated. `status` verifies the cached path against the recorded commit offline.

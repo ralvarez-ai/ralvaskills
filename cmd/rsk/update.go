@@ -89,9 +89,14 @@ func runUpdate(cmd *cobra.Command, opts updateOpts, args []string) error {
 	}
 
 	if cfg.LocalMode() {
-		return runUpdateLocal(cmd, args, cfg, opts)
+		err = runUpdateLocal(cmd, args, cfg, opts)
+	} else {
+		err = runUpdateRegistry(cmd, args, cfg, opts)
 	}
-	return runUpdateRegistry(cmd, args, cfg, opts)
+	if err != nil {
+		return err
+	}
+	return runGitUpdate(cmd, cfg, opts, args)
 }
 
 // runUpdateLocal handles update for local-repo mode: git pull + optional official cache refresh.

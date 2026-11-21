@@ -163,8 +163,21 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 	// has no project index to size.
 	if capture == nil && !opts.global && modErr == nil {
 		printSkillsIndexStatus(out, filepath.Dir(rskDir), m.Pinned)
+		printGitLockDrift(out, rskDir, projectDirs, cfg)
 	}
 	return nil
+}
+
+// printGitLockDrift warns about git skills whose links are not what the project's
+// lock records. It reads only local files.
+func printGitLockDrift(out io.Writer, rskDir string, projectDirs []string, cfg config.Config) {
+	lock, err := manifest.ReadLock(rskDir)
+	if err != nil {
+		return
+	}
+	for _, line := range gitLockDrift(lock, projectDirs, cfg.SourceOptions().CacheRoot) {
+		ui.Warn(out, line)
+	}
 }
 
 // warnOrCapture reports msg on the capture (when a captured in-process run is
@@ -421,6 +434,9 @@ func scanLinked(
 			skillVersion = ""
 		}
 		src := detectSkillSource(symlinkTarget, repoPath, officialCachePath, registryCachePath)
+		if id, _, _, isGit := parseGitLink(symlinkTarget, filepath.Dir(officialCachePath)); isGit {
+			src = skill.DeclaredSource(id)
+		}
 		result = append(result, linkedEntry{
 			name:    e.Name(),
 			version: skillVersion,

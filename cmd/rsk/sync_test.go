@@ -513,3 +513,25 @@ func readTestFile(t *testing.T, path string) string {
 	}
 	return string(data)
 }
+
+//nolint:paralleltest // the config folder override is process-wide
+func TestPlanSyncRestoresGitEntriesOnlyThroughADeclaredTrustedSource(t *testing.T) {
+	config.SetConfigHome(t.TempDir())
+	t.Cleanup(func() { config.SetConfigHome("") })
+
+	project := t.TempDir()
+	cfg := config.Config{OfficialCache: filepath.Join(t.TempDir(), "anthropic")}
+	m := manifest.Mod{Tools: []tool.ID{tool.ClaudeID}, Skills: map[string]string{"alpha": "*"}}
+	lock := manifest.Lock{Skills: []manifest.LockEntry{{
+		Name: "alpha", Version: "1.0.0", Source: skill.DeclaredSource("@acme/skills"),
+		Git: &skill.GitRef{
+			URL: "git@github.com:acme/skills.git", Path: "skills/alpha",
+			Commit: strings.Repeat("a", 40), Tree: strings.Repeat("b", 40),
+		},
+	}}}
+
+	_, err := planSyncLinks(t.Context(), project, m, lock, cfg)
+	if err == nil || !strings.Contains(err.Error(), "rsk source add @acme/skills") {
+		t.Errorf("a lock naming an undeclared source err = %v, want the command to add it", err)
+	}
+}

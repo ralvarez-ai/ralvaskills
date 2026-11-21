@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -166,5 +167,49 @@ func TestAGrantForAnotherURLDoesNotTrustTheSource(t *testing.T) {
 	}
 	if _, err := m.chain(t, true).Find(t.Context(), skill.Ref{Name: "mine"}); !errors.Is(err, trust.ErrUntrusted) {
 		t.Errorf("err = %v, want ErrUntrusted for a grant made at a different URL", err)
+	}
+}
+
+func TestRestoreRefusesASourceThisMachineDoesNotHaveOrTrust(t *testing.T) {
+	t.Parallel()
+	m := newMachine(t)
+	l := source.LockedSkill{
+		Name:   "alpha",
+		Commit: strings.Repeat("a", 40),
+		Tree:   strings.Repeat("b", 40),
+		Path:   "skills/alpha",
+	}
+	url := "git@github.com:acme/skills.git"
+	restore := func() error {
+		_, err := sources.RestoreAt(
+			t.Context(),
+			m.cfg,
+			m.sources,
+			m.trustFile,
+			sources.ChainOptions{},
+			"@acme/skills",
+			url,
+			l,
+		)
+		return err
+	}
+
+	var notDeclared *sources.NotDeclaredError
+	if err := restore(); !errors.As(err, &notDeclared) ||
+		!strings.Contains(err.Error(), "rsk source add @acme/skills") {
+		t.Fatalf("err = %v, want a NotDeclaredError naming the command", err)
+	}
+
+	e := m.declare(t, "@acme/skills", sources.Options{})
+	if err := restore(); !errors.Is(err, trust.ErrUntrusted) {
+		t.Errorf("a declared but untrusted source err = %v, want ErrUntrusted", err)
+	}
+
+	// The lock names a URL this machine did not declare: refused, not followed.
+	m.grant(t, e)
+	_, err := sources.RestoreAt(t.Context(), m.cfg, m.sources, m.trustFile, sources.ChainOptions{},
+		"@acme/skills", "git@evil.example:acme/skills.git", l)
+	if err == nil || !strings.Contains(err.Error(), "evil.example") {
+		t.Errorf("a lock URL that differs from the declared one err = %v, want a refusal naming it", err)
 	}
 }

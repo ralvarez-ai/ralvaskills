@@ -20,6 +20,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
@@ -213,6 +214,17 @@ func planSyncLinks(
 func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.Config) (skill.Skill, error) {
 	if err := skill.ValidateName(entry.Name); err != nil {
 		return skill.Skill{}, err
+	}
+	if entry.Source.IsDeclared() {
+		// A git skill is restored at its locked commit and checked against its
+		// locked tree: the lock names the source, so the chain is not consulted.
+		if entry.Git == nil {
+			return skill.Skill{}, fmt.Errorf("lock entry %s has no git record", entry.Name)
+		}
+		g := entry.Git
+		return sources.Restore(ctx, cfg, sources.ChainOptions{}, string(entry.Source), g.URL, source.LockedSkill{
+			Name: entry.Name, Rev: g.Rev, Commit: g.Commit, Tree: g.Tree, Path: g.Path,
+		})
 	}
 	if entry.Source != skill.SourceOfficial &&
 		(entry.Version == "" || filepath.Base(entry.Version) != entry.Version ||
