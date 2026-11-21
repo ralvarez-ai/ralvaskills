@@ -142,6 +142,11 @@ tasks:
 
   # aggregate
 
+  paths:check:
+    desc: No retired or unknown go.ralva.dev import
+    cmds:
+      - go run go.ralva.dev/repokit/cmd/paths@v0.4.0 -root .
+
   lint:
     desc: Lint everything
     cmds:
