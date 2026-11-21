@@ -75,7 +75,7 @@ func (s Source) Identity() string {
 
 // SourceFromIdentity maps a source identity, or one of the older kind names
 // ("registry", "official", "local") that rsk.lock v1 wrote, to its Source. An
-// identity this rsk has no transport for is an error, never a guess.
+// identity that is not well formed is an error, never a guess.
 func SourceFromIdentity(id string) (Source, error) {
 	if src, err := ParseSource(id); err == nil {
 		return src, nil
@@ -88,7 +88,12 @@ func SourceFromIdentity(id string) (Source, error) {
 	case strings.HasPrefix(canonical, LocalScope+"/"):
 		return SourceLocal, nil
 	default:
-		return "", fmt.Errorf("source %q is not supported by this rsk", id)
+		// Any other identity names a declared git source. Whether it is declared
+		// on this machine, and trusted, is checked when it is used, not here.
+		if _, err := ParseSourceID(canonical); err != nil {
+			return "", fmt.Errorf("source %q is not a source identity: %w", id, err)
+		}
+		return DeclaredSource(canonical), nil
 	}
 }
 

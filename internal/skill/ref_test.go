@@ -134,7 +134,11 @@ func TestSourceIdentity(t *testing.T) {
 			t.Errorf("SourceFromIdentity(%q) = %q, %v; want %q", id, got, err, want)
 		}
 	}
-	for _, id := range []string{"@acme/skills-private", "", "bogus"} {
+	declared, declErr := skill.SourceFromIdentity("@Acme/Skills-Private")
+	if declErr != nil || declared != skill.DeclaredSource("@acme/skills-private") {
+		t.Errorf("a declared identity = %q, %v; want it kept, case-folded", declared, declErr)
+	}
+	for _, id := range []string{"", "bogus", "@acme", "@acme/x/y"} {
 		if _, err := skill.SourceFromIdentity(id); err == nil {
 			t.Errorf("SourceFromIdentity(%q) accepted a source this rsk cannot read", id)
 		}
