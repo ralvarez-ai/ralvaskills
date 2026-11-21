@@ -1,6 +1,7 @@
 package skill_test
 
 import (
+	"strings"
 	"testing"
 
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
@@ -147,15 +148,58 @@ func TestParseSourceID(t *testing.T) {
 		"@Acme/Skills-Private":     "@acme/skills-private",
 		"@ralvarezdev/ralvaskills": skill.DefaultRegistryID,
 		"@local/my-dir":            "@local/my-dir",
+		"@acme/.github":            "@acme/.github",
+		"@acme/a.b":                "@acme/a.b",
 	} {
 		got, err := skill.ParseSourceID(in)
 		if err != nil || got != want {
 			t.Errorf("ParseSourceID(%q) = %q, %v; want %q", in, got, err, want)
 		}
 	}
-	for _, in := range []string{"", "acme/skills", "@acme", "@acme/", "@/skills", "@acme/skills/x", "@acme/sk ills", "@-a/b"} {
+	for _, in := range []string{
+		"", "acme/skills", "@acme", "@acme/", "@/skills", "@acme/skills/x", "@acme/sk ills", "@-a/b",
+		"@acme/.", "@acme/..", "@acme/...",
+	} {
 		if got, err := skill.ParseSourceID(in); err == nil {
 			t.Errorf("ParseSourceID(%q) accepted as %q", in, got)
 		}
+	}
+}
+
+func TestParseFrontmatter(t *testing.T) {
+	t.Parallel()
+	body := "---\nname: alpha\nversion: 1.2.0\ndescription: \"Does a thing\"\nallowed-tools:\n  - Read\n  - Bash(make lint)\n---\n# Body\nversion: 9\n"
+	fm := skill.ParseFrontmatter(strings.NewReader(body))
+	if fm.Name != "alpha" || fm.Version != "1.2.0" || fm.Description != "Does a thing" ||
+		len(fm.AllowedTools) != 2 || fm.AllowedTools[1] != "Bash(make lint)" {
+		t.Errorf("frontmatter = %+v", fm)
+	}
+
+	versionless := skill.ParseFrontmatter(strings.NewReader("---\nname: xlsx\ndescription: sheets\n---\n"))
+	if versionless.Name != "xlsx" || versionless.Version != "" {
+		t.Errorf("a versionless skill must parse with an empty version: %+v", versionless)
+	}
+	if empty := skill.ParseFrontmatter(strings.NewReader("no frontmatter here")); empty.Name != "" {
+		t.Errorf("text without frontmatter parsed as %+v", empty)
+	}
+}
+
+func TestDeclaredSourceCarriesItsIdentity(t *testing.T) {
+	t.Parallel()
+	src := skill.DeclaredSource("@acme/skills")
+	if !src.IsDeclared() || src.Kind() != skill.SourceGit || src.Identity() != "@acme/skills" ||
+		src.Label() != "git  " {
+		t.Errorf("declared source = %q: declared=%v kind=%q identity=%q label=%q",
+			src, src.IsDeclared(), src.Kind(), src.Identity(), src.Label())
+	}
+	for _, builtin := range []skill.Source{skill.SourceRegistry, skill.SourceOfficial, skill.SourceLocal} {
+		if builtin.IsDeclared() || builtin.Kind() != builtin {
+			t.Errorf("%q is built in but reports declared=%v kind=%q", builtin, builtin.IsDeclared(), builtin.Kind())
+		}
+	}
+	if _, err := skill.ParseSource("@acme/skills"); err == nil {
+		t.Error(
+			"ParseSource accepted a declared identity: only the lock reader may map one, through SourceFromIdentity",
+		)
 	}
 }

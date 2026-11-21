@@ -17,6 +17,12 @@ const (
 
 	// SourceRegistry is a skill downloaded from the hosted registry.
 	SourceRegistry Source = "registry"
+
+	// SourceGit is the kind of a skill read from a declared git repository.
+	// Such a skill's Source is the repository's identity itself ("@owner/repo",
+	// see DeclaredSource), so one value says both what kind of source it is and
+	// which one; Kind folds it back to SourceGit. ParseSource does not accept it.
+	SourceGit Source = "git"
 )
 
 // ParseSource converts a string to its Source value. Returns an error for
@@ -30,6 +36,26 @@ func ParseSource(s string) (Source, error) {
 	}
 }
 
+// DeclaredSource is the Source of a skill read from the declared git source
+// with the given canonical identity.
+func DeclaredSource(id string) Source {
+	return Source(id)
+}
+
+// IsDeclared reports whether s names a declared git source by its identity.
+func (s Source) IsDeclared() bool {
+	return strings.HasPrefix(string(s), "@")
+}
+
+// Kind returns s itself for the built-in sources, and SourceGit for a declared
+// one.
+func (s Source) Kind() Source {
+	if s.IsDeclared() {
+		return SourceGit
+	}
+	return s
+}
+
 // Identity returns the canonical identity of the source a skill kind comes
 // from. A local clone has none (neither does an unknown kind): its identity is the name of a directory on one
 // machine, which a committed file must not carry.
@@ -40,6 +66,9 @@ func (s Source) Identity() string {
 	case SourceOfficial:
 		return OfficialID
 	default:
+		if s.IsDeclared() {
+			return string(s)
+		}
 		return ""
 	}
 }
@@ -71,13 +100,15 @@ func (s Source) String() string {
 
 // Label returns the short display label used in table output.
 func (s Source) Label() string {
-	switch s {
+	switch s.Kind() {
 	case SourceLocal:
 		return "ralva"
 	case SourceOfficial:
 		return "anthr"
 	case SourceRegistry:
 		return "reg  "
+	case SourceGit:
+		return "git  "
 	default:
 		return "?????"
 	}

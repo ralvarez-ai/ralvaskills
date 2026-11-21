@@ -21,7 +21,9 @@ const (
 
 var (
 	ownerPattern = regexp.MustCompile(`^[a-z0-9]([a-z0-9-]*[a-z0-9])?$`)
-	repoPattern  = regexp.MustCompile(`^[a-z0-9._-]+$`)
+	// repoPattern admits what GitHub allows in a repository name, except a
+	// name made only of dots: "." and ".." would escape a cache directory.
+	repoPattern = regexp.MustCompile(`^[a-z0-9_-][a-z0-9._-]*$|^\.[a-z0-9._-]*[a-z0-9_-][a-z0-9._-]*$`)
 
 	// builtinAliases maps an alternative spelling of a built-in source to its
 	// canonical identity. It is the only place an alias can come from: never

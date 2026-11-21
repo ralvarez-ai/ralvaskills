@@ -3,6 +3,7 @@ package skill
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -103,9 +104,8 @@ func parseSkill(root, dir string, source Source) Skill {
 	}
 }
 
-// readFrontmatter reads the frontmatter keys rsk uses from path. allowed-tools
-// accepts both a YAML block list and an inline string ("Read Grep" or
-// "Read, Bash(git status *)"); an unindented key ends the block.
+// readFrontmatter reads the frontmatter keys rsk uses from path, and requires a
+// version.
 func readFrontmatter(path string) (Frontmatter, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -113,8 +113,21 @@ func readFrontmatter(path string) (Frontmatter, error) {
 	}
 	defer func() { _ = f.Close() }()
 
+	fm := ParseFrontmatter(f)
+	if fm.Version == "" {
+		return Frontmatter{}, fmt.Errorf("version field not found in %s", path)
+	}
+	return fm, nil
+}
+
+// ParseFrontmatter reads the frontmatter keys rsk uses from a SKILL.md stream.
+// A missing key is left empty: official skills carry no version, and a skill
+// read from a git repository may not either. allowed-tools accepts both a YAML
+// block list and an inline string ("Read Grep" or "Read, Bash(git status *)");
+// an unindented key ends the block.
+func ParseFrontmatter(r io.Reader) Frontmatter {
 	var fm Frontmatter
-	scanner := bufio.NewScanner(f)
+	scanner := bufio.NewScanner(r)
 	inFrontmatter := false
 	inAllowedToolsList := false
 	for scanner.Scan() {
@@ -143,10 +156,7 @@ func readFrontmatter(path string) (Frontmatter, error) {
 		}
 		fm.readScalar(line)
 	}
-	if fm.Version == "" {
-		return Frontmatter{}, fmt.Errorf("version field not found in %s", path)
-	}
-	return fm, nil
+	return fm
 }
 
 // readAllowedTools records an inline allowed-tools value and reports whether a
