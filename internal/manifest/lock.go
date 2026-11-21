@@ -42,6 +42,39 @@ type (
 	}
 )
 
+// lockFile and lockEntryFile are the on-disk shape of rsk.lock. In memory an
+// entry's name is bare and its Source a kind; on disk a version 2 file carries
+// the qualified key, the source identity and the transport.
+type (
+	lockFile struct {
+		SchemaVersion schema.Version  `toml:"version,omitempty"`
+		Skills        []lockEntryFile `toml:"skills"`
+	}
+
+	lockEntryFile struct {
+		Name        string   `toml:"name"`
+		Version     string   `toml:"version"`
+		Source      string   `toml:"source"`
+		Permissions []string `toml:"permissions,omitempty"`
+		Granted     []string `toml:"granted,omitempty"`
+		Transport   string   `toml:"transport,omitempty"`
+	}
+)
+
+// transportOf names how a skill kind is fetched.
+func transportOf(src skill.Source) string {
+	switch src {
+	case skill.SourceRegistry:
+		return "registry"
+	case skill.SourceOfficial:
+		return "git"
+	case skill.SourceLocal:
+		return "path"
+	default:
+		return ""
+	}
+}
+
 // ReadLock decodes rsk.lock from rskDir. Returns an empty Lock if the file
 // does not exist.
 func ReadLock(rskDir string) (Lock, error) {
@@ -50,26 +83,81 @@ func ReadLock(rskDir string) (Lock, error) {
 		return Lock{}, nil
 	}
 
-	var l Lock
-	if _, err := toml.DecodeFile(path, &l); err != nil {
+	var f lockFile
+	if _, err := toml.DecodeFile(path, &f); err != nil {
 		return Lock{}, fmt.Errorf("read %s: %w", path, err)
 	}
-	if err := schema.Check(l.SchemaVersion, schema.Lock); err != nil {
+	if err := schema.Check(f.SchemaVersion, schema.Lock); err != nil {
 		return Lock{}, fmt.Errorf("rsk.lock: %w", err)
+	}
+
+	l := Lock{SchemaVersion: f.SchemaVersion}
+	for _, e := range f.Skills {
+		entry, err := entryFromFile(e)
+		if err != nil {
+			return Lock{}, fmt.Errorf("rsk.lock: %w", err)
+		}
+		l.Skills = append(l.Skills, entry)
 	}
 	return l, nil
 }
 
+func entryFromFile(e lockEntryFile) (LockEntry, error) {
+	ref, err := skill.ParseKey(e.Name)
+	if err != nil {
+		return LockEntry{}, err
+	}
+	src, err := skill.SourceFromIdentity(e.Source)
+	if err != nil {
+		return LockEntry{}, fmt.Errorf("%s: %w", e.Name, err)
+	}
+	if ref.Source != "" {
+		keySrc, keyErr := skill.SourceFromIdentity(ref.Source)
+		if keyErr != nil {
+			return LockEntry{}, fmt.Errorf("%s: %w", e.Name, keyErr)
+		}
+		if keySrc != src {
+			return LockEntry{}, fmt.Errorf("%s: key names source %s but source is %q", e.Name, ref.Source, e.Source)
+		}
+	}
+	return LockEntry{
+		Name: ref.Name, Version: e.Version, Source: src, Permissions: e.Permissions, Granted: e.Granted,
+	}, nil
+}
+
 // WriteLock encodes l as TOML to rskDir/rsk.lock atomically, creating parent
-// directories as needed.
+// directories as needed. It writes version 2 only when an entry comes from a
+// source other than the default registry; otherwise the file stays version 1.
 func WriteLock(rskDir string, l Lock) error {
-	l.SchemaVersion = schema.Lock
+	f := lockFile{SchemaVersion: schema.Base, Skills: make([]lockEntryFile, len(l.Skills))}
+	for _, e := range l.Skills {
+		if id := e.Source.Identity(); id != "" && id != skill.DefaultRegistryID {
+			f.SchemaVersion = schema.Lock
+			break
+		}
+	}
+	v2 := f.SchemaVersion == schema.Lock
+	for i, e := range l.Skills {
+		out := lockEntryFile{
+			Name: e.Name, Version: e.Version, Source: e.Source.String(),
+			Permissions: e.Permissions, Granted: e.Granted,
+		}
+		if v2 {
+			if id := e.Source.Identity(); id != "" {
+				out.Name = skill.Ref{Source: id, Name: e.Name}.Key()
+				out.Source = id
+			}
+			out.Transport = transportOf(e.Source)
+		}
+		f.Skills[i] = out
+	}
+
 	path := LockPath(rskDir)
 	if err := os.MkdirAll(filepath.Dir(path), fsperm.Dir); err != nil {
 		return fmt.Errorf("create dir: %w", err)
 	}
 	return fsx.WriteAtomic(path, TempFilePattern, func(w io.Writer) error {
-		return toml.NewEncoder(w).Encode(l)
+		return toml.NewEncoder(w).Encode(f)
 	})
 }
 

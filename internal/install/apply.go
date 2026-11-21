@@ -97,6 +97,7 @@ func applyProject(linked []skill.Skill, opts Options) error {
 			constraint = c
 		}
 		m.Skills[s.Name] = constraint
+		m.SetOrigin(s.Name, s.Source)
 		names = append(names, s.Name)
 		// Keep what the previous entry recorded about this skill's tool
 		// permissions: the reconcile that follows the link step updates those

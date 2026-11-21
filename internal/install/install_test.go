@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"testing"
 
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
@@ -125,5 +126,51 @@ func TestApplyGlobalWritesNoManifest(t *testing.T) {
 	}
 	if _, statErr := os.Stat(filepath.Join(project, ".rsk")); !os.IsNotExist(statErr) {
 		t.Error("global apply wrote a project manifest")
+	}
+}
+
+func TestApplyProjectQualifiesAnOfficialSkillAndLeavesRegistryOnesBare(t *testing.T) {
+	t.Parallel()
+
+	project := t.TempDir()
+	rskDir := filepath.Join(project, ".rsk")
+	if err := manifest.WriteMod(rskDir, manifest.Mod{Tools: []tool.ID{tool.ClaudeID}}); err != nil {
+		t.Fatal(err)
+	}
+	mk := func(name string) string {
+		dir := filepath.Join(t.TempDir(), name)
+		if err := os.MkdirAll(dir, fsperm.Dir); err != nil {
+			t.Fatal(err)
+		}
+		return dir
+	}
+
+	_, err := install.Apply([]skill.Skill{
+		{Name: "xlsx", Path: mk("xlsx"), Source: skill.SourceOfficial},
+		{Name: "tdd", Version: "1.0.0", Path: mk("tdd"), Source: skill.SourceRegistry},
+	}, install.Options{
+		Scope: install.ScopeProject, Targets: []string{filepath.Join(project, ".claude", "skills")},
+		RskDir: rskDir, Pin: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	modText, _ := os.ReadFile(manifest.ModPath(rskDir))
+	for _, want := range []string{"version = 2", `"@anthropics/skills/xlsx"`, `tdd = "*"`} {
+		if !strings.Contains(string(modText), want) {
+			t.Errorf("rsk.mod lacks %q:\n%s", want, modText)
+		}
+	}
+	m, err := manifest.ReadMod(rskDir)
+	if err != nil || m.Skills["xlsx"] != "*" || m.Origin["xlsx"] != skill.OfficialID {
+		t.Fatalf("read back %+v, %v", m, err)
+	}
+	lock, err := manifest.ReadLock(rskDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if entry, ok := manifest.FindLockEntry(lock, "xlsx"); !ok || entry.Source != skill.SourceOfficial {
+		t.Errorf("lock entry = %+v, %v", entry, ok)
 	}
 }

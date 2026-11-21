@@ -27,8 +27,8 @@ func TestWriteReadMod_roundtrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ReadMod: %v", err)
 	}
-	if got.SchemaVersion != schema.Mod {
-		t.Errorf("SchemaVersion: got %d want %d", got.SchemaVersion, schema.Mod)
+	if got.SchemaVersion != schema.Base {
+		t.Errorf("SchemaVersion: got %d want %d", got.SchemaVersion, schema.Base)
 	}
 	if len(got.Skills) != 2 {
 		t.Errorf("Skills len: got %d want 2", len(got.Skills))
@@ -92,6 +92,7 @@ func TestWriteReadLock_roundtrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ReadLock: %v", err)
 	}
+	// The official entry is not from the default registry, so the file is v2.
 	if got.SchemaVersion != schema.Lock {
 		t.Errorf("SchemaVersion: got %d want %d", got.SchemaVersion, schema.Lock)
 	}
