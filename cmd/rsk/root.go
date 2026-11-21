@@ -23,6 +23,7 @@ const (
 	groupInstall   = "install"
 	groupPinning   = "pinning"
 	groupToolsConf = "tools"
+	groupSources   = "sources"
 	groupViews     = "views"
 	groupOther     = "other"
 )
@@ -35,6 +36,7 @@ var rootGroups = []*cobra.Group{
 	{ID: groupInstall, Title: "Install / uninstall / update (use --global for system-wide):"},
 	{ID: groupPinning, Title: "Project pinning (auto-import into each tool's project config):"},
 	{ID: groupToolsConf, Title: "Tool configuration:"},
+	{ID: groupSources, Title: "Skill sources (git repositories and directories):"},
 	{ID: groupViews, Title: "Read-only views:"},
 	{ID: groupOther, Title: "Other:"},
 }
@@ -71,6 +73,11 @@ func sessionRunnable(cmd *cobra.Command) bool {
 	}
 	switch top.Name() {
 	case "help", "completion", mcpCmd.Name(), initCmd.Name():
+		return false
+	}
+	// Trusting a source is a decision only a person at a terminal may make; the
+	// session owns the terminal while it runs, so it never offers it.
+	if cmd == canonicalSource.trust {
 		return false
 	}
 	return true

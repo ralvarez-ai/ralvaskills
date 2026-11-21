@@ -49,6 +49,8 @@ func setupCommands() {
 	rootCmd.AddCommand(canonicalTools.root)
 	term.MarkTableView(canonicalTools.list)
 
+	registerSourceCommands()
+
 	// destroy command
 	rootCmd.AddCommand(destroyCmd)
 	destroyCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
