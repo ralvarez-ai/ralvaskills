@@ -34,6 +34,12 @@ const (
 	// transport of each skill.
 	Lock Version = 2
 
+	// Sources is the current schema version for ~/.config/rsk/sources.json.
+	Sources Version = 1
+
+	// Trust is the current schema version for ~/.config/rsk/trust.json.
+	Trust Version = 1
+
 	// Catalog is the current schema version for ~/.config/rsk/catalog.toml
 	// and any user-override catalog.
 	Catalog Version = 1

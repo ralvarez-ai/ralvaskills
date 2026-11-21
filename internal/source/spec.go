@@ -7,6 +7,10 @@ const (
 	// KindRegistry is a hosted registry served as an index plus tarballs.
 	KindRegistry Kind = "registry"
 
+	// KindGit is a git repository read through the hardened git runner. The
+	// factory does not build it yet; declarations can already name it.
+	KindGit Kind = "git"
+
 	// KindPath is a directory of skills on the local filesystem, such as a
 	// clone of ralvaskills.
 	KindPath Kind = "path"

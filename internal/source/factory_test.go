@@ -53,7 +53,8 @@ func TestNewRejectsWhatItCannotHonour(t *testing.T) {
 		name string
 		spec source.Spec
 	}{
-		{"unknown kind", source.Spec{ID: "@a/a", Type: "git", URL: "git@host:a/a.git"}},
+		{"unknown kind", source.Spec{ID: "@a/a", Type: "bogus", URL: "git@host:a/a.git"}},
+		{"git is declared but not built yet", source.Spec{ID: "@a/a", Type: source.KindGit, URL: "git@host:a/a.git"}},
 		{"empty kind", source.Spec{ID: "@a/a"}},
 		{"private is not enforced yet", path(func(s *source.Spec) { s.Private = true })},
 		{"rev is not honored yet", path(func(s *source.Spec) { s.Rev = "main" })},

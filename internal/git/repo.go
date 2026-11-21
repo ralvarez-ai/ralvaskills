@@ -21,6 +21,9 @@ var (
 	// ErrInvalidCommit is returned for a value that is not a full object id.
 	ErrInvalidCommit = errors.New("invalid commit id")
 
+	// ErrRefNotFound is returned when a remote has no such branch or tag.
+	ErrRefNotFound = errors.New("ref not found on the remote")
+
 	// ErrInvalidPath is returned for a repository path that is not relative and
 	// confined.
 	ErrInvalidPath = errors.New("invalid repository path")
@@ -59,7 +62,9 @@ type TreeEntry struct {
 	Path     string
 }
 
-func validateRef(ref string) error {
+// ValidateRef reports why ref (a branch, tag or object id) is not safe to pass
+// to git, or nil.
+func ValidateRef(ref string) error {
 	if !refPattern.MatchString(ref) || strings.HasPrefix(ref, "-") || ref == "@" ||
 		strings.Contains(ref, "..") || strings.HasSuffix(ref, ".lock") || strings.Contains(ref, "//") {
 		return fmt.Errorf("%w: %q", ErrInvalidRef, ref)
@@ -74,7 +79,9 @@ func validateCommit(commit string) error {
 	return nil
 }
 
-func validateRepoPath(p string) error {
+// ValidateRepoPath reports why p is not a relative, confined path inside a
+// repository, or nil.
+func ValidateRepoPath(p string) error {
 	if p == "" || strings.HasPrefix(p, "-") || strings.HasPrefix(p, "/") || strings.ContainsAny(p, "\\\x00\n") {
 		return fmt.Errorf("%w: %q", ErrInvalidPath, p)
 	}
@@ -90,7 +97,7 @@ func validateRepoPath(p string) error {
 // bare clone, at depth 1, and returns the commit it resolved to. The commit is
 // pinned under refs/rsk/ so garbage collection cannot drop it.
 func (r Repo) Fetch(ctx context.Context, remote RemoteURL, ref string) (string, error) {
-	if err := validateRef(ref); err != nil {
+	if err := ValidateRef(ref); err != nil {
 		return "", err
 	}
 	if err := r.ensureInit(ctx); err != nil {
@@ -125,7 +132,7 @@ func (r Repo) TreeID(ctx context.Context, commit, dir string) (string, error) {
 	}
 	spec := commit + "^{tree}"
 	if dir != "" {
-		if err := validateRepoPath(dir); err != nil {
+		if err := ValidateRepoPath(dir); err != nil {
 			return "", err
 		}
 		spec = commit + ":" + dir
@@ -158,7 +165,7 @@ func (r Repo) ListTree(ctx context.Context, commit string, roots []string) ([]Tr
 	if len(roots) > 0 {
 		args = append(args, "--")
 		for _, root := range roots {
-			if err := validateRepoPath(root); err != nil {
+			if err := ValidateRepoPath(root); err != nil {
 				return nil, err
 			}
 			args = append(args, root)
@@ -195,7 +202,7 @@ func (r Repo) Archive(ctx context.Context, commit, dir, dest string, lim Limits)
 	if err := validateCommit(commit); err != nil {
 		return err
 	}
-	if err := validateRepoPath(dir); err != nil {
+	if err := ValidateRepoPath(dir); err != nil {
 		return err
 	}
 	return r.runner().stream(ctx, r.Dir, "archive",
@@ -221,4 +228,34 @@ func (r Repo) ensureInit(ctx context.Context) error {
 	}
 	_, err = r.runner().run(ctx, "", "init", "init", "--bare", "--quiet", "--", abs)
 	return err
+}
+
+// LsRemote reports the commit ref (a branch or tag; empty means HEAD) points to
+// on remote, without fetching anything. It is how a source is tested for
+// reachability. It contacts the host, so a caller must have checked that the
+// source is trusted.
+func LsRemote(ctx context.Context, remote RemoteURL, ref string) (string, error) {
+	return runner{}.lsRemote(ctx, remote, ref)
+}
+
+func (r runner) lsRemote(ctx context.Context, remote RemoteURL, ref string) (string, error) {
+	if ref == "" {
+		ref = "HEAD"
+	} else if err := ValidateRef(ref); err != nil {
+		return "", err
+	}
+	out, err := r.run(ctx, "", "ls-remote", "ls-remote", "--exit-code", "--", remote.String(), ref)
+	if err != nil {
+		var gitErr *Error
+		if errors.As(err, &gitErr) && strings.Contains(gitErr.Err.Error(), "exit status 2") {
+			return "", fmt.Errorf("%w: %s", ErrRefNotFound, ref)
+		}
+		return "", err
+	}
+	line, _, _ := strings.Cut(string(out), "\n")
+	commit, _, _ := strings.Cut(line, "\t")
+	if err = validateCommit(commit); err != nil {
+		return "", err
+	}
+	return commit, nil
 }

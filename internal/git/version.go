@@ -43,6 +43,11 @@ func parseVersion(s string) ([3]int, error) {
 	return v, nil
 }
 
+// MeetsMinimum reports whether v is at least MinVersion.
+func MeetsMinimum(v [3]int) bool {
+	return versionAtLeast(v, MinVersion)
+}
+
 func versionAtLeast(have, want [3]int) bool {
 	for i := range have {
 		if have[i] != want[i] {

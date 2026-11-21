@@ -92,6 +92,18 @@ func ParseKey(key string) (Ref, error) {
 	return ref, nil
 }
 
+// ParseSourceID validates a source identity ("@owner/repo") and returns its
+// canonical form: case-folded, with a built-in alias mapped to its target.
+func ParseSourceID(id string) (string, error) {
+	body, ok := strings.CutPrefix(id, "@")
+	owner, repo, hasRepo := strings.Cut(body, "/")
+	if !ok || !hasRepo || strings.Contains(repo, "/") ||
+		!ownerPattern.MatchString(strings.ToLower(owner)) || !repoPattern.MatchString(strings.ToLower(repo)) {
+		return "", fmt.Errorf("source identity %q must look like @owner/repo", id)
+	}
+	return CanonicalSourceID(id), nil
+}
+
 func parseQualified(body string) (Ref, error) {
 	owner, rest, _ := strings.Cut(body, "/")
 	repo, tail, _ := strings.Cut(rest, "/")

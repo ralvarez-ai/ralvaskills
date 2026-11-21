@@ -330,3 +330,27 @@ func TestTreeIDRefusesAFile(t *testing.T) {
 		t.Errorf("TreeID of a file err = %v, want ErrInvalidPath", err)
 	}
 }
+
+func TestLsRemoteResolvesARefWithoutCloning(t *testing.T) {
+	t.Parallel()
+	f := newFixture(t)
+	want := f.commit(t)
+	run := runner{allowFile: true}
+
+	got, err := run.lsRemote(t.Context(), f.remote, "main")
+	if err != nil || got != want {
+		t.Fatalf("lsRemote(main) = %q, %v; want %q", got, err, want)
+	}
+	if got, err = run.lsRemote(t.Context(), f.remote, ""); err != nil || got != want {
+		t.Errorf("lsRemote(HEAD) = %q, %v; want %q", got, err, want)
+	}
+	if _, err = run.lsRemote(t.Context(), f.remote, "nope"); !errors.Is(err, ErrRefNotFound) {
+		t.Errorf("a missing ref err = %v, want ErrRefNotFound", err)
+	}
+	if _, err = run.lsRemote(t.Context(), f.remote, "--upload-pack=x"); !errors.Is(err, ErrInvalidRef) {
+		t.Errorf("an option-looking ref err = %v, want ErrInvalidRef", err)
+	}
+	if _, err = (runner{}).lsRemote(t.Context(), f.remote, "main"); err == nil {
+		t.Error("the production runner reached a local path")
+	}
+}

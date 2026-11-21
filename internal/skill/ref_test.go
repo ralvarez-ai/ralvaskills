@@ -139,3 +139,23 @@ func TestSourceIdentity(t *testing.T) {
 		}
 	}
 }
+
+func TestParseSourceID(t *testing.T) {
+	t.Parallel()
+	for in, want := range map[string]string{
+		"@acme/skills":             "@acme/skills",
+		"@Acme/Skills-Private":     "@acme/skills-private",
+		"@ralvarezdev/ralvaskills": skill.DefaultRegistryID,
+		"@local/my-dir":            "@local/my-dir",
+	} {
+		got, err := skill.ParseSourceID(in)
+		if err != nil || got != want {
+			t.Errorf("ParseSourceID(%q) = %q, %v; want %q", in, got, err, want)
+		}
+	}
+	for _, in := range []string{"", "acme/skills", "@acme", "@acme/", "@/skills", "@acme/skills/x", "@acme/sk ills", "@-a/b"} {
+		if got, err := skill.ParseSourceID(in); err == nil {
+			t.Errorf("ParseSourceID(%q) accepted as %q", in, got)
+		}
+	}
+}
