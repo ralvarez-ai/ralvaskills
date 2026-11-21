@@ -48,7 +48,9 @@ Out: SHA-256 digests and URL transports (phase 2), `rsk registry build`, `repo i
 - Discovery uses `ListTree`, not a checkout: apply `roots` and `excludes`, find `SKILL.md` directories, reject symlink entries, and fail on two skills with one name (the first-match behaviour of `FindByName` stays only for the old sources). Then `Archive` only the chosen skill directories into `<cache>/sources/<owner>/<repo>/<name>/<commit>/`.
 - The fetch path checks the trust grant first and fails closed with the `rsk source trust` hint.
 - Fail-closed name index (resolution rule 4): a per-source name index with a fetch time, 24 h TTL, refreshed now when stale, `--offline` accepting any existing index and saying so. A source that has never been fetched, or whose refresh fails past the TTL, fails a bare-name lookup.
-- `catalog` lists a git source and degrades per source with a partial marker; `Chain.All` appears here because it now has a caller.
+- `catalog` lists a git source and degrades per source: an unreachable or untrusted source is a warning and the rest are listed. (`Chain.All` is still not needed: the catalog walks the chain's sources one by one to keep its per-source warnings.)
+
+Built as planned, with these settled while building: declared **path** sources are left out of the chain until step 1f, since a path source needs its own walker; a **project** install of a git skill is refused until step 1e can lock it, while `--global` works (it only links); `install` from `rsk.mod`, `update` and `new` keep using the built-in sources, so they never depend on a declared source; a skill's `Source` holds the repository identity for a declared source (`skill.DeclaredSource`), which keeps `Skill` under the linter's copy threshold. First real run, against `cursor/plugins`: it holds `pr-review-canvas` in two plugin directories, so the duplicate-name rule refused the whole source until `--roots pr-review-canvas` narrowed it. That is the design working, and it argues for `rsk source scan` (step 1h) to show the clashes before a user hits them.
 
 ### 1d. The official cache on the git transport
 

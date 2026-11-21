@@ -105,6 +105,7 @@ func init() {
 	pf.String("config", "", "rsk config directory (default: $RSK_CONFIG_HOME or ~/.config/rsk)")
 	pf.BoolP("verbose", "v", false, "print diagnostic detail")
 	pf.BoolP("quiet", "q", false, "suppress informational output")
+	pf.Bool(flagOffline, false, "answer from cached source indexes and never contact a git remote")
 
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
 		noColor, err := cmd.Flags().GetBool("no-color")

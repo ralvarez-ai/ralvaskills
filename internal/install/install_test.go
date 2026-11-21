@@ -174,3 +174,40 @@ func TestApplyProjectQualifiesAnOfficialSkillAndLeavesRegistryOnesBare(t *testin
 		t.Errorf("lock entry = %+v, %v", entry, ok)
 	}
 }
+
+func TestApplyGitSkillsAreGlobalOnlyUntilTheLockCanRecordThem(t *testing.T) {
+	t.Parallel()
+
+	src := filepath.Join(t.TempDir(), "alpha")
+	if err := os.MkdirAll(src, fsperm.Dir); err != nil {
+		t.Fatal(err)
+	}
+	gitSkill := skill.Skill{Name: "alpha", Path: src, Source: skill.DeclaredSource("@acme/skills")}
+
+	project := t.TempDir()
+	rskDir := filepath.Join(project, ".rsk")
+	if err := manifest.WriteMod(rskDir, manifest.Mod{Tools: []tool.ID{tool.ClaudeID}}); err != nil {
+		t.Fatal(err)
+	}
+	target := filepath.Join(project, ".claude", "skills")
+	_, err := install.Apply([]skill.Skill{gitSkill}, install.Options{
+		Scope: install.ScopeProject, Targets: []string{target}, RskDir: rskDir,
+	})
+	if err == nil || !strings.Contains(err.Error(), "@acme/skills") {
+		t.Fatalf("a project install of a git skill err = %v, want a refusal naming the source", err)
+	}
+	if _, statErr := os.Lstat(filepath.Join(target, "alpha")); statErr == nil {
+		t.Error("the refused install still linked the skill")
+	}
+
+	globalTarget := filepath.Join(t.TempDir(), "skills")
+	results, err := install.Apply([]skill.Skill{gitSkill}, install.Options{
+		Scope: install.ScopeGlobal, Targets: []string{globalTarget},
+	})
+	if err != nil || len(results) != 1 || results[0].Err != nil {
+		t.Fatalf("a global install of a git skill = %+v, %v", results, err)
+	}
+	if _, statErr := os.Lstat(filepath.Join(globalTarget, "alpha")); statErr != nil {
+		t.Errorf("the global link is missing: %v", statErr)
+	}
+}

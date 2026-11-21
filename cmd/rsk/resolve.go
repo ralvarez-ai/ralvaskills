@@ -5,13 +5,43 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
+	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
+
+// flagOffline is the root flag that keeps git sources from contacting their
+// remotes.
+const flagOffline = "offline"
+
+// sourceChain builds the chain a command resolves skill names through: the
+// built-in sources, then the declared git sources. Commands that only restore
+// or relink what a project already records use cfg.Sources() instead, so they
+// never depend on a declared source.
+func sourceChain(cmd *cobra.Command, cfg config.Config) (source.Chain, error) {
+	offline := false
+	if cmd.Flags().Lookup(flagOffline) != nil {
+		var err error
+		if offline, err = cmd.Flags().GetBool(flagOffline); err != nil {
+			return nil, err
+		}
+	}
+	chain, err := sources.Chain(cfg, sources.ChainOptions{Offline: offline})
+	if err != nil {
+		return nil, err
+	}
+	if offline && len(chain) > len(cfg.SourceSpecs()) {
+		ui.Info(cmd.ErrOrStderr(), "offline: answering from cached source indexes")
+	}
+	return chain, nil
+}
 
 // projectSkillsDirs returns deduplicated per-tool project skills directories.
 func projectSkillsDirs(projectRoot string, m manifest.Mod) []string {

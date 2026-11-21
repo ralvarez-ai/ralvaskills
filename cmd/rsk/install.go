@@ -97,7 +97,7 @@ func runInstall(cmd *cobra.Command, opts installOpts, args []string) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	chain, err := cfg.Sources()
+	chain, err := sourceChain(cmd, cfg)
 	if err != nil {
 		return err
 	}

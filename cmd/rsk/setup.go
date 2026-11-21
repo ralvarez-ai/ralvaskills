@@ -28,7 +28,7 @@ func setupCommands() {
 	term.MarkTableView(catalogCmd)
 	f := catalogCmd.Flags()
 	cmdx.RegisterInclude(catalogCmd, "Include extra skills in the output", cmdx.IncludePersonal)
-	f.String(cmdx.FlagSource, "", "Filter by source: local|official")
+	f.String(cmdx.FlagSource, "", "Filter by source: local|official|git")
 	registerSourceCompletion(catalogCmd)
 	addOutputFlag(catalogCmd)
 
@@ -40,7 +40,7 @@ func setupCommands() {
 	term.MarkTableView(catalogBundleCmd)
 	f = catalogBundleCmd.Flags()
 	cmdx.RegisterInclude(catalogBundleCmd, "Include extra skills in the output", cmdx.IncludePersonal)
-	f.String(cmdx.FlagSource, "", "Filter by source: local|official")
+	f.String(cmdx.FlagSource, "", "Filter by source: local|official|git")
 	registerSourceCompletion(catalogBundleCmd)
 	addOutputFlag(catalogBundleCmd)
 

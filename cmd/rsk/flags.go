@@ -25,18 +25,19 @@ func forToolFlag(cmd *cobra.Command) (tool.ID, error) {
 }
 
 // parseSourceFilter parses --source: an empty value disables the source filter,
-// otherwise the value must name a source the catalog can walk (local or
-// official). The registry source is deliberately not selectable here.
+// otherwise the value must name a source the catalog can walk (local,
+// official or git). The registry source is deliberately not selectable here.
 func parseSourceFilter(raw string) (skill.Source, error) {
 	switch skill.Source(raw) {
-	case "", skill.SourceLocal, skill.SourceOfficial:
+	case "", skill.SourceLocal, skill.SourceOfficial, skill.SourceGit:
 		return skill.Source(raw), nil
 	default:
 		return "", fieldError(
 			cmdx.FlagSource,
-			"--source must be '%s' or '%s'",
+			"--source must be '%s', '%s' or '%s'",
 			skill.SourceLocal,
 			skill.SourceOfficial,
+			skill.SourceGit,
 		)
 	}
 }
@@ -46,7 +47,7 @@ func parseSourceFilter(raw string) (skill.Source, error) {
 func registerSourceCompletion(cmd *cobra.Command) {
 	err := cmd.RegisterFlagCompletionFunc(cmdx.FlagSource,
 		func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
-			return []string{skill.SourceLocal.String(), skill.SourceOfficial.String()},
+			return []string{skill.SourceLocal.String(), skill.SourceOfficial.String(), skill.SourceGit.String()},
 				cobra.ShellCompDirectiveNoFileComp
 		})
 	if err != nil {

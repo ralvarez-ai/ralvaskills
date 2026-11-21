@@ -95,6 +95,7 @@ type (
 		Name     string `json:"name"`
 		Version  string `json:"version"`
 		Source   string `json:"source"`
+		SourceID string `json:"source_id,omitempty"`
 		Personal bool   `json:"personal,omitempty"`
 		Path     string `json:"path"`
 	}
@@ -126,7 +127,11 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	all := loadSkillsBySource(ctx, out, capture, cfg, opts.source)
+	chain, err := sourceChain(cmd, cfg)
+	if err != nil {
+		return err
+	}
+	all := loadSkillsBySource(ctx, out, capture, chain, opts.source)
 
 	if opts.bundle != "" {
 		all, err = filterByBundle(out, capture, all, opts.bundle)
@@ -161,42 +166,35 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 	return renderList(cmd, opts.format, "", skillsToEntries(all), header, tableRows, skillNames(all))
 }
 
-// loadSkillsBySource walks the local and/or official sources per sourceFilter
-// ("" means both), warning on (rather than failing for) a source that can't
-// be walked.
+// loadSkillsBySource walks the local, official and declared git sources per
+// sourceFilter ("" means all), warning on (rather than failing for) a source
+// that can't be walked: an unreachable or untrusted git source is reported and
+// the rest are still listed.
 func loadSkillsBySource(
-	ctx context.Context, out io.Writer, capture *term.Capture, cfg config.Config, sourceFilter skill.Source,
+	ctx context.Context, out io.Writer, capture *term.Capture, chain source.Chain, sourceFilter skill.Source,
 ) []skill.Skill {
 	var all []skill.Skill
-
-	chain, err := cfg.Sources()
-	if err != nil {
-		warnOrCapture(out, capture, err.Error())
-		return nil
-	}
-
-	if sourceFilter == "" || sourceFilter == skill.SourceLocal {
-		for _, src := range chain.Select(source.KindRegistry, source.KindPath) {
-			local, walkErr := src.All(ctx)
-			if walkErr != nil {
-				warnOrCapture(out, capture, fmt.Sprintf("walk local skills: %v", walkErr))
-			} else {
-				all = append(all, local...)
+	walk := func(want skill.Source, label func(source.Resolver, error) string, kinds ...source.Kind) {
+		if sourceFilter != "" && sourceFilter != want {
+			return
+		}
+		for _, src := range chain.Select(kinds...) {
+			listed, err := src.All(ctx)
+			if err != nil {
+				warnOrCapture(out, capture, label(src, err))
+				continue
 			}
+			all = append(all, listed...)
 		}
 	}
 
-	if sourceFilter == "" || sourceFilter == skill.SourceOfficial {
-		for _, src := range chain.Select(source.KindOfficial) {
-			official, walkErr := src.All(ctx)
-			if walkErr != nil {
-				warnOrCapture(out, capture, walkErr.Error())
-			} else {
-				all = append(all, official...)
-			}
-		}
-	}
-
+	walk(skill.SourceLocal, func(_ source.Resolver, err error) string {
+		return fmt.Sprintf("walk local skills: %v", err)
+	}, source.KindRegistry, source.KindPath)
+	walk(skill.SourceOfficial, func(_ source.Resolver, err error) string { return err.Error() }, source.KindOfficial)
+	walk(skill.SourceGit, func(src source.Resolver, err error) string {
+		return fmt.Sprintf("source %s: %v", src.Spec().ID, err)
+	}, source.KindGit)
 	return all
 }
 
@@ -237,13 +235,22 @@ var catalogSkillTable = term.Table[skill.Skill]{
 	},
 }
 
+// declaredID returns the identity of a declared source, and "" for the others.
+func declaredID(src skill.Source) string {
+	if src.IsDeclared() {
+		return string(src)
+	}
+	return ""
+}
+
 func skillsToEntries(skills []skill.Skill) []skillEntry {
 	out := make([]skillEntry, len(skills))
 	for i, s := range skills {
 		out[i] = skillEntry{
 			Name:     s.Name,
 			Version:  s.Version,
-			Source:   s.Source.String(),
+			Source:   s.Source.Kind().String(),
+			SourceID: declaredID(s.Source),
 			Personal: s.IsPersonal,
 			Path:     s.Path,
 		}
