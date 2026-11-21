@@ -33,6 +33,7 @@ Check: `python3 <skill>/scripts/docs_lint.py docs`
 | 2026-05-20 | [ralvaskills — Technical Specification](designs/2026-05-20-technical-specification.md) | active |
 | 2026-11-04 | [Landing page — round 1 and combined page](designs/2026-11-04-ralvaskills-landing-page.md) | draft |
 | 2026-11-11 | [Skill rename aliases and manifest migration](designs/2026-11-11-skill-rename-aliases.md) | active |
+| 2026-11-21 | [Private and remote skill sources](designs/2026-11-21-private-and-remote-skill-sources.md) | draft |
 
 ## guides/
 
