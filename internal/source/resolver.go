@@ -6,10 +6,14 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
-// Resolver is the common interface satisfied by Local, Official, and Registry.
-// Commands depend on this interface rather than on concrete types so that the
-// source-selection logic stays centralized in resolve.go.
+// Resolver is one source in a Chain. Commands depend on this interface, and
+// on Chain, rather than on concrete types, so that source selection stays in
+// this package.
 type Resolver interface {
+	// Spec returns the descriptor the source was built from, including its
+	// canonical identity.
+	Spec() Spec
+
 	// All returns every skill available from this source.
 	All(ctx context.Context) ([]skill.Skill, error)
 

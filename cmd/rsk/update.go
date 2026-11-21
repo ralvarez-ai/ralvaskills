@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -310,7 +311,14 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 		return err
 	}
 
-	reg := source.NewRegistry(cfg.EffectiveRegistryURL(), cfg.RegistryCache())
+	chain, err := cfg.Sources()
+	if err != nil {
+		return err
+	}
+	reg, ok := chain.Registry()
+	if !ok {
+		return errors.New("no hosted registry is configured")
+	}
 
 	ui.Info(out, fmt.Sprintf("Fetching index from %s …", cfg.EffectiveRegistryURL()))
 	index, err := reg.Index(ctx)

@@ -67,6 +67,8 @@ type stubResolver struct {
 	skills []skill.Skill
 }
 
+func (stubResolver) Spec() source.Spec { return source.Spec{ID: "@test/stub"} }
+
 func (s stubResolver) All(context.Context) ([]skill.Skill, error) {
 	return s.skills, nil
 }

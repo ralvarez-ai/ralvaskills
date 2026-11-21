@@ -17,15 +17,17 @@ const OfficialSkillsURL = "https://github.com/anthropics/skills"
 
 // Official resolves skills from the cached anthropic/skills clone.
 type Official struct {
+	spec     Spec
 	cacheDir string
 	fs       fsSource
 }
 
-// NewOfficial returns an Official source backed by cacheDir (the
+// newOfficial returns an Official source backed by cacheDir (the
 // official_cache config value).
-func NewOfficial(cacheDir string) *Official {
+func newOfficial(spec Spec, cacheDir string) *Official {
 	root := filepath.Join(cacheDir, skill.SkillsFolderName)
 	return &Official{
+		spec:     spec,
 		cacheDir: cacheDir,
 		fs: fsSource{
 			root: root,
@@ -38,6 +40,11 @@ func NewOfficial(cacheDir string) *Official {
 			},
 		},
 	}
+}
+
+// Spec returns the descriptor the source was built from.
+func (o *Official) Spec() Spec {
+	return o.spec
 }
 
 // All walks the official cache and returns every discovered skill.
@@ -57,6 +64,16 @@ func (o *Official) All(ctx context.Context) ([]skill.Skill, error) {
 func (o *Official) Find(ctx context.Context, name string) (skill.Skill, error) {
 	if err := o.ensureCache(ctx); err != nil {
 		return skill.Skill{}, fmt.Errorf("fetch official skills cache: %w", err)
+	}
+	return o.fs.find(ctx, name)
+}
+
+// FindCached returns the official skill with the given name from the cache as
+// it stands, never cloning. A cache that has not been fetched holds nothing, so
+// the name is not found.
+func (o *Official) FindCached(ctx context.Context, name string) (skill.Skill, error) {
+	if _, err := os.Stat(o.fs.root); os.IsNotExist(err) {
+		return skill.Skill{}, o.fs.notFound(name)
 	}
 	return o.fs.find(ctx, name)
 }

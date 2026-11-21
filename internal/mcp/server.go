@@ -2,6 +2,7 @@ package mcp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -49,11 +50,22 @@ func ServeStdio(ctx context.Context, srv *sdk.Server) error {
 // catalog lists the skills available to this machine: from the local clone in
 // local mode, or from the cached registry index otherwise.
 func (d Deps) catalog(ctx context.Context) ([]catalog.Entry, error) {
+	chain, err := d.Cfg.Sources()
+	if err != nil {
+		return nil, err
+	}
 	if d.Cfg.LocalMode() {
-		return catalog.Build(ctx, source.NewLocal(d.Cfg.RepoPath))
+		local := chain.Select(source.KindPath)
+		if len(local) == 0 {
+			return nil, errors.New("no local source is configured")
+		}
+		return catalog.Build(ctx, local[0])
 	}
 
-	reg := source.NewRegistry(d.Cfg.EffectiveRegistryURL(), d.Cfg.RegistryCache())
+	reg, ok := chain.Registry()
+	if !ok {
+		return nil, errors.New("no hosted registry is configured")
+	}
 	snap, err := NewIndexCache(d.Cfg.RegistryCache(), DefaultIndexTTL, reg.Index).Load(ctx)
 	if err != nil {
 		return nil, err

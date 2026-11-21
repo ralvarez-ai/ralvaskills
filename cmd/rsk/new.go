@@ -20,7 +20,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/digest"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
-	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
@@ -292,11 +292,11 @@ func installRskGuide(ctx context.Context, out io.Writer, cwd, rskDir string) err
 		ui.Warn(out, "user catalog: "+catalogErr.Error())
 	}
 
-	skills, _, resolveErr := install.Resolve(
-		ctx, []string{"rsk-guide"}, bundles,
-		install.LocalSource(cfg),
-		source.NewOfficial(cfg.OfficialCache),
-	)
+	chain, resolveErr := cfg.Sources()
+	var skills []skill.Skill
+	if resolveErr == nil {
+		skills, _, resolveErr = install.Resolve(ctx, []string{"rsk-guide"}, bundles, chain)
+	}
 	if resolveErr != nil {
 		ui.Warn(out, "could not resolve rsk-guide: "+resolveErr.Error())
 		//nolint:nilerr // best-effort convenience install; the project is still set up

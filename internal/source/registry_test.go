@@ -86,7 +86,7 @@ func TestEnsureCached_staleEmptyDir(t *testing.T) {
 	defer srv.Close()
 
 	cache := t.TempDir()
-	r := NewRegistry("", cache)
+	r := newRegistry(Spec{}, cache)
 
 	// Simulate the interrupted run: an empty version dir with no SKILL.md.
 	skillDir := filepath.Join(cache, name, version)
@@ -195,7 +195,7 @@ func TestRegistryAllCarriesDescription(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	r := NewRegistry(srv.URL, t.TempDir())
+	r := newRegistry(Spec{URL: srv.URL}, t.TempDir())
 	skills, err := r.All(context.Background())
 	if err != nil {
 		t.Fatalf("All: %v", err)
@@ -232,7 +232,7 @@ func TestRegistryResolvesRetiredName(t *testing.T) {
 		`"hexagonal-architecture":{"name":"hexagonal-architecture","latest":"2.0.0",` +
 		`"versions":{"2.0.0":{"version":"2.0.0","archive_url":"` + srv.URL + `/new.tar.gz"}}}}}`
 
-	r := NewRegistry(srv.URL, t.TempDir())
+	r := newRegistry(Spec{URL: srv.URL}, t.TempDir())
 	s, err := r.Find(context.Background(), "hexagonal-arch")
 	if err != nil {
 		t.Fatalf("Find: %v", err)

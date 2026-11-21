@@ -16,7 +16,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
-	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
@@ -98,15 +97,17 @@ func runInstall(cmd *cobra.Command, opts installOpts, args []string) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	localSrc := newLocalSource(cfg)
-	officialSrc := source.NewOfficial(cfg.OfficialCache)
+	chain, err := cfg.Sources()
+	if err != nil {
+		return err
+	}
 
 	catalog, catalogWarn := config.LoadCatalog("")
 	if catalogWarn != nil {
 		ui.Warn(out, fmt.Sprintf("user catalog: %v", catalogWarn))
 	}
 
-	skills, warnings, err := resolveNames(ctx, args, catalog, localSrc, officialSrc)
+	skills, warnings, err := resolveNames(ctx, args, catalog, chain)
 	if err != nil {
 		return err
 	}
@@ -345,8 +346,10 @@ func runInstallFromMod(cmd *cobra.Command, opts installOpts) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	localSrc := newLocalSource(cfg)
-	officialSrc := source.NewOfficial(cfg.OfficialCache)
+	chain, err := cfg.Sources()
+	if err != nil {
+		return err
+	}
 
 	projectRoot := filepath.Dir(rskDir)
 	targets := projectSkillsDirs(projectRoot, m)
@@ -360,7 +363,7 @@ func runInstallFromMod(cmd *cobra.Command, opts installOpts) error {
 	var skills []skill.Skill
 	var warnings []string
 	for _, name := range sortedNames {
-		s, findErr := findSkillByName(ctx, name, localSrc, officialSrc)
+		s, findErr := findSkillByName(ctx, name, chain)
 		if findErr != nil {
 			warnings = append(warnings, fmt.Sprintf("%s: %v — skipped", name, findErr))
 			continue

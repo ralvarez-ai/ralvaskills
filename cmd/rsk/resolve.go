@@ -13,13 +13,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
-// newLocalSource returns the appropriate source.Resolver for local skills.
-//
-//nolint:ireturn // returns interface for dependency injection
-func newLocalSource(cfg config.Config) source.Resolver {
-	return install.LocalSource(cfg)
-}
-
 // projectSkillsDirs returns deduplicated per-tool project skills directories.
 func projectSkillsDirs(projectRoot string, m manifest.Mod) []string {
 	return install.ProjectSkillsDirs(projectRoot, m)
@@ -31,9 +24,9 @@ func resolveTargetDirs(cfg config.Config, global bool, forTool tool.ID) ([]strin
 	return install.Targets(cfg, global, forTool)
 }
 
-// findSkillByName looks up a skill by name, trying local first then official.
-func findSkillByName(ctx context.Context, name string, localSrc, officialSrc source.Resolver) (skill.Skill, error) {
-	return install.FindSkill(ctx, name, localSrc, officialSrc)
+// findSkillByName looks up a skill by name across every source in the chain.
+func findSkillByName(ctx context.Context, name string, chain source.Chain) (skill.Skill, error) {
+	return install.FindSkill(ctx, name, chain)
 }
 
 // resolveNames expands bundle-or-skill names into skills, with soft warnings for
@@ -42,9 +35,9 @@ func resolveNames(
 	ctx context.Context,
 	names []string,
 	catalog []config.Bundle,
-	localSrc, officialSrc source.Resolver,
+	chain source.Chain,
 ) ([]skill.Skill, []string, error) {
-	return install.Resolve(ctx, names, catalog, localSrc, officialSrc)
+	return install.Resolve(ctx, names, catalog, chain)
 }
 
 // filterSkills returns a new slice containing only the skills for which keep returns true.

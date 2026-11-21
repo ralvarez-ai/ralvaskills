@@ -226,12 +226,12 @@ func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.C
 		s = skill.Skill{Name: entry.Name, Version: entry.Version, Source: entry.Source,
 			Path: filepath.Join(cfg.RegistryCache(), entry.Name, entry.Version)}
 	case skill.SourceLocal:
-		s, err = source.NewLocal(cfg.RepoPath).Find(ctx, entry.Name)
+		s, err = findIn(ctx, cfg.LocalSpec(), cfg, entry.Name)
 	case skill.SourceOfficial:
 		if _, statErr := os.Stat(filepath.Join(cfg.OfficialCache, skill.SkillsFolderName)); statErr != nil {
 			return skill.Skill{}, fmt.Errorf("official cache unavailable for %s: %w", entry.Name, statErr)
 		}
-		s, err = source.NewOfficial(cfg.OfficialCache).Find(ctx, entry.Name)
+		s, err = findIn(ctx, cfg.OfficialSpec(), cfg, entry.Name)
 	default:
 		return skill.Skill{}, fmt.Errorf("unsupported source for %s: %s", entry.Name, entry.Source)
 	}
@@ -249,6 +249,16 @@ func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.C
 		return skill.Skill{}, fmt.Errorf("locked skill %s@%s is unavailable at %s", entry.Name, entry.Version, s.Path)
 	}
 	return s, nil
+}
+
+// findIn resolves name in the single source spec describes. A lock names its
+// source, so a locked skill is looked up there and never through the chain.
+func findIn(ctx context.Context, spec source.Spec, cfg config.Config, name string) (skill.Skill, error) {
+	r, err := source.New(spec, cfg.SourceOptions())
+	if err != nil {
+		return skill.Skill{}, err
+	}
+	return r.Find(ctx, name)
 }
 
 func syncLinkMissing(path, want string) (bool, error) {

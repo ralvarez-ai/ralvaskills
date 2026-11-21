@@ -9,7 +9,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
-	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
@@ -43,8 +42,10 @@ func bumpLockForProject(cmd *cobra.Command, args []string, cfg config.Config) er
 		}
 	}
 
-	localSrc := newLocalSource(cfg)
-	officialSrc := source.NewOfficial(cfg.OfficialCache)
+	chain, err := cfg.Sources()
+	if err != nil {
+		return err
+	}
 
 	m, err := manifest.ReadMod(rskDir)
 	if err != nil {
@@ -57,7 +58,7 @@ func bumpLockForProject(cmd *cobra.Command, args []string, cfg config.Config) er
 		return err
 	}
 	lock, resolved, err := linkAndLock(lock, names, targets, func(name string) (skill.Skill, error) {
-		return findSkillByName(ctx, name, localSrc, officialSrc)
+		return findSkillByName(ctx, name, chain)
 	})
 	if err != nil {
 		return err

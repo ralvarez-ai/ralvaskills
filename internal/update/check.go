@@ -7,6 +7,7 @@ package update
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -129,7 +130,14 @@ func checkLocal(ctx context.Context, cfg config.Config) (Result, error) {
 // registry's published latest, mirroring the exact comparison
 // cmd/rsk/update.go's runUpdateRegistry performs — see InstalledVersionFromTargets.
 func checkRegistry(ctx context.Context, cfg config.Config) (Result, error) {
-	reg := source.NewRegistry(cfg.EffectiveRegistryURL(), cfg.RegistryCache())
+	chain, err := cfg.Sources()
+	if err != nil {
+		return Result{Mode: ModeRegistry}, err
+	}
+	reg, hasRegistry := chain.Registry()
+	if !hasRegistry {
+		return Result{Mode: ModeRegistry}, errors.New("no hosted registry is configured")
+	}
 
 	index, err := reg.Index(ctx)
 	if err != nil {

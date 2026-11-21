@@ -10,14 +10,17 @@ import (
 
 // Local resolves skills from the local ralvaskills repo clone.
 type Local struct {
+	spec     Spec
 	repoPath string
 	fs       fsSource
 }
 
-// NewLocal returns a Local source rooted at repoPath.
-func NewLocal(repoPath string) *Local {
+// newLocal returns a Local source rooted at spec.URL.
+func newLocal(spec Spec) *Local {
+	repoPath := spec.URL
 	root := filepath.Join(repoPath, skill.SkillsFolderName)
 	return &Local{
+		spec:     spec,
 		repoPath: repoPath,
 		fs: fsSource{
 			root: root,
@@ -27,6 +30,11 @@ func NewLocal(repoPath string) *Local {
 			},
 		},
 	}
+}
+
+// Spec returns the descriptor the source was built from.
+func (l *Local) Spec() Spec {
+	return l.spec
 }
 
 // SkillsRoot returns the absolute path to the skills/ directory.

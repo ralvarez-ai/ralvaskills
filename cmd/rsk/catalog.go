@@ -169,21 +169,31 @@ func loadSkillsBySource(
 ) []skill.Skill {
 	var all []skill.Skill
 
+	chain, err := cfg.Sources()
+	if err != nil {
+		warnOrCapture(out, capture, err.Error())
+		return nil
+	}
+
 	if sourceFilter == "" || sourceFilter == skill.SourceLocal {
-		local, walkErr := newLocalSource(cfg).All(ctx)
-		if walkErr != nil {
-			warnOrCapture(out, capture, fmt.Sprintf("walk local skills: %v", walkErr))
-		} else {
-			all = append(all, local...)
+		for _, src := range chain.Select(source.KindRegistry, source.KindPath) {
+			local, walkErr := src.All(ctx)
+			if walkErr != nil {
+				warnOrCapture(out, capture, fmt.Sprintf("walk local skills: %v", walkErr))
+			} else {
+				all = append(all, local...)
+			}
 		}
 	}
 
 	if sourceFilter == "" || sourceFilter == skill.SourceOfficial {
-		official, walkErr := source.NewOfficial(cfg.OfficialCache).All(ctx)
-		if walkErr != nil {
-			warnOrCapture(out, capture, walkErr.Error())
-		} else {
-			all = append(all, official...)
+		for _, src := range chain.Select(source.KindOfficial) {
+			official, walkErr := src.All(ctx)
+			if walkErr != nil {
+				warnOrCapture(out, capture, walkErr.Error())
+			} else {
+				all = append(all, official...)
+			}
 		}
 	}
 

@@ -12,7 +12,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
-	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
@@ -94,11 +93,11 @@ func resolveForInstall(ctx context.Context, deps Deps, names []string) ([]skill.
 		deps.Logger.Warn("user catalog", "error", catalogErr)
 	}
 
-	skills, _, err := install.Resolve(
-		ctx, names, bundles,
-		install.LocalSource(deps.Cfg),
-		source.NewOfficial(deps.Cfg.OfficialCache),
-	)
+	chain, err := deps.Cfg.Sources()
+	if err != nil {
+		return nil, err
+	}
+	skills, _, err := install.Resolve(ctx, names, bundles, chain)
 	if err != nil {
 		return nil, err
 	}

@@ -173,7 +173,17 @@ func TestIndexCacheFetchesRegistryIndexAndServesOffline(t *testing.T) {
 	}))
 
 	dir := t.TempDir()
-	reg := source.NewRegistry(srv.URL, dir)
+	chain, err := source.Build(
+		[]source.Spec{{ID: source.DefaultRegistryID, Type: source.KindRegistry, URL: srv.URL}},
+		source.Options{RegistryCache: dir},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reg, ok := chain.Registry()
+	if !ok {
+		t.Fatal("chain has no registry")
+	}
 	snap, err := mcp.NewIndexCache(dir, mcp.DefaultIndexTTL, reg.Index).Load(t.Context())
 	if err != nil {
 		t.Fatalf("Load: %v", err)

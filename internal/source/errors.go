@@ -3,5 +3,15 @@ package source
 
 import "errors"
 
-// ErrNotFound is returned when a skill cannot be located in a source.
-var ErrNotFound = errors.New("skill not found")
+var (
+	// ErrNotFound is returned when a skill cannot be located in a source.
+	ErrNotFound = errors.New("skill not found")
+
+	// ErrAmbiguous is returned when a bare name is provided by more than one
+	// source. It is never resolved by order.
+	ErrAmbiguous = errors.New("skill name is ambiguous")
+
+	// ErrUnknownSource is returned when a qualified reference names a source
+	// that is not in the chain. It never falls back to another source.
+	ErrUnknownSource = errors.New("unknown source")
+)

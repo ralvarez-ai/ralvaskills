@@ -19,40 +19,21 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
-// LocalSource returns the resolver for the configured local source: a repo
-// clone in local mode, the hosted registry otherwise.
-//
-//nolint:ireturn // returns interface for dependency injection
-func LocalSource(cfg config.Config) source.Resolver {
-	if cfg.LocalMode() {
-		return source.NewLocal(cfg.RepoPath)
-	}
-	return source.NewRegistry(cfg.EffectiveRegistryURL(), cfg.RegistryCache())
-}
-
-// FindSkill returns the skill named name, trying the local source first and the
-// official cache second.
-func FindSkill(ctx context.Context, name string, localSrc, officialSrc source.Resolver) (skill.Skill, error) {
-	s, localErr := localSrc.Find(ctx, name)
-	if localErr == nil {
+// FindSkill returns the skill named name from the chain. A bare name is looked
+// up in every source; a name two sources provide is an error, never resolved by
+// order, and a source that cannot be consulted fails the lookup.
+func FindSkill(ctx context.Context, name string, chain source.Chain) (skill.Skill, error) {
+	s, err := chain.Find(ctx, source.Ref{Name: name})
+	if err == nil {
 		return s, nil
 	}
-	if !errors.Is(localErr, source.ErrNotFound) {
-		return skill.Skill{}, localErr
+	if errors.Is(err, source.ErrNotFound) {
+		return skill.Skill{}, fmt.Errorf(
+			"skill %q not found in local repo or official cache\n  Run 'rsk catalog' to browse available skills",
+			name,
+		)
 	}
-
-	s, officialErr := officialSrc.Find(ctx, name)
-	if officialErr == nil {
-		return s, nil
-	}
-	if !errors.Is(officialErr, source.ErrNotFound) {
-		return skill.Skill{}, officialErr
-	}
-
-	return skill.Skill{}, fmt.Errorf(
-		"skill %q not found in local repo or official cache\n  Run 'rsk catalog' to browse available skills",
-		name,
-	)
+	return skill.Skill{}, err
 }
 
 // Resolve expands bundle-or-skill names into concrete, deduplicated skills,
@@ -61,7 +42,7 @@ func Resolve(
 	ctx context.Context,
 	names []string,
 	catalog []config.Bundle,
-	localSrc, officialSrc source.Resolver,
+	chain source.Chain,
 ) ([]skill.Skill, []string, error) {
 	var skills []skill.Skill
 	var warnings []string
@@ -73,7 +54,7 @@ func Resolve(
 		}
 		if bundle, ok := config.FindBundle(catalog, bareName); ok {
 			bundleSkills, bundleWarnings, resolveErr := resolveBundleSkills(
-				ctx, bundle, localSrc, officialSrc,
+				ctx, bundle, chain,
 			)
 			if resolveErr != nil {
 				return nil, nil, resolveErr
@@ -82,7 +63,7 @@ func Resolve(
 			warnings = append(warnings, bundleWarnings...)
 			continue
 		}
-		s, findErr := FindSkill(ctx, bareName, localSrc, officialSrc)
+		s, findErr := FindSkill(ctx, bareName, chain)
 		if findErr != nil {
 			return nil, nil, findErr
 		}
@@ -93,14 +74,14 @@ func Resolve(
 }
 
 func resolveBundleSkills(
-	ctx context.Context, bundle config.Bundle, localSrc, officialSrc source.Resolver,
+	ctx context.Context, bundle config.Bundle, chain source.Chain,
 ) ([]skill.Skill, []string, error) {
 	var skills []skill.Skill
 	var warnings []string
 
 	for _, ref := range bundle.Skills {
-		src, notFoundMsg := sourceForRef(ref.Source, localSrc, officialSrc)
-		s, err := src.Find(ctx, ref.Name)
+		src, notFoundMsg := sourceForRef(ref.Source, chain)
+		s, err := src.Find(ctx, source.Ref{Name: ref.Name})
 		if err == nil {
 			skills = append(skills, s)
 			continue
@@ -113,15 +94,15 @@ func resolveBundleSkills(
 	return skills, warnings, nil
 }
 
-//
-//nolint:ireturn // returns interface for dependency injection
-func sourceForRef(
-	src skill.Source, localSrc, officialSrc source.Resolver,
-) (resolver source.Resolver, notFoundMsg string) {
+// sourceForRef narrows the chain to the sources a bundle member names: the
+// official cache for an official member, the configured local source (a clone or
+// the hosted registry) otherwise.
+func sourceForRef(src skill.Source, chain source.Chain) (sub source.Chain, notFoundMsg string) {
 	if src == skill.SourceOfficial {
-		return officialSrc, "%s (official) not in cache — run 'rsk update --include official' to fetch it"
+		return chain.Select(source.KindOfficial),
+			"%s (official) not in cache — run 'rsk update --include official' to fetch it"
 	}
-	return localSrc, "%s is not yet available (planned) — skipped"
+	return chain.Select(source.KindRegistry, source.KindPath), "%s is not yet available (planned) — skipped"
 }
 
 // DedupSkills returns skills with duplicates removed, keeping first occurrences.

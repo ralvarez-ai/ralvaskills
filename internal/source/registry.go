@@ -62,20 +62,27 @@ type (
 	// Registry resolves skills from the hosted registry at baseURL.
 	// Downloaded tarballs are extracted and cached in cacheDir.
 	Registry struct {
+		spec     Spec
 		baseURL  string
 		cacheDir string
 		client   *http.Client
 	}
 )
 
-// NewRegistry returns a Registry backed by baseURL, caching extractions in
+// newRegistry returns a Registry backed by spec.URL, caching extractions in
 // cacheDir.
-func NewRegistry(baseURL, cacheDir string) *Registry {
+func newRegistry(spec Spec, cacheDir string) *Registry {
 	return &Registry{
-		baseURL:  baseURL,
+		spec:     spec,
+		baseURL:  spec.URL,
 		cacheDir: cacheDir,
 		client:   &http.Client{Timeout: DefaultHTTPTimeout},
 	}
+}
+
+// Spec returns the descriptor the source was built from.
+func (r *Registry) Spec() Spec {
+	return r.spec
 }
 
 // Index fetches and returns the registry index.
