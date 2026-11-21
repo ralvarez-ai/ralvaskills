@@ -40,6 +40,11 @@ type (
 		next    skill.Skill
 	}
 
+	// refresher is implemented by a source that can fetch its branch now.
+	refresher interface {
+		Refresh(ctx context.Context) error
+	}
+
 	// treeAter is implemented by a source that can say what tree a skill's
 	// directory had at an earlier commit.
 	treeAter interface {
@@ -79,7 +84,7 @@ func parseGitLink(dest, cacheRoot string) (id, name, commit string, ok bool) {
 
 // globalGitInstalls finds the git skills linked into targets, by reading where
 // each link points.
-func globalGitInstalls(targets []string, cacheRoot string, only map[string]bool) []gitInstall {
+func globalGitInstalls(targets []string, cacheRoot, officialCache string, only map[string]bool) []gitInstall {
 	var installs []gitInstall
 	seen := map[string]bool{}
 	for _, target := range targets {
@@ -93,6 +98,11 @@ func globalGitInstalls(targets []string, cacheRoot string, only map[string]bool)
 				continue
 			}
 			id, name, commit, ok := parseGitLink(dest, cacheRoot)
+			if !ok && isLegacyOfficialLink(dest, officialCache) {
+				// Linked into the working clone the official source used before the
+				// git transport. Its commit is unknown, so it will be re-pointed.
+				id, name, commit, ok = skill.OfficialID, e.Name(), "", true
+			}
 			if !ok || name != e.Name() || seen[id+"/"+name] || (len(only) > 0 && !only[name]) {
 				continue
 			}
@@ -103,15 +113,25 @@ func globalGitInstalls(targets []string, cacheRoot string, only map[string]bool)
 	return installs
 }
 
+// isLegacyOfficialLink reports whether dest points into the working clone the
+// official source used before it moved to the git transport.
+func isLegacyOfficialLink(dest, officialCache string) bool {
+	if officialCache == "" {
+		return false
+	}
+	prefix := filepath.Join(officialCache, skill.SkillsFolderName) + string(filepath.Separator)
+	return strings.HasPrefix(filepath.Clean(dest), prefix)
+}
+
 // projectGitInstalls reads the git entries of a project's lock.
 func projectGitInstalls(lock manifest.Lock, m manifest.Mod, only map[string]bool) []gitInstall {
 	var installs []gitInstall
 	for i := range lock.Skills {
 		e := &lock.Skills[i]
-		if !e.Source.IsDeclared() || (len(only) > 0 && !only[e.Name]) {
+		if !e.Source.UsesGit() || (len(only) > 0 && !only[e.Name]) {
 			continue
 		}
-		in := gitInstall{name: e.Name, id: string(e.Source), constraint: m.Skills[e.Name]}
+		in := gitInstall{name: e.Name, id: e.Source.Identity(), constraint: m.Skills[e.Name]}
 		if e.Git != nil {
 			in.commit, in.tree = e.Git.Commit, e.Git.Tree
 		}
@@ -155,7 +175,15 @@ func (l *gitLister) current(ctx context.Context, in *gitInstall) (cur skill.Skil
 		return skill.Skill{}, "", false, true
 	}
 	if l.listed[in.id] == nil {
-		all, err := r.All(ctx)
+		// An update must see the source as it is now, not as it was a day ago.
+		var err error
+		if rf, canRefresh := r.(refresher); canRefresh {
+			err = rf.Refresh(ctx)
+		}
+		var all []skill.Skill
+		if err == nil {
+			all, err = r.All(ctx)
+		}
 		if err != nil {
 			ui.Warn(l.out, fmt.Sprintf("source %s: %v", in.id, err))
 			l.broken[in.id] = true
@@ -295,7 +323,7 @@ func collectGitInstalls(
 		only[name] = true
 	}
 	if opts.global {
-		return globalGitInstalls(targets, cfg.SourceOptions().CacheRoot, only), nil, nil
+		return globalGitInstalls(targets, cfg.SourceOptions().CacheRoot, cfg.OfficialCache, only), nil, nil
 	}
 	dir, ok := tryRskDir()
 	if !ok {
@@ -379,13 +407,10 @@ func gitLockDrift(lock manifest.Lock, targets []string, cacheRoot string) []stri
 	var drift []string
 	for i := range lock.Skills {
 		e := &lock.Skills[i]
-		if !e.Source.IsDeclared() {
+		if !e.Source.UsesGit() || e.Git == nil {
 			continue
 		}
-		if e.Git == nil {
-			continue
-		}
-		owner, repo, _ := strings.Cut(strings.TrimPrefix(string(e.Source), "@"), "/")
+		owner, repo, _ := strings.Cut(strings.TrimPrefix(e.Source.Identity(), "@"), "/")
 		want := filepath.Join(cacheRoot, "sources", owner, repo, e.Name, e.Git.Commit)
 		linked := false
 		for _, target := range targets {

@@ -140,9 +140,9 @@ func entryFromFile(e *lockEntryFile) (LockEntry, error) {
 	entry := LockEntry{
 		Name: ref.Name, Version: e.Version, Source: src, Permissions: e.Permissions, Granted: e.Granted,
 	}
-	if !src.IsDeclared() {
-		// Older locks recorded a machine cache path under "path". It means
-		// nothing outside a git entry, so it is dropped rather than refused.
+	if e.URL == "" && e.Rev == "" && e.Commit == "" && e.Tree == "" {
+		// Older locks recorded a machine cache path under "path". Alone it is not
+		// a git record, so it is dropped rather than refused.
 		e.Path = ""
 	}
 	if e.URL != "" || e.Rev != "" || e.Commit != "" || e.Tree != "" || e.Path != "" {
@@ -158,17 +158,22 @@ func entryFromFile(e *lockEntryFile) (LockEntry, error) {
 // well-formed URL, commit, tree and path, and no other entry may carry any. A
 // lock file is untrusted input, since restoring from it fetches a URL it names.
 func checkGitFields(e *LockEntry, transport string) error {
-	if !e.Source.IsDeclared() {
+	if !e.Source.UsesGit() {
 		if e.Git != nil {
 			return errors.New("git fields on an entry that is not from a git source")
 		}
 		return nil
 	}
+	if e.Git == nil {
+		// An official entry written before the git transport has no record. A
+		// declared one cannot exist without it.
+		if e.Source == skill.SourceOfficial {
+			return nil
+		}
+		return errors.New("a git entry needs url, commit, tree and path")
+	}
 	if transport != transportGit {
 		return fmt.Errorf("a git source needs transport %q, got %q", transportGit, transport)
-	}
-	if e.Git == nil {
-		return errors.New("a git entry needs url, commit, tree and path")
 	}
 	if _, err := git.ParseRemoteURL(e.Git.URL); err != nil {
 		return err

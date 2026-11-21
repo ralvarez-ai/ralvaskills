@@ -51,15 +51,6 @@ func (f *fakeSource) lookup(name string) (skill.Skill, error) {
 	return skill.Skill{}, fmt.Errorf("%w: %s has no %q", source.ErrNotFound, f.spec.ID, name)
 }
 
-// lazyFake is a source whose Find may fetch over the network (as Official
-// clones on demand) and which can also answer from what it already holds.
-type lazyFake struct{ *fakeSource }
-
-func (l lazyFake) FindCached(_ context.Context, name string) (skill.Skill, error) {
-	l.calls = append(l.calls, "FindCached:"+name)
-	return l.lookup(name)
-}
-
 func TestChainFindBare(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
@@ -75,14 +66,14 @@ func TestChainFindBare(t *testing.T) {
 		{
 			name: "one source has it",
 			chain: func() source.Chain {
-				return source.Chain{newFake("@a/a", source.KindRegistry, "x"), newFake("@b/b", source.KindOfficial)}
+				return source.Chain{newFake("@a/a", source.KindRegistry, "x"), newFake("@b/b", source.KindGit)}
 			},
 			wantPath: "@a/a/x",
 		},
 		{
 			name: "found in the second source",
 			chain: func() source.Chain {
-				return source.Chain{newFake("@a/a", source.KindRegistry), newFake("@b/b", source.KindOfficial, "x")}
+				return source.Chain{newFake("@a/a", source.KindRegistry), newFake("@b/b", source.KindGit, "x")}
 			},
 			wantPath: "@b/b/x",
 		},
@@ -90,7 +81,7 @@ func TestChainFindBare(t *testing.T) {
 			name: "two sources have it is ambiguous and names both",
 			chain: func() source.Chain {
 				return source.Chain{
-					newFake("@a/a", source.KindRegistry, "x"), newFake("@b/b", source.KindOfficial, "x"),
+					newFake("@a/a", source.KindRegistry, "x"), newFake("@b/b", source.KindGit, "x"),
 				}
 			},
 			wantErr: source.ErrAmbiguous,
@@ -99,7 +90,7 @@ func TestChainFindBare(t *testing.T) {
 		{
 			name: "no source has it",
 			chain: func() source.Chain {
-				return source.Chain{newFake("@a/a", source.KindRegistry), newFake("@b/b", source.KindOfficial)}
+				return source.Chain{newFake("@a/a", source.KindRegistry), newFake("@b/b", source.KindGit)}
 			},
 			wantErr: source.ErrNotFound,
 		},
@@ -108,14 +99,14 @@ func TestChainFindBare(t *testing.T) {
 			chain: func() source.Chain {
 				bad := newFake("@a/a", source.KindRegistry)
 				bad.failErr = boom
-				return source.Chain{bad, newFake("@b/b", source.KindOfficial, "x")}
+				return source.Chain{bad, newFake("@b/b", source.KindGit, "x")}
 			},
 			wantErr: boom,
 		},
 		{
 			name: "a failing source fails closed regardless of order",
 			chain: func() source.Chain {
-				bad := newFake("@b/b", source.KindOfficial)
+				bad := newFake("@b/b", source.KindGit)
 				bad.failErr = boom
 				return source.Chain{newFake("@a/a", source.KindRegistry, "x"), bad}
 			},
@@ -157,7 +148,7 @@ func TestChainFindQualified(t *testing.T) {
 	ctx := context.Background()
 
 	a := newFake("@a/a", source.KindRegistry, "x")
-	b := newFake("@b/b", source.KindOfficial, "x")
+	b := newFake("@b/b", source.KindGit, "x")
 	chain := source.Chain{a, b}
 
 	got, err := chain.Find(ctx, skill.Ref{Source: "@b/b", Name: "x"})
@@ -178,73 +169,17 @@ func TestChainFindQualified(t *testing.T) {
 	}
 }
 
-func TestChainFindLazySource(t *testing.T) {
-	t.Parallel()
-	ctx := context.Background()
-
-	t.Run("a hit elsewhere never triggers the fetching Find", func(t *testing.T) {
-		t.Parallel()
-		reg := newFake("@a/a", source.KindRegistry, "x")
-		off := lazyFake{newFake("@b/b", source.KindOfficial)}
-		if _, err := (source.Chain{reg, off}).Find(ctx, skill.Ref{Name: "x"}); err != nil {
-			t.Fatal(err)
-		}
-		for _, c := range off.calls {
-			if strings.HasPrefix(c, "Find:") {
-				t.Errorf("lazy source was asked to fetch although another source had the name: %v", off.calls)
-			}
-		}
-	})
-
-	t.Run("a cached duplicate is still ambiguous", func(t *testing.T) {
-		t.Parallel()
-		reg := newFake("@a/a", source.KindRegistry, "x")
-		off := lazyFake{newFake("@b/b", source.KindOfficial, "x")}
-		_, err := (source.Chain{reg, off}).Find(ctx, skill.Ref{Name: "x"})
-		if !errors.Is(err, source.ErrAmbiguous) {
-			t.Fatalf("err = %v, want ErrAmbiguous", err)
-		}
-	})
-
-	t.Run("a miss everywhere falls back to the fetching Find", func(t *testing.T) {
-		t.Parallel()
-		reg := newFake("@a/a", source.KindRegistry)
-		off := &fetchingFake{fakeSource: newFake("@b/b", source.KindOfficial), fetched: "x"}
-		got, err := (source.Chain{reg, off}).Find(ctx, skill.Ref{Name: "x"})
-		if err != nil || got.Path != "@b/b/x" {
-			t.Fatalf("got %+v, %v; want the skill found after the fetch", got, err)
-		}
-	})
-}
-
-// fetchingFake finds nothing in its cache but "fetches" name on Find, the way
-// Official clones anthropics/skills on first use.
-type fetchingFake struct {
-	*fakeSource
-	fetched string
-}
-
-func (f *fetchingFake) FindCached(context.Context, string) (skill.Skill, error) {
-	return skill.Skill{}, fmt.Errorf("%w: cache empty", source.ErrNotFound)
-}
-
-func (f *fetchingFake) Find(_ context.Context, name string) (skill.Skill, error) {
-	f.skills[f.fetched] = true
-	f.calls = append(f.calls, "Find:"+name)
-	return f.lookup(name)
-}
-
 func TestChainSelect(t *testing.T) {
 	t.Parallel()
 	reg := newFake("@a/a", source.KindRegistry, "x")
-	off := newFake("@b/b", source.KindOfficial, "y")
+	off := newFake("@b/b", source.KindGit, "y")
 	chain := source.Chain{reg, off}
 
-	only := chain.Select(source.KindOfficial)
+	only := chain.Select(source.KindGit)
 	if len(only) != 1 || only[0].Spec().ID != "@b/b" {
 		t.Fatalf("Select(official) = %v", only)
 	}
-	both := chain.Select(source.KindRegistry, source.KindOfficial)
+	both := chain.Select(source.KindRegistry, source.KindGit)
 	if len(both) != 2 {
 		t.Fatalf("Select(registry, official) kept %d sources, want 2", len(both))
 	}
@@ -257,7 +192,7 @@ func TestChainFindQualifiedNormalisesTheSourceAndRejectsPaths(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
 	reg := newFake(skill.DefaultRegistryID, source.KindRegistry, "x")
-	off := newFake(skill.OfficialID, source.KindOfficial, "x")
+	off := newFake(skill.OfficialID, source.KindGit, "x")
 	chain := source.Chain{reg, off}
 
 	for _, qualified := range []string{
@@ -277,4 +212,30 @@ func TestChainFindQualifiedNormalisesTheSourceAndRejectsPaths(t *testing.T) {
 	if _, err := chain.Find(ctx, withPath); !errors.Is(err, source.ErrUnsupported) {
 		t.Errorf("a path selection err = %v, want ErrUnsupported until a source can honor it", err)
 	}
+}
+
+func TestChainByID(t *testing.T) {
+	t.Parallel()
+	reg := newFake(skill.DefaultRegistryID, source.KindRegistry, "x")
+	off := newFake(skill.OfficialID, source.KindGit, "y")
+	chain := source.Chain{reg, off}
+
+	got := chain.ByID("@Anthropics/Skills", "@ralvarezdev/ralvaskills")
+	if len(got) != 2 || got[0].Spec().ID != skill.DefaultRegistryID || got[1].Spec().ID != skill.OfficialID {
+		t.Errorf("ByID = %v, want both, case-folded and alias-aware, in chain order", ids(got))
+	}
+	if only := chain.ByID(skill.OfficialID); len(only) != 1 || only[0].Spec().ID != skill.OfficialID {
+		t.Errorf("ByID(official) = %v", ids(only))
+	}
+	if none := chain.ByID("@nobody/nothing"); len(none) != 0 {
+		t.Errorf("ByID of an unknown identity = %v", ids(none))
+	}
+}
+
+func ids(chain source.Chain) []string {
+	out := make([]string, len(chain))
+	for i, r := range chain {
+		out[i] = r.Spec().ID
+	}
+	return out
 }

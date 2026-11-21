@@ -38,7 +38,11 @@ type Config struct {
 	// DefaultTargetScope is the tool ID (or "all") selected when --for is omitted.
 	DefaultTargetScope string `json:"default_target_scope" validate:"required"`
 
-	// OfficialCache is the directory where the official anthropic/skills clone is stored.
+	// OfficialCache is the directory the official anthropic/skills clone used to
+	// live in. The official source is read through the git transport now, so the
+	// directory is kept for two things: the cache root every other cache
+	// (registry, git, indexes, extractions) is placed beside, and finding links
+	// that still point into the old clone so an update can re-point them.
 	OfficialCache string `json:"official_cache" validate:"required"`
 
 	// VersionsCache is the directory used to cache stack-version metadata.

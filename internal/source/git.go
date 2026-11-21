@@ -38,11 +38,11 @@ const (
 
 var versionPattern = regexp.MustCompile(`^[0-9A-Za-z][0-9A-Za-z.+-]*$`)
 
-// repoOps is what Git needs from a bare clone; git.Repo is the production
-// implementation, and tests supply an in-memory one.
+// RepoOps is what Git needs from a bare clone; git.Repo is the production
+// implementation, and tests supply an in-memory one through Options.RepoFor.
 //
 //nolint:interfacebloat // the operations a git source performs on its clone
-type repoOps interface {
+type RepoOps interface {
 	Fetch(ctx context.Context, remote git.RemoteURL, ref string) (string, error)
 	ListTree(ctx context.Context, commit string, roots []string) ([]git.TreeEntry, error)
 	TreeID(ctx context.Context, commit, dir string) (string, error)
@@ -58,7 +58,8 @@ type (
 	Git struct {
 		spec    Spec
 		remote  git.RemoteURL
-		repo    repoOps
+		repo    RepoOps
+		kind    skill.Source
 		root    string
 		owner   string
 		name    string
@@ -109,9 +110,8 @@ type (
 	}
 )
 
-// newGit validates spec and builds the resolver. A nil repo means the real bare
-// clone under the cache root.
-func newGit(spec Spec, opts Options, repo repoOps) (*Git, error) {
+// newGit validates spec and builds the resolver.
+func newGit(spec Spec, opts Options) (*Git, error) {
 	if opts.Gate == nil {
 		return nil, fmt.Errorf("source %s: a git source needs a trust gate", spec.ID)
 	}
@@ -147,7 +147,8 @@ func newGit(spec Spec, opts Options, repo repoOps) (*Git, error) {
 
 	owner, name, _ := strings.Cut(strings.TrimPrefix(spec.ID, "@"), "/")
 	g := &Git{
-		spec: spec, remote: remote, repo: repo, root: opts.CacheRoot, owner: owner, name: name,
+		spec: spec, remote: remote, root: opts.CacheRoot, owner: owner, name: name,
+		kind: skill.DeclaredSource(spec.ID),
 		gate: opts.Gate, offline: opts.Offline, ttl: opts.IndexTTL, now: opts.Now, globs: globs,
 	}
 	if g.ttl == 0 {
@@ -156,7 +157,14 @@ func newGit(spec Spec, opts Options, repo repoOps) (*Git, error) {
 	if g.now == nil {
 		g.now = time.Now
 	}
-	if g.repo == nil {
+	if spec.ID == skill.OfficialID {
+		// The built-in source keeps its own kind, so bundles, labels and lock
+		// keys for official skills are what they always were.
+		g.kind = skill.SourceOfficial
+	}
+	if opts.RepoFor != nil {
+		g.repo = opts.RepoFor(spec)
+	} else {
 		g.repo = git.Repo{Dir: filepath.Join(g.root, "git", owner, name+".git")}
 	}
 	return g, nil
@@ -165,6 +173,23 @@ func newGit(spec Spec, opts Options, repo repoOps) (*Git, error) {
 // Spec returns the descriptor the source was built from.
 func (g *Git) Spec() Spec {
 	return g.spec
+}
+
+// Refresh fetches the source's branch now and rebuilds its index, whatever the
+// freshness window says. It is what `rsk update` uses, since an update must see
+// what changed since the last day. Offline it does nothing and the cached index
+// stays in use.
+func (g *Git) Refresh(ctx context.Context) error {
+	if err := g.gate(g.spec.ID, g.spec.URL); err != nil {
+		return err
+	}
+	if g.offline {
+		return nil
+	}
+	if _, err := g.refresh(ctx); err != nil {
+		return fmt.Errorf("cannot consult source %s: %w", g.spec.ID, err)
+	}
+	return nil
 }
 
 // All lists every skill in the source at its indexed commit.
@@ -486,7 +511,7 @@ func (g *Git) materializeAt(ctx context.Context, name, dir, commit string) (stri
 func (g *Git) toSkill(sk *gitSkill, dir, commit, rev string) skill.Skill {
 	return skill.Skill{
 		Name: sk.Name, Version: sk.Version, Description: sk.Description, Path: dir,
-		Source: skill.DeclaredSource(g.spec.ID), AllowedTools: sk.AllowedTools,
+		Source: g.kind, AllowedTools: sk.AllowedTools,
 		Git: &skill.GitRef{URL: g.spec.URL, Rev: rev, Commit: commit, Tree: sk.Tree, Path: sk.Path},
 	}
 }

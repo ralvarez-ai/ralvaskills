@@ -214,7 +214,7 @@ func TestProjectAndGlobalGitInstalls(t *testing.T) {
 	if err := os.Symlink("/somewhere/else", filepath.Join(target, "other")); err != nil {
 		t.Fatal(err)
 	}
-	globals := globalGitInstalls([]string{target, filepath.Join(target, "missing")}, root, nil)
+	globals := globalGitInstalls([]string{target, filepath.Join(target, "missing")}, root, "", nil)
 	if len(globals) != 1 || globals[0].id != "@acme/skills" || globals[0].commit != oldCommit {
 		t.Errorf("global installs = %+v", globals)
 	}
@@ -301,5 +301,125 @@ func TestGitLockDriftFindsALinkThatIsNotTheLockedCommit(t *testing.T) {
 	}
 	if strings.Contains(joined, "ok:") || strings.Contains(joined, "tdd") {
 		t.Errorf("drift %q reports a skill that matches its lock or is not a git skill", joined)
+	}
+}
+
+func TestOfficialSkillsJoinTheGitUpdatePass(t *testing.T) {
+	t.Parallel()
+	lock := manifest.Lock{Skills: []manifest.LockEntry{
+		// Written before the git transport: no git record at all.
+		{Name: "xlsx", Source: skill.SourceOfficial},
+		{Name: "pdf", Source: skill.SourceOfficial, Git: &skill.GitRef{Commit: oldCommit, Tree: oldTree}},
+		{Name: "tdd", Source: skill.SourceRegistry, Version: "1.0.0"},
+	}}
+	got := projectGitInstalls(lock, manifest.Mod{Skills: map[string]string{"xlsx": "*", "pdf": "*"}}, nil)
+	if len(got) != 2 || got[0].id != skill.OfficialID || got[0].tree != "" || got[1].tree != oldTree ||
+		got[1].commit != oldCommit {
+		t.Errorf("installs = %+v, want both official entries under the official identity", got)
+	}
+}
+
+func TestGlobalGitInstallsFindsLinksIntoTheOldOfficialClone(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	officialCache := filepath.Join(root, "anthropic")
+	target := t.TempDir()
+	// The old layout: the repository was cloned into <official_cache>/skills.
+	oldClone := filepath.Join(officialCache, "skills", "skills", "xlsx")
+	if err := os.MkdirAll(oldClone, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(oldClone, filepath.Join(target, "xlsx")); err != nil {
+		t.Fatal(err)
+	}
+	// And one already in the new layout.
+	fresh := filepath.Join(root, "sources", "anthropics", "skills", "pdf", newCommit)
+	if err := os.MkdirAll(fresh, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(fresh, filepath.Join(target, "pdf")); err != nil {
+		t.Fatal(err)
+	}
+
+	got := globalGitInstalls([]string{target}, root, officialCache, nil)
+	if len(got) != 2 {
+		t.Fatalf("installs = %+v, want both official skills", got)
+	}
+	byName := map[string]gitInstall{}
+	for _, in := range got {
+		byName[in.name] = in
+	}
+	if in := byName["xlsx"]; in.id != skill.OfficialID || in.commit != "" {
+		t.Errorf("legacy link = %+v, want the official identity and no known commit", in)
+	}
+	if in := byName["pdf"]; in.id != skill.OfficialID || in.commit != newCommit {
+		t.Errorf("new link = %+v", in)
+	}
+}
+
+func TestPlanGitUpdatesMigratesALegacyOfficialInstall(t *testing.T) {
+	t.Parallel()
+	src := &fakeGitSource{id: skill.OfficialID, skills: map[string]skill.Skill{
+		"xlsx": {
+			Name: "xlsx", Source: skill.SourceOfficial,
+			Git: &skill.GitRef{Commit: newCommit, Tree: newTree, Path: "skills/xlsx"},
+		},
+	}}
+	legacy := []gitInstall{{name: "xlsx", id: skill.OfficialID}}
+	plan, failed := planGitUpdates(t.Context(), &bytes.Buffer{}, source.Chain{src}, legacy)
+	if failed != 0 || len(plan) != 1 || plan[0].next.Git.Commit != newCommit {
+		t.Errorf("plan = %+v failed=%d: an install with no recorded tree must be re-pointed", plan, failed)
+	}
+}
+
+func TestPlanGitUpdatesRefreshesEachSourceOnceAndReportsAFailure(t *testing.T) {
+	t.Parallel()
+	ok := &refreshingSource{}
+	ok.id = "@acme/skills"
+	ok.skills = map[string]skill.Skill{"a": currentGitSkill("a", newTree), "b": currentGitSkill("b", newTree)}
+	installs := []gitInstall{
+		{name: "a", id: "@acme/skills", commit: oldCommit, tree: newTree},
+		{name: "b", id: "@acme/skills", commit: oldCommit, tree: newTree},
+	}
+	if _, failed := planGitUpdates(t.Context(), &bytes.Buffer{}, source.Chain{ok}, installs); failed != 0 {
+		t.Errorf("failed = %d", failed)
+	}
+	if ok.refreshes != 1 {
+		t.Errorf("refreshed %d times: an update must see the source as it is now, once", ok.refreshes)
+	}
+
+	bad := &refreshingSource{refreshErr: errors.New("network is unreachable")}
+	bad.id = "@acme/skills"
+	bad.skills = map[string]skill.Skill{"a": currentGitSkill("a", newTree)}
+	var out bytes.Buffer
+	plan, failed := planGitUpdates(t.Context(), &out, source.Chain{bad}, installs[:1])
+	if len(plan) != 0 || failed != 1 || !strings.Contains(out.String(), "network is unreachable") {
+		t.Errorf("plan=%v failed=%d out=%q; a source that cannot be refreshed must fail, not answer from its old index",
+			plan, failed, out.String())
+	}
+}
+
+// refreshingSource is a fakeGitSource that can be refreshed.
+type refreshingSource struct {
+	fakeGitSource
+	refreshes  int
+	refreshErr error
+}
+
+func (r *refreshingSource) Refresh(context.Context) error {
+	r.refreshes++
+	return r.refreshErr
+}
+
+func TestGitLockDriftCoversOfficialEntries(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	lock := manifest.Lock{Skills: []manifest.LockEntry{
+		{Name: "xlsx", Source: skill.SourceOfficial, Git: &skill.GitRef{Commit: oldCommit}},
+		{Name: "legacy", Source: skill.SourceOfficial}, // no record: nothing to compare
+	}}
+	got := gitLockDrift(lock, []string{t.TempDir()}, root)
+	if len(got) != 1 || !strings.Contains(got[0], "xlsx") {
+		t.Errorf("drift = %v, want only the official entry that has a record", got)
 	}
 }

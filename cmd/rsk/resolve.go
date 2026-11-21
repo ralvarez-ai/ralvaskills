@@ -21,6 +21,10 @@ import (
 // remotes.
 const flagOffline = "offline"
 
+// sourceRepoFor lets tests supply the clone a git source reads, so none of them
+// reaches a network. It is nil outside tests.
+var sourceRepoFor func(source.Spec) source.RepoOps
+
 // sourceChain builds the chain a command resolves skill names through: the
 // built-in sources, then the declared git sources. Commands that only restore
 // or relink what a project already records use cfg.Sources() instead, so they
@@ -33,7 +37,7 @@ func sourceChain(cmd *cobra.Command, cfg config.Config) (source.Chain, error) {
 			return nil, err
 		}
 	}
-	chain, err := sources.Chain(cfg, sources.ChainOptions{Offline: offline})
+	chain, err := sources.Chain(cfg, sources.ChainOptions{Offline: offline, RepoFor: sourceRepoFor})
 	if err != nil {
 		return nil, err
 	}

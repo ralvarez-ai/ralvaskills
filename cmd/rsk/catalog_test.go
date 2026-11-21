@@ -20,6 +20,7 @@ import (
 // must land in the capture and nothing must be written to the command's own
 // writer.
 func TestRunCatalogSkillsCapture(t *testing.T) {
+	withOfficialSkills(t, nil)
 	home := t.TempDir()
 	t.Setenv(config.EnvConfigHome, home)
 
@@ -79,6 +80,7 @@ func TestRunCatalogSkillsCapture(t *testing.T) {
 // the capture's raw payload (rendered as a scrollable viewport by
 // term.ResultView) instead of silently falling back to a table.
 func TestRunCatalogSkillsCaptureJSON(t *testing.T) {
+	withOfficialSkills(t, nil)
 	home := t.TempDir()
 	t.Setenv(config.EnvConfigHome, home)
 

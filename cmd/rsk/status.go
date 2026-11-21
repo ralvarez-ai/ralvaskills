@@ -436,6 +436,9 @@ func scanLinked(
 		src := detectSkillSource(symlinkTarget, repoPath, officialCachePath, registryCachePath)
 		if id, _, _, isGit := parseGitLink(symlinkTarget, filepath.Dir(officialCachePath)); isGit {
 			src = skill.DeclaredSource(id)
+			if id == skill.OfficialID {
+				src = skill.SourceOfficial
+			}
 		}
 		result = append(result, linkedEntry{
 			name:    e.Name(),

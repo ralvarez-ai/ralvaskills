@@ -14,6 +14,8 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
 	"go.ralva.dev/ralvaskills/v3/internal/mcp"
+	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/source/sourcetest"
 )
 
 func TestServerToolsAndResource(t *testing.T) {
@@ -105,6 +107,14 @@ func TestServerToolsAndResource(t *testing.T) {
 	if len(read.Contents) != 1 || !strings.Contains(read.Contents[0].Text, "go-architect") {
 		t.Errorf("catalog = %+v, want a go-architect entry", read.Contents)
 	}
+}
+
+// noOfficialSkills gives the official source an in-memory clone with no skills,
+// so resolving a name never reaches GitHub.
+//
+//nolint:ireturn // the seam's signature returns the interface
+func noOfficialSkills(source.Spec) source.RepoOps {
+	return &sourcetest.Repo{Commit: strings.Repeat("c", 40)}
 }
 
 func TestReadOnlyServerOmitsInstall(t *testing.T) {
@@ -224,7 +234,9 @@ func TestInstallSkillsGlobal(t *testing.T) {
 			RepoPath:           repo,
 			GlobalTargets:      map[string]string{"claude-code": globalDir},
 			DefaultTargetScope: "claude-code",
+			OfficialCache:      filepath.Join(t.TempDir(), "anthropic"),
 		},
+		RepoFor: noOfficialSkills,
 		Logger:  slog.New(slog.DiscardHandler),
 		Version: "test",
 	})
@@ -254,7 +266,9 @@ func TestInstallSkillsUnknownNameIsToolError(t *testing.T) {
 			RepoPath:           t.TempDir(),
 			GlobalTargets:      map[string]string{"claude-code": t.TempDir()},
 			DefaultTargetScope: "claude-code",
+			OfficialCache:      filepath.Join(t.TempDir(), "anthropic"),
 		},
+		RepoFor: noOfficialSkills,
 		Logger:  slog.New(slog.DiscardHandler),
 		Version: "test",
 	})

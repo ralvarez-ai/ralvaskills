@@ -116,7 +116,7 @@ func resolveBundleSkills(
 // the hosted registry) otherwise.
 func sourceForRef(src skill.Source, chain source.Chain) (sub source.Chain, notFoundMsg string) {
 	if src == skill.SourceOfficial {
-		return chain.Select(source.KindOfficial),
+		return chain.ByID(skill.OfficialID),
 			"%s (official) not in cache — run 'rsk update --include official' to fetch it"
 	}
 	return chain.Select(source.KindRegistry, source.KindPath), "%s is not yet available (planned) — skipped"

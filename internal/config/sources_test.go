@@ -16,7 +16,7 @@ func TestSourceSpecsFollowTheMode(t *testing.T) {
 		specs := base.SourceSpecs()
 		if len(specs) != 2 ||
 			specs[0].Type != source.KindRegistry || specs[0].URL != "https://skills.example" ||
-			specs[1].Type != source.KindOfficial {
+			specs[1].Type != source.KindGit {
 			t.Fatalf("specs = %+v, want registry then official", specs)
 		}
 	})
@@ -27,7 +27,7 @@ func TestSourceSpecsFollowTheMode(t *testing.T) {
 		specs := cfg.SourceSpecs()
 		if len(specs) != 2 ||
 			specs[0].Type != source.KindPath || specs[0].URL != "/home/u/ralvaskills" ||
-			specs[0].ID != "@local/ralvaskills" || specs[1].Type != source.KindOfficial {
+			specs[0].ID != "@local/ralvaskills" || specs[1].Type != source.KindGit {
 			t.Fatalf("specs = %+v, want path then official", specs)
 		}
 	})

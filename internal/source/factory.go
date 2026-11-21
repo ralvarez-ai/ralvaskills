@@ -22,13 +22,11 @@ func New(spec Spec, opts Options) (Resolver, error) {
 	}
 	switch spec.Type {
 	case KindGit:
-		return newGit(spec, opts, nil)
+		return newGit(spec, opts)
 	case KindRegistry:
 		return newRegistry(spec, opts.RegistryCache), nil
 	case KindPath:
 		return newLocal(spec), nil
-	case KindOfficial:
-		return newOfficial(spec, opts.OfficialCache), nil
 	default:
 		return nil, fmt.Errorf("source %s: unsupported kind %q", spec.ID, spec.Type)
 	}

@@ -15,6 +15,10 @@ type ChainOptions struct {
 	// Offline makes a git source answer from its existing index and never
 	// contact its remote.
 	Offline bool
+
+	// RepoFor supplies the clone a git source reads, for tests above this
+	// package that must not reach a network. Nil means the real one.
+	RepoFor func(source.Spec) source.RepoOps
 }
 
 // Chain builds the machine's source chain: the built-in sources first (the
@@ -46,7 +50,13 @@ func ChainAt(cfg config.Config, sourcesPath, trustPath string, o ChainOptions) (
 
 	opts := cfg.SourceOptions()
 	opts.Offline = o.Offline
-	opts.Gate = func(id, url string) error { return trust.Require(grants, id, url) }
+	opts.RepoFor = o.RepoFor
+	opts.Gate = func(id, url string) error {
+		if config.BuiltinTrusted(id, url) {
+			return nil
+		}
+		return trust.Require(grants, id, url)
+	}
 	return source.Build(specs, opts)
 }
 
@@ -85,18 +95,34 @@ func RestoreAt(
 	ctx context.Context, cfg config.Config, sourcesPath, trustPath string, o ChainOptions,
 	id, url string, l source.LockedSkill,
 ) (skill.Skill, error) {
-	declared, err := Load(sourcesPath)
-	if err != nil {
-		return skill.Skill{}, err
-	}
-	entry, ok := Find(declared, id)
-	if !ok || entry.Type != source.KindGit {
-		return skill.Skill{}, &NotDeclaredError{ID: skill.CanonicalSourceID(id)}
-	}
-	if entry.URL != url {
-		return skill.Skill{}, fmt.Errorf(
-			"the lock fetches %s from %s but this machine declares %s: refusing to follow it", entry.ID, url, entry.URL,
-		)
+	entry := Entry{ID: skill.CanonicalSourceID(id), URL: url}
+	if builtin := config.BuiltinTrusted(entry.ID, source.OfficialSkillsURL); builtin && entry.ID == skill.OfficialID {
+		// The official source is built in: it is not declared, and the only URL it
+		// may be restored from is its own.
+		if url != source.OfficialSkillsURL {
+			return skill.Skill{}, fmt.Errorf(
+				"the lock fetches %s from %s but it is built in at %s: refusing to follow it",
+				entry.ID, url, source.OfficialSkillsURL,
+			)
+		}
+	} else {
+		declared, err := Load(sourcesPath)
+		if err != nil {
+			return skill.Skill{}, err
+		}
+		found, ok := Find(declared, id)
+		if !ok || found.Type != source.KindGit {
+			return skill.Skill{}, &NotDeclaredError{ID: skill.CanonicalSourceID(id)}
+		}
+		if found.URL != url {
+			return skill.Skill{}, fmt.Errorf(
+				"the lock fetches %s from %s but this machine declares %s: refusing to follow it",
+				found.ID,
+				url,
+				found.URL,
+			)
+		}
+		entry = found
 	}
 
 	chain, err := ChainAt(cfg, sourcesPath, trustPath, o)

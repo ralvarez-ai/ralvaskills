@@ -11,6 +11,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/source/sourcetest"
 )
 
 func writeSkillDir(t *testing.T, root, name string) {
@@ -25,18 +26,24 @@ func writeSkillDir(t *testing.T, root, name string) {
 	}
 }
 
-// localModeChain builds the real chain for a machine in local mode: a repo
-// clone holding the local names and an official cache holding the official ones.
+// localModeChain builds the chain for a machine in local mode: a repo clone
+// holding the local names, and the official source reading an in-memory clone
+// holding the official ones.
 func localModeChain(t *testing.T, local, official []string) source.Chain {
 	t.Helper()
-	repo, cache := t.TempDir(), t.TempDir()
+	repo := t.TempDir()
 	for _, n := range local {
 		writeSkillDir(t, repo, n)
 	}
+	skills := map[string]string{}
 	for _, n := range official {
-		writeSkillDir(t, cache, n)
+		skills[n] = ""
 	}
-	chain, err := config.Config{RepoPath: repo, OfficialCache: cache}.Sources()
+	clone := &sourcetest.Repo{Commit: strings.Repeat("c", 40), Skills: skills}
+	cfg := config.Config{RepoPath: repo, OfficialCache: filepath.Join(t.TempDir(), "anthropic")}
+	opts := cfg.SourceOptions()
+	opts.RepoFor = func(source.Spec) source.RepoOps { return clone }
+	chain, err := source.Build(cfg.SourceSpecs(), opts)
 	if err != nil {
 		t.Fatal(err)
 	}

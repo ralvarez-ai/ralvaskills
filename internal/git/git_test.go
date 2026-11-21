@@ -13,7 +13,10 @@ func run(ctx context.Context, t *testing.T, dir string, args ...string) {
 	t.Helper()
 	c := exec.CommandContext(ctx, "git", args...)
 	c.Dir = dir
+	// The user's own git config (commit signing, hooks, templates) must not leak
+	// into a fixture: a test repository is never signed.
 	c.Env = append(os.Environ(),
+		"GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1",
 		"GIT_AUTHOR_NAME=test", "GIT_AUTHOR_EMAIL=test@example.com",
 		"GIT_COMMITTER_NAME=test", "GIT_COMMITTER_EMAIL=test@example.com",
 	)

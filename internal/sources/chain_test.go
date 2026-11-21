@@ -11,6 +11,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/source/sourcetest"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/trust"
 )
@@ -27,15 +28,13 @@ func newMachine(t *testing.T) machine {
 	t.Helper()
 	dir := t.TempDir()
 	repo, cache := filepath.Join(dir, "repo"), filepath.Join(dir, "cache", "anthropic")
-	for root, name := range map[string]string{repo: "mine", cache: "theirs"} {
-		skillDir := filepath.Join(root, "skills", name)
-		if err := os.MkdirAll(skillDir, 0o755); err != nil {
-			t.Fatal(err)
-		}
-		body := "---\nname: " + name + "\nversion: 1.0.0\ndescription: x\n---\n"
-		if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(body), 0o644); err != nil {
-			t.Fatal(err)
-		}
+	skillDir := filepath.Join(repo, "skills", "mine")
+	if err := os.MkdirAll(skillDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := "---\nname: mine\nversion: 1.0.0\ndescription: x\n---\n"
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
 	}
 	return machine{
 		cfg:       config.Config{RepoPath: repo, OfficialCache: cache},
@@ -76,7 +75,19 @@ func (m machine) grant(t *testing.T, e sources.Entry) {
 
 func (m machine) chain(t *testing.T, offline bool) source.Chain {
 	t.Helper()
-	chain, err := sources.ChainAt(m.cfg, m.sources, m.trustFile, sources.ChainOptions{Offline: offline})
+	// The official source reads an in-memory clone holding "theirs"; a declared
+	// source must never reach one, so its clone fails every fetch.
+	official := &sourcetest.Repo{Commit: strings.Repeat("c", 40), Skills: map[string]string{"theirs": ""}}
+	elsewhere := &sourcetest.Repo{FetchErr: errors.New("a declared source reached its remote")}
+	chain, err := sources.ChainAt(m.cfg, m.sources, m.trustFile, sources.ChainOptions{
+		Offline: offline,
+		RepoFor: func(spec source.Spec) source.RepoOps {
+			if spec.ID == skill.OfficialID {
+				return official
+			}
+			return elsewhere
+		},
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -148,7 +159,7 @@ func TestATrustedSourceThatWasNeverFetchedFailsOffline(t *testing.T) {
 	e := m.declare(t, "@acme/skills", sources.Options{})
 	m.grant(t, e)
 
-	_, err := m.chain(t, true).Find(t.Context(), skill.Ref{Name: "mine"})
+	_, err := m.chain(t, true).Find(t.Context(), skill.Ref{Source: e.ID, Name: "mine"})
 	if !errors.Is(err, source.ErrNeverFetched) {
 		t.Errorf("err = %v, want ErrNeverFetched: offline must not reach the network or skip the source", err)
 	}
@@ -165,7 +176,11 @@ func TestAGrantForAnotherURLDoesNotTrustTheSource(t *testing.T) {
 	); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := m.chain(t, true).Find(t.Context(), skill.Ref{Name: "mine"}); !errors.Is(err, trust.ErrUntrusted) {
+	if _, err := m.chain(t, true).
+		Find(t.Context(), skill.Ref{Source: e.ID, Name: "mine"}); !errors.Is(
+		err,
+		trust.ErrUntrusted,
+	) {
 		t.Errorf("err = %v, want ErrUntrusted for a grant made at a different URL", err)
 	}
 }

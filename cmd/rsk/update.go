@@ -88,6 +88,11 @@ func runUpdate(cmd *cobra.Command, opts updateOpts, args []string) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
+	if opts.official {
+		if err = refreshOfficialIndex(cmd, cfg, opts.dryRun); err != nil {
+			return err
+		}
+	}
 	if cfg.LocalMode() {
 		err = runUpdateLocal(cmd, args, cfg, opts)
 	} else {
@@ -99,18 +104,12 @@ func runUpdate(cmd *cobra.Command, opts updateOpts, args []string) error {
 	return runGitUpdate(cmd, cfg, opts, args)
 }
 
-// runUpdateLocal handles update for local-repo mode: git pull + optional official cache refresh.
+// runUpdateLocal handles update for local-repo mode: git pull of the local clone.
 func runUpdateLocal(cmd *cobra.Command, args []string, cfg config.Config, opts updateOpts) error {
 	out := cmd.OutOrStdout()
 
-	needsOfficial, err := needsOfficialCache(out, args, opts.official)
-	if err != nil {
-		return err
-	}
-	officialCacheDir := filepath.Join(cfg.OfficialCache, skill.SkillsFolderName)
-
 	if opts.dryRun {
-		printLocalUpdateDryRun(out, cfg, needsOfficial, officialCacheDir)
+		printLocalUpdateDryRun(out, cfg)
 		return nil
 	}
 
@@ -120,58 +119,20 @@ func runUpdateLocal(cmd *cobra.Command, args []string, cfg config.Config, opts u
 	}
 	fmt.Fprintln(out)
 
-	return applyLocalUpdate(cmd, args, cfg, opts, needsOfficial, officialCacheDir)
-}
-
-// needsOfficialCache reports whether the anthropics/skills cache also needs
-// refreshing: explicitly via --official, or implicitly because any named arg
-// resolves to an official-source skill.
-func needsOfficialCache(out io.Writer, args []string, official bool) (bool, error) {
-	if official || len(args) == 0 {
-		return official, nil
-	}
-
-	catalog, catalogWarn := config.LoadCatalog("")
-	if catalogWarn != nil {
-		ui.Warn(out, fmt.Sprintf("user catalog: %v", catalogWarn))
-	}
-	names, err := skillNamesFromArgs(args, catalog)
-	if err != nil {
-		return false, err
-	}
-	for _, name := range names {
-		for _, b := range catalog {
-			for _, ref := range b.Skills {
-				if ref.Name == name && ref.Source == skill.SourceOfficial {
-					return true, nil
-				}
-			}
-		}
-	}
-	return false, nil
+	return applyLocalUpdate(cmd, args, cfg, opts)
 }
 
 // printLocalUpdateDryRun previews the git operations a real run would perform.
-func printLocalUpdateDryRun(out io.Writer, cfg config.Config, needsOfficial bool, officialCacheDir string) {
+func printLocalUpdateDryRun(out io.Writer, cfg config.Config) {
 	fmt.Fprintln(out)
 	ui.Header(out, "Dry run — would run:")
 	fmt.Fprintf(out, "  git pull  in  %s\n", cfg.RepoPath)
-	if needsOfficial {
-		if _, err := os.Stat(officialCacheDir); os.IsNotExist(err) {
-			fmt.Fprintf(out, "  git clone %s  →  %s\n", source.OfficialSkillsURL, officialCacheDir)
-		} else {
-			fmt.Fprintf(out, "  git pull  in  %s\n", officialCacheDir)
-		}
-	}
 	fmt.Fprintln(out)
 }
 
-// applyLocalUpdate pulls the local repo clone, refreshes the official cache
-// if needed, and bumps the project lock — the non-dry-run body of
+// applyLocalUpdate pulls the local repo clone and bumps the project lock — the non-dry-run body of
 // runUpdateLocal, run only after the user has confirmed.
-func applyLocalUpdate(
-	cmd *cobra.Command, args []string, cfg config.Config, opts updateOpts, needsOfficial bool, officialCacheDir string,
-) error {
+func applyLocalUpdate(cmd *cobra.Command, args []string, cfg config.Config, opts updateOpts) error {
 	out := cmd.OutOrStdout()
 	errOut := cmd.ErrOrStderr()
 	ctx := cmd.Context()
@@ -186,12 +147,6 @@ func applyLocalUpdate(
 	// that immediately rather than waiting on the background worker.
 	if err := updatecheck.Save(cfg, updatecheck.Result{Mode: updatecheck.ModeLocal}); err != nil {
 		ui.Warn(out, fmt.Sprintf("update-check cache: %v", err))
-	}
-
-	if needsOfficial {
-		if err := refreshOfficialCache(cmd, officialCacheDir); err != nil {
-			return err
-		}
 	}
 
 	// If we're in a project, bump rsk.lock entries for any changed skills and
@@ -249,53 +204,30 @@ func refreshPinnedDigest(out, errOut io.Writer) {
 	warnSkillsIndexBudget(errOut, filepath.Dir(rskDir), m.Pinned)
 }
 
-// bumpLockForProject re-resolves skills and updates the project's rsk.lock.
-// When args is empty, all skills in rsk.mod are refreshed. No-op if no project.
-func refreshOfficialCache(cmd *cobra.Command, dir string) error {
+// refreshOfficialIndex fetches the official anthropics/skills source now, so
+// the catalog sees what changed upstream even when no official skill is
+// installed. Installed official skills are checked by the git pass either way.
+func refreshOfficialIndex(cmd *cobra.Command, cfg config.Config, dryRun bool) error {
 	out := cmd.OutOrStdout()
-	ctx := cmd.Context()
-
-	if _, statErr := os.Stat(dir); os.IsNotExist(statErr) {
-		ui.Info(out, fmt.Sprintf("Cloning %s → %s …", source.OfficialSkillsURL, dir))
-		if err := rskgit.Clone(ctx, source.OfficialSkillsURL, dir, out); err != nil {
-			return fmt.Errorf("git clone (official cache): %w", err)
-		}
+	if dryRun {
+		fmt.Fprintf(out, "  would refresh %s\n", source.OfficialSkillsURL)
 		return nil
 	}
-
-	ui.Info(out, fmt.Sprintf("Pulling %s …", dir))
-	if err := rskgit.Pull(ctx, dir, out); err != nil {
-		return fmt.Errorf("git pull (official cache): %w", err)
+	chain, err := sourceChain(cmd, cfg)
+	if err != nil {
+		return err
+	}
+	for _, r := range chain.ByID(skill.OfficialID) {
+		rf, ok := r.(refresher)
+		if !ok {
+			continue
+		}
+		ui.Info(out, fmt.Sprintf("Refreshing %s …", source.OfficialSkillsURL))
+		if err = rf.Refresh(cmd.Context()); err != nil {
+			return err
+		}
 	}
 	return nil
-}
-
-// runOfficialCacheRefresh handles --official for registry mode: it clones or
-// pulls the anthropics/skills cache independently of the registry index
-// check below, respecting --dry-run and prompting for confirmation before
-// touching the filesystem.
-func runOfficialCacheRefresh(cmd *cobra.Command, cfg config.Config, dryRun, yes bool) error {
-	out := cmd.OutOrStdout()
-	dir := filepath.Join(cfg.OfficialCache, skill.SkillsFolderName)
-
-	if dryRun {
-		fmt.Fprintln(out)
-		ui.Header(out, "Dry run — would run:")
-		if _, statErr := os.Stat(dir); os.IsNotExist(statErr) {
-			fmt.Fprintf(out, "  git clone %s  →  %s\n", source.OfficialSkillsURL, dir)
-		} else {
-			fmt.Fprintf(out, "  git pull  in  %s\n", dir)
-		}
-		fmt.Fprintln(out)
-		return nil
-	}
-
-	if !term.Confirm(cmd, yes, term.StdioIsTerminal(), "Refresh anthropics/skills cache?") {
-		fmt.Fprintln(out, "Skipped official cache refresh.")
-		return nil
-	}
-	fmt.Fprintln(out)
-	return refreshOfficialCache(cmd, dir)
 }
 
 // runUpdateRegistry handles update for registry mode: fetch the index, compare
@@ -304,12 +236,6 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 	out := cmd.OutOrStdout()
 	errOut := cmd.ErrOrStderr()
 	ctx := cmd.Context()
-
-	if opts.official {
-		if err := runOfficialCacheRefresh(cmd, cfg, opts.dryRun, opts.yes); err != nil {
-			return err
-		}
-	}
 
 	targets, err := resolveTargetDirs(cfg, opts.global, opts.forTool)
 	if err != nil {

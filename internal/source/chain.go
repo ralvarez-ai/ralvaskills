@@ -13,13 +13,6 @@ import (
 // only keeps listings stable: it never decides a resolution.
 type Chain []Resolver
 
-// cachedFinder is implemented by a source whose Find may reach the network to
-// fill its own cache (Official clones anthropics/skills on first use).
-// FindCached answers from what the source already holds and never fetches.
-type cachedFinder interface {
-	FindCached(ctx context.Context, name string) (skill.Skill, error)
-}
-
 // Find resolves ref.
 //
 // A qualified reference resolves in exactly the named source; an unknown
@@ -30,10 +23,6 @@ type cachedFinder interface {
 // consulted fails the whole lookup, never letting another source answer in its
 // place: otherwise an unreachable private source would silently resolve the
 // name from a public one.
-//
-// A source that can fetch on demand is first asked only for what it already
-// holds, so a name another source provides never triggers a fetch. Only when no
-// source has the name is it asked to fetch.
 func (c Chain) Find(ctx context.Context, ref skill.Ref) (skill.Skill, error) {
 	if ref.Path != "" {
 		return skill.Skill{}, fmt.Errorf("%w: selecting %q by path needs a git source", ErrUnsupported, ref.String())
@@ -43,24 +32,10 @@ func (c Chain) Find(ctx context.Context, ref skill.Ref) (skill.Skill, error) {
 	}
 
 	hits, err := c.collect(func(r Resolver) (skill.Skill, error) {
-		if cf, ok := r.(cachedFinder); ok {
-			return cf.FindCached(ctx, ref.Name)
-		}
 		return r.Find(ctx, ref.Name)
 	})
 	if err != nil {
 		return skill.Skill{}, err
-	}
-	if len(hits) == 0 {
-		hits, err = c.collect(func(r Resolver) (skill.Skill, error) {
-			if _, ok := r.(cachedFinder); !ok {
-				return skill.Skill{}, ErrNotFound
-			}
-			return r.Find(ctx, ref.Name)
-		})
-		if err != nil {
-			return skill.Skill{}, err
-		}
 	}
 	return pickOne(ref.Name, hits)
 }
@@ -99,6 +74,20 @@ func (c Chain) FindVersion(ctx context.Context, id, name, version string) (skill
 		return vf.FindVersion(ctx, name, version)
 	}
 	return skill.Skill{}, fmt.Errorf("%w: %q for skill %q", ErrUnknownSource, id, name)
+}
+
+// ByID returns the sources with the given identities, in chain order.
+func (c Chain) ByID(ids ...string) Chain {
+	var out Chain
+	for _, r := range c {
+		for _, id := range ids {
+			if skill.CanonicalSourceID(r.Spec().ID) == skill.CanonicalSourceID(id) {
+				out = append(out, r)
+				break
+			}
+		}
+	}
+	return out
 }
 
 // Select returns the sources of the given kinds, in chain order.

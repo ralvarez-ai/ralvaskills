@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -215,16 +216,8 @@ func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.C
 	if err := skill.ValidateName(entry.Name); err != nil {
 		return skill.Skill{}, err
 	}
-	if entry.Source.IsDeclared() {
-		// A git skill is restored at its locked commit and checked against its
-		// locked tree: the lock names the source, so the chain is not consulted.
-		if entry.Git == nil {
-			return skill.Skill{}, fmt.Errorf("lock entry %s has no git record", entry.Name)
-		}
-		g := entry.Git
-		return sources.Restore(ctx, cfg, sources.ChainOptions{}, string(entry.Source), g.URL, source.LockedSkill{
-			Name: entry.Name, Rev: g.Rev, Commit: g.Commit, Tree: g.Tree, Path: g.Path,
-		})
+	if entry.Source.UsesGit() {
+		return restoreGitEntry(ctx, entry, cfg)
 	}
 	if entry.Source != skill.SourceOfficial &&
 		(entry.Version == "" || filepath.Base(entry.Version) != entry.Version ||
@@ -239,28 +232,45 @@ func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.C
 			Path: filepath.Join(cfg.RegistryCache(), entry.Name, entry.Version)}
 	case skill.SourceLocal:
 		s, err = findIn(ctx, cfg.LocalSpec(), cfg, entry.Name)
-	case skill.SourceOfficial:
-		if _, statErr := os.Stat(filepath.Join(cfg.OfficialCache, skill.SkillsFolderName)); statErr != nil {
-			return skill.Skill{}, fmt.Errorf("official cache unavailable for %s: %w", entry.Name, statErr)
-		}
-		s, err = findIn(ctx, cfg.OfficialSpec(), cfg, entry.Name)
 	default:
 		return skill.Skill{}, fmt.Errorf("unsupported source for %s: %s", entry.Name, entry.Source)
 	}
 	if err != nil {
 		return skill.Skill{}, err
 	}
-	// Official skills carry no version in their frontmatter, so their lock
-	// entries are versionless too. The cache check above already proved the
-	// source is present; comparing a version would reject every one of them.
-	if entry.Source == skill.SourceOfficial && entry.Version == "" {
-		return s, nil
-	}
 	actualVersion, err := skill.ReadVersion(s.Path)
 	if err != nil || actualVersion != entry.Version {
 		return skill.Skill{}, fmt.Errorf("locked skill %s@%s is unavailable at %s", entry.Name, entry.Version, s.Path)
 	}
 	return s, nil
+}
+
+// restoreGitEntry restores a skill whose lock entry names a git source: a
+// declared one, or the built-in official one. An entry with a git record is
+// restored at its locked commit and checked against its locked tree, through the
+// source's own trust gate and never the chain. An official entry written before
+// the git transport has no record; it resolves to what the source has now, as it
+// always did, and the next update records it.
+func restoreGitEntry(ctx context.Context, entry manifest.LockEntry, cfg config.Config) (skill.Skill, error) {
+	if entry.Git != nil {
+		g := entry.Git
+		return sources.Restore(ctx, cfg, sources.ChainOptions{RepoFor: sourceRepoFor},
+			entry.Source.Identity(), g.URL, source.LockedSkill{
+				Name: entry.Name, Rev: g.Rev, Commit: g.Commit, Tree: g.Tree, Path: g.Path,
+			})
+	}
+	if entry.Source.IsDeclared() {
+		return skill.Skill{}, fmt.Errorf("lock entry %s has no git record", entry.Name)
+	}
+	chain, err := sources.Chain(cfg, sources.ChainOptions{RepoFor: sourceRepoFor})
+	if err != nil {
+		return skill.Skill{}, err
+	}
+	official := chain.ByID(skill.OfficialID)
+	if len(official) == 0 {
+		return skill.Skill{}, errors.New("the official source is not in the chain")
+	}
+	return official[0].Find(ctx, entry.Name)
 }
 
 // findIn resolves name in the single source spec describes. A lock names its

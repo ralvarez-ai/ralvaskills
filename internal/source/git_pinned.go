@@ -104,7 +104,7 @@ func (g *Git) Locked(ctx context.Context, l LockedSkill) (skill.Skill, error) {
 	fm := readMeta(dest)
 	return skill.Skill{
 		Name: l.Name, Version: fm.Version, Description: fm.Description, Path: dest,
-		Source: skill.DeclaredSource(g.spec.ID), AllowedTools: skill.NormalizeAllowedTools(fm.AllowedTools),
+		Source: g.kind, AllowedTools: skill.NormalizeAllowedTools(fm.AllowedTools),
 		Git: &skill.GitRef{URL: g.spec.URL, Rev: l.Rev, Commit: l.Commit, Tree: tree, Path: l.Path},
 	}, nil
 }

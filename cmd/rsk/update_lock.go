@@ -96,6 +96,7 @@ func linkAndLock(
 		}
 		existing.Version = s.Version
 		existing.Source = s.Source
+		existing.Git = s.Git
 		lock = manifest.UpsertLockEntry(lock, existing)
 		resolved = append(resolved, s)
 	}

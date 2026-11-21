@@ -152,34 +152,6 @@ func TestPlanSyncSupportsLocalSource(t *testing.T) {
 	}
 }
 
-// TestPlanSyncSupportsVersionlessOfficialSkills covers the official-source
-// lock entry: those skills carry no version in their frontmatter, so the lock
-// records an empty one and sync must not reject it.
-func TestPlanSyncSupportsVersionlessOfficialSkills(t *testing.T) {
-	t.Parallel()
-	project := t.TempDir()
-	cfg := config.Config{OfficialCache: filepath.Join(t.TempDir(), "anthropic")}
-	skillDir := filepath.Join(cfg.OfficialCache, "skills", "frontend-design")
-	if err := os.MkdirAll(skillDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	body := "---\nname: frontend-design\ndescription: Frontend design\n---\n\nBody.\n"
-	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(body), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	m := manifest.Mod{Tools: []tool.ID{tool.ClaudeID}, Skills: map[string]string{"frontend-design": "*"}}
-	lock := manifest.Lock{
-		Skills: []manifest.LockEntry{{Name: "frontend-design", Source: skill.SourceOfficial}},
-	}
-	links, err := planSyncLinks(t.Context(), project, m, lock, cfg)
-	if err != nil || len(links) != 1 {
-		t.Fatalf("links=%+v err=%v", links, err)
-	}
-	if links[0].skill.Path != skillDir {
-		t.Fatalf("source = %s, want %s", links[0].skill.Path, skillDir)
-	}
-}
-
 func TestPlanSyncRejectsBrokenLocks(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
@@ -225,14 +197,6 @@ func TestPlanSyncRejectsBrokenLocks(t *testing.T) {
 				{Name: "example", Version: "1.0.0", Source: skill.SourceRegistry},
 			}},
 			wantErr: "is unavailable",
-		},
-		{
-			name: "missing official cache",
-			mod:  manifest.Mod{Tools: []tool.ID{tool.ClaudeID}, Skills: map[string]string{"example": "*"}},
-			lock: manifest.Lock{Skills: []manifest.LockEntry{
-				{Name: "example", Version: "1.0.0", Source: skill.SourceOfficial},
-			}},
-			wantErr: "official cache unavailable",
 		},
 		{
 			name: "unsupported source",
@@ -512,26 +476,4 @@ func readTestFile(t *testing.T, path string) string {
 		t.Fatalf("read %s: %v", path, err)
 	}
 	return string(data)
-}
-
-//nolint:paralleltest // the config folder override is process-wide
-func TestPlanSyncRestoresGitEntriesOnlyThroughADeclaredTrustedSource(t *testing.T) {
-	config.SetConfigHome(t.TempDir())
-	t.Cleanup(func() { config.SetConfigHome("") })
-
-	project := t.TempDir()
-	cfg := config.Config{OfficialCache: filepath.Join(t.TempDir(), "anthropic")}
-	m := manifest.Mod{Tools: []tool.ID{tool.ClaudeID}, Skills: map[string]string{"alpha": "*"}}
-	lock := manifest.Lock{Skills: []manifest.LockEntry{{
-		Name: "alpha", Version: "1.0.0", Source: skill.DeclaredSource("@acme/skills"),
-		Git: &skill.GitRef{
-			URL: "git@github.com:acme/skills.git", Path: "skills/alpha",
-			Commit: strings.Repeat("a", 40), Tree: strings.Repeat("b", 40),
-		},
-	}}}
-
-	_, err := planSyncLinks(t.Context(), project, m, lock, cfg)
-	if err == nil || !strings.Contains(err.Error(), "rsk source add @acme/skills") {
-		t.Errorf("a lock naming an undeclared source err = %v, want the command to add it", err)
-	}
 }

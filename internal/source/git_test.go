@@ -140,7 +140,8 @@ func newHarness(t *testing.T, mutate func(*Spec), repo *fakeRepo) *harness {
 		CacheRoot: t.TempDir(),
 		Gate:      func(string, string) error { return h.trust },
 		Now:       func() time.Time { return h.now },
-	}, repo)
+		RepoFor:   func(Spec) RepoOps { return repo },
+	})
 	if err != nil {
 		t.Fatal(err)
 	}

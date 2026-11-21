@@ -15,7 +15,9 @@ import (
 
 func TestNewBuildsEachKind(t *testing.T) {
 	t.Parallel()
-	opts := source.Options{RegistryCache: t.TempDir(), OfficialCache: t.TempDir()}
+	opts := source.Options{
+		RegistryCache: t.TempDir(), CacheRoot: t.TempDir(), Gate: func(string, string) error { return nil },
+	}
 
 	tests := []struct {
 		name string
@@ -25,7 +27,7 @@ func TestNewBuildsEachKind(t *testing.T) {
 			ID: "@ralvarez-ai/ralvaskills", Type: source.KindRegistry, URL: "https://skills.example",
 		}},
 		{"path", source.Spec{ID: "@local/ralvaskills", Type: source.KindPath, URL: t.TempDir()}},
-		{"official", source.Spec{ID: "@anthropics/skills", Type: source.KindOfficial, URL: source.OfficialSkillsURL}},
+		{"official", source.Spec{ID: "@anthropics/skills", Type: source.KindGit, URL: source.OfficialSkillsURL}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -73,10 +75,12 @@ func TestNewRejectsWhatItCannotHonour(t *testing.T) {
 
 func TestBuildKeepsDeclarationOrderAndRegistryAccessor(t *testing.T) {
 	t.Parallel()
-	opts := source.Options{RegistryCache: t.TempDir(), OfficialCache: t.TempDir()}
+	opts := source.Options{
+		RegistryCache: t.TempDir(), CacheRoot: t.TempDir(), Gate: func(string, string) error { return nil },
+	}
 	chain, err := source.Build([]source.Spec{
 		{ID: "@ralvarez-ai/ralvaskills", Type: source.KindRegistry, URL: "https://skills.example"},
-		{ID: "@anthropics/skills", Type: source.KindOfficial, URL: source.OfficialSkillsURL},
+		{ID: "@anthropics/skills", Type: source.KindGit, URL: source.OfficialSkillsURL},
 	}, opts)
 	if err != nil {
 		t.Fatal(err)
@@ -90,7 +94,7 @@ func TestBuildKeepsDeclarationOrderAndRegistryAccessor(t *testing.T) {
 	if _, ok := chain.Registry(); !ok {
 		t.Error("Registry() found no registry in a chain that has one")
 	}
-	if _, ok := chain.Select(source.KindOfficial).Registry(); ok {
+	if _, ok := chain.Select(source.KindGit).Registry(); ok {
 		t.Error("Registry() found a registry in a chain without one")
 	}
 	if _, err = source.Build([]source.Spec{{ID: "@a/a", Type: "bogus"}}, opts); err == nil {

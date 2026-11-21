@@ -7,8 +7,8 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
 
-// fsSource is a shared base for filesystem-backed skill sources (Local and
-// Official). It walks a directory and caches nothing — suitable for sources
+// fsSource is a shared base for filesystem-backed skill sources (Local). It walks a directory and caches nothing —
+// suitable for sources
 // where the directory is small enough to stat on every call.
 type fsSource struct {
 	root     string

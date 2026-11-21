@@ -174,11 +174,11 @@ func loadSkillsBySource(
 	ctx context.Context, out io.Writer, capture *term.Capture, chain source.Chain, sourceFilter skill.Source,
 ) []skill.Skill {
 	var all []skill.Skill
-	walk := func(want skill.Source, label func(source.Resolver, error) string, kinds ...source.Kind) {
+	walk := func(want skill.Source, label func(source.Resolver, error) string, srcs source.Chain) {
 		if sourceFilter != "" && sourceFilter != want {
 			return
 		}
-		for _, src := range chain.Select(kinds...) {
+		for _, src := range srcs {
 			listed, err := src.All(ctx)
 			if err != nil {
 				warnOrCapture(out, capture, label(src, err))
@@ -190,12 +190,25 @@ func loadSkillsBySource(
 
 	walk(skill.SourceLocal, func(_ source.Resolver, err error) string {
 		return fmt.Sprintf("walk local skills: %v", err)
-	}, source.KindRegistry, source.KindPath)
-	walk(skill.SourceOfficial, func(_ source.Resolver, err error) string { return err.Error() }, source.KindOfficial)
+	}, chain.Select(source.KindRegistry, source.KindPath))
+	walk(skill.SourceOfficial, func(_ source.Resolver, err error) string { return err.Error() },
+		chain.ByID(skill.OfficialID))
 	walk(skill.SourceGit, func(src source.Resolver, err error) string {
 		return fmt.Sprintf("source %s: %v", src.Spec().ID, err)
-	}, source.KindGit)
+	}, declaredSources(chain))
 	return all
+}
+
+// declaredSources is the chain's git sources other than the built-in official
+// one, which the catalog lists as its own source.
+func declaredSources(chain source.Chain) source.Chain {
+	var out source.Chain
+	for _, r := range chain.Select(source.KindGit) {
+		if r.Spec().ID != skill.OfficialID {
+			out = append(out, r)
+		}
+	}
+	return out
 }
 
 // filterByBundle keeps only the skills named in bundleName's catalog entry.

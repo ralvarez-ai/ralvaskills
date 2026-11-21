@@ -47,6 +47,12 @@ func (s Source) IsDeclared() bool {
 	return strings.HasPrefix(string(s), "@")
 }
 
+// UsesGit reports whether skills of this source are read from a git repository:
+// a declared source, and the official one, which is the built-in git source.
+func (s Source) UsesGit() bool {
+	return s.IsDeclared() || s == SourceOfficial
+}
+
 // Kind returns s itself for the built-in sources, and SourceGit for a declared
 // one.
 func (s Source) Kind() Source {

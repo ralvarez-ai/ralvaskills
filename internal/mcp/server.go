@@ -22,6 +22,18 @@ type Deps struct {
 	Version  string
 	Logger   *slog.Logger
 	ReadOnly bool
+
+	// RepoFor supplies the clone a git source reads, for tests that must not
+	// reach a network. Nil means the real one.
+	RepoFor func(source.Spec) source.RepoOps
+}
+
+// chain builds the built-in source chain, which is all the MCP server resolves
+// through: declared sources are the user's to add and trust from a terminal.
+func (d Deps) chain() (source.Chain, error) {
+	opts := d.Cfg.SourceOptions()
+	opts.RepoFor = d.RepoFor
+	return source.Build(d.Cfg.SourceSpecs(), opts)
 }
 
 // NewServer builds the MCP server with every tool and resource registered. The
@@ -50,7 +62,7 @@ func ServeStdio(ctx context.Context, srv *sdk.Server) error {
 // catalog lists the skills available to this machine: from the local clone in
 // local mode, or from the cached registry index otherwise.
 func (d Deps) catalog(ctx context.Context) ([]catalog.Entry, error) {
-	chain, err := d.Cfg.Sources()
+	chain, err := d.chain()
 	if err != nil {
 		return nil, err
 	}

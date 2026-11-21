@@ -93,7 +93,7 @@ func resolveForInstall(ctx context.Context, deps Deps, names []string) ([]skill.
 		deps.Logger.Warn("user catalog", "error", catalogErr)
 	}
 
-	chain, err := deps.Cfg.Sources()
+	chain, err := deps.chain()
 	if err != nil {
 		return nil, err
 	}

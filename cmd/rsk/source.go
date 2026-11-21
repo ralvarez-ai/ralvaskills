@@ -367,7 +367,7 @@ func runSourceList(cmd *cobra.Command, _ []string) error {
 			},
 			sourceView{
 				ID:    skill.OfficialID,
-				Type:  string(source.KindOfficial),
+				Type:  string(source.KindGit),
 				URL:   source.OfficialSkillsURL,
 				Trust: trustBuiltIn,
 			},

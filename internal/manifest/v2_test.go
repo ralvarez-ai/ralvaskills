@@ -346,3 +346,93 @@ func TestModQualifiesAGitSkillsKey(t *testing.T) {
 		t.Errorf("read back %+v, %v", got, err)
 	}
 }
+
+func officialEntry() LockEntry {
+	return LockEntry{
+		Name: "xlsx", Source: skill.SourceOfficial,
+		Git: &skill.GitRef{
+			URL: "https://github.com/anthropics/skills", Path: "skills/xlsx",
+			Commit: "1111111111111111111111111111111111111111", Tree: "2222222222222222222222222222222222222222",
+		},
+	}
+}
+
+func TestOfficialEntriesRecordTheirGitSourceToo(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	want := officialEntry()
+	if err := WriteLock(dir, Lock{Skills: []LockEntry{want}}); err != nil {
+		t.Fatal(err)
+	}
+	text := readFile(t, LockPath(dir))
+	for _, line := range []string{
+		"version = 2", `name = "@anthropics/skills/xlsx"`, `source = "@anthropics/skills"`, `transport = "git"`,
+		`url = "https://github.com/anthropics/skills"`, `path = "skills/xlsx"`,
+		`commit = "1111111111111111111111111111111111111111"`,
+	} {
+		if !strings.Contains(text, line) {
+			t.Errorf("rsk.lock lacks %q:\n%s", line, text)
+		}
+	}
+	got, err := ReadLock(dir)
+	if err != nil || len(got.Skills) != 1 {
+		t.Fatalf("ReadLock = %+v, %v", got, err)
+	}
+	if g := got.Skills[0]; g.Source != skill.SourceOfficial || g.Git == nil || *g.Git != *want.Git {
+		t.Errorf("entry = %+v, want the official kind with its git record", g)
+	}
+}
+
+func TestAnOfficialEntryWithoutAGitRecordStillReadsAndWritesAsBefore(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	legacy := "version = 2\n\n[[skills]]\n  name = \"@anthropics/skills/xlsx\"\n  version = \"\"\n" +
+		"  source = \"@anthropics/skills\"\n  transport = \"git\"\n"
+	if err := os.WriteFile(LockPath(dir), []byte(legacy), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	l, err := ReadLock(dir)
+	if err != nil || len(l.Skills) != 1 || l.Skills[0].Git != nil || l.Skills[0].Source != skill.SourceOfficial {
+		t.Fatalf("ReadLock = %+v, %v", l, err)
+	}
+	if err = WriteLock(dir, l); err != nil {
+		t.Fatal(err)
+	}
+	if got := readFile(t, LockPath(dir)); got != legacy {
+		t.Errorf("rewriting an entry with no git record changed it:\n%s\nwant\n%s", got, legacy)
+	}
+}
+
+func TestReadLockRefusesAMalformedOfficialGitRecord(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	text := "version = 2\n[[skills]]\n  name = \"@anthropics/skills/xlsx\"\n  version = \"\"\n  source = \"@anthropics/skills\"\n" +
+		"  transport = \"git\"\n  url = \"ext::sh -c id\"\n  commit = \"" + strings.Repeat(
+		"a",
+		40,
+	) + "\"\n  tree = \"" +
+		strings.Repeat(
+			"b",
+			40,
+		) + "\"\n  path = \"skills/xlsx\"\n"
+	if err := os.WriteFile(LockPath(dir), []byte(text), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ReadLock(dir); err == nil {
+		t.Error("an official entry with a hostile URL was accepted")
+	}
+}
+
+func TestALegacyCachePathAloneIsNotAGitRecord(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	text := "version = 2\n[[skills]]\n  name = \"@anthropics/skills/xlsx\"\n  version = \"\"\n  source = \"@anthropics/skills\"\n" +
+		"  transport = \"git\"\n  path = \"/home/u/.config/rsk/cache/anthropic/skills/skills/xlsx\"\n"
+	if err := os.WriteFile(LockPath(dir), []byte(text), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	l, err := ReadLock(dir)
+	if err != nil || l.Skills[0].Git != nil {
+		t.Errorf("ReadLock = %+v, %v; want the machine path dropped and no git record", l, err)
+	}
+}

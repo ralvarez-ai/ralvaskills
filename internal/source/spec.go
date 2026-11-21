@@ -16,9 +16,6 @@ const (
 	// KindPath is a directory of skills on the local filesystem, such as a
 	// clone of ralvaskills.
 	KindPath Kind = "path"
-
-	// KindOfficial is the cached anthropics/skills clone.
-	KindOfficial Kind = "official"
 )
 
 // Spec describes one source: what it is called and where it is read from.
@@ -50,14 +47,15 @@ type Spec struct {
 	Private bool
 }
 
+// OfficialSkillsURL is the GitHub URL of the anthropics/skills repository, the
+// built-in official source. It is the one git source that needs no trust grant.
+const OfficialSkillsURL = "https://github.com/anthropics/skills"
+
 // Options carries what a source needs besides its Spec: where it caches, and
 // how a git source is gated.
 type Options struct {
 	// RegistryCache is where downloaded registry tarballs are extracted.
 	RegistryCache string
-
-	// OfficialCache is where the anthropics/skills clone lives.
-	OfficialCache string
 
 	// CacheRoot is the folder git sources keep their bare clones, indexes and
 	// extracted skills under. A git source cannot be built without it.
@@ -67,6 +65,10 @@ type Options struct {
 	// reads or contacts it, and returns an error to refuse. A git source
 	// cannot be built without one, so no path can reach a remote ungated.
 	Gate func(id, url string) error
+
+	// RepoFor returns the bare clone a git source reads, for tests that supply an
+	// in-memory one. Nil means the real clone under CacheRoot.
+	RepoFor func(Spec) RepoOps
 
 	// Offline makes a git source answer from its existing index however old,
 	// and never contact its remote.

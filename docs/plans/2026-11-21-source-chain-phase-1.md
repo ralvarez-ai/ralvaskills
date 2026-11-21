@@ -54,11 +54,12 @@ Built as planned, with these settled while building: declared **path** sources a
 
 > **Order changed while building.** Step 1e was built before 1d. Folding official onto per-commit extractions means an installed link must be re-pointed on update, which needs the lock to record a commit and tree and `update` to compare them: that is 1e. Done in that order, official updates never regress. Step 1e is complete; 1d follows and rests on it.
 
-### 1d. The official cache on the git transport
+### 1d. The official cache on the git transport - done
 
 Decision 2: `@anthropics/skills` becomes an ordinary git source instead of its own kind, as the design already describes (2.1).
 
 - A built-in spec (type `git`, the existing URL, trusted for that exact URL) replaces `KindOfficial`; `Official`, `FindCached` and the lazy-clone logic from 0a go away, and the chain's cache-first pass is deleted with them.
+- Built with these refinements: the official source keeps `skill.SourceOfficial` as its kind instead of becoming a declared identity, which kept bundles, labels and lock keys untouched; a legacy global link into the old clone is recognised by its target; tests reach the official source through an in-memory clone (`internal/source/sourcetest`) because they were silently reaching GitHub otherwise.
 - Its lock entries gain `commit`, `tree` and `path` like any git skill, so `update` finally detects drift for official skills instead of treating them as versionless.
 - **The old working clone is left in place.** Installed official symlinks point into `<official_cache>/skills/<name>`; leaving that directory alone means the 26 projects that use it keep working with no relink. New installs use the new layout, and the first `rsk update` finds no recorded `tree`, treats the skill as changed and re-points its links. Nothing deletes the old clone automatically.
 - `rsk update --include official` fetches through the new path; the `official_cache` config key stays for the old clone and is read only to find it.
