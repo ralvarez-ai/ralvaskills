@@ -73,7 +73,8 @@ func ValidateRef(ref string) error {
 	return nil
 }
 
-func validateCommit(commit string) error {
+// ValidateCommit reports why commit is not a full object id, or nil.
+func ValidateCommit(commit string) error {
 	if !commitPattern.MatchString(commit) {
 		return fmt.Errorf("%w: %q", ErrInvalidCommit, commit)
 	}
@@ -108,6 +109,10 @@ func (r Repo) Fetch(ctx context.Context, remote RemoteURL, ref string) (string, 
 	if _, err := run.run(ctx, r.Dir, "fetch",
 		"fetch", "--quiet", "--no-tags", "--no-recurse-submodules", "--depth=1", "--", remote.String(), ref,
 	); err != nil {
+		var gitErr *Error
+		if errors.As(err, &gitErr) && strings.Contains(gitErr.Stderr, "couldn't find remote ref") {
+			return "", fmt.Errorf("%w: %s", ErrRefNotFound, ref)
+		}
 		return "", err
 	}
 	out, err := run.run(ctx, r.Dir, "rev-parse", "rev-parse", "--verify", "FETCH_HEAD^{commit}")
@@ -115,7 +120,7 @@ func (r Repo) Fetch(ctx context.Context, remote RemoteURL, ref string) (string, 
 		return "", err
 	}
 	commit := strings.TrimSpace(string(out))
-	if err = validateCommit(commit); err != nil {
+	if err = ValidateCommit(commit); err != nil {
 		return "", err
 	}
 	if _, err = run.run(ctx, r.Dir, "update-ref", "update-ref", pinPrefix+commit, commit); err != nil {
@@ -128,7 +133,7 @@ func (r Repo) Fetch(ctx context.Context, remote RemoteURL, ref string) (string, 
 // identity of a skill, which an unrelated commit elsewhere in the repository
 // does not change. An empty dir means the repository root.
 func (r Repo) TreeID(ctx context.Context, commit, dir string) (string, error) {
-	if err := validateCommit(commit); err != nil {
+	if err := ValidateCommit(commit); err != nil {
 		return "", err
 	}
 	spec := commit + "^{tree}"
@@ -159,7 +164,7 @@ func (r Repo) TreeID(ctx context.Context, commit, dir string) (string, error) {
 // what to do with the modes: ModeSymlink and ModeSubmodule entries are never
 // something to extract.
 func (r Repo) ListTree(ctx context.Context, commit string, roots []string) ([]TreeEntry, error) {
-	if err := validateCommit(commit); err != nil {
+	if err := ValidateCommit(commit); err != nil {
 		return nil, err
 	}
 	args := []string{"ls-tree", "-r", "-t", "-z", "--full-tree", commit}
@@ -212,7 +217,7 @@ type Blob struct {
 // larger than maxBytes is reported with its Size and no Data, so a hostile
 // repository cannot make rsk hold an arbitrarily large file in memory.
 func (r Repo) ReadBlobs(ctx context.Context, commit string, paths []string, maxBytes int64) (map[string]Blob, error) {
-	if err := validateCommit(commit); err != nil {
+	if err := ValidateCommit(commit); err != nil {
 		return nil, err
 	}
 	var input bytes.Buffer
@@ -268,16 +273,25 @@ func parseBlobs(out []byte, paths []string, maxBytes int64) (map[string]Blob, er
 // and anything over lim; on refusal nothing is left at dest. dest must not
 // already exist.
 func (r Repo) Archive(ctx context.Context, commit, dir, dest string, lim Limits) error {
-	if err := validateCommit(commit); err != nil {
+	if err := ValidateCommit(commit); err != nil {
 		return err
 	}
 	if err := ValidateRepoPath(dir); err != nil {
 		return err
 	}
-	return r.runner().stream(ctx, r.Dir, "archive",
+	if _, err := os.Lstat(dest); err == nil {
+		return fmt.Errorf("extract to %s: destination exists", dest)
+	}
+	err := r.runner().stream(ctx, r.Dir, "archive",
 		[]string{"archive", "--format=tar", commit + ":" + dir},
 		func(src io.Reader) error { return extractTar(src, dest, lim) },
 	)
+	if err != nil {
+		// git can fail after an empty (and so valid) tar was extracted. Nothing was
+		// at dest before, so removing it only clears that husk and lets a retry in.
+		_ = os.RemoveAll(dest)
+	}
+	return err
 }
 
 func (r Repo) runner() runner {
@@ -323,7 +337,7 @@ func (r runner) lsRemote(ctx context.Context, remote RemoteURL, ref string) (str
 	}
 	line, _, _ := strings.Cut(string(out), "\n")
 	commit, _, _ := strings.Cut(line, "\t")
-	if err = validateCommit(commit); err != nil {
+	if err = ValidateCommit(commit); err != nil {
 		return "", err
 	}
 	return commit, nil

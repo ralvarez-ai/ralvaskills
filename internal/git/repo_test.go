@@ -93,8 +93,8 @@ func TestFetchBranchTagAndSHA(t *testing.T) {
 	}
 
 	repo := newRepo(t)
-	if _, err := repo.Fetch(ctx, f.remote, "no-such-branch"); err == nil {
-		t.Error("fetching a missing ref succeeded")
+	if _, err := repo.Fetch(ctx, f.remote, "no-such-branch"); !errors.Is(err, ErrRefNotFound) {
+		t.Errorf("fetching a missing ref err = %v, want ErrRefNotFound", err)
 	}
 }
 
@@ -419,5 +419,55 @@ func TestReadBlobs(t *testing.T) {
 	}
 	if got, err = repo.ReadBlobs(t.Context(), commit, nil, 10); err != nil || len(got) != 0 {
 		t.Errorf("no paths: %v, %v", got, err)
+	}
+}
+
+func TestArchiveLeavesNothingWhenGitFails(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	dest := filepath.Join(root, "out", "alpha")
+	// A clone that does not exist makes git archive fail before it writes a byte;
+	// an empty stream is a valid tar, so extraction itself succeeds.
+	repo := Repo{Dir: filepath.Join(root, "no-such-clone.git")}
+
+	err := repo.Archive(t.Context(), strings.Repeat("a", 40), "skills/alpha", dest, Limits{})
+	if err == nil {
+		t.Fatal("archiving from a missing clone succeeded")
+	}
+	if _, statErr := os.Stat(dest); statErr == nil {
+		t.Error("a failed archive left an (empty) destination, which blocks the retry")
+	}
+	if retryErr := repo.Archive(
+		t.Context(),
+		strings.Repeat("a", 40),
+		"skills/alpha",
+		dest,
+		Limits{},
+	); errors.Is(
+		retryErr,
+		os.ErrExist,
+	) {
+		t.Errorf("the retry was refused as if the destination existed: %v", retryErr)
+	}
+}
+
+func TestArchiveNeverTouchesAnExistingDestination(t *testing.T) {
+	t.Parallel()
+	f := newFixture(t)
+	repo := newRepo(t)
+	commit, err := repo.Fetch(t.Context(), f.remote, "main")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dest := t.TempDir()
+	keep := filepath.Join(dest, "keep.txt")
+	if err = os.WriteFile(keep, []byte("mine"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err = repo.Archive(t.Context(), commit, "skills/alpha", dest, Limits{}); err == nil {
+		t.Fatal("archiving over an existing directory succeeded")
+	}
+	if _, statErr := os.Stat(keep); statErr != nil {
+		t.Errorf("a refused archive deleted what was already there: %v", statErr)
 	}
 }
