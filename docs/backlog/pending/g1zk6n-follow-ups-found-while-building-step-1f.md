@@ -10,7 +10,7 @@ related:
 ---
 Found while building and running step 1f; none blocks the first release.
 
-- **A versionless skill digests as "no digest, and not readable here".** `digest.Load` falls back to the bare name when `skill.ReadFrontmatter` fails, and that function requires a version, so an official or git skill with no version loses its description in `.rsk/SKILLS.md` and in the new pin confirmation. Fixing it changes generated files for projects that pin official skills: decide, then fix with a test.
+- ~~A versionless skill digests as "no digest, and not readable here".~~ Fixed 2026-11-22: `digest.Load` reads the frontmatter leniently, so the description is kept.
 - **The MCP `install_skills` pin shows no digest text.** The CLI shows it and asks (trust rule 7); the tool writes `.rsk/SKILLS.md` for a non-default source after the client's approval of the input only. Decide whether the tool returns the text and refuses to pin until the user confirms it.
 - **`rsk update` rewrites `.rsk/SKILLS.md` when a pinned remote skill's digest changes, with no confirmation** (trust rule 7 is only enforced at pin time). Decide whether update should show the new text, and whether the MCP `install_skills` pin must (1h).
 - **`rsk status` labels a `--from` skill as `reg`.** `detectSkillSource` falls back to the registry for a link outside every known cache; teach it declared path sources or print `path`.

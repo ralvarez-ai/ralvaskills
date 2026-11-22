@@ -195,3 +195,27 @@ func TestMeasure(t *testing.T) {
 		t.Errorf("nothing pinned should measure zero, got %+v", empty)
 	}
 }
+
+// An official or git skill declares no version. Its description is still what
+// the always-on file should carry, not a line saying it cannot be read.
+func TestLoad_aVersionlessSkillContributesItsDescription(t *testing.T) {
+	t.Parallel()
+	dir := filepath.Join(t.TempDir(), "official-skill")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	skillMD := "---\nname: official-skill\ndescription: Works with spreadsheets.\n---\nbody\n"
+	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(skillMD), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	got := Load(dir, "official-skill")
+	if got.Version != "" || got.Body != "- official-skill: Works with spreadsheets." {
+		t.Errorf("entry = %+v", got)
+	}
+
+	missing := Load(filepath.Join(t.TempDir(), "absent"), "ghost")
+	if !strings.Contains(missing.Body, "not readable here") {
+		t.Errorf("a skill that is not installed must still say so: %+v", missing)
+	}
+}

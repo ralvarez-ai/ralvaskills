@@ -45,10 +45,7 @@ type Entry struct {
 // directory that does not exist (a pin that is not installed) says so.
 func Load(dir, name string) Entry {
 	entry := Entry{Name: name}
-	fm, fmErr := skill.ReadFrontmatter(dir)
-	if fmErr != nil {
-		fm = skill.Frontmatter{} // unreadable or versionless SKILL.md: fall back to the bare name
-	}
+	fm := readFrontmatter(dir)
 	entry.Version = fm.Version
 
 	data, err := os.ReadFile(filepath.Join(dir, FileName))
@@ -63,6 +60,18 @@ func Load(dir, name string) Entry {
 		entry.Body = "- " + name + " (digest unreadable: " + err.Error() + ")"
 	}
 	return entry
+}
+
+// readFrontmatter reads what a SKILL.md declares, leniently: a skill from the
+// official or a git source carries no version, and that must not cost it its
+// description. A SKILL.md that cannot be opened yields nothing.
+func readFrontmatter(dir string) skill.Frontmatter {
+	f, err := os.Open(filepath.Join(dir, skill.SkillFileName))
+	if err != nil {
+		return skill.Frontmatter{}
+	}
+	defer func() { _ = f.Close() }()
+	return skill.ParseFrontmatter(f)
 }
 
 // demote drops a leading H1 and pushes every other heading one level down, so
