@@ -126,8 +126,8 @@ Built as planned, with these settled while building:
 - [x] An untrusted git source cannot be cloned from the CLI, a lock restore or MCP.
 - [x] `rsk source add @owner/repo`, `trust`, `install @owner/repo/name` installs from a local bare-repo fixture and records `commit`, `tree` and `path` in a v2 lock.
 - [x] A second machine restores from that lock without the chain and without a secret.
-- [ ] A source that is down fails a bare-name lookup instead of falling through to another source.
+- [x] A source that is down fails a bare-name lookup instead of falling through to another source.
 - [ ] URL allowlist, option injection, embedded credentials and `roots` traversal tests pass.
 - [ ] `update` reports a skill outdated only when its own directory changed.
 - [ ] Registry and local clone behaviour is byte-identical for existing projects; an existing official install keeps working untouched and is re-pointed by the next `update`; `task lint`, `go test ./...`, `task registry:check` and `task site:check` pass.
-- [ ] The manual SSH acceptance run against the private skills repository passes (needs your approval to run).
+- [x] The manual SSH acceptance run against the private skills repository passes (2026-11-21, see `6w4kzn` in done; one finding, the runner honors `url.*.insteadOf`).
