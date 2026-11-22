@@ -127,3 +127,14 @@ func writeIndexCache(path string, fetchedAt time.Time, index source.Index) error
 		return enc.Encode(cached)
 	})
 }
+
+// CachedAliases returns the alias table of the cached registry index at any
+// age, without fetching. It returns nil when the cache is missing or unreadable,
+// so a caller that only wants a hint stays silent offline.
+func CachedAliases(cacheDir string) map[string]string {
+	cached, err := readIndexCache(filepath.Join(cacheDir, indexCacheFileName))
+	if err != nil {
+		return nil
+	}
+	return cached.Aliases
+}

@@ -92,6 +92,9 @@ type (
 		Source  string   `json:"source,omitempty"`
 		Pinned  bool     `json:"pinned,omitempty"`
 		Bundles []string `json:"bundles,omitempty"`
+		// RenamedTo is set when the linked name is a retired alias; it holds the
+		// name that replaced it.
+		RenamedTo string `json:"renamed_to,omitempty"`
 	}
 
 	// statusSectionEntry is one section (a scanned target directory) in the
@@ -152,11 +155,12 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 	}
 
 	scanStatusSections(out, capture, sections, cfg, membership, opts.personal)
+	renamed := offlineAliases(cfg)
 
 	if opts.format == output.FormatJSON {
-		return newFormatter(cmd, opts.format).JSON(statusSectionsToEntries(sections, pinnedSet))
+		return newFormatter(cmd, opts.format).JSON(statusSectionsToEntries(sections, pinnedSet, renamed))
 	}
-	if err = printStatusText(out, capture, cmd, opts.format, sections, pinnedSet); err != nil {
+	if err = printStatusText(out, capture, cmd, opts.format, sections, pinnedSet, renamed); err != nil {
 		return err
 	}
 	// The captured (picker) run must not write behind the TUI, and --global
@@ -233,7 +237,7 @@ func scanStatusSections(
 // skills installed" notice when all sections are empty.
 func printStatusText(
 	out io.Writer, capture *term.Capture, cmd *cobra.Command,
-	format output.OutputFormat, sections []statusSection, pinnedSet map[string]bool,
+	format output.OutputFormat, sections []statusSection, pinnedSet map[string]bool, renamed map[string]string,
 ) error {
 	hasAny := false
 	for _, sec := range sections {
@@ -245,7 +249,7 @@ func printStatusText(
 			fmt.Fprintln(out)
 			ui.SectionHeader(out, sec.title, sec.subtitle)
 		}
-		if err := printStatusSectionRows(cmd, format, sec.title, sec.skills, pinnedSet); err != nil {
+		if err := printStatusSectionRows(cmd, format, sec.title, sec.skills, pinnedSet, renamed); err != nil {
 			return err
 		}
 	}
@@ -271,10 +275,10 @@ func printStatusText(
 // when a captured status run has more than one.
 func printStatusSectionRows(
 	cmd *cobra.Command, format output.OutputFormat, title string,
-	skills []linkedEntry, pinnedSet map[string]bool,
+	skills []linkedEntry, pinnedSet map[string]bool, renamed map[string]string,
 ) error {
 	header := []string{headerSource, headerName, headerVersion, "", ""}
-	rows := term.Rows(skills, statusRowTable(pinnedSet))
+	rows := term.Rows(skills, statusRowTable(pinnedSet, renamed))
 
 	return renderTitledTable(cmd, format, title, rows, header, rows, linkedSkillNames(skills))
 }
@@ -304,7 +308,7 @@ func statusRowActionScope(table term.Data) map[string]string {
 
 // statusRowTable projects one linked skill into its status row. The pinned set
 // is captured because it is per-section, not per-entry.
-func statusRowTable(pinnedSet map[string]bool) term.Table[linkedEntry] {
+func statusRowTable(pinnedSet map[string]bool, renamed map[string]string) term.Table[linkedEntry] {
 	return term.Table[linkedEntry]{
 		Row: func(e linkedEntry) []any {
 			return []any{
@@ -312,7 +316,7 @@ func statusRowTable(pinnedSet map[string]bool) term.Table[linkedEntry] {
 				ui.SkillName(e.name),
 				ui.SkillVersion(e.version),
 				ui.SuccessMark,
-				statusRowTags(e, pinnedSet),
+				statusRowTags(e, pinnedSet, renamed),
 			}
 		},
 	}
@@ -320,8 +324,11 @@ func statusRowTable(pinnedSet map[string]bool) term.Table[linkedEntry] {
 
 // statusRowTags builds the trailing "  [pinned]  bundle-tag ..." suffix for
 // one status row.
-func statusRowTags(e linkedEntry, pinnedSet map[string]bool) string {
+func statusRowTags(e linkedEntry, pinnedSet map[string]bool, renamed map[string]string) string {
 	tags := ""
+	if next, ok := renamed[e.name]; ok {
+		tags += "  [renamed \u2192 " + next + "]"
+	}
 	if pinnedSet[e.name] {
 		tags += "  [pinned]"
 	}
@@ -338,17 +345,20 @@ func statusRowTags(e linkedEntry, pinnedSet map[string]bool) string {
 // statusSectionsToEntries converts the scanned statusSections into their
 // JSON-serializable shape, carrying over the pinned marker (which is tracked
 // separately from statusSection/linkedEntry) onto each skill row.
-func statusSectionsToEntries(sections []statusSection, pinnedSet map[string]bool) []statusSectionEntry {
+func statusSectionsToEntries(
+	sections []statusSection, pinnedSet map[string]bool, renamed map[string]string,
+) []statusSectionEntry {
 	entries := make([]statusSectionEntry, len(sections))
 	for i, sec := range sections {
 		skills := make([]statusSkillEntry, len(sec.skills))
 		for j, e := range sec.skills {
 			skills[j] = statusSkillEntry{
-				Name:    e.name,
-				Version: e.version,
-				Source:  e.source.String(),
-				Pinned:  pinnedSet[e.name],
-				Bundles: e.bundles,
+				Name:      e.name,
+				Version:   e.version,
+				Source:    e.source.String(),
+				Pinned:    pinnedSet[e.name],
+				Bundles:   e.bundles,
+				RenamedTo: renamed[e.name],
 			}
 		}
 		entries[i] = statusSectionEntry{

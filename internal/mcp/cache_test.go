@@ -200,3 +200,27 @@ func TestIndexCacheFetchesRegistryIndexAndServesOffline(t *testing.T) {
 		t.Errorf("offline load: %v", offlineErr)
 	}
 }
+
+func TestCachedAliasesReadsAnyAgeAndStaysSilentWithoutCache(t *testing.T) {
+	t.Parallel()
+
+	if got := mcp.CachedAliases(t.TempDir()); got != nil {
+		t.Errorf("CachedAliases with no cache = %v, want nil", got)
+	}
+
+	dir := t.TempDir()
+	payload, err := json.Marshal(map[string]any{
+		"fetched_at": time.Now().Add(-90 * 24 * time.Hour),
+		"aliases":    map[string]string{"old-name": "new-name"},
+		"skills":     map[string]*source.IndexEntry{"new-name": {Name: "new-name", Latest: "1.0.0"}},
+	})
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	writeFile(t, filepath.Join(dir, "index.json"), payload)
+
+	got := mcp.CachedAliases(dir)
+	if got["old-name"] != "new-name" {
+		t.Errorf("CachedAliases = %v, want old-name -> new-name from a 90-day-old cache", got)
+	}
+}
