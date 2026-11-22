@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/status"
 )
 
 func writeStatusFile(t *testing.T, path, data string) {
@@ -50,15 +51,15 @@ func TestStatusMarksARetiredName(t *testing.T) {
 
 	renamed := map[string]string{"hexagonal-arch": "hexagonal-architecture"}
 
-	tags := statusRowTags(linkedEntry{name: "hexagonal-arch"}, nil, renamed)
+	tags := statusRowTags(status.Linked{Name: "hexagonal-arch"}, nil, renamed)
 	if !strings.Contains(tags, "[renamed → hexagonal-architecture]") {
 		t.Errorf("tags = %q, want a renamed mark", tags)
 	}
-	if current := statusRowTags(linkedEntry{name: "go-architect"}, nil, renamed); current != "" {
+	if current := statusRowTags(status.Linked{Name: "go-architect"}, nil, renamed); current != "" {
 		t.Errorf("a current name got tags %q", current)
 	}
 
-	sections := []statusSection{{skills: []linkedEntry{{name: "hexagonal-arch"}, {name: "go-architect"}}}}
+	sections := []status.Section{{Skills: []status.Linked{{Name: "hexagonal-arch"}, {Name: "go-architect"}}}}
 	entries := statusSectionsToEntries(sections, nil, renamed)
 	if got := entries[0].Skills[0].RenamedTo; got != "hexagonal-architecture" {
 		t.Errorf("RenamedTo = %q", got)

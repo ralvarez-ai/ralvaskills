@@ -124,26 +124,6 @@ func skillNamesFromArgs(args []string, catalog []config.Bundle) ([]string, error
 	return names, nil
 }
 
-// detectSkillSource determines the origin of a skill by matching its path against
-// known cache roots. Falls back to SourceRegistry in registry mode (repoPath == "")
-// and SourceLocal in local-clone mode.
-func detectSkillSource(skillPath, repoPath, officialCachePath, registryCachePath string) skill.Source {
-	sp := filepath.ToSlash(filepath.Clean(skillPath))
-	if repoPath != "" && strings.HasPrefix(sp, filepath.ToSlash(filepath.Clean(repoPath))+"/") {
-		return skill.SourceLocal
-	}
-	if registryCachePath != "" && strings.HasPrefix(sp, filepath.ToSlash(filepath.Clean(registryCachePath))+"/") {
-		return skill.SourceRegistry
-	}
-	if officialCachePath != "" && strings.HasPrefix(sp, filepath.ToSlash(filepath.Clean(officialCachePath))+"/") {
-		return skill.SourceOfficial
-	}
-	if repoPath == "" {
-		return skill.SourceRegistry
-	}
-	return skill.SourceLocal
-}
-
 // allTargetDirs returns all configured target dirs (all global targets + project-local).
 func allTargetDirs(cfg config.Config) []string {
 	dirs := make([]string, 0, len(cfg.GlobalTargets)+1)
@@ -156,17 +136,6 @@ func allTargetDirs(cfg config.Config) []string {
 		}
 	}
 	return dirs
-}
-
-// bundleMembershipIndex returns a map from skill name to the bundle names that include it.
-func bundleMembershipIndex(catalog []config.Bundle) map[string][]string {
-	idx := make(map[string][]string)
-	for _, b := range catalog {
-		for _, ref := range b.Skills {
-			idx[ref.Name] = append(idx[ref.Name], b.Name)
-		}
-	}
-	return idx
 }
 
 func joinKeys(m map[string]string) string {

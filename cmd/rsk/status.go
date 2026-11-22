@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -16,7 +15,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
-	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/status"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
@@ -68,22 +67,6 @@ type (
 		format                                    output.OutputFormat
 	}
 
-	// statusSection groups linked skills under a single target directory.
-	statusSection struct {
-		title    string
-		subtitle string
-		dir      string
-		skills   []linkedEntry
-	}
-
-	// linkedEntry describes one symlink found in a target directory.
-	linkedEntry struct {
-		name    string
-		version string
-		source  skill.Source
-		bundles []string
-	}
-
 	// statusSkillEntry is one skill row inside a statusSectionEntry, serialized
 	// as JSON when -o json is set.
 	statusSkillEntry struct {
@@ -98,7 +81,7 @@ type (
 	}
 
 	// statusSectionEntry is one section (a scanned target directory) in the
-	// JSON status output, mirroring statusSection's text rendering.
+	// JSON status output, mirroring status.Section's text rendering.
 	statusSectionEntry struct {
 		Title    string             `json:"title"`
 		Subtitle string             `json:"subtitle,omitempty"`
@@ -138,14 +121,14 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 	if catalogWarn != nil {
 		warnOrCapture(out, capture, fmt.Sprintf("user catalog: %v", catalogWarn))
 	}
-	membership := bundleMembershipIndex(catalog)
+	membership := status.BundleMembership(catalog)
 
 	m, modErr := manifest.ReadMod(rskDir)
 	var projectDirs []string
 	if modErr == nil {
 		projectDirs = projectSkillsDirs(filepath.Dir(rskDir), m)
 	}
-	sections := buildStatusSections(cfg, opts.global, opts.project, opts.forTool, projectDirs)
+	sections := status.BuildSections(cfg, opts.global, opts.project, opts.forTool, projectDirs)
 
 	pinnedSet := make(map[string]bool)
 	if modErr == nil {
@@ -154,7 +137,9 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 		}
 	}
 
-	scanStatusSections(out, capture, sections, cfg, membership, opts.personal)
+	for _, w := range status.Scan(sections, cfg, membership, opts.personal) {
+		warnOrCapture(out, capture, w)
+	}
 	renamed := offlineAliases(cfg)
 
 	if opts.format == output.FormatJSON {
@@ -213,43 +198,23 @@ func validateStatusOpts(opts statusOpts) error {
 	return nil
 }
 
-// scanStatusSections fills in each section's skills in place by scanning its
-// target directory, warning (rather than failing) on a directory that can't
-// be scanned.
-func scanStatusSections(
-	out io.Writer, capture *term.Capture,
-	sections []statusSection, cfg config.Config, membership map[string][]string, includePersonal bool,
-) {
-	for i := range sections {
-		entries, err := scanLinked(
-			sections[i].dir,
-			cfg.RepoPath, cfg.OfficialCache, cfg.RegistryCache(),
-			membership, includePersonal,
-		)
-		if err != nil {
-			warnOrCapture(out, capture, fmt.Sprintf("scan %s: %v", sections[i].dir, err))
-		}
-		sections[i].skills = entries
-	}
-}
-
 // printStatusText renders every non-empty section as a table, or a "no
 // skills installed" notice when all sections are empty.
 func printStatusText(
 	out io.Writer, capture *term.Capture, cmd *cobra.Command,
-	format output.OutputFormat, sections []statusSection, pinnedSet map[string]bool, renamed map[string]string,
+	format output.OutputFormat, sections []status.Section, pinnedSet map[string]bool, renamed map[string]string,
 ) error {
 	hasAny := false
 	for _, sec := range sections {
-		if len(sec.skills) == 0 {
+		if len(sec.Skills) == 0 {
 			continue
 		}
 		hasAny = true
 		if capture == nil {
 			fmt.Fprintln(out)
-			ui.SectionHeader(out, sec.title, sec.subtitle)
+			ui.SectionHeader(out, sec.Title, sec.Subtitle)
 		}
-		if err := printStatusSectionRows(cmd, format, sec.title, sec.skills, pinnedSet, renamed); err != nil {
+		if err := printStatusSectionRows(cmd, format, sec.Title, sec.Skills, pinnedSet, renamed); err != nil {
 			return err
 		}
 	}
@@ -275,7 +240,7 @@ func printStatusText(
 // when a captured status run has more than one.
 func printStatusSectionRows(
 	cmd *cobra.Command, format output.OutputFormat, title string,
-	skills []linkedEntry, pinnedSet map[string]bool, renamed map[string]string,
+	skills []status.Linked, pinnedSet map[string]bool, renamed map[string]string,
 ) error {
 	header := []string{headerSource, headerName, headerVersion, "", ""}
 	rows := term.Rows(skills, statusRowTable(pinnedSet, renamed))
@@ -286,10 +251,10 @@ func printStatusSectionRows(
 // linkedSkillNames extracts each row's skill name, parallel to statusRowTable's
 // rows, so a captured table can identify the row a RowAction fires on
 // independently of how it's displayed.
-func linkedSkillNames(skills []linkedEntry) []string {
+func linkedSkillNames(skills []status.Linked) []string {
 	names := make([]string, len(skills))
 	for i, e := range skills {
-		names[i] = e.name
+		names[i] = e.Name
 	}
 	return names
 }
@@ -308,13 +273,13 @@ func statusRowActionScope(table term.Data) map[string]string {
 
 // statusRowTable projects one linked skill into its status row. The pinned set
 // is captured because it is per-section, not per-entry.
-func statusRowTable(pinnedSet map[string]bool, renamed map[string]string) term.Table[linkedEntry] {
-	return term.Table[linkedEntry]{
-		Row: func(e linkedEntry) []any {
+func statusRowTable(pinnedSet map[string]bool, renamed map[string]string) term.Table[status.Linked] {
+	return term.Table[status.Linked]{
+		Row: func(e status.Linked) []any {
 			return []any{
-				ui.SourceLabel(e.source),
-				ui.SkillName(e.name),
-				ui.SkillVersion(e.version),
+				ui.SourceLabel(e.Source),
+				ui.SkillName(e.Name),
+				ui.SkillVersion(e.Version),
 				ui.SuccessMark,
 				statusRowTags(e, pinnedSet, renamed),
 			}
@@ -324,17 +289,17 @@ func statusRowTable(pinnedSet map[string]bool, renamed map[string]string) term.T
 
 // statusRowTags builds the trailing "  [pinned]  bundle-tag ..." suffix for
 // one status row.
-func statusRowTags(e linkedEntry, pinnedSet map[string]bool, renamed map[string]string) string {
+func statusRowTags(e status.Linked, pinnedSet map[string]bool, renamed map[string]string) string {
 	tags := ""
-	if next, ok := renamed[e.name]; ok {
+	if next, ok := renamed[e.Name]; ok {
 		tags += "  [renamed \u2192 " + next + "]"
 	}
-	if pinnedSet[e.name] {
+	if pinnedSet[e.Name] {
 		tags += "  [pinned]"
 	}
-	if len(e.bundles) > 0 {
-		bundleTags := make([]string, len(e.bundles))
-		for i, b := range e.bundles {
+	if len(e.Bundles) > 0 {
+		bundleTags := make([]string, len(e.Bundles))
+		for i, b := range e.Bundles {
 			bundleTags[i] = ui.BundleTag(b)
 		}
 		tags += "  " + strings.Join(bundleTags, " ")
@@ -344,118 +309,29 @@ func statusRowTags(e linkedEntry, pinnedSet map[string]bool, renamed map[string]
 
 // statusSectionsToEntries converts the scanned statusSections into their
 // JSON-serializable shape, carrying over the pinned marker (which is tracked
-// separately from statusSection/linkedEntry) onto each skill row.
+// separately from status.Section/status.Linked) onto each skill row.
 func statusSectionsToEntries(
-	sections []statusSection, pinnedSet map[string]bool, renamed map[string]string,
+	sections []status.Section, pinnedSet map[string]bool, renamed map[string]string,
 ) []statusSectionEntry {
 	entries := make([]statusSectionEntry, len(sections))
 	for i, sec := range sections {
-		skills := make([]statusSkillEntry, len(sec.skills))
-		for j, e := range sec.skills {
+		skills := make([]statusSkillEntry, len(sec.Skills))
+		for j, e := range sec.Skills {
 			skills[j] = statusSkillEntry{
-				Name:      e.name,
-				Version:   e.version,
-				Source:    e.source.String(),
-				Pinned:    pinnedSet[e.name],
-				Bundles:   e.bundles,
-				RenamedTo: renamed[e.name],
+				Name:      e.Name,
+				Version:   e.Version,
+				Source:    e.Source.String(),
+				Pinned:    pinnedSet[e.Name],
+				Bundles:   e.Bundles,
+				RenamedTo: renamed[e.Name],
 			}
 		}
 		entries[i] = statusSectionEntry{
-			Title:    sec.title,
-			Subtitle: sec.subtitle,
-			Dir:      sec.dir,
+			Title:    sec.Title,
+			Subtitle: sec.Subtitle,
+			Dir:      sec.Dir,
 			Skills:   skills,
 		}
 	}
 	return entries
-}
-
-func buildStatusSections(
-	cfg config.Config,
-	globalOnly, projectOnly bool,
-	forTool tool.ID,
-	projectDirs []string,
-) []statusSection {
-	var sections []statusSection
-
-	if !projectOnly {
-		if forTool != "" {
-			if dir, ok := cfg.GlobalTargets[string(forTool)]; ok {
-				sections = append(sections, statusSection{
-					title:    "Global — " + forTool.String(),
-					subtitle: dir,
-					dir:      dir,
-				})
-			}
-		} else {
-			for tool, dir := range cfg.GlobalTargets {
-				sections = append(sections, statusSection{
-					title:    "Global — " + tool,
-					subtitle: dir,
-					dir:      dir,
-				})
-			}
-		}
-	}
-
-	if !globalOnly {
-		for _, dir := range projectDirs {
-			sections = append(sections, statusSection{
-				title:    "Project",
-				subtitle: dir,
-				dir:      dir,
-			})
-		}
-	}
-
-	return sections
-}
-
-func scanLinked(
-	targetDir, repoPath, officialCachePath, registryCachePath string,
-	membership map[string][]string,
-	includePersonal bool,
-) ([]linkedEntry, error) {
-	entries, err := os.ReadDir(targetDir)
-	if os.IsNotExist(err) {
-		return nil, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	var result []linkedEntry
-	for _, e := range entries {
-		linkPath := filepath.Join(targetDir, e.Name())
-		fi, statErr := os.Lstat(linkPath)
-		if statErr != nil || !skill.IsLink(fi) {
-			continue
-		}
-		symlinkTarget, readErr := os.Readlink(linkPath)
-		if readErr != nil {
-			continue
-		}
-		if !includePersonal && skill.IsPersonalPath(symlinkTarget) {
-			continue
-		}
-		skillVersion, readVersionErr := skill.ReadVersion(symlinkTarget)
-		if readVersionErr != nil {
-			skillVersion = ""
-		}
-		src := detectSkillSource(symlinkTarget, repoPath, officialCachePath, registryCachePath)
-		if id, _, _, isGit := parseGitLink(symlinkTarget, filepath.Dir(officialCachePath)); isGit {
-			src = skill.DeclaredSource(id)
-			if id == skill.OfficialID {
-				src = skill.SourceOfficial
-			}
-		}
-		result = append(result, linkedEntry{
-			name:    e.Name(),
-			version: skillVersion,
-			source:  src,
-			bundles: membership[e.Name()],
-		})
-	}
-	return result, nil
 }

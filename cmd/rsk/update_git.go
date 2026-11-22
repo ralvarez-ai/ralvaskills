@@ -21,10 +21,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
-const (
-	shortCommit  = 7
-	gitLinkParts = 4
-)
+const shortCommit = 7
 
 type (
 	// gitInstall is an installed git skill and what is known of its content. A
@@ -67,21 +64,6 @@ func short(commit string) string {
 	return commit
 }
 
-// parseGitLink reads the identity, name and commit out of the target of a link
-// into the git cache: <root>/sources/<owner>/<repo>/<name>/<commit>.
-func parseGitLink(dest, cacheRoot string) (id, name, commit string, ok bool) {
-	prefix := filepath.Join(cacheRoot, "sources") + string(filepath.Separator)
-	rest, found := strings.CutPrefix(filepath.Clean(dest), prefix)
-	if !found {
-		return "", "", "", false
-	}
-	parts := strings.Split(rest, string(filepath.Separator))
-	if len(parts) != gitLinkParts {
-		return "", "", "", false
-	}
-	return "@" + parts[0] + "/" + parts[1], parts[2], parts[3], true
-}
-
 // globalGitInstalls finds the git skills linked into targets, by reading where
 // each link points.
 func globalGitInstalls(targets []string, cacheRoot, officialCache string, only map[string]bool) []gitInstall {
@@ -97,7 +79,7 @@ func globalGitInstalls(targets []string, cacheRoot, officialCache string, only m
 			if linkErr != nil {
 				continue
 			}
-			id, name, commit, ok := parseGitLink(dest, cacheRoot)
+			id, name, commit, ok := skill.ParseGitLink(dest, cacheRoot)
 			if !ok && isLegacyOfficialLink(dest, officialCache) {
 				// Linked into the working clone the official source used before the
 				// git transport. Its commit is unknown, so it will be re-pointed.

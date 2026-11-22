@@ -75,26 +75,6 @@ func currentGitSkill(name, tree string) skill.Skill {
 	}
 }
 
-func TestParseGitLink(t *testing.T) {
-	t.Parallel()
-	root := t.TempDir()
-	dest := filepath.Join(root, "sources", "acme", "skills", "alpha", oldCommit)
-	id, name, commit, ok := parseGitLink(dest, root)
-	if !ok || id != "@acme/skills" || name != "alpha" || commit != oldCommit {
-		t.Errorf("parseGitLink = %q %q %q %v", id, name, commit, ok)
-	}
-	for _, bad := range []string{
-		filepath.Join(root, "registry", "alpha", "1.0.0"),
-		filepath.Join(root, "sources", "acme", "skills", "alpha"),
-		filepath.Join(root, "sources", "acme", "skills", "alpha", oldCommit, "extra"),
-		"/elsewhere/alpha",
-	} {
-		if _, _, _, ok = parseGitLink(bad, root); ok {
-			t.Errorf("parseGitLink(%s) accepted a path that is not a git extraction", bad)
-		}
-	}
-}
-
 func TestPlanGitUpdatesComparesTreesNotCommits(t *testing.T) {
 	t.Parallel()
 	src := &fakeGitSource{id: "@acme/skills", skills: map[string]skill.Skill{

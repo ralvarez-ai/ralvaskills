@@ -1,7 +1,6 @@
 package main
 
 import (
-	"path/filepath"
 	"testing"
 
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
@@ -26,50 +25,6 @@ func TestDedupSkills(t *testing.T) {
 			t.Errorf("duplicate skill %q in dedup output", s.Name)
 		}
 		names[s.Name] = true
-	}
-}
-
-func TestDetectSkillSource(t *testing.T) {
-	t.Parallel()
-	repo := filepath.FromSlash("/home/user/ralvaskills")
-	official := filepath.FromSlash("/home/user/.config/rsk/cache/anthropic")
-	registry := filepath.FromSlash("/home/user/.config/rsk/cache/registry")
-
-	tests := []struct {
-		name      string
-		skillPath string
-		want      skill.Source
-	}{
-		{
-			name:      "local repo skill",
-			skillPath: filepath.Join(repo, "skills", "go-architect"),
-			want:      skill.SourceLocal,
-		},
-		{
-			name:      "official cache skill",
-			skillPath: filepath.Join(official, "skills", "claude-code"),
-			want:      skill.SourceOfficial,
-		},
-		{
-			name:      "registry cache skill",
-			skillPath: filepath.Join(registry, "go-architect", "1.0.0"),
-			want:      skill.SourceRegistry,
-		},
-		{
-			name:      "unknown path defaults to local",
-			skillPath: filepath.FromSlash("/some/random/path/skill"),
-			want:      skill.SourceLocal,
-		},
-	}
-
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			got := detectSkillSource(tc.skillPath, repo, official, registry)
-			if got != tc.want {
-				t.Errorf("detectSkillSource(%q) = %v, want %v", tc.skillPath, got, tc.want)
-			}
-		})
 	}
 }
 

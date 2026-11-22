@@ -16,6 +16,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/status"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
@@ -193,16 +194,16 @@ func runListGlobal(cmd *cobra.Command, opts listOpts) error {
 
 	var rows []listedSkill
 	for _, target := range targets {
-		entries, scanErr := scanLinked(target, cfg.RepoPath, cfg.OfficialCache, cfg.RegistryCache(), nil, false)
+		entries, scanErr := status.ScanLinked(target, cfg.RepoPath, cfg.OfficialCache, cfg.RegistryCache(), nil, false)
 		if scanErr != nil && !errors.Is(scanErr, os.ErrNotExist) {
 			ui.Warn(out, fmt.Sprintf("scan %s: %v", target, scanErr))
 			continue
 		}
 		for _, e := range entries {
 			rows = append(rows, listedSkill{
-				Name:      e.name,
-				Version:   e.version,
-				Source:    e.source.String(),
+				Name:      e.Name,
+				Version:   e.Version,
+				Source:    e.Source.String(),
 				Tool:      dirToTool[target],
 				Installed: true,
 			})
