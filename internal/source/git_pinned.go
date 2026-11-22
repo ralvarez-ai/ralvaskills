@@ -56,7 +56,7 @@ func (g *Git) pin(ctx context.Context, name, ref, wantVersion string) (skill.Ski
 	if err != nil {
 		return skill.Skill{}, err
 	}
-	skills, _, err := g.buildSkills(ctx, commit, entries)
+	skills, _, _, err := g.buildSkills(ctx, commit, entries, true)
 	if err != nil {
 		return skill.Skill{}, err
 	}

@@ -100,6 +100,7 @@ type (
 		Version      string   `json:"version,omitempty"`
 		Description  string   `json:"description,omitempty"`
 		AllowedTools []string `json:"allowed_tools,omitempty"`
+		Issues       []string `json:"issues,omitempty"`
 	}
 
 	// skippedPath is a directory that looked like a skill but was left out, and
@@ -225,6 +226,45 @@ func (g *Git) Find(ctx context.Context, name string) (skill.Skill, error) {
 	return skill.Skill{}, fmt.Errorf("%w: source %s has no skill %q", ErrNotFound, g.spec.ID, name)
 }
 
+// Scan is a dry-run discovery of the source at its current commit: what would
+// resolve, what is left out and why, and which names clash. It fetches (the gate
+// comes first, and offline it fails) but writes no index and extracts nothing.
+func (g *Git) Scan(ctx context.Context) (ScanResult, error) {
+	if err := g.gate(g.spec.ID, g.spec.URL); err != nil {
+		return ScanResult{}, err
+	}
+	if g.offline {
+		return ScanResult{}, fmt.Errorf("%w: scanning %s needs the network", ErrNeverFetched, g.spec.ID)
+	}
+	rev := g.spec.Rev
+	if rev == "" {
+		rev = "HEAD"
+	}
+	commit, err := g.repo.Fetch(ctx, g.remote, rev)
+	if err != nil {
+		return ScanResult{}, fmt.Errorf("cannot consult source %s: %w", g.spec.ID, err)
+	}
+	entries, err := g.repo.ListTree(ctx, commit, g.spec.Roots)
+	if err != nil {
+		return ScanResult{}, err
+	}
+	skills, skipped, clashes, err := g.buildSkills(ctx, commit, entries, false)
+	if err != nil {
+		return ScanResult{}, err
+	}
+	res := ScanResult{Skills: make([]ScannedSkill, len(skills)), Clashes: clashes}
+	for i := range skills {
+		res.Skills[i] = ScannedSkill{
+			Name: skills[i].Name, Path: skills[i].Path, Version: skills[i].Version,
+			Description: skills[i].Description, Issues: skills[i].Issues,
+		}
+	}
+	for _, s := range skipped {
+		res.Skipped = append(res.Skipped, Skipped(s))
+	}
+	return res, nil
+}
+
 func (g *Git) indexPath() string {
 	return filepath.Join(g.root, "index", g.owner, g.name+".json")
 }
@@ -308,7 +348,7 @@ func (g *Git) refresh(ctx context.Context) (gitIndex, error) {
 	if err != nil {
 		return gitIndex{}, err
 	}
-	skills, skipped, err := g.buildSkills(ctx, commit, entries)
+	skills, skipped, _, err := g.buildSkills(ctx, commit, entries, true)
 	if err != nil {
 		return gitIndex{}, err
 	}
@@ -331,7 +371,8 @@ func (g *Git) buildSkills(
 	ctx context.Context,
 	commit string,
 	entries []git.TreeEntry,
-) ([]gitSkill, []skippedPath, error) {
+	strict bool,
+) ([]gitSkill, []skippedPath, []Clash, error) {
 	found := g.findSkillDirs(entries)
 	skipped := found.skipped
 	unsafe := unsafeEntries(entries, found.roots)
@@ -355,16 +396,16 @@ func (g *Git) buildSkills(
 
 	blobs, err := g.repo.ReadBlobs(ctx, commit, files, maxSkillFile)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
-	skills, more, err := readSkills(candidates, files, blobs, found.trees)
+	skills, more, clashes, err := readSkills(candidates, files, blobs, found.trees, strict)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	skipped = append(skipped, more...)
 	sort.Slice(skills, func(i, j int) bool { return skills[i].Name < skills[j].Name })
 	sort.Slice(skipped, func(i, j int) bool { return skipped[i].Path < skipped[j].Path })
-	return skills, skipped, nil
+	return skills, skipped, clashes, nil
 }
 
 // skillDirs is what a tree listing says about where skills are.
@@ -412,14 +453,15 @@ func (g *Git) findSkillDirs(entries []git.TreeEntry) skillDirs {
 }
 
 // readSkills turns the SKILL.md files of the candidate directories into index
-// entries, leaving out a missing or oversized file and rejecting a name used
-// twice.
+// entries, leaving out a missing or oversized file. A name used twice is an
+// error when strict; otherwise it is returned as a clash and left out of the
+// skills, since none of its directories would resolve.
 func readSkills(
-	candidates, files []string, blobs map[string]git.Blob, trees map[string]string,
-) ([]gitSkill, []skippedPath, error) {
+	candidates, files []string, blobs map[string]git.Blob, trees map[string]string, strict bool,
+) ([]gitSkill, []skippedPath, []Clash, error) {
 	var skills []gitSkill
 	var skipped []skippedPath
-	byName := map[string]string{}
+	paths := map[string][]string{}
 	for i, dir := range candidates {
 		b := blobs[files[i]]
 		switch {
@@ -431,17 +473,22 @@ func readSkills(
 			continue
 		}
 		name := path.Base(dir)
-		if first, dup := byName[name]; dup {
-			return nil, nil, fmt.Errorf("%w: %q is in %s and %s", ErrDuplicate, name, first, dir)
+		paths[name] = append(paths[name], dir)
+		if len(paths[name]) > 1 {
+			continue
 		}
-		byName[name] = dir
 		fm := skill.ParseFrontmatter(bytes.NewReader(b.Data))
 		skills = append(skills, gitSkill{
 			Name: name, Path: dir, Tree: trees[dir], Version: fm.Version, Description: fm.Description,
-			AllowedTools: skill.NormalizeAllowedTools(fm.AllowedTools),
+			AllowedTools: skill.NormalizeAllowedTools(fm.AllowedTools), Issues: issuesOf(name, &fm),
 		})
 	}
-	return skills, skipped, nil
+	clashes := clashesOf(paths)
+	if strict {
+		return skills, skipped, nil, firstClash(clashes)
+	}
+	skills = slices.DeleteFunc(skills, func(s gitSkill) bool { return len(paths[s.Name]) > 1 })
+	return skills, skipped, clashes, nil
 }
 
 // unsafeEntries maps each kept skill directory that contains a symlink or a

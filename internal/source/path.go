@@ -29,8 +29,8 @@ type (
 
 	// Skipped is a directory that looked like a skill but was left out, and why.
 	Skipped struct {
-		Path   string
-		Reason string
+		Path   string `json:"path"`
+		Reason string `json:"reason"`
 	}
 )
 
@@ -62,14 +62,43 @@ func (p *Path) Spec() Spec {
 
 // All lists every skill in the directory.
 func (p *Path) All(_ context.Context) ([]skill.Skill, error) {
-	skills, _, err := p.scan()
-	return skills, err
+	st, err := p.scan()
+	if err != nil {
+		return nil, err
+	}
+	if err = firstClash(clashesOf(st.paths)); err != nil {
+		return nil, fmt.Errorf("source %s: %w", p.spec.ID, err)
+	}
+	return st.skills, nil
+}
+
+// Scan is a dry-run discovery: what resolves, what is left out, and which names
+// clash, which All would refuse.
+func (p *Path) Scan(_ context.Context) (ScanResult, error) {
+	st, err := p.scan()
+	if err != nil {
+		return ScanResult{}, err
+	}
+	clashes := clashesOf(st.paths)
+	res := ScanResult{Skills: []ScannedSkill{}, Skipped: st.skipped, Clashes: clashes}
+	for i := range st.skills {
+		s := &st.skills[i]
+		if len(st.paths[s.Name]) > 1 {
+			continue
+		}
+		fm := frontmatterAt(s.Path)
+		res.Skills = append(res.Skills, ScannedSkill{
+			Name: s.Name, Path: st.paths[s.Name][0], Version: s.Version, Description: s.Description,
+			Issues: issuesOf(s.Name, &fm),
+		})
+	}
+	return res, nil
 }
 
 // Skipped lists the directories that were left out, with the reason.
 func (p *Path) Skipped(_ context.Context) ([]Skipped, error) {
-	_, skipped, err := p.scan()
-	return skipped, err
+	st, err := p.scan()
+	return st.skipped, err
 }
 
 // Find returns the skill with the given name.
@@ -89,30 +118,30 @@ func (p *Path) Find(ctx context.Context, name string) (skill.Skill, error) {
 type scanState struct {
 	skills  []skill.Skill
 	skipped []Skipped
-	byName  map[string]string
+	paths   map[string][]string // name to the directories that provide it
 }
 
-func (p *Path) scan() ([]skill.Skill, []Skipped, error) {
+func (p *Path) scan() (scanState, error) {
 	roots := p.spec.Roots
 	if len(roots) == 0 {
 		roots = []string{"."}
 	}
-	st := scanState{byName: map[string]string{}}
+	st := scanState{paths: map[string][]string{}}
 	for _, root := range roots {
 		if err := p.confine(root); err != nil {
-			return nil, nil, err
+			return scanState{}, err
 		}
 		walkRoot := filepath.Join(p.spec.URL, filepath.FromSlash(root))
 		err := filepath.WalkDir(walkRoot, func(dir string, d fs.DirEntry, err error) error {
 			return p.visit(dir, d, err, &st)
 		})
 		if err != nil {
-			return nil, nil, fmt.Errorf("source %s: %w", p.spec.ID, err)
+			return scanState{}, fmt.Errorf("source %s: %w", p.spec.ID, err)
 		}
 	}
 	sort.Slice(st.skills, func(i, j int) bool { return st.skills[i].Name < st.skills[j].Name })
 	sort.Slice(st.skipped, func(i, j int) bool { return st.skipped[i].Path < st.skipped[j].Path })
-	return st.skills, st.skipped, nil
+	return st, nil
 }
 
 // visit handles one directory of the walk: it prunes an excluded one, records a
@@ -138,11 +167,10 @@ func (p *Path) visit(dir string, d fs.DirEntry, err error, st *scanState) error 
 		return nil
 	case skip != nil:
 	default:
-		if first, dup := st.byName[found.Name]; dup {
-			return fmt.Errorf("%w: %q is in %s and %s", ErrDuplicate, found.Name, first, rel)
+		st.paths[found.Name] = append(st.paths[found.Name], rel)
+		if len(st.paths[found.Name]) == 1 {
+			st.skills = append(st.skills, found)
 		}
-		st.byName[found.Name] = rel
-		st.skills = append(st.skills, found)
 	}
 	return fs.SkipDir
 }
