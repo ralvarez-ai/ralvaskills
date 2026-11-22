@@ -63,6 +63,7 @@ Order can change if a step uncovers coupling, but `update` stays last because it
 
 - ADR 0004 and the depguard rule: `9485d8f`.
 - Phase 1, `catalog`: done (`8a5784f`). `catalog.List` and `catalog.BundleRows`; warnings are returned, `cmd/rsk` prints them. Output of `catalog -o json`, `catalog bundles -o json`, `catalog bundle go-grpc -o json` and `catalog --source local` is byte-identical to the released 3.10.0. `task lint`, `go test ./...` and `lint:doccheck` pass; `deadcode` reports only `git.Clone`, which was already unreachable.
+- Phase 2, `claude`: done. `ClaudeTool.AllowRule|DenyRule|RemoveRule`, `ClaudeToolStates` and the tool list live in `internal/tool/claude_rules.go`; `cmd/rsk/claude.go` keeps cobra, the `--for` check, the prompt and the table. The ten-step `tools list|allow|deny|remove` run (JSON, text, repeats, settings.json) is byte-identical to the released 3.10.0 on project copies.
 
 ## Open questions (answered above, kept for the record)
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"slices"
 
 	"github.com/spf13/cobra"
 
@@ -14,50 +13,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
-
-// availableClaudeTools lists all Claude Code tools that can be managed.
-var availableClaudeTools = []string{
-	"Agent",
-	"AskUserQuestion",
-	"Bash",
-	"CronCreate",
-	"CronDelete",
-	"CronList",
-	"Edit",
-	"EnterPlanMode",
-	"EnterWorktree",
-	"ExitPlanMode",
-	"ExitWorktree",
-	"Glob",
-	"Grep",
-	"ListMcpResourcesTool",
-	"LSP",
-	"Monitor",
-	"NotebookEdit",
-	"PowerShell",
-	"PushNotification",
-	"Read",
-	"ReadMcpResourceTool",
-	"RemoteTrigger",
-	"ScheduleWakeup",
-	"SendMessage",
-	"ShareOnboardingGuide",
-	"Skill",
-	"TaskCreate",
-	"TaskGet",
-	"TaskList",
-	"TaskOutput",
-	"TaskStop",
-	"TaskUpdate",
-	"TeamCreate",
-	"TeamDelete",
-	"TodoWrite",
-	"ToolSearch",
-	"WaitForMcpServers",
-	"WebFetch",
-	"WebSearch",
-	"Write",
-}
 
 // toolsForHint is the --for flag's help text, shared by every tools subcommand.
 const toolsForHint = "Tool to configure (only claude-code is supported for now)"
@@ -204,195 +159,101 @@ func runClaudeToolsList(cmd *cobra.Command, args []string) error {
 		return newFormatter(cmd, format).JSON(claudeToolsPermissions{Allow: allow, Deny: deny})
 	}
 
-	rows := make([]claudeToolRow, 0, len(availableClaudeTools))
-	for _, t := range availableClaudeTools {
-		switch {
-		case slices.Contains(allow, t):
-			rows = append(rows, claudeToolRow{name: t, status: claudeToolAllowed})
-		case slices.Contains(deny, t):
-			rows = append(rows, claudeToolRow{name: t, status: claudeToolDenied})
-		default:
-			rows = append(rows, claudeToolRow{name: t, status: claudeToolUnconfigured})
-		}
-	}
+	rows := tool.ClaudeToolStates(allow, deny)
 
 	header := []string{headerName, "Status"}
 	tableRows := term.Rows(rows, claudeToolsTable)
 
-	return renderList(cmd, format, "Claude Code tools available:", rows, header, tableRows, claudeToolNames())
+	return renderList(cmd, format, "Claude Code tools available:", rows, header, tableRows, tool.AvailableClaudeTools())
 }
 
-// claudeToolStatus is a Claude tool's permission state relative to the
-// project's settings.
-type claudeToolStatus int
-
-const (
-	claudeToolAllowed claudeToolStatus = iota
-	claudeToolDenied
-	claudeToolUnconfigured
-)
-
-// claudeToolRow is one row of the tools-available table.
-type claudeToolRow struct {
-	name   string
-	status claudeToolStatus
-}
-
-// claudeToolsTable projects one claudeToolRow, marking each tool's
+// claudeToolsTable projects one tool.State, marking each tool's
 // permission state the same way install/uninstall mark their own rows.
-var claudeToolsTable = term.Table[claudeToolRow]{
-	Row: func(r claudeToolRow) []any {
-		switch r.status {
-		case claudeToolAllowed:
-			return []any{r.name, ui.SuccessMark + " explicitly allowed"}
-		case claudeToolDenied:
-			return []any{r.name, ui.ErrorMark + " explicitly denied"}
+var claudeToolsTable = term.Table[tool.State]{
+	Row: func(r tool.State) []any {
+		switch r.Permission {
+		case tool.Allowed:
+			return []any{r.Name, ui.SuccessMark + " explicitly allowed"}
+		case tool.Denied:
+			return []any{r.Name, ui.ErrorMark + " explicitly denied"}
 		default:
-			return []any{r.name, ui.MutedStyle.Render("• not configured (uses global settings)")}
+			return []any{r.Name, ui.MutedStyle.Render("• not configured (uses global settings)")}
 		}
 	},
 }
 
-// claudeToolNames lists the tools table's row IDs — the bare tool name
-// allow/deny/remove accept as a rule — parallel to claudeToolsTable's rows,
-// which are built by walking availableClaudeTools in order.
-func claudeToolNames() []string {
-	names := make([]string, len(availableClaudeTools))
-	copy(names, availableClaudeTools)
-	return names
+// claudeRuleTarget resolves what the allow, deny and remove subcommands need:
+// the validated --for target, the rule (from the argument or a prompt) and the
+// project directory with the Claude tool that owns its settings.
+func claudeRuleTarget(
+	cmd *cobra.Command, args []string, prompt string,
+) (claudeTool *tool.ClaudeTool, projectDir, rule string, err error) {
+	if err = requireClaudeTarget(cmd); err != nil {
+		return nil, "", "", err
+	}
+	rule, err = nameFromArgsOrPrompt(cmd, args, fieldArgRule, prompt)
+	if err != nil {
+		return nil, "", "", err
+	}
+	projectDir, err = claudeProjectDir()
+	if err != nil {
+		return nil, "", "", err
+	}
+	claudeTool, err = claudeToolGet()
+	if err != nil {
+		return nil, "", "", err
+	}
+	return claudeTool, projectDir, rule, nil
+}
+
+// claudeProjectDir is the project root: the parent of the .rsk folder.
+func claudeProjectDir() (string, error) {
+	cwd, err := manifest.ProjectFolderPath()
+	if err != nil {
+		return "", err
+	}
+	return cwd[:len(cwd)-len("/.rsk")], nil
 }
 
 func runClaudeToolsAllow(cmd *cobra.Command, args []string) error {
-	if err := requireClaudeTarget(cmd); err != nil {
-		return err
-	}
-	out := cmd.OutOrStdout()
-	rule, err := nameFromArgsOrPrompt(cmd, args, fieldArgRule, "Tool rule (e.g. Bash(npm run *))")
+	claudeTool, projectDir, rule, err := claudeRuleTarget(cmd, args, "Tool rule (e.g. Bash(npm run *))")
 	if err != nil {
 		return err
 	}
-
-	cwd, err := manifest.ProjectFolderPath()
-	if err != nil {
-		return err
-	}
-	projectDir := cwd[:len(cwd)-len("/.rsk")]
-
-	claudeTool, err := claudeToolGet()
-	if err != nil {
-		return err
-	}
-	allow, deny, err := claudeTool.ReadPermissions(projectDir)
-	if err != nil {
-		return err
-	}
-
-	if slices.Contains(allow, rule) {
-		ui.Info(out, rule+" is already allowed")
-		return nil
-	}
-
-	// Remove from deny if present
-	deny = slices.DeleteFunc(deny, func(v string) bool { return v == rule })
-
-	allow = append(allow, rule)
-
-	if err = claudeTool.WritePermissions(projectDir, allow, deny); err != nil {
-		return err
-	}
-
-	fmt.Fprintln(out)
-	ui.Success(out, "allowed "+rule)
-	fmt.Fprintln(out)
-	return nil
+	return reportClaudeRule(cmd, rule, " is already allowed", "allowed ")(claudeTool.AllowRule(projectDir, rule))
 }
 
 func runClaudeToolsDeny(cmd *cobra.Command, args []string) error {
-	if err := requireClaudeTarget(cmd); err != nil {
-		return err
-	}
-	out := cmd.OutOrStdout()
-	rule, err := nameFromArgsOrPrompt(cmd, args, fieldArgRule, "Tool rule (e.g. Write(**) or Bash)")
+	claudeTool, projectDir, rule, err := claudeRuleTarget(cmd, args, "Tool rule (e.g. Write(**) or Bash)")
 	if err != nil {
 		return err
 	}
-
-	cwd, err := manifest.ProjectFolderPath()
-	if err != nil {
-		return err
-	}
-	projectDir := cwd[:len(cwd)-len("/.rsk")]
-
-	claudeTool, err := claudeToolGet()
-	if err != nil {
-		return err
-	}
-	allow, deny, err := claudeTool.ReadPermissions(projectDir)
-	if err != nil {
-		return err
-	}
-
-	if slices.Contains(deny, rule) {
-		ui.Info(out, rule+" is already denied")
-		return nil
-	}
-
-	// Remove from allow if present
-	allow = slices.DeleteFunc(allow, func(v string) bool { return v == rule })
-
-	deny = append(deny, rule)
-
-	if err = claudeTool.WritePermissions(projectDir, allow, deny); err != nil {
-		return err
-	}
-
-	fmt.Fprintln(out)
-	ui.Success(out, "denied "+rule)
-	fmt.Fprintln(out)
-	return nil
+	return reportClaudeRule(cmd, rule, " is already denied", "denied ")(claudeTool.DenyRule(projectDir, rule))
 }
 
 func runClaudeToolsRemove(cmd *cobra.Command, args []string) error {
-	if err := requireClaudeTarget(cmd); err != nil {
+	claudeTool, projectDir, rule, err := claudeRuleTarget(cmd, args, "Tool rule to remove")
+	if err != nil {
 		return err
 	}
+	return reportClaudeRule(cmd, rule, " not found in permissions", "removed ")(claudeTool.RemoveRule(projectDir, rule))
+}
+
+// reportClaudeRule prints the outcome of a rule change: the unchanged message
+// when nothing was written, the success line framed by blank lines otherwise.
+func reportClaudeRule(cmd *cobra.Command, rule, unchanged, done string) func(bool, error) error {
 	out := cmd.OutOrStdout()
-	rule, err := nameFromArgsOrPrompt(cmd, args, fieldArgRule, "Tool rule to remove")
-	if err != nil {
-		return err
-	}
-
-	cwd, err := manifest.ProjectFolderPath()
-	if err != nil {
-		return err
-	}
-	projectDir := cwd[:len(cwd)-len("/.rsk")]
-
-	claudeTool, err := claudeToolGet()
-	if err != nil {
-		return err
-	}
-	allow, deny, err := claudeTool.ReadPermissions(projectDir)
-	if err != nil {
-		return err
-	}
-
-	initialAllow, initialDeny := len(allow), len(deny)
-
-	allow = slices.DeleteFunc(allow, func(v string) bool { return v == rule })
-	deny = slices.DeleteFunc(deny, func(v string) bool { return v == rule })
-
-	if len(allow) == initialAllow && len(deny) == initialDeny {
-		ui.Info(out, rule+" not found in permissions")
+	return func(changed bool, err error) error {
+		if err != nil {
+			return err
+		}
+		if !changed {
+			ui.Info(out, rule+unchanged)
+			return nil
+		}
+		fmt.Fprintln(out)
+		ui.Success(out, done+rule)
+		fmt.Fprintln(out)
 		return nil
 	}
-
-	if err = claudeTool.WritePermissions(projectDir, allow, deny); err != nil {
-		return err
-	}
-
-	fmt.Fprintln(out)
-	ui.Success(out, "removed "+rule)
-	fmt.Fprintln(out)
-	return nil
 }

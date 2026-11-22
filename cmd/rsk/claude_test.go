@@ -13,6 +13,7 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
 // TestRunClaudeToolsListJSONOutput checks that -o json on `rsk claude tools
@@ -119,7 +120,7 @@ func TestRunClaudeToolsListCapture(t *testing.T) {
 	if len(tables) != 1 {
 		t.Fatalf("expected exactly one captured table, got %d", len(tables))
 	}
-	if len(tables[0].Rows) != len(availableClaudeTools) {
-		t.Fatalf("expected %d captured rows, got %d", len(availableClaudeTools), len(tables[0].Rows))
+	if len(tables[0].Rows) != len(tool.AvailableClaudeTools()) {
+		t.Fatalf("expected %d captured rows, got %d", len(tool.AvailableClaudeTools()), len(tables[0].Rows))
 	}
 }
