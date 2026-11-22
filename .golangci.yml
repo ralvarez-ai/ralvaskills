@@ -126,6 +126,7 @@ linters:
     - testifylint
 
     # Style & conventions
+    - depguard
     - recvcheck
     - nosprintfhostport
 
@@ -147,6 +148,19 @@ linters:
     # - tagliatelle
 
   settings:
+    # ADR 0004: domain packages under internal/ never import cobra; cmd/rsk owns the CLI.
+    depguard:
+      rules:
+        no-cobra-in-domain:
+          files:
+            - "**/internal/**"
+            - "!**/internal/cmdx/**"
+            - "!**/internal/ui/**"
+            - "!$test"
+          deny:
+            - pkg: github.com/spf13/cobra
+              desc: "domain packages return plain structs; cmd/rsk owns cobra (docs/adr/0004)"
+
     prealloc:
       range-allocs: true
       for-loops: false
