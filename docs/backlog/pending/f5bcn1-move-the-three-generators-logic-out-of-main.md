@@ -13,3 +13,5 @@ Module path `go.ralva.dev/ralvaskills/v3` is idiomatic (major-version suffix on 
 
 Note: this item was written by hand because `l9c2xm` carried an `l`, which is outside the tool's alphabet and made `rdk`
 refuse the whole backlog; it is `k9c2xm` now and `rdk check` passes.
+
+Update 2026-11-22: `count-tokens` is done (`bgmb76`, `internal/tokensreport`). `generate-registry` (436 lines) and `registry-remove` (296) remain; `generate-registry` feeds the published index, so check its move with `task registry:check` byte-identical.
