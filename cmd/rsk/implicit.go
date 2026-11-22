@@ -43,6 +43,8 @@ const (
 	flagTrust = "trust"
 	flagSave  = "save"
 	flagFrom  = "from"
+
+	flagShared = "shared"
 )
 
 // errImplicitDeclined is returned when the person at the terminal says no.
@@ -283,4 +285,21 @@ func prepareImplicit(cmd *cobra.Command, opts *installOpts, args []string) ([]so
 	out := cmd.OutOrStdout()
 	opts.onApplied = func() error { return saveImplicit(out, implicit) }
 	return implicit, nil
+}
+
+// privateSourceIDs returns the identities of the declared sources marked
+// private. An unreadable sources.json yields none: the install that follows
+// fails on the same file when it resolves.
+func privateSourceIDs() map[string]bool {
+	declared, err := sources.Load(sources.DefaultPath())
+	if err != nil {
+		return nil
+	}
+	ids := map[string]bool{}
+	for i := range declared.Sources {
+		if declared.Sources[i].Private {
+			ids[declared.Sources[i].ID] = true
+		}
+	}
+	return ids
 }

@@ -352,3 +352,53 @@ func TestSyncPinnedAllToolsKeepsAPrivatePinOutOfEveryCommittedFile(t *testing.T)
 		t.Errorf("opencode.json still lists the local digest: %s", oc)
 	}
 }
+
+func TestApplyProjectSendsASkillFromAPrivateSourceToTheLocalLayer(t *testing.T) {
+	t.Parallel()
+	project := t.TempDir()
+	rskDir := filepath.Join(project, ".rsk")
+	if err := manifest.WriteMod(rskDir, manifest.Mod{Tools: []tool.ID{tool.ClaudeID}}); err != nil {
+		t.Fatal(err)
+	}
+	src := filepath.Join(t.TempDir(), "alpha")
+	if err := os.MkdirAll(src, fsperm.Dir); err != nil {
+		t.Fatal(err)
+	}
+	git := &skill.GitRef{
+		URL:    "git@github.com:acme/hidden.git",
+		Commit: strings.Repeat("a", 40),
+		Tree:   strings.Repeat("b", 40),
+		Path:   "skills/alpha",
+	}
+	sk := skill.Skill{
+		Name:    "alpha",
+		Version: "1.0.0",
+		Path:    src,
+		Source:  skill.DeclaredSource("@acme/hidden"),
+		Git:     git,
+	}
+	opts := install.Options{
+		Scope: install.ScopeProject, Targets: []string{filepath.Join(project, ".claude", "skills")}, RskDir: rskDir,
+		PrivateSources: map[string]bool{"@acme/hidden": true},
+	}
+	if _, err := install.Apply([]skill.Skill{sk}, opts); err != nil {
+		t.Fatal(err)
+	}
+	m, _ := manifest.ReadMod(rskDir)
+	lock, _ := manifest.ReadLock(rskDir)
+	if !m.Local["alpha"] || len(lock.Skills) != 1 || !lock.Skills[0].Local {
+		t.Fatalf("mod = %+v, lock = %+v", m, lock)
+	}
+	data, _ := os.ReadFile(filepath.Join(rskDir, "rsk.mod"))
+	if strings.Contains(string(data), "alpha") {
+		t.Errorf("rsk.mod names the private skill:\n%s", data)
+	}
+
+	opts.Shared = true
+	if _, err := install.Apply([]skill.Skill{sk}, opts); err != nil {
+		t.Fatal(err)
+	}
+	if m, _ = manifest.ReadMod(rskDir); m.Local["alpha"] {
+		t.Error("--shared left the skill in the local layer")
+	}
+}

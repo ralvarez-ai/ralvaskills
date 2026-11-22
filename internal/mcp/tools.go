@@ -249,11 +249,27 @@ func readProjectState(projectRoot string) (manifest.Mod, manifest.Lock, *Manifes
 		// A malformed lock must not break profiling; report no installs.
 		lock = manifest.Lock{}
 	}
+	mod, lock = withoutLocal(mod, lock)
 	return mod, lock, &ManifestState{
 		Exists: true,
 		Skills: len(mod.Skills),
 		Pinned: len(mod.Pinned),
 	}
+}
+
+// withoutLocal drops the skills from a private source: the profile reaches an
+// agent's transcript, and the local layer exists to keep those names out of it.
+func withoutLocal(mod manifest.Mod, lock manifest.Lock) (manifest.Mod, manifest.Lock) {
+	skills := make(map[string]string, len(mod.Skills))
+	for name, constraint := range mod.Skills {
+		if !mod.Local[name] {
+			skills[name] = constraint
+		}
+	}
+	mod.Skills = skills
+	mod.Pinned = slices.DeleteFunc(slices.Clone(mod.Pinned), func(name string) bool { return mod.Local[name] })
+	lock.Skills = slices.DeleteFunc(slices.Clone(lock.Skills), func(e manifest.LockEntry) bool { return e.Local })
+	return mod, lock
 }
 
 func installedRefs(lock manifest.Lock, mod manifest.Mod) []InstalledRef {

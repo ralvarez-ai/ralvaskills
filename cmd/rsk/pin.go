@@ -75,6 +75,12 @@ func runPin(cmd *cobra.Command, args []string) error {
 	}
 
 	m.Pinned = append(m.Pinned, name)
+	if cmdx.Bool(cmd, flagShared) {
+		delete(m.Local, name)
+		if err = shareLockEntry(rskDir, name); err != nil {
+			return err
+		}
+	}
 	if err = manifest.WriteMod(rskDir, m); err != nil {
 		return err
 	}
@@ -123,4 +129,19 @@ func runUnpin(cmd *cobra.Command, args []string) error {
 	ui.Success(out, "unpinned "+ui.SkillName(name))
 	fmt.Fprintln(out)
 	return nil
+}
+
+// shareLockEntry moves a skill's lock entry to the committed layer, to match a
+// manifest entry that --shared is moving there.
+func shareLockEntry(rskDir, name string) error {
+	lock, err := manifest.ReadLock(rskDir)
+	if err != nil {
+		return err
+	}
+	for i := range lock.Skills {
+		if lock.Skills[i].Name == name {
+			lock.Skills[i].Local = false
+		}
+	}
+	return manifest.WriteLock(rskDir, lock)
 }

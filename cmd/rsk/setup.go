@@ -83,6 +83,11 @@ func setupCommands() {
 		nil,
 		"Approve an unregistered @owner/repo source for this run only (for CI; --yes never does)",
 	)
+	f.Bool(
+		flagShared,
+		false,
+		"Write a private source's skills to the committed rsk files (for a project that is itself private)",
+	)
 	f.String(
 		flagFrom,
 		"",
@@ -123,6 +128,7 @@ func setupCommands() {
 	// pin and unpin commands
 	rootCmd.AddCommand(pinCmd)
 	pinCmd.Flags().Bool(cmdx.FlagRemove, false, "Unpin the skill instead of pinning it")
+	pinCmd.Flags().Bool(flagShared, false, "Move a private source's skill into the committed rsk files, on purpose")
 	pinCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Accept the digest of a remote skill after showing it")
 
 	// status command

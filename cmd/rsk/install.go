@@ -79,6 +79,7 @@ Examples:
 			version:  cmdx.String(cmd, cmdx.FlagVersion),
 			trust:    trustIDs,
 			save:     cmdx.Bool(cmd, flagSave),
+			shared:   cmdx.Bool(cmd, flagShared),
 			from:     cmdx.String(cmd, flagFrom),
 		}, args)
 	},
@@ -86,7 +87,7 @@ Examples:
 
 type installOpts struct {
 	global, dryRun, personal, pin, yes bool
-	save                               bool
+	save, shared                       bool
 	forTool                            tool.ID
 	version                            string
 	from                               string
@@ -311,6 +312,9 @@ func runInstallProject(
 		RskDir:      rskDir,
 		Pin:         opts.pin,
 		Constraints: constraints,
+
+		PrivateSources: privateSourceIDs(),
+		Shared:         opts.shared,
 	})
 	if err != nil {
 		return err

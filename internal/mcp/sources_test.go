@@ -15,12 +15,15 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/git"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/mcp"
 	"go.ralva.dev/ralvaskills/v3/internal/resolve"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/source/sourcetest"
 	"go.ralva.dev/ralvaskills/v3/internal/sourceops"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
+	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/trust"
 )
 
@@ -462,5 +465,46 @@ func TestThePrivateSourceIsInvisibleOverMCP(t *testing.T) {
 	}
 	if !w.exists("sources.json") {
 		t.Error("sources.json is gone")
+	}
+}
+
+// project_profile reports what a project has installed, and a project can hold
+// private pins in its local layer: the profile must not name them.
+func TestProjectProfileLeavesThePrivatePinsOut(t *testing.T) {
+	t.Parallel()
+	w := newSourcesWorld(t, false)
+	project := t.TempDir()
+	rsk := filepath.Join(project, ".rsk")
+	mod := manifest.Mod{
+		Tools: []tool.ID{tool.ClaudeID}, Skills: map[string]string{"public-one": "*", "private-one": "*"},
+		Pinned: []string{"public-one", "private-one"}, Local: map[string]bool{"private-one": true},
+	}
+	mod.SetOrigin("private-one", skill.DeclaredSource("@acme/hidden"))
+	lock := manifest.Lock{Skills: []manifest.LockEntry{
+		{Name: "public-one", Version: "1.0.0", Source: skill.SourceRegistry},
+		{
+			Name: "private-one", Version: "1.0.0", Source: skill.DeclaredSource("@acme/hidden"), Local: true,
+			Git: &skill.GitRef{
+				URL: "git@github.com:acme/hidden.git", Commit: sourcesCommit, Tree: strings.Repeat("e", 40),
+				Path: "skills/private-one",
+			},
+		},
+	}}
+	if err := manifest.WriteMod(rsk, mod); err != nil || manifest.WriteLock(rsk, lock) != nil {
+		t.Fatal(err)
+	}
+
+	res := w.call(t, "project_profile", map[string]any{"path": project}, nil)
+	if res.IsError {
+		t.Fatal(errorText(res))
+	}
+	data, _ := json.Marshal(res.StructuredContent)
+	if strings.Contains(string(data), "private-one") || strings.Contains(string(data), "hidden") {
+		t.Errorf("project_profile names the private pin: %s", data)
+	}
+	var out mcp.ProjectProfileOut
+	decode(t, res.StructuredContent, &out)
+	if out.Manifest == nil || out.Manifest.Skills != 1 || out.Manifest.Pinned != 1 || len(out.Installed) != 1 {
+		t.Errorf("profile = %+v %+v", out.Manifest, out.Installed)
 	}
 }

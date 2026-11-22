@@ -74,6 +74,9 @@ func (m *Mod) normalize() {
 	if m.Origin == nil {
 		m.Origin = make(map[string]string)
 	}
+	if m.Local == nil {
+		m.Local = make(map[string]bool)
+	}
 }
 
 // ReadMod decodes rsk.mod from rskDir and merges rsk.local.mod, when there is

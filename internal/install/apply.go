@@ -32,6 +32,15 @@ type Options struct {
 	Scope       Scope
 	Constraints map[string]string
 	Pin         bool
+
+	// PrivateSources are the identities of the sources the user marked private.
+	// A skill from one goes to the local layer of rsk.mod and rsk.lock, which is
+	// kept out of git, unless Shared is set.
+	PrivateSources map[string]bool
+
+	// Shared writes a private source's skills to the committed files on purpose,
+	// for a project that is itself private.
+	Shared bool
 }
 
 // Result is the outcome for one skill. Files lists the links created; Err is
@@ -114,6 +123,12 @@ func applyProject(linked []skill.Skill, opts Options) error {
 		}
 		m.Skills[s.Name] = constraint
 		m.SetOrigin(s.Name, s.Source)
+		private := opts.PrivateSources[s.Source.Identity()] && !opts.Shared
+		if private {
+			m.Local[s.Name] = true
+		} else {
+			delete(m.Local, s.Name)
+		}
 		names = append(names, s.Name)
 		// Keep what the previous entry recorded about this skill's tool
 		// permissions: the reconcile that follows the link step updates those
@@ -123,6 +138,7 @@ func applyProject(linked []skill.Skill, opts Options) error {
 		entry.Version = s.Version
 		entry.Source = s.Source
 		entry.Git = s.Git
+		entry.Local = private
 		lock = manifest.UpsertLockEntry(lock, entry)
 	}
 
