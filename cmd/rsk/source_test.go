@@ -15,6 +15,7 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/git"
+	"go.ralva.dev/ralvaskills/v3/internal/sourceops"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/trust"
 )
@@ -279,5 +280,56 @@ func TestSourceCommandIsRegisteredGroupedAndGuarded(t *testing.T) {
 	}
 	if canonicalSource.trust.Flags().Lookup("yes") != nil {
 		t.Error("'source trust' must not accept --yes: trust is a human decision")
+	}
+}
+
+//nolint:paralleltest // the config folder override is process-wide
+func TestSourceScanShowsAClashAndRegistersNothing(t *testing.T) {
+	dir := isolateConfig(t)
+	root := t.TempDir()
+	writeCatalogSkill(t, filepath.Join(root, "a"), "same")
+	writeCatalogSkill(t, filepath.Join(root, "b"), "same")
+	writeCatalogSkill(t, root, "fine")
+
+	out, err := runSource(t, "scan", root, "-o", "json")
+	if err != nil {
+		t.Fatalf("err = %v\n%s", err, out)
+	}
+	var res sourceops.ScanOutcome
+	if err = json.Unmarshal([]byte(out), &res); err != nil || len(res.Clashes) != 1 || res.Clashes[0].Name != "same" ||
+		len(res.Skills) != 1 || res.Skills[0].Name != "fine" {
+		t.Errorf("scan = %+v, %v\n%s", res, err, out)
+	}
+	text, err := runSource(t, "scan", root)
+	if err != nil || !strings.Contains(text, "same") || !strings.Contains(text, "a/same") ||
+		!strings.Contains(text, "b/same") {
+		t.Errorf("text scan = %q, %v", text, err)
+	}
+	if _, statErr := os.Stat(filepath.Join(dir, sources.FileName)); statErr == nil {
+		t.Error("scan registered the directory")
+	}
+}
+
+//nolint:paralleltest // the config folder override is process-wide
+func TestSourceScanRefusesAnUnregisteredRepositoryAndAnUntrustedOne(t *testing.T) {
+	isolateConfig(t)
+	if _, err := runSource(
+		t,
+		"scan",
+		"@acme/skills",
+	); err == nil ||
+		!strings.Contains(err.Error(), "rsk source add @acme/skills") {
+		t.Errorf("an unregistered repository: err = %v", err)
+	}
+	if _, err := runSource(t, "add", "@acme/skills", "--yes"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := runSource(
+		t,
+		"scan",
+		"@acme/skills",
+	); err == nil ||
+		!strings.Contains(err.Error(), "rsk source trust @acme/skills") {
+		t.Errorf("an untrusted repository: err = %v", err)
 	}
 }

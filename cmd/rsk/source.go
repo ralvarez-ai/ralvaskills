@@ -15,27 +15,27 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
-	"go.ralva.dev/ralvaskills/v3/internal/git"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
+	"go.ralva.dev/ralvaskills/v3/internal/sourceops"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/trust"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
 const (
-	actionAdd    = "add"
-	actionRemove = "remove"
+	actionAdd    = sourceops.ActionAdd
+	actionRemove = sourceops.ActionRemove
 	flagID       = "id"
 	flagRev      = "rev"
 	flagRoots    = "roots"
 	flagExclude  = "exclude"
 	flagPrivate  = "private"
 	testTimeout  = 30 * time.Second
-	trustTrusted = "trusted"
-	trustNone    = "untrusted"
-	trustNA      = "not required"
-	trustBuiltIn = "built-in"
+	trustTrusted = sourceops.TrustTrusted
+	trustNone    = sourceops.TrustNone
+	trustNA      = sourceops.TrustNA
+	trustBuiltIn = sourceops.TrustBuiltIn
 )
 
 type (
@@ -46,39 +46,18 @@ type (
 		list    *cobra.Command
 		remove  *cobra.Command
 		test    *cobra.Command
+		scan    *cobra.Command
 		trust   *cobra.Command
 		untrust *cobra.Command
 	}
+)
 
-	// sourceView is one source as the commands print it, and as JSON.
-	sourceView struct {
-		ID       string   `json:"id"`
-		Type     string   `json:"type"`
-		URL      string   `json:"url"`
-		Rev      string   `json:"rev,omitempty"`
-		Roots    []string `json:"roots,omitempty"`
-		Excludes []string `json:"excludes,omitempty"`
-		Trust    string   `json:"trust"`
-	}
-
-	// sourceChange is the preview and the result of a mutating command, the
-	// same JSON either way so an agent can show it and then apply it.
-	sourceChange struct {
-		Action  string     `json:"action"`
-		DryRun  bool       `json:"dry_run"`
-		Applied bool       `json:"applied"`
-		Source  sourceView `json:"source"`
-		Next    string     `json:"next,omitempty"`
-	}
-
-	// sourceTest is the result of `rsk source test`.
-	sourceTest struct {
-		sourceView
-		Reachable bool   `json:"reachable"`
-		Via       string `json:"via,omitempty"`
-		Commit    string `json:"commit,omitempty"`
-		Error     string `json:"error,omitempty"`
-	}
+// The result types are the core's, so the CLI and the MCP tools print the same
+// JSON.
+type (
+	sourceView   = sourceops.View
+	sourceChange = sourceops.Change
+	sourceTest   = sourceops.TestResult
 )
 
 // canonicalSource is the registered `rsk source` tree.
@@ -162,6 +141,25 @@ the check then asks the remote for its branch with 'git ls-remote'.`,
 	}
 	addOutputFlag(test)
 
+	scan := &cobra.Command{
+		Use:   "scan <directory | @owner/repo>",
+		Short: "Show what a source would provide, and what is wrong with it.",
+		Long: `Dry-run discovery: the skills a source would resolve, the directories left out
+and why, the names two directories claim (which make resolving the source fail),
+and frontmatter problems such as a name that differs from its directory.
+
+A directory needs no registration and contacts nothing. A repository must be
+registered and trusted first: scanning it fetches it. Nothing is installed or
+registered.
+
+Examples:
+  rsk source scan ./my-skills
+  rsk source scan @acme/skills-private`,
+		Args: cobra.ExactArgs(1),
+		RunE: runSourceScan,
+	}
+	addOutputFlag(scan)
+
 	trustCmd := &cobra.Command{
 		Use:   "trust <id>",
 		Short: "Allow rsk to contact a declared git source (needs a terminal).",
@@ -183,8 +181,10 @@ The grant covers the identity at its current URL; changing the URL revokes it.`,
 		RunE:  runSourceUntrust,
 	}
 
-	root.AddCommand(add, list, remove, test, trustCmd, untrust)
-	return sourceCmds{root: root, add: add, list: list, remove: remove, test: test, trust: trustCmd, untrust: untrust}
+	root.AddCommand(add, list, remove, test, scan, trustCmd, untrust)
+	return sourceCmds{
+		root: root, add: add, list: list, remove: remove, test: test, scan: scan, trust: trustCmd, untrust: untrust,
+	}
 }
 
 type sourceState struct {
@@ -204,19 +204,6 @@ func loadSourceState() (sourceState, error) {
 	return sourceState{file: file, grants: grants}, nil
 }
 
-func viewOf(e sources.Entry, grants trust.File) sourceView {
-	state := trustNone
-	switch {
-	case e.Type == source.KindPath:
-		state = trustNA
-	case grants.Granted(e.ID, e.URL):
-		state = trustTrusted
-	}
-	return sourceView{
-		ID: e.ID, Type: string(e.Type), URL: e.URL, Rev: e.Rev, Roots: e.Roots, Excludes: e.Excludes, Trust: state,
-	}
-}
-
 func writeJSON(w io.Writer, v any) error {
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "  ")
@@ -226,8 +213,14 @@ func writeJSON(w io.Writer, v any) error {
 	return nil
 }
 
-func trustHint(id string) string {
-	return "Trust it yourself in a terminal before use: rsk source trust " + id
+// sourceEnv is where the source commands read and write: the machine's own
+// files, plus the built-in sources when the configuration loads.
+func sourceEnv() sourceops.Env {
+	env := sourceops.Env{RepoFor: sourceRepoFor, EffectiveURL: effectiveURL}
+	if cfg, err := config.Load(); err == nil {
+		env.Cfg = &cfg
+	}
+	return env
 }
 
 func runSourceAdd(cmd *cobra.Command, args []string) error {
@@ -248,60 +241,26 @@ func runSourceAdd(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	entry, err := sources.NewEntry(args[0], sources.Options{
+	change, apply, err := sourceops.PlanAdd(sourceEnv(), args[0], sources.Options{
 		ID: cmdx.String(cmd, flagID), Rev: cmdx.String(cmd, flagRev), Roots: roots, Excludes: excludes,
 	})
 	if err != nil {
 		return err
 	}
-	state, err := loadSourceState()
-	if err != nil {
-		return err
-	}
-	next, err := sources.Add(state.file, entry)
-	if err != nil {
-		return err
-	}
-
-	change := sourceChange{
-		Action: actionAdd,
-		DryRun: cmdx.Bool(cmd, cmdx.FlagDryRun),
-		Source: viewOf(entry, state.grants),
-	}
-	if entry.Type == source.KindGit {
-		change.Next = trustHint(entry.ID)
-	}
-	return applySourceChange(cmd, change, func() error { return sources.Save(sources.DefaultPath(), next) })
+	change.DryRun = cmdx.Bool(cmd, cmdx.FlagDryRun)
+	return applySourceChange(cmd, change, apply)
 }
 
 func runSourceRemove(cmd *cobra.Command, args []string) error {
 	if err := checkOutput(cmd); err != nil {
 		return err
 	}
-	state, err := loadSourceState()
+	change, apply, err := sourceops.PlanRemove(sourceEnv(), args[0])
 	if err != nil {
 		return err
 	}
-	entry, ok := sources.Find(state.file, args[0])
-	if !ok {
-		return fmt.Errorf("source %s is not declared", args[0])
-	}
-	next, _ := sources.Remove(state.file, entry.ID)
-	change := sourceChange{
-		Action: actionRemove,
-		DryRun: cmdx.Bool(cmd, cmdx.FlagDryRun),
-		Source: viewOf(entry, state.grants),
-	}
-	return applySourceChange(cmd, change, func() error {
-		if err = sources.Save(sources.DefaultPath(), next); err != nil {
-			return err
-		}
-		grants, revoked := trust.Revoke(state.grants, entry.ID)
-		if !revoked {
-			return nil
-		}
-		return trust.Save(trust.DefaultPath(), grants)
-	})
+	change.DryRun = cmdx.Bool(cmd, cmdx.FlagDryRun)
+	return applySourceChange(cmd, change, apply)
 }
 
 // applySourceChange previews a change, asks, applies it, and reports the result
@@ -351,31 +310,9 @@ func runSourceList(cmd *cobra.Command, _ []string) error {
 	if err := checkOutput(cmd); err != nil {
 		return err
 	}
-	state, err := loadSourceState()
+	views, err := sourceops.List(sourceEnv())
 	if err != nil {
 		return err
-	}
-
-	var views []sourceView
-	if cfg, cfgErr := config.Load(); cfgErr == nil {
-		views = append(
-			views,
-			sourceView{
-				ID:    skill.DefaultRegistryID,
-				Type:  string(source.KindRegistry),
-				URL:   cfg.EffectiveRegistryURL(),
-				Trust: trustBuiltIn,
-			},
-			sourceView{
-				ID:    skill.OfficialID,
-				Type:  string(source.KindGit),
-				URL:   source.OfficialSkillsURL,
-				Trust: trustBuiltIn,
-			},
-		)
-	}
-	for i := range state.file.Sources {
-		views = append(views, viewOf(state.file.Sources[i], state.grants))
 	}
 	if len(views) == 0 {
 		emptyHint(cmd, false, "No sources. Add one with 'rsk source add'.")
@@ -397,64 +334,25 @@ func runSourceTest(cmd *cobra.Command, args []string) error {
 	if err := checkOutput(cmd); err != nil {
 		return err
 	}
-	state, err := loadSourceState()
-	if err != nil {
-		return err
-	}
-	entry, ok := sources.Find(state.file, args[0])
-	if !ok {
-		return fmt.Errorf("source %s is not declared", args[0])
-	}
-
-	result := sourceTest{sourceView: viewOf(entry, state.grants)}
 	ctx, cancel := context.WithTimeout(cmd.Context(), testTimeout)
 	defer cancel()
-	testErr := probeSource(ctx, entry, state.grants, &result)
-	if testErr != nil {
-		result.Error = testErr.Error()
+	result, testErr := sourceops.Test(ctx, sourceEnv(), args[0])
+	if result.ID == "" {
+		return testErr // the source is not declared, or its files are unreadable
 	}
 
 	out := cmd.OutOrStdout()
 	if printer.Format(cmd) == output.FormatJSON {
-		if err = writeJSON(out, result); err != nil {
+		if err := writeJSON(out, result); err != nil {
 			return err
 		}
 	} else if testErr == nil {
-		ui.Success(out, fmt.Sprintf("%s is reachable (%s %s)", entry.ID, entry.Type, result.Commit))
+		ui.Success(out, fmt.Sprintf("%s is reachable (%s %s)", result.ID, result.Type, result.Commit))
+		if result.Via != "" {
+			ui.Info(out, "your git configuration rewrites "+result.URL+" to "+result.Via)
+		}
 	}
 	return testErr
-}
-
-// probeSource checks that e can be used. A git source must be trusted before
-// anything contacts its host, so an untrusted one fails here with the command
-// to run and nothing is sent.
-func probeSource(ctx context.Context, e sources.Entry, grants trust.File, result *sourceTest) error {
-	if e.Type == source.KindPath {
-		result.Reachable = true
-		return nil
-	}
-	if err := trust.Require(grants, e.ID, e.URL); err != nil {
-		return err
-	}
-	remote, err := git.ParseRemoteURL(e.URL)
-	if err != nil {
-		return err
-	}
-	result.Via = rewrittenURL(ctx, e.URL)
-	have, err := git.Version(ctx)
-	if err != nil {
-		return err
-	}
-	if !git.MeetsMinimum(have) {
-		return fmt.Errorf("git %d.%d.%d is older than the %d.%d.%d rsk needs", have[0], have[1], have[2],
-			git.MinVersion[0], git.MinVersion[1], git.MinVersion[2])
-	}
-	commit, err := git.LsRemote(ctx, remote, e.Rev)
-	if err != nil {
-		return err
-	}
-	result.Reachable, result.Commit = true, commit
-	return nil
 }
 
 func runSourceTrust(cmd *cobra.Command, args []string) error {

@@ -16,6 +16,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/git"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/sourceops"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/trust"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
@@ -231,7 +232,7 @@ func saveImplicit(out io.Writer, entries []sources.Entry) error {
 	}
 	for i := range entries {
 		ui.Success(out, "registered "+entries[i].ID+" at "+entries[i].URL)
-		ui.Info(out, trustHint(entries[i].ID))
+		ui.Info(out, sourceops.TrustHint(entries[i].ID))
 		ui.Info(out, "Until it is trusted, installing a bare skill name fails, since rsk cannot consult every source: "+
 			"'rsk source remove "+entries[i].ID+"' undoes this")
 	}
