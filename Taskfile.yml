@@ -79,6 +79,7 @@ tasks:
     sources:
       - skills/**/*.md
       - cmd/generate-registry/**/*.go
+      - internal/registrygen/**/*.go
     generates:
       - dist/index.json
       - dist/new-versions.json
@@ -107,12 +108,12 @@ tasks:
   registry:lint:
     desc: Lint the generate-registry tool
     cmds:
-      - golangci-lint run --config .golangci.yml ./cmd/generate-registry/...
+      - golangci-lint run --config .golangci.yml ./cmd/generate-registry/... ./internal/registrygen/...
 
   registry:fmt:
     desc: Format the generate-registry tool
     cmds:
-      - golangci-lint fmt --config .golangci.yml ./cmd/generate-registry/...
+      - golangci-lint fmt --config .golangci.yml ./cmd/generate-registry/... ./internal/registrygen/...
 
   registry:clean:
     desc: Remove the dist/ output directory

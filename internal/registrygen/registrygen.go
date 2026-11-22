@@ -1,0 +1,437 @@
+// Package registrygen walks the skills/ directory, creates versioned tarballs
+// for any skill whose version is not yet in the existing index, and writes an
+// updated index.json plus a new-versions.json for the CI publish step. The
+// generate-registry command is its flag shim.
+package registrygen
+
+import (
+	"archive/tar"
+	"bufio"
+	"compress/gzip"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"io/fs"
+	"net/url"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"time"
+
+	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
+	"go.ralva.dev/ralvaskills/v3/internal/fsx"
+	"go.ralva.dev/ralvaskills/v3/internal/skill"
+)
+
+const (
+	descriptionField    = skill.DescriptionPrefix
+	frontmatterDelim    = skill.FrontmatterDelimiter
+	archiveSuffix       = ".tar.gz"
+	tempFilePattern     = ".rsk-gen-*.tmp"
+	releaseURLPath      = "releases/download"
+	indexFileName       = "index.json"
+	newVersionsFileName = "new-versions.json"
+	gitHubRepoDefault   = "ralvarezdev/ralvaskills"
+
+	// indexAliasesVersion is the index format written once a retired-name
+	// table exists. Readers accept version 1 and 2 alike.
+	indexAliasesVersion = 2
+)
+
+var semverRe = regexp.MustCompile(`^\d+\.\d+\.\d+$`)
+
+type (
+	// Index is the top-level shape of the published index.json.
+	Index struct {
+		Version     int                    `json:"version"`
+		GeneratedAt string                 `json:"generated_at"`
+		Aliases     map[string]string      `json:"aliases,omitempty"`
+		Skills      map[string]*SkillEntry `json:"skills"`
+	}
+
+	// SkillEntry records a single skill's metadata and version history in the
+	// published index.
+	SkillEntry struct {
+		Name        string                   `json:"name"`
+		Description string                   `json:"description"`
+		Personal    bool                     `json:"personal,omitempty"`
+		Deprecated  bool                     `json:"deprecated,omitempty"`
+		Latest      string                   `json:"latest"`
+		Versions    map[string]*VersionEntry `json:"versions"`
+	}
+
+	// VersionEntry records a single published version of a skill.
+	VersionEntry struct {
+		Version     string `json:"version"`
+		PublishedAt string `json:"published_at"`
+		ArchiveURL  string `json:"archive_url"`
+	}
+
+	// NewVersion is written to new-versions.json so the CI publish step knows
+	// which archive files to upload as GitHub release assets.
+	NewVersion struct {
+		Name    string `json:"name"`
+		Version string `json:"version"`
+		Archive string `json:"archive"`
+	}
+
+	skillInfo struct {
+		Name        string
+		Version     string
+		Description string
+		Personal    bool
+		Path        string
+	}
+)
+
+func walkSkills(root string, retired skill.Retirements) ([]skillInfo, error) {
+	var skills []skillInfo
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil || !d.IsDir() {
+			return err
+		}
+
+		skillMD := filepath.Join(path, skill.SkillFileName)
+		if _, statErr := os.Stat(skillMD); os.IsNotExist(statErr) {
+			return nil
+		}
+
+		version, description, parseErr := readFrontmatter(skillMD)
+		if parseErr != nil {
+			fmt.Fprintf(os.Stderr, "warn: skip %s — %v\n", path, parseErr)
+			return fs.SkipDir
+		}
+
+		rel, relErr := filepath.Rel(root, path)
+		if relErr != nil {
+			rel = path
+		}
+		name := filepath.Base(path)
+		if nameErr := skill.ValidateName(name); nameErr != nil {
+			return fmt.Errorf("%s: %w", path, nameErr)
+		}
+		if nameErr := skill.CheckRetirements(name, retired); nameErr != nil {
+			return fmt.Errorf("%s: %w", path, nameErr)
+		}
+		skills = append(skills, skillInfo{
+			Name:        name,
+			Version:     version,
+			Description: description,
+			Personal:    skill.IsPersonalPath(rel),
+			Path:        path,
+		})
+		return fs.SkipDir
+	})
+	return skills, err
+}
+
+func readFrontmatter(path string) (version, description string, err error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", "", err
+	}
+	defer func() { _ = f.Close() }()
+
+	scanner := bufio.NewScanner(f)
+	inFrontmatter := false
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == frontmatterDelim {
+			if !inFrontmatter {
+				inFrontmatter = true
+				continue
+			}
+			break
+		}
+		if !inFrontmatter {
+			continue
+		}
+		if v, ok := strings.CutPrefix(line, skill.VersionPrefix); ok {
+			version = strings.Trim(strings.TrimSpace(v), `"'`)
+		}
+		if v, ok := strings.CutPrefix(line, descriptionField); ok {
+			description = strings.Trim(strings.TrimSpace(v), `"'`)
+		}
+	}
+	if version == "" {
+		return "", "", fmt.Errorf("version field not found in %s", path)
+	}
+	return version, description, nil
+}
+
+// createTarball packs skillPath into a .tar.gz at dest. Archive entries are
+// rooted at skillName/ so extracting creates a single directory. On failure
+// the partial file at dest is removed.
+func createTarball(skillPath, skillName, dest string) (retErr error) {
+	f, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = f.Close()
+		if retErr != nil {
+			_ = os.Remove(dest)
+		}
+	}()
+
+	gw := gzip.NewWriter(f)
+	tw := tar.NewWriter(gw)
+
+	walkErr := filepath.WalkDir(skillPath, func(path string, d fs.DirEntry, walkFnErr error) error {
+		if walkFnErr != nil {
+			return walkFnErr
+		}
+		rel, relErr := filepath.Rel(skillPath, path)
+		if relErr != nil {
+			return relErr
+		}
+		archivePath := skillName + "/" + filepath.ToSlash(rel)
+
+		info, infoErr := d.Info()
+		if infoErr != nil {
+			return infoErr
+		}
+		hdr, hdrErr := tar.FileInfoHeader(info, "")
+		if hdrErr != nil {
+			return hdrErr
+		}
+		hdr.Name = archivePath
+		if writeErr := tw.WriteHeader(hdr); writeErr != nil {
+			return writeErr
+		}
+		if d.IsDir() {
+			return nil
+		}
+		src, openErr := os.Open(path)
+		if openErr != nil {
+			return openErr
+		}
+		defer func() { _ = src.Close() }()
+		_, copyErr := io.Copy(tw, src)
+		return copyErr
+	})
+	if walkErr != nil {
+		return walkErr
+	}
+	if err = tw.Close(); err != nil {
+		return err
+	}
+	return gw.Close()
+}
+
+func loadIndex(path string) *Index {
+	if path == "" {
+		return &Index{Version: 1, Skills: make(map[string]*SkillEntry)}
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return &Index{Version: 1, Skills: make(map[string]*SkillEntry)}
+	}
+	var idx Index
+	if err = json.Unmarshal(data, &idx); err != nil {
+		return &Index{Version: 1, Skills: make(map[string]*SkillEntry)}
+	}
+	if idx.Skills == nil {
+		idx.Skills = make(map[string]*SkillEntry)
+	}
+	return &idx
+}
+
+func writeJSON(path string, v any) error {
+	data, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		return err
+	}
+	data = append(data, '\n')
+	return fsx.WriteAtomic(path, tempFilePattern, func(w io.Writer) error {
+		_, writeErr := w.Write(data)
+		return writeErr
+	})
+}
+
+// GitHubRepoDefault is the repository release asset URLs point at when
+// Options.GitHubRepo is empty.
+const GitHubRepoDefault = gitHubRepoDefault
+
+// Options configures Run.
+type Options struct {
+	// SkillsDir is the skills directory to walk.
+	SkillsDir string
+	// OutputDir receives the tarballs, index.json and new-versions.json.
+	OutputDir string
+	// ExistingIndex is an index.json to merge with; empty starts from none.
+	ExistingIndex string
+	// GitHubRepo (owner/name) is used to build release asset URLs.
+	GitHubRepo string
+	// Check previews what would be published and validates versions; it writes
+	// no files.
+	Check bool
+	// Aliases is the retired-name table path, relative to the repo root.
+	Aliases string
+}
+
+// Run generates the registry artifacts, or previews them when Check is set. It
+// prints progress to standard output and returns the first failure.
+func Run(o Options) error {
+	retired, err := skill.LoadRetirements(o.Aliases)
+	if err != nil {
+		return err
+	}
+	if err = skill.ValidateRetirements(retired); err != nil {
+		return fmt.Errorf("%s: %w", o.Aliases, err)
+	}
+
+	if o.Check {
+		return runCheck(o.SkillsDir, o.ExistingIndex, retired)
+	}
+
+	index := loadIndex(o.ExistingIndex)
+
+	skills, err := walkSkills(o.SkillsDir, retired)
+	if err != nil {
+		return fmt.Errorf("walking skills: %w", err)
+	}
+
+	if err = os.MkdirAll(o.OutputDir, fsperm.Dir); err != nil {
+		return fmt.Errorf("creating output dir: %w", err)
+	}
+
+	now := time.Now().UTC().Format(time.RFC3339)
+	var newVersions []NewVersion
+
+	for _, s := range skills {
+		entry, exists := index.Skills[s.Name]
+		if !exists {
+			entry = &SkillEntry{
+				Name:     s.Name,
+				Personal: s.Personal,
+				Versions: make(map[string]*VersionEntry),
+			}
+			index.Skills[s.Name] = entry
+		}
+
+		if _, published := entry.Versions[s.Version]; published {
+			continue
+		}
+
+		archiveFile := fmt.Sprintf("%s-v%s%s", s.Name, s.Version, archiveSuffix)
+		archivePath := filepath.Join(o.OutputDir, archiveFile)
+
+		if err = createTarball(s.Path, s.Name, archivePath); err != nil {
+			return fmt.Errorf("creating tarball for %s: %w", s.Name, err)
+		}
+
+		tag := url.PathEscape(fmt.Sprintf("%s@v%s", s.Name, s.Version))
+		entry.Description = s.Description
+		entry.Latest = s.Version
+		entry.Versions[s.Version] = &VersionEntry{
+			Version:     s.Version,
+			PublishedAt: now,
+			ArchiveURL:  fmt.Sprintf("https://github.com/%s/%s/%s/%s", o.GitHubRepo, releaseURLPath, tag, archiveFile),
+		}
+
+		newVersions = append(newVersions, NewVersion{
+			Name:    s.Name,
+			Version: s.Version,
+			Archive: archiveFile,
+		})
+		fmt.Printf("+ %s@v%s\n", s.Name, s.Version)
+	}
+
+	index.GeneratedAt = now
+
+	if err = applyAliases(index, retired); err != nil {
+		return err
+	}
+
+	if err = writeJSON(filepath.Join(o.OutputDir, indexFileName), index); err != nil {
+		return fmt.Errorf("writing %s: %w", indexFileName, err)
+	}
+
+	if err = writeJSON(filepath.Join(o.OutputDir, newVersionsFileName), newVersions); err != nil {
+		return fmt.Errorf("writing %s: %w", newVersionsFileName, err)
+	}
+
+	fmt.Printf("index: %d skills total, %d new versions\n", len(index.Skills), len(newVersions))
+	return nil
+}
+
+// applyAliases publishes the retired-name table and marks the old entries
+// deprecated, keeping their versions installable. A target that is not in the
+// index is an error: the alias would resolve to nothing.
+func applyAliases(index *Index, retired skill.Retirements) error {
+	if len(retired) == 0 {
+		return nil
+	}
+	index.Aliases = retired
+	index.Version = indexAliasesVersion
+
+	for old, next := range retired {
+		if index.Skills[next] == nil {
+			return fmt.Errorf("alias %q -> %q: target is not in the index", old, next)
+		}
+		if entry := index.Skills[old]; entry != nil {
+			entry.Deprecated = true
+		}
+	}
+	return nil
+}
+
+// runCheck previews what would be published without creating any files or
+// tarballs. Prints a current → new line for each unpublished version and
+// returns an error if any version string is not in X.Y.Z format.
+func runCheck(skillsDir, existingIndex string, retired skill.Retirements) error {
+	index := loadIndex(existingIndex)
+
+	skills, err := walkSkills(skillsDir, retired)
+	if err != nil {
+		return fmt.Errorf("walking skills: %w", err)
+	}
+
+	type pendingEntry struct {
+		name    string
+		current string
+		next    string
+	}
+	var pending []pendingEntry
+
+	for _, s := range skills {
+		entry := index.Skills[s.Name]
+		if entry != nil {
+			if _, published := entry.Versions[s.Version]; published {
+				continue
+			}
+		}
+		current := "(new)"
+		if entry != nil && entry.Latest != "" {
+			current = "v" + entry.Latest
+		}
+		pending = append(pending, pendingEntry{s.Name, current, s.Version})
+	}
+
+	if len(pending) == 0 {
+		fmt.Println("Nothing to publish — all skill versions are already in the index.")
+		return nil
+	}
+
+	fmt.Printf("\n%d skill(s) ready to publish:\n\n", len(pending))
+
+	invalid := false
+	for _, p := range pending {
+		marker := "+"
+		if !semverRe.MatchString(p.next) {
+			marker = "!"
+			invalid = true
+		}
+		fmt.Printf("  %s  %-40s %s  →  v%s\n", marker, p.name, p.current, p.next)
+	}
+
+	fmt.Println()
+	if invalid {
+		return errors.New("one or more versions are not in X.Y.Z format")
+	}
+	fmt.Println("All version formats OK.")
+	return nil
+}
