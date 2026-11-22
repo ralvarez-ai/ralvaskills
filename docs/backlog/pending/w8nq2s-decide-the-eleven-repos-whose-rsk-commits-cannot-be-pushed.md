@@ -19,3 +19,5 @@ Note 2026-11-22 (night): the roll-out survey found eight more active main checko
 Note 2026-11-22 (batch 1): `ralvarez-ts/ui`, `ralvagym`, `ralvafi` and `automation-labs-openhands-plc` all have an upstream; their pin commits wait for a push after about 2026-11-23T05:21Z. `automation-labs-coding-agents-benchmarks` was not migrated: its main checkout sits on `feat/label-required` with no upstream.
 
 Note 2026-11-22 (private skills): `ralvarez-go/ports` has no upstream, so its rsk commit (`ad51377`) stays local.
+
+Note 2026-11-22 (archived): `ralvarezdev/strucgo` and `ralvarezdev/strucgo-runtime` are archived on GitHub, so pushes are refused; their local `main` carries the roll-out commits (`18ac193`, `b1a679a`) plus 12 and 13 older unpushed commits. They live outside `archived/` in the tree, so the sweep filter missed them. Declare them local-only or unarchive, push and re-archive. `ralvarez-go/ports` still has no upstream (commit `ad51377`).
