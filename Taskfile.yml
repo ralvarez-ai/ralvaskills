@@ -152,6 +152,7 @@ tasks:
   lint:
     desc: Lint everything
     cmds:
+      - task: paths:check
       - golangci-lint run --config .golangci.yml ./...
       - task: lint:oneliners
       - task: lint:dashes
