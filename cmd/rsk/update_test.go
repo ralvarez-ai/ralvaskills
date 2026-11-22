@@ -4,43 +4,12 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
-	"reflect"
 	"testing"
 
 	"go.ralva.dev/ralvaskills/v3/internal/digest"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
-
-func TestUpdatePairNames(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name string
-		in   []updatePair
-		want []string
-	}{
-		{name: "empty", in: nil, want: []string{}},
-		{
-			name: "several",
-			in: []updatePair{
-				{name: "go-architect", installed: "1.0.0", latest: "1.1.0", newSkill: skill.Skill{}},
-				{name: "tdd", installed: "1.0.0", latest: "1.0.1", newSkill: skill.Skill{}},
-			},
-			want: []string{"go-architect", "tdd"},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			got := updatePairNames(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("updatePairNames(%v) = %#v, want %#v", tt.in, got, tt.want)
-			}
-		})
-	}
-}
 
 // writeLinkedSkill seeds the linked skill a pinned entry points at: a SKILL.md
 // and the DIGEST.md it ships.
@@ -103,46 +72,6 @@ func TestRefreshPinnedDigest(t *testing.T) {
 // TestNeedsUpdate covers the drift k3vx7p reported: `rsk update` decided
 // "up to date" from the symlink alone, so a lock left behind by a restore or
 // an aborted update never repaired itself and the digest re-render never ran.
-func TestNeedsUpdate(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name                      string
-		installed, locked, latest string
-		want                      bool
-	}{
-		{name: "link behind", installed: "1.0.0", locked: "1.0.0", latest: "1.1.0", want: true},
-		{name: "lock behind, link current", installed: "1.1.0", locked: "1.0.0", latest: "1.1.0", want: true},
-		{name: "both current", installed: "1.1.0", locked: "1.1.0", latest: "1.1.0", want: false},
-		{name: "untracked, link current", installed: "1.1.0", locked: "", latest: "1.1.0", want: false},
-		{name: "untracked, link behind", installed: "1.0.0", locked: "", latest: "1.1.0", want: true},
-		{name: "lock ahead of latest", installed: "1.1.0", locked: "1.2.0", latest: "1.1.0", want: true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			if got := needsUpdate(tt.installed, tt.locked, tt.latest); got != tt.want {
-				t.Errorf("needsUpdate(%q, %q, %q) = %v, want %v",
-					tt.installed, tt.locked, tt.latest, got, tt.want)
-			}
-		})
-	}
-}
-
-// TestWithLockedNames covers the second half of the same bug: a lock entry
-// whose link went missing was never checked, so it could not be repaired.
-func TestWithLockedNames(t *testing.T) {
-	t.Parallel()
-
-	if got := withLockedNames([]string{"tdd"}, nil); !reflect.DeepEqual(got, []string{"tdd"}) {
-		t.Errorf("no lock: got %v, want the names unchanged", got)
-	}
-	got := withLockedNames([]string{"tdd"}, map[string]string{"tdd": "1.0.0", "rsk-guide": "0.5.3"})
-	if len(got) != 2 || got[0] != "tdd" || got[1] != "rsk-guide" {
-		t.Errorf("got %v, want [tdd rsk-guide]", got)
-	}
-}
-
 // TestProjectLockedVersions checks that the lock is read from the project and
 // ignored for a global run, where no single project owns the state.
 func TestProjectLockedVersions(t *testing.T) {

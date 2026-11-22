@@ -1,12 +1,11 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/spf13/cobra"
 
@@ -24,14 +23,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 	updatecheck "go.ralva.dev/ralvaskills/v3/internal/update"
 )
-
-// updatePair is a skill with a newer version available in the registry.
-type updatePair struct {
-	name      string
-	installed string
-	latest    string
-	newSkill  skill.Skill
-}
 
 var updateCmd = &cobra.Command{
 	Use:   "update [name...] [flags]",
@@ -272,12 +263,15 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 	// A bare `rsk update` also checks what the lock tracks: an entry whose link
 	// went missing is otherwise invisible. Named skills are checked by name.
 	if len(args) == 0 {
-		namesToCheck = withLockedNames(namesToCheck, locked)
+		namesToCheck = updatecheck.WithLockedNames(namesToCheck, locked)
 	}
 
-	toUpdate := findOutdatedSkills(
-		ctx, out, reg, index.Skills, namesToCheck, targets, cfg.RegistryCache(), locked,
+	toUpdate, warnings := updatecheck.FindOutdated(
+		ctx, reg, index.Skills, namesToCheck, targets, cfg.RegistryCache(), locked,
 	)
+	for _, w := range warnings {
+		ui.Warn(out, w)
+	}
 	if len(toUpdate) == 0 {
 		saveUpdateCache(out, cfg, nil)
 		ui.Info(out, "All installed skills are up to date.")
@@ -287,12 +281,12 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 	printRegistryUpdatePlan(out, toUpdate)
 
 	if opts.dryRun {
-		saveUpdateCache(out, cfg, updatePairNames(toUpdate))
+		saveUpdateCache(out, cfg, updatecheck.Names(toUpdate))
 		return nil
 	}
 	if !term.Confirm(cmd, opts.yes, term.StdioIsTerminal(), "Proceed?") {
 		fmt.Fprintln(out, messageAborted)
-		saveUpdateCache(out, cfg, updatePairNames(toUpdate))
+		saveUpdateCache(out, cfg, updatecheck.Names(toUpdate))
 		return nil
 	}
 	fmt.Fprintln(out)
@@ -332,22 +326,7 @@ func registryNamesToCheck(out io.Writer, args, targets []string) ([]string, erro
 		}
 		return skillNamesFromArgs(args, catalog)
 	}
-
-	seen := make(map[string]bool)
-	var names []string
-	for _, target := range targets {
-		entries, err := os.ReadDir(target)
-		if err != nil {
-			continue
-		}
-		for _, e := range entries {
-			if !seen[e.Name()] {
-				seen[e.Name()] = true
-				names = append(names, e.Name())
-			}
-		}
-	}
-	return names, nil
+	return updatecheck.LinkedNames(targets), nil
 }
 
 // projectLockedVersions reads the project's rsk.lock and returns each tracked
@@ -361,89 +340,12 @@ func projectLockedVersions(global bool) map[string]string {
 	if !ok {
 		return nil
 	}
-	lock, err := manifest.ReadLock(rskDir)
-	if err != nil {
-		return nil
-	}
-	versions := make(map[string]string, len(lock.Skills))
-	for _, entry := range lock.Skills {
-		versions[entry.Name] = entry.Version
-	}
-	return versions
-}
-
-// withLockedNames appends the skills the project's lock records but no target
-// dir links, so an entry whose link went missing is repaired as well.
-func withLockedNames(names []string, locked map[string]string) []string {
-	if len(locked) == 0 {
-		return names
-	}
-	seen := make(map[string]bool, len(names))
-	for _, name := range names {
-		seen[name] = true
-	}
-	for name := range locked {
-		if !seen[name] {
-			names = append(names, name)
-		}
-	}
-	return names
-}
-
-// needsUpdate reports whether a skill is behind: the version linked in the
-// target dirs, or the version the project's lock records, disagrees with the
-// registry's latest. A skill absent from the lock is judged by its link alone,
-// since a project need not track everything it links.
-func needsUpdate(installed, locked, latest string) bool {
-	if installed != latest {
-		return true
-	}
-	return locked != "" && locked != latest
-}
-
-// findOutdatedSkills checks each name in namesToCheck against index, skipping
-// any that aren't in the registry, aren't actually behind, or fail to
-// resolve at their latest version (warned, not fatal).
-func findOutdatedSkills(
-	ctx context.Context, out io.Writer, reg *source.Registry, index map[string]*source.IndexEntry,
-	namesToCheck, targets []string, registryCache string, locked map[string]string,
-) []updatePair {
-	var toUpdate []updatePair
-	for _, name := range namesToCheck {
-		entry, ok := index[name]
-		if !ok {
-			continue
-		}
-		// Determine installed version from symlink target path.
-		installedVer := updatecheck.InstalledVersionFromTargets(name, targets, registryCache)
-		lockedVer := locked[name]
-		if !needsUpdate(installedVer, lockedVer, entry.Latest) {
-			continue
-		}
-		s, err := reg.FindVersion(ctx, name, entry.Latest)
-		if err != nil {
-			ui.Warn(out, fmt.Sprintf("skip %s: %v", name, err))
-			continue
-		}
-		// When the link is already current, the lock is what is behind; report
-		// that version so the plan shows what will be rewritten.
-		reported := installedVer
-		if reported == entry.Latest {
-			reported = lockedVer
-		}
-		toUpdate = append(toUpdate, updatePair{
-			name:      name,
-			installed: reported,
-			latest:    entry.Latest,
-			newSkill:  s,
-		})
-	}
-	return toUpdate
+	return updatecheck.LockedVersions(rskDir)
 }
 
 // printRegistryUpdatePlan renders the name/installed/latest table of skills
 // about to be updated.
-func printRegistryUpdatePlan(out io.Writer, toUpdate []updatePair) {
+func printRegistryUpdatePlan(out io.Writer, toUpdate []updatecheck.Pair) {
 	fmt.Fprintln(out)
 	ui.Header(out, "Skills to update:")
 	term.WriteTableStyled(out, []string{headerName, "From", "", "To"},
@@ -452,56 +354,41 @@ func printRegistryUpdatePlan(out io.Writer, toUpdate []updatePair) {
 }
 
 // updatePlanTable projects one update-plan row.
-var updatePlanTable = term.Table[updatePair]{
-	Row: func(u updatePair) []any {
-		from := u.installed
+var updatePlanTable = term.Table[updatecheck.Pair]{
+	Row: func(u updatecheck.Pair) []any {
+		from := u.Installed
 		if from == "" {
 			from = "?"
 		}
-		return []any{ui.SkillName(u.name), ui.SkillVersion(from), ui.Arrow, ui.SkillVersion(u.latest)}
+		return []any{ui.SkillName(u.Name), ui.SkillVersion(from), ui.Arrow, ui.SkillVersion(u.Latest)}
 	},
 }
 
 // relinkOutdated re-links each outdated skill wherever it's currently
 // linked, reporting (rather than aborting on) a failure so the rest of the
 // batch still updates. It returns how many failed and their names.
-func relinkOutdated(out, errOut io.Writer, toUpdate []updatePair, targets []string) (failed int, failedNames []string) {
-	for i := range toUpdate {
-		u := &toUpdate[i]
-		skillFailed := false
-		for _, target := range targets {
-			if !skill.IsLinked(u.name, target) {
-				continue
+func relinkOutdated(
+	out, errOut io.Writer, toUpdate []updatecheck.Pair, targets []string,
+) (failed int, failedNames []string) {
+	results := updatecheck.Relink(toUpdate, targets)
+	for i := range results {
+		r := &results[i]
+		if r.Err != nil {
+			ui.Failf(errOut, "re-link %s: %v", r.Name, r.Err)
+			failed++
+			if !slices.Contains(failedNames, r.Name) {
+				failedNames = append(failedNames, r.Name)
 			}
-			if err := skill.Link(u.newSkill, target); err != nil {
-				ui.Failf(errOut, "re-link %s: %v", u.name, err)
-				failed++
-				skillFailed = true
-			} else {
-				ui.Success(out, fmt.Sprintf("%s  %s  %s  %s",
-					ui.SkillName(u.name),
-					ui.SkillVersion(u.installed),
-					ui.Arrow,
-					ui.SkillVersion(u.latest),
-				))
-			}
+			continue
 		}
-		if skillFailed {
-			failedNames = append(failedNames, u.name)
-		}
+		ui.Success(out, fmt.Sprintf("%s  %s  %s  %s",
+			ui.SkillName(r.Name),
+			ui.SkillVersion(r.Installed),
+			ui.Arrow,
+			ui.SkillVersion(r.Latest),
+		))
 	}
 	return failed, failedNames
-}
-
-// updatePairNames extracts the skill names from toUpdate, for caching the
-// update-availability state when nothing was actually applied (dry-run or
-// an aborted confirm).
-func updatePairNames(toUpdate []updatePair) []string {
-	names := make([]string, len(toUpdate))
-	for i := range toUpdate {
-		names[i] = toUpdate[i].name
-	}
-	return names
 }
 
 // saveUpdateCache refreshes the passive update-availability cache with
