@@ -16,6 +16,12 @@ const (
 	// LockFileName is the filename of the resolved skill lockfile.
 	LockFileName = "rsk.lock"
 
+	// LocalModFileName and LocalLockFileName hold the skills from a private
+	// source. They are never committed: rsk keeps them out of git and merges them
+	// with rsk.mod and rsk.lock on read.
+	LocalModFileName  = "rsk.local.mod"
+	LocalLockFileName = "rsk.local.lock"
+
 	// TempFilePattern is the glob pattern for temporary files created during
 	// atomic write operations inside the .rsk directory.
 	TempFilePattern = internal.TempFilePattern
@@ -45,4 +51,14 @@ func LockPath(rskDir string) string {
 // ModPath returns the canonical path of rsk.mod inside rskDir.
 func ModPath(rskDir string) string {
 	return filepath.Join(rskDir, ModFileName)
+}
+
+// LocalLockPath returns the canonical path of rsk.local.lock inside rskDir.
+func LocalLockPath(rskDir string) string {
+	return filepath.Join(rskDir, LocalLockFileName)
+}
+
+// LocalModPath returns the canonical path of rsk.local.mod inside rskDir.
+func LocalModPath(rskDir string) string {
+	return filepath.Join(rskDir, LocalModFileName)
 }

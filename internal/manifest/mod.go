@@ -31,6 +31,12 @@ type Mod struct {
 	// that do not come from the default registry. It is what makes a file
 	// qualify those keys on write; it is never written itself.
 	Origin map[string]string `toml:"-"`
+
+	// Local names the skills that live in rsk.local.mod, the layer for skills
+	// from a private source. A skill is in exactly one layer: the reader marks
+	// the ones it found in the local file, and the writer sends them back there,
+	// so nothing private reaches the committed rsk.mod.
+	Local map[string]bool `toml:"-"`
 }
 
 // modFile is the on-disk shape of rsk.mod: keys are the qualified form for a
@@ -70,57 +76,108 @@ func (m *Mod) normalize() {
 	}
 }
 
-// ReadMod decodes rsk.mod from rskDir.
+// ReadMod decodes rsk.mod from rskDir and merges rsk.local.mod, when there is
+// one, marking the skills it holds as local.
 func ReadMod(rskDir string) (Mod, error) {
-	path := ModPath(rskDir)
-	var f modFile
-	if _, err := toml.DecodeFile(path, &f); err != nil {
-		return Mod{}, fmt.Errorf("read %s: %w", path, err)
-	}
-	if err := schema.Check(f.SchemaVersion, schema.Mod); err != nil {
-		return Mod{}, fmt.Errorf("rsk.mod: %w", err)
-	}
 	m := Mod{
-		SchemaVersion: f.SchemaVersion,
-		Tools:         f.Tools,
-		Pinned:        make([]string, 0, len(f.Pinned)),
-		Skills:        make(map[string]string, len(f.Skills)),
-		Origin:        make(map[string]string),
+		Pinned: []string{}, Skills: map[string]string{}, Origin: map[string]string{}, Local: map[string]bool{},
 	}
-	for key, constraint := range f.Skills {
-		ref, err := skill.ParseKey(key)
-		if err != nil {
-			return Mod{}, fmt.Errorf("rsk.mod: %w", err)
-		}
-		if _, dup := m.Skills[ref.Name]; dup {
-			return Mod{}, fmt.Errorf("rsk.mod: two skills named %q in one scope", ref.Name)
-		}
-		m.Skills[ref.Name] = constraint
-		if ref.Source != "" && ref.Source != skill.DefaultRegistryID {
-			m.Origin[ref.Name] = ref.Source
-		}
+	f, err := decodeMod(ModPath(rskDir))
+	if err != nil {
+		return Mod{}, err
 	}
-	for _, key := range f.Pinned {
-		ref, err := skill.ParseKey(key)
-		if err != nil {
-			return Mod{}, fmt.Errorf("rsk.mod: %w", err)
+	m.SchemaVersion, m.Tools = f.SchemaVersion, f.Tools
+	if err = m.merge(&f, false); err != nil {
+		return Mod{}, err
+	}
+	if _, statErr := os.Stat(LocalModPath(rskDir)); statErr == nil {
+		local, localErr := decodeMod(LocalModPath(rskDir))
+		if localErr != nil {
+			return Mod{}, localErr
 		}
-		m.Pinned = append(m.Pinned, ref.Name)
+		if err = m.merge(&local, true); err != nil {
+			return Mod{}, err
+		}
 	}
 	m.normalize()
 	return m, nil
 }
 
+func decodeMod(path string) (modFile, error) {
+	var f modFile
+	if _, err := toml.DecodeFile(path, &f); err != nil {
+		return modFile{}, fmt.Errorf("read %s: %w", path, err)
+	}
+	if err := schema.Check(f.SchemaVersion, schema.Mod); err != nil {
+		return modFile{}, fmt.Errorf("%s: %w", filepath.Base(path), err)
+	}
+	return f, nil
+}
+
+// merge adds a layer's skills and pins to m, marking them local when asked. The
+// same name in two layers is an error: a skill is unique by name in one scope.
+func (m *Mod) merge(f *modFile, local bool) error {
+	for key, constraint := range f.Skills {
+		ref, err := skill.ParseKey(key)
+		if err != nil {
+			return fmt.Errorf("rsk.mod: %w", err)
+		}
+		if _, dup := m.Skills[ref.Name]; dup {
+			return fmt.Errorf("rsk.mod: two skills named %q in one scope", ref.Name)
+		}
+		m.Skills[ref.Name] = constraint
+		if ref.Source != "" && ref.Source != skill.DefaultRegistryID {
+			m.Origin[ref.Name] = ref.Source
+		}
+		if local {
+			m.Local[ref.Name] = true
+		}
+	}
+	for _, key := range f.Pinned {
+		ref, err := skill.ParseKey(key)
+		if err != nil {
+			return fmt.Errorf("rsk.mod: %w", err)
+		}
+		m.Pinned = append(m.Pinned, ref.Name)
+	}
+	return nil
+}
+
 // WriteMod encodes m as TOML to rskDir/rsk.mod atomically, creating parent
 // directories as needed. It writes version 2 only when a skill in m has an
-// origin to qualify; otherwise the file stays version 1.
+// origin to qualify; otherwise the file stays version 1. The skills marked
+// local go to rsk.local.mod instead, which is kept out of git and removed when
+// no skill is left in it.
 func WriteMod(rskDir string, m Mod) error {
 	m.normalize()
+	if err := writeModFile(ModPath(rskDir), &m, func(name string) bool { return !m.Local[name] }, true); err != nil {
+		return err
+	}
+	var local []string
+	for name := range m.Skills {
+		if m.Local[name] {
+			local = append(local, name)
+		}
+	}
+	if len(local) == 0 {
+		return removeIfPresent(LocalModPath(rskDir))
+	}
+	if err := ExcludeLocalFiles(filepath.Dir(rskDir)); err != nil {
+		return err
+	}
+	return writeModFile(LocalModPath(rskDir), &m, func(name string) bool { return m.Local[name] }, false)
+}
+
+// writeModFile writes the skills and pins of m that keep selects. Only the
+// committed file carries the tools list.
+func writeModFile(path string, m *Mod, keep func(name string) bool, withTools bool) error {
 	f := modFile{
 		SchemaVersion: schema.Base,
-		Tools:         m.Tools,
-		Pinned:        make([]string, len(m.Pinned)),
-		Skills:        make(map[string]string, len(m.Skills)),
+		Pinned:        []string{},
+		Skills:        map[string]string{},
+	}
+	if withTools {
+		f.Tools = m.Tools
 	}
 	key := func(name string) string {
 		if origin := m.Origin[name]; origin != "" {
@@ -130,17 +187,28 @@ func WriteMod(rskDir string, m Mod) error {
 		return name
 	}
 	for name, constraint := range m.Skills {
-		f.Skills[key(name)] = constraint
+		if keep(name) {
+			f.Skills[key(name)] = constraint
+		}
 	}
-	for i, name := range m.Pinned {
-		f.Pinned[i] = key(name)
+	for _, name := range m.Pinned {
+		if keep(name) {
+			f.Pinned = append(f.Pinned, key(name))
+		}
 	}
 
-	path := ModPath(rskDir)
 	if err := os.MkdirAll(filepath.Dir(path), fsperm.Dir); err != nil {
 		return fmt.Errorf("create dir: %w", err)
 	}
 	return fsx.WriteAtomic(path, TempFilePattern, func(w io.Writer) error {
 		return toml.NewEncoder(w).Encode(f)
 	})
+}
+
+// removeIfPresent deletes path and ignores a file that is already gone.
+func removeIfPresent(path string) error {
+	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("remove %s: %w", path, err)
+	}
+	return nil
 }

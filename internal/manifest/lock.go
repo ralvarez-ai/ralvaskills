@@ -38,6 +38,12 @@ type (
 		// source. Its Commit and Tree are the integrity record: a restore must
 		// find that tree at that commit.
 		Git *skill.GitRef `toml:"-"`
+
+		// Local marks an entry that lives in rsk.local.lock, the layer for
+		// skills from a private source. The reader sets it for what it found
+		// there and the writer sends such entries back, so nothing private
+		// reaches the committed rsk.lock.
+		Local bool `toml:"-"`
 	}
 
 	// Lock is the in-memory representation of rsk.lock.
@@ -92,10 +98,27 @@ func transportOf(src skill.Source) string {
 	}
 }
 
-// ReadLock decodes rsk.lock from rskDir. Returns an empty Lock if the file
-// does not exist.
+// ReadLock decodes rsk.lock from rskDir and appends rsk.local.lock, when there
+// is one, with its entries marked local. Returns an empty Lock if neither exists.
 func ReadLock(rskDir string) (Lock, error) {
-	file := LockPath(rskDir)
+	l, err := readLockFile(LockPath(rskDir), false)
+	if err != nil {
+		return Lock{}, err
+	}
+	local, err := readLockFile(LocalLockPath(rskDir), true)
+	if err != nil {
+		return Lock{}, err
+	}
+	for i := range local.Skills {
+		if _, dup := FindLockEntry(l, local.Skills[i].Name); dup {
+			return Lock{}, fmt.Errorf("rsk.lock: two entries named %q in one scope", local.Skills[i].Name)
+		}
+	}
+	l.Skills = append(l.Skills, local.Skills...)
+	return l, nil
+}
+
+func readLockFile(file string, local bool) (Lock, error) {
 	if _, statErr := os.Stat(file); errors.Is(statErr, os.ErrNotExist) {
 		return Lock{}, nil
 	}
@@ -105,15 +128,16 @@ func ReadLock(rskDir string) (Lock, error) {
 		return Lock{}, fmt.Errorf("read %s: %w", file, err)
 	}
 	if err := schema.Check(f.SchemaVersion, schema.Lock); err != nil {
-		return Lock{}, fmt.Errorf("rsk.lock: %w", err)
+		return Lock{}, fmt.Errorf("%s: %w", filepath.Base(file), err)
 	}
 
 	l := Lock{SchemaVersion: f.SchemaVersion}
 	for i := range f.Skills {
 		entry, err := entryFromFile(&f.Skills[i])
 		if err != nil {
-			return Lock{}, fmt.Errorf("rsk.lock: %w", err)
+			return Lock{}, fmt.Errorf("%s: %w", filepath.Base(file), err)
 		}
+		entry.Local = local
 		l.Skills = append(l.Skills, entry)
 	}
 	return l, nil
@@ -199,16 +223,40 @@ func checkGitFields(e *LockEntry, transport string) error {
 // WriteLock encodes l as TOML to rskDir/rsk.lock atomically, creating parent
 // directories as needed. It writes version 2 only when an entry comes from a
 // source other than the default registry; otherwise the file stays version 1.
+// The entries marked local go to rsk.local.lock instead, which is kept out of
+// git and removed when none is left.
 func WriteLock(rskDir string, l Lock) error {
-	f := lockFile{SchemaVersion: schema.Base, Skills: make([]lockEntryFile, len(l.Skills))}
-	for _, e := range l.Skills {
-		if id := e.Source.Identity(); id != "" && id != skill.DefaultRegistryID {
+	var committed, local []LockEntry
+	for i := range l.Skills {
+		if l.Skills[i].Local {
+			local = append(local, l.Skills[i])
+		} else {
+			committed = append(committed, l.Skills[i])
+		}
+	}
+	if err := writeLockFile(LockPath(rskDir), committed); err != nil {
+		return err
+	}
+	if len(local) == 0 {
+		return removeIfPresent(LocalLockPath(rskDir))
+	}
+	if err := ExcludeLocalFiles(filepath.Dir(rskDir)); err != nil {
+		return err
+	}
+	return writeLockFile(LocalLockPath(rskDir), local)
+}
+
+func writeLockFile(file string, entries []LockEntry) error {
+	f := lockFile{SchemaVersion: schema.Base, Skills: make([]lockEntryFile, len(entries))}
+	for i := range entries {
+		if id := entries[i].Source.Identity(); id != "" && id != skill.DefaultRegistryID {
 			f.SchemaVersion = schema.Lock
 			break
 		}
 	}
 	v2 := f.SchemaVersion == schema.Lock
-	for i, e := range l.Skills {
+	for i := range entries {
+		e := &entries[i]
 		out := lockEntryFile{
 			Name: e.Name, Version: e.Version, Source: e.Source.String(),
 			Permissions: e.Permissions, Granted: e.Granted,
@@ -226,7 +274,6 @@ func WriteLock(rskDir string, l Lock) error {
 		f.Skills[i] = out
 	}
 
-	file := LockPath(rskDir)
 	if err := os.MkdirAll(filepath.Dir(file), fsperm.Dir); err != nil {
 		return fmt.Errorf("create dir: %w", err)
 	}
