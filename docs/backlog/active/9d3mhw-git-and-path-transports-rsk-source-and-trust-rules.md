@@ -19,3 +19,6 @@ Progress 2026-11-21: steps 1a to 1e are built and committed, not pushed (`478179
 **Risk.** A new cache root.
 
 **Done when.** its tests are green, `task lint` and `task registry:check` pass, v1 files still round-trip, and the behaviour of the default registry is byte-identical for existing projects. The trust rules of design section 3 ship in this same release, not after it. Depends on phase 0b.
+
+Update 2026-11-22: steps 1a to 1f and 1h are done and the SSH acceptance run passed; the versionless digest fix and the `AGENTS.md` update are in. `v3.10.0` is tagged locally at `869bedc` and not pushed (`c3qwq1`). Remaining: 1g (`8d2nwx`, approved, own session), the `rsk-guide` 0.6.0 update (`7bxgw3`, blocked on a permission rule), the consumer roll-out (`9m3rtc`, after the release) and `g1zk6n`.
+
