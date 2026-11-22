@@ -21,3 +21,6 @@ Update 2026-11-22: the release is `v3.10.0` (changelog section "v3.10.0", with t
 Update 2026-11-22 (later): the plan is [plans/2026-11-22-consumer-rollout-rsk-3-10.md](../../plans/2026-11-22-consumer-rollout-rsk-3-10.md). The survey: 149 projects have a lock, 21 use an official skill, none is v2 yet, 85 `mise.toml` files pin rsk (79 at 3.9.1, 6 at 3.7.0) and 62 lock projects have no pin. The release assets do not exist yet, so step 0 (`c3qwq1`) is the gate.
 
 Update 2026-11-22 (release out): `v3.10.0` is released and verified (`c3qwq1` done). The pilot dry run on a copy of `ralvarez-ts/ui` passed (see the plan). Next: the owner approves the real pilot, then the 21 official-skill projects in batches. Use `rsk update`, not `rsk sync`, in consumers: sync also registers the MCP server.
+
+Update 2026-11-22 (end of day): the pilot dry run on a copy passed; the real pilot (`ralvarez-ts/ui`: pin 3.9.1, clean tree, 12 skills, one official; it has uncommitted backlog work of its own that must be left alone) waits on the owner's go. Steps, in `plans/2026-11-22-consumer-rollout-rsk-3-10.md`: bump the pin, `rsk update --yes`, one `chore(rsk)` commit with explicit pathspecs.
+

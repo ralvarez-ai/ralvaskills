@@ -1,11 +1,11 @@
 ---
-status: active
+status: done
 project: ralvaskills
 date: 2026-11-21
 related:
     - designs/2026-11-21-private-and-remote-skill-sources.md
     - adr/0003-source-chain-and-reference-grammar.md
-    - backlog/active/9d3mhw-git-and-path-transports-rsk-source-and-trust-rules.md
+    - backlog/done/9d3mhw-git-and-path-transports-rsk-source-and-trust-rules.md
 ---
 
 # Phase 1: git and path sources, `rsk source`, and the trust rules
@@ -148,7 +148,7 @@ Built as planned, with these settled while building:
 - [x] `rsk source add @owner/repo`, `trust`, `install @owner/repo/name` installs from a local bare-repo fixture and records `commit`, `tree` and `path` in a v2 lock.
 - [x] A second machine restores from that lock without the chain and without a secret.
 - [x] A source that is down fails a bare-name lookup instead of falling through to another source.
-- [ ] URL allowlist, option injection, embedded credentials and `roots` traversal tests pass.
-- [ ] `update` reports a skill outdated only when its own directory changed.
-- [ ] Registry and local clone behaviour is byte-identical for existing projects; an existing official install keeps working untouched and is re-pointed by the next `update`; `task lint`, `go test ./...`, `task registry:check` and `task site:check` pass.
+- [x] URL allowlist, option injection, embedded credentials and `roots` traversal tests pass.
+- [x] `update` reports a skill outdated only when its own directory changed.
+- [x] Registry and local clone behaviour is byte-identical for existing projects; an existing official install keeps working untouched and is re-pointed by the next `update`; `task lint`, `go test ./...`, `task registry:check` and `task site:check` pass.
 - [x] The manual SSH acceptance run against the private skills repository passes (2026-11-21, see `6w4kzn` in done; one finding, the runner honors `url.*.insteadOf`).

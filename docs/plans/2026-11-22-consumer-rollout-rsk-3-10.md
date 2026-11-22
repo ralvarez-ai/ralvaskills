@@ -4,7 +4,7 @@ project: ralvaskills
 date: 2026-11-22
 related:
     - plans/2026-11-21-source-chain-phase-1.md
-    - backlog/pending/9m3rtc-roll-out-rsk-v2-manifests-to-the-consumer-projects.md
+    - backlog/active/9m3rtc-roll-out-rsk-v2-manifests-to-the-consumer-projects.md
     - backlog/done/c3qwq1-push-main-and-v3-10-0-and-run-the-release-workflow.md
 ---
 

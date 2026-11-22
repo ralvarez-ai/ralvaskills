@@ -24,3 +24,5 @@ Update 2026-11-22: steps 1a to 1f and 1h are done and the SSH acceptance run pas
 
 Update 2026-11-22 (later): step 1g is built too (`8d2nwx` in done): `--private`, the local layers, `SKILLS.local.md`, the Claude Code and OpenCode imports (verified in the real clients) and `--shared`. All of phase 1 is built. Open: the push of these commits, the `rsk-guide` update, the consumer roll-out and the follow-ups in `g1zk6n`.
 
+Resolved 2026-11-22: phase 1 is built, verified and released as `v3.10.0` (tag at `2c1cc10`, six assets, checksum and `--version` checked). Every exit criterion of the plan holds, including the SSH acceptance run, and the plan is marked done. What is left is its own work: the consumer roll-out (`9m3rtc`), the `rsk-guide` 0.6.0 update (`7bxgw3`, blocked on a permission rule) and the follow-ups in `g1zk6n`.
+
