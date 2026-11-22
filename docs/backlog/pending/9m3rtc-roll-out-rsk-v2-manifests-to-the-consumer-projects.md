@@ -13,3 +13,5 @@ Once the first CLI release is tagged: a project becomes v2 the first time it ins
 **Deliverable.** A release note with the migration rule and the `rsk update` behaviour for official links; the pin bump across the consumers (see the earlier sweep items); a check that no consumer is left on an older pin with a v2 file.
 
 **Done when.** every consumer with an official skill runs a release that reads v2.
+
+Update 2026-11-21 (after step 1f): the release note also needs the new surface: `rsk resolve`, `install --from`, `--trust` and `--save` on install, `rsk sync --trust`, `rsk pin --yes`, the digest confirmation for non-default pins, and that a lock restores through the machine's own transport. A consumer script that pins a remote skill without a terminal now needs `--yes` (the digest is shown, not asked).

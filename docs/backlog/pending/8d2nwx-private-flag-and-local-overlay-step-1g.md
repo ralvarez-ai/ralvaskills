@@ -17,3 +17,5 @@ Step of [the phase 1 plan](../../plans/2026-11-21-source-chain-phase-1.md); desi
 **Tests.** A private pin never reaches a committed file; both layers merge on read; `--shared` writes the committed ones; a teammate without the local files sees a clean project; per-client check of the uncommitted import.
 
 **Done when.** its tests are green, the lint and registry gates pass, and the three adapters' behaviour is recorded.
+
+Update 2026-11-21 (after step 1f): `--save` registers a source untrusted and `rsk install --pin` of a non-default source now shows the digest first, so the private overlay has two inputs to respect: a pin from a private source must skip the committed `SKILLS.md` even when `--yes` accepted its text, and `rsk pin` (which has no install step) must route by the skill's origin. Path-source skills (`skill.SourcePath`) never reach a lock, so only git sources need the overlay. An implicit install of a private repository (`@owner/repo/name` over SSH) currently pins into the committed files; decide whether implicit sources default to the overlay or ask.
