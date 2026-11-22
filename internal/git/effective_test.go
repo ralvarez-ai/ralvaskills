@@ -8,9 +8,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/git"
 )
 
-// EffectiveURL changes the process environment, so these tests are sequential.
-//
-//nolint:paralleltest // GIT_CONFIG_GLOBAL is process-wide
 func TestEffectiveURLShowsWhatGitsURLRewritesMakeOfIt(t *testing.T) {
 	cfg := filepath.Join(t.TempDir(), "gitconfig")
 	rules := "[url \"git@github.com:\"]\n\tinsteadOf = https://github.com/\n"
@@ -34,7 +31,6 @@ func TestEffectiveURLShowsWhatGitsURLRewritesMakeOfIt(t *testing.T) {
 	}
 }
 
-//nolint:paralleltest // GIT_CONFIG_GLOBAL is process-wide
 func TestEffectiveURLWithoutRulesIsTheURLItself(t *testing.T) {
 	t.Setenv("GIT_CONFIG_GLOBAL", "/dev/null")
 	t.Setenv("GIT_CONFIG_SYSTEM", "/dev/null")
