@@ -109,7 +109,7 @@ jobs:
       # Runs every workflow execution (not gated on `count != '0'`) so a manual
       # re-trigger republishes the current index even when no skill versions
       # changed. The deploy uploads just `registry/` as the site root, so the
-      # index is served at https://skills.ralvarez.dev/index.json.
+      # index is served at https://skills.ralva.dev/index.json.
 
       - name: Configure Pages
         uses: actions/configure-pages@v6

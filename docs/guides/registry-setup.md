@@ -12,7 +12,7 @@ This document walks through the one-time setup for the skill registry.
 ## Architecture
 
 ```
-skills.ralvarez.dev/index.json   ← GitHub Pages  (registry/index.json in repo)
+skills.ralva.dev/index.json   ← GitHub Pages  (registry/index.json in repo)
 GitHub Releases assets           ← primary tarball download source for rsk
 Cloudflare R2 (private)          ← cold backup of tarballs, never read by users
 ```
@@ -32,7 +32,7 @@ The `Publish Registry` workflow runs on pushes that touch `skills/**`, `cmd/gene
 
 > **Why GitHub Actions, not "Deploy from a branch"?** The branch-folder source only allows `/` or `/docs` as the publish folder — `/registry` cannot be selected. Deploying via Actions side-steps that restriction and keeps `registry/index.json` where it already lives.
 
-> **Custom domain:** Add `skills.ralvarez.dev` in the Pages settings. Since `ralvarez.dev` is on Cloudflare, add a CNAME record pointing `skills` at `<username>.github.io`. GitHub provisions TLS automatically.
+> **Custom domain:** the Pages custom domain is `skills.ralva.dev`; add it in the Pages settings and point a CNAME for `skills` at `<username>.github.io` in the `ralva.dev` zone (Cloudflare). GitHub provisions TLS automatically. `skills.ralvarez.dev` stays alive as a 301 redirect to it.
 
 ---
 
@@ -102,7 +102,7 @@ Subsequent runs only publish skills whose `version:` field changed, but the Page
 
 ```bash
 # Index is served from GitHub Pages
-curl https://skills.ralvarez.dev/index.json | jq '.skills | keys'
+curl https://skills.ralva.dev/index.json | jq '.skills | keys'
 
 # A tarball is reachable from GitHub Releases
 curl -IL https://github.com/ralvarezdev/ralvaskills/releases/download/go-architect%40v1.0.0/go-architect-v1.0.0.tar.gz
@@ -125,7 +125,7 @@ To restore: download from R2, re-upload as GitHub Release assets, the `index.jso
 
 | Resource | Location |
 |---|---|
-| Index | `registry/index.json` in repo → `https://skills.ralvarez.dev/index.json` |
+| Index | `registry/index.json` in repo → `https://skills.ralva.dev/index.json` |
 | Tarballs (primary) | GitHub Releases assets |
 | Tarballs (backup) | Private R2 bucket `ralvaskills` |
 | CI workflow | `.github/workflows/publish-registry.yml` |

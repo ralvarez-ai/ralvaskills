@@ -3,7 +3,7 @@
 The skill registry and the `rsk` CLI. `skills/` holds the published catalogue (grouped by
 domain); `cmd/rsk` is the CLI that installs, pins and syncs skills into a project; `internal/mcp`
 is the `rsk mcp` server; `registry/` is the generated index served at
-`https://skills.ralvarez.dev/index.json`.
+`https://skills.ralva.dev/index.json`.
 
 > **Publishing is load-bearing.** Pushing `main` runs the registry workflow and **auto-publishes
 > every changed skill**. Do not edit `skills/**` unless the change is meant to ship, and never put
@@ -102,7 +102,7 @@ runtime, only at build.
 - **`rsk` CLI** — the human-facing surface; `rsk <subcommand> --help`. Skills pinned for this repo
   itself (via `rsk`): cli-tool-architect, go-architect, logic-cleaner, repo-tooling-architect,
   skill-builder.
-- **Registry** — `https://skills.ralvarez.dev/index.json` (GitHub Pages); consumers `rsk update`
+- **Registry** — `https://skills.ralva.dev/index.json` (GitHub Pages); consumers `rsk update`
   then `rsk install <name>`.
 
 ## Boundaries

@@ -72,7 +72,7 @@ git commit registry/index.json [skip ci]  ← INDEX UPDATE
 `registry/` is the GitHub Pages source, so the commit from step 4 automatically publishes `registry/index.json` to:
 
 ```
-https://skills.ralvarez.dev/index.json
+https://skills.ralva.dev/index.json
 ```
 
 Within ~30 seconds of the push. No deploy step needed.
@@ -87,11 +87,11 @@ Registry mode (no `repo_path` configured). `<cache>` below resolves to `<dirname
 rsk install go-architect
  │
  ├── load config (~/.config/rsk/config.json)
- │     registry_url:   https://skills.ralvarez.dev
+ │     registry_url:   https://skills.ralva.dev
  │     official_cache: ~/.cache/rsk/official    (example)
  │     → registry cache: ~/.cache/rsk/registry/
  │
- ├── GET https://skills.ralvarez.dev/index.json
+ ├── GET https://skills.ralva.dev/index.json
  │     → finds go-architect, latest: 1.1.0
  │     → archive_url: https://github.com/.../releases/download/
  │                    go-architect%40v1.1.0/go-architect-v1.1.0.tar.gz
@@ -128,7 +128,7 @@ Two modes, picked by config:
 ```
 rsk update
  │
- ├── GET https://skills.ralvarez.dev/index.json
+ ├── GET https://skills.ralva.dev/index.json
  │     → go-architect latest: 1.1.0
  │
  ├── scan symlinks in target dirs (project .rsk/skills/, or --global dirs)
