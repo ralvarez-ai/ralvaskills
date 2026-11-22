@@ -15,3 +15,5 @@ Note: this item was written by hand because `l9c2xm` carried an `l`, which is ou
 refuse the whole backlog; it is `k9c2xm` now and `rdk check` passes.
 
 Update 2026-11-22: `count-tokens` is done (`bgmb76`, `internal/tokensreport`). `generate-registry` (436 lines) and `registry-remove` (296) remain; `generate-registry` feeds the published index, so check its move with `task registry:check` byte-identical.
+
+Update 2026-11-22: `registry-remove` is done: `cmd/registry-remove` is a flag shim over `internal/registryremove` (`Run(Options)`), now with unit tests (selection, validation, dry run, index-only removal). Only `generate-registry` (436 lines) remains here.
