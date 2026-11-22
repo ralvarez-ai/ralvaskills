@@ -2,14 +2,12 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 
-	"go.ralva.dev/lib/lifecycle"
 	"go.ralva.dev/lib/term/cli"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
@@ -139,23 +137,17 @@ func init() {
 	setupCommands()
 }
 
-// Execute runs the root command and exits on error.
-// A user cancellation (Ctrl+C during a prompt) or a caught SIGINT/SIGTERM exits 130 silently per SIGINT convention.
+// Execute runs the root command and exits with its code. A caught
+// SIGINT/SIGTERM, or a prompt the user cancels (Ctrl+C or Esc), exits 130.
 func Execute() {
-	os.Exit(execute())
+	os.Exit(cli.Run(rootCmd, os.Args[1:], os.Stdout, os.Stderr,
+		cli.WithSignals(), cli.WithClassifier(classifyAbort)))
 }
 
-func execute() int {
-	ctx, stop := lifecycle.NotifyContext(context.Background())
-	defer stop()
-
-	err := rootCmd.ExecuteContext(ctx)
-	if errors.Is(context.Cause(ctx), lifecycle.ErrInterrupted) || errors.Is(err, ui.ErrAborted) {
-		return cli.ExitInterrupt
+// classifyAbort maps a canceled prompt to the interrupt the exit table knows.
+func classifyAbort(err error) error {
+	if errors.Is(err, ui.ErrAborted) {
+		return cli.ErrInterrupted
 	}
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "rsk: "+err.Error())
-		return cli.ExitCode(err)
-	}
-	return 0
+	return err
 }

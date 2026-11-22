@@ -12,9 +12,8 @@ require (
 	github.com/mattn/go-isatty v0.0.24
 	github.com/modelcontextprotocol/go-sdk v1.8.0
 	github.com/spf13/cobra v1.10.2
-	go.ralva.dev/lib/lifecycle v0.6.1
 	go.ralva.dev/lib/mcpserver v0.14.0
-	go.ralva.dev/lib/term v0.73.0
+	go.ralva.dev/lib/term v0.74.0
 )
 
 require (
@@ -66,7 +65,8 @@ require (
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	github.com/yuin/goldmark v1.8.7 // indirect
 	github.com/yuin/goldmark-emoji v1.0.6 // indirect
-	go.ralva.dev/lib/errkind v0.7.0 // indirect
+	go.ralva.dev/lib/errkind v0.7.1 // indirect
+	go.ralva.dev/lib/lifecycle v0.7.0 // indirect
 	go.ralva.dev/lib/resilience v0.5.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.6 // indirect
 	golang.org/x/crypto v0.59.0 // indirect
