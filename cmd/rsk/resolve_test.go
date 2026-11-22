@@ -2,31 +2,7 @@ package main
 
 import (
 	"testing"
-
-	"go.ralva.dev/ralvaskills/v3/internal/skill"
 )
-
-func TestDedupSkills(t *testing.T) {
-	t.Parallel()
-	input := []skill.Skill{
-		{Name: "a"},
-		{Name: "b"},
-		{Name: "a"},
-		{Name: "c"},
-		{Name: "b"},
-	}
-	got := dedupSkills(input)
-	if len(got) != 3 {
-		t.Fatalf("expected 3 unique skills, got %d: %v", len(got), got)
-	}
-	names := map[string]bool{}
-	for _, s := range got {
-		if names[s.Name] {
-			t.Errorf("duplicate skill %q in dedup output", s.Name)
-		}
-		names[s.Name] = true
-	}
-}
 
 func TestJoinKeys(t *testing.T) {
 	t.Parallel()

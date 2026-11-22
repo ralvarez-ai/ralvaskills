@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
-	"sort"
 
 	"github.com/spf13/cobra"
 
@@ -156,13 +155,13 @@ func runInstall(cmd *cobra.Command, opts installOpts, args []string) error {
 		ui.Warn(out, fmt.Sprintf("user catalog: %v", catalogWarn))
 	}
 
-	skills, warnings, err := resolveNames(ctx, args, catalog, chain)
+	skills, warnings, err := install.Resolve(ctx, args, catalog, chain)
 	if err != nil {
 		return err
 	}
-	skills = dedupSkills(skills)
+	skills = install.DedupSkills(skills)
 
-	if err = checkNoPersonalSkills(skills, opts.personal); err != nil {
+	if err = install.CheckNoPersonal(skills, opts.personal); err != nil {
 		return err
 	}
 
@@ -214,20 +213,6 @@ func promptInstallName(cmd *cobra.Command, out io.Writer) (string, error) {
 	return name, nil
 }
 
-// checkNoPersonalSkills rejects the install when any resolved skill lives
-// under personal/ and --personal wasn't passed.
-func checkNoPersonalSkills(skills []skill.Skill, personal bool) error {
-	if personal {
-		return nil
-	}
-	for _, s := range skills {
-		if s.IsPersonal {
-			return fmt.Errorf("skill %q is in personal/ — pass --include personal to install it", s.Name)
-		}
-	}
-	return nil
-}
-
 // runInstallGlobal symlinks each resolved skill into the configured global
 // skills dir(s). No manifest is touched.
 func runInstallGlobal(
@@ -237,7 +222,7 @@ func runInstallGlobal(
 	out := cmd.OutOrStdout()
 	errOut := cmd.ErrOrStderr()
 
-	targets, err := resolveTargetDirs(cfg, true, opts.forTool)
+	targets, err := install.Targets(cfg, true, opts.forTool)
 	if err != nil {
 		return err
 	}
@@ -285,7 +270,7 @@ func runInstallProject(
 	if err != nil {
 		return err
 	}
-	targets := projectSkillsDirs(projectRoot, m)
+	targets := install.ProjectSkillsDirs(projectRoot, m)
 
 	if !previewAndConfirm(cmd, out, skills, targets, warnings, opts.dryRun, opts.yes) {
 		return nil
@@ -301,7 +286,7 @@ func runInstallProject(
 		}
 	}
 
-	constraints, err := constraintsFromArgs(args)
+	constraints, err := install.ConstraintsFromArgs(args)
 	if err != nil {
 		return err
 	}
@@ -342,12 +327,6 @@ func previewAndConfirm(
 	}
 	fmt.Fprintln(out)
 	return true
-}
-
-// constraintsFromArgs returns name → version constraints from "name@version"
-// args. Bundle names are passed through unchanged.
-func constraintsFromArgs(args []string) (map[string]string, error) {
-	return install.ConstraintsFromArgs(args)
 }
 
 // printInstallPreview renders the skill × target preview block shared by the
@@ -417,24 +396,9 @@ func runInstallFromMod(cmd *cobra.Command, opts installOpts) error {
 	}
 
 	projectRoot := filepath.Dir(rskDir)
-	targets := projectSkillsDirs(projectRoot, m)
+	targets := install.ProjectSkillsDirs(projectRoot, m)
 
-	sortedNames := make([]string, 0, len(m.Skills))
-	for name := range m.Skills {
-		sortedNames = append(sortedNames, name)
-	}
-	sort.Strings(sortedNames)
-
-	var skills []skill.Skill
-	var warnings []string
-	for _, name := range sortedNames {
-		s, findErr := findSkillByName(ctx, name, chain)
-		if findErr != nil {
-			warnings = append(warnings, fmt.Sprintf("%s: %v — skipped", name, findErr))
-			continue
-		}
-		skills = append(skills, s)
-	}
+	skills, warnings := install.ResolveFromMod(ctx, m, chain)
 
 	if !previewAndConfirm(cmd, out, skills, targets, warnings, opts.dryRun, opts.yes) {
 		return nil

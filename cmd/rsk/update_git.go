@@ -324,7 +324,7 @@ func collectGitInstalls(
 // runGitUpdate updates the git skills installed in the scope `rsk update` runs
 // in. It does nothing, and prints nothing, when there are none.
 func runGitUpdate(cmd *cobra.Command, cfg config.Config, opts updateOpts, args []string) error {
-	targets, err := resolveTargetDirs(cfg, opts.global, opts.forTool)
+	targets, err := install.Targets(cfg, opts.global, opts.forTool)
 	if err != nil {
 		return err
 	}

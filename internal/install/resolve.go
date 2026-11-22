@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
@@ -268,4 +269,39 @@ func joinKeys(m map[string]string) string {
 		keys = append(keys, k)
 	}
 	return strings.Join(keys, ", ")
+}
+
+// CheckNoPersonal rejects skills that live under personal/ unless personal is
+// set, because installing one has to be asked for.
+func CheckNoPersonal(skills []skill.Skill, personal bool) error {
+	if personal {
+		return nil
+	}
+	for _, s := range skills {
+		if s.IsPersonal {
+			return fmt.Errorf("skill %q is in personal/ — pass --include personal to install it", s.Name)
+		}
+	}
+	return nil
+}
+
+// ResolveFromMod finds every skill m lists, in name order. A skill no source
+// can supply is a warning ("<name>: <reason> — skipped"), not an error, so the
+// rest still install.
+func ResolveFromMod(ctx context.Context, m manifest.Mod, chain source.Chain) (skills []skill.Skill, warnings []string) {
+	names := make([]string, 0, len(m.Skills))
+	for name := range m.Skills {
+		names = append(names, name)
+	}
+	slices.Sort(names)
+
+	for _, name := range names {
+		s, err := FindSkill(ctx, name, chain)
+		if err != nil {
+			warnings = append(warnings, fmt.Sprintf("%s: %v — skipped", name, err))
+			continue
+		}
+		skills = append(skills, s)
+	}
+	return skills, warnings
 }

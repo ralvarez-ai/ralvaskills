@@ -14,6 +14,7 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/status"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
@@ -126,7 +127,7 @@ func runStatus(cmd *cobra.Command, opts statusOpts) error {
 	m, modErr := manifest.ReadMod(rskDir)
 	var projectDirs []string
 	if modErr == nil {
-		projectDirs = projectSkillsDirs(filepath.Dir(rskDir), m)
+		projectDirs = install.ProjectSkillsDirs(filepath.Dir(rskDir), m)
 	}
 	sections := status.BuildSections(cfg, opts.global, opts.project, opts.forTool, projectDirs)
 

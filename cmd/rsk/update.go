@@ -16,6 +16,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/digest"
 	rskgit "go.ralva.dev/ralvaskills/v3/internal/git"
+	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
@@ -237,7 +238,7 @@ func runUpdateRegistry(cmd *cobra.Command, args []string, cfg config.Config, opt
 	errOut := cmd.ErrOrStderr()
 	ctx := cmd.Context()
 
-	targets, err := resolveTargetDirs(cfg, opts.global, opts.forTool)
+	targets, err := install.Targets(cfg, opts.global, opts.forTool)
 	if err != nil {
 		return err
 	}

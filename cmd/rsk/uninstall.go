@@ -14,6 +14,7 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/permission"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
@@ -91,7 +92,7 @@ func runUninstall(cmd *cobra.Command, opts uninstallOpts, args []string) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	targets, err := resolveTargetDirs(cfg, opts.global, opts.forTool)
+	targets, err := install.Targets(cfg, opts.global, opts.forTool)
 	if err != nil {
 		return err
 	}

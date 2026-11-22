@@ -14,6 +14,7 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/status"
@@ -100,7 +101,7 @@ func runListProject(cmd *cobra.Command, opts listOpts) error {
 		return err
 	}
 
-	projectDirs := projectSkillsDirs(filepath.Dir(rskDir), m)
+	projectDirs := install.ProjectSkillsDirs(filepath.Dir(rskDir), m)
 	pinnedSet := make(map[string]bool, len(m.Pinned))
 	for _, p := range m.Pinned {
 		pinnedSet[p] = true
@@ -178,7 +179,7 @@ func runListGlobal(cmd *cobra.Command, opts listOpts) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	targets, err := resolveTargetDirs(cfg, true, opts.forTool)
+	targets, err := install.Targets(cfg, true, opts.forTool)
 	if err != nil {
 		return err
 	}

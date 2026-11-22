@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
@@ -51,14 +52,14 @@ func bumpLockForProject(cmd *cobra.Command, args []string, cfg config.Config) er
 	if err != nil {
 		return err
 	}
-	targets := projectSkillsDirs(filepath.Dir(rskDir), m)
+	targets := install.ProjectSkillsDirs(filepath.Dir(rskDir), m)
 
 	lock, err := manifest.ReadLock(rskDir)
 	if err != nil {
 		return err
 	}
 	lock, resolved, err := linkAndLock(lock, names, targets, func(name string) (skill.Skill, error) {
-		return findSkillByName(ctx, name, chain)
+		return install.FindSkill(ctx, name, chain)
 	})
 	if err != nil {
 		return err

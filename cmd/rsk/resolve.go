@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"path/filepath"
 	"strings"
 
@@ -13,7 +12,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
-	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
@@ -54,33 +52,6 @@ func offlineRequested(cmd *cobra.Command) (bool, error) {
 	return cmd.Flags().GetBool(flagOffline)
 }
 
-// projectSkillsDirs returns deduplicated per-tool project skills directories.
-func projectSkillsDirs(projectRoot string, m manifest.Mod) []string {
-	return install.ProjectSkillsDirs(projectRoot, m)
-}
-
-// resolveTargetDirs determines which skill directories an operation should act on.
-// Without --global it returns the per-tool project-local skills directories.
-func resolveTargetDirs(cfg config.Config, global bool, forTool tool.ID) ([]string, error) {
-	return install.Targets(cfg, global, forTool)
-}
-
-// findSkillByName looks up a skill by name across every source in the chain.
-func findSkillByName(ctx context.Context, name string, chain source.Chain) (skill.Skill, error) {
-	return install.FindSkill(ctx, name, chain)
-}
-
-// resolveNames expands bundle-or-skill names into skills, with soft warnings for
-// bundle members that could not be resolved.
-func resolveNames(
-	ctx context.Context,
-	names []string,
-	catalog []config.Bundle,
-	chain source.Chain,
-) ([]skill.Skill, []string, error) {
-	return install.Resolve(ctx, names, catalog, chain)
-}
-
 // isLinkedAnywhere reports whether a skill named name is symlinked into any of
 // the given target directories.
 func isLinkedAnywhere(name string, targets []string) bool {
@@ -90,10 +61,6 @@ func isLinkedAnywhere(name string, targets []string) bool {
 		}
 	}
 	return false
-}
-
-func dedupSkills(skills []skill.Skill) []skill.Skill {
-	return install.DedupSkills(skills)
 }
 
 // skillNamesFromArgs resolves bundle-or-skill args to a deduplicated list of
@@ -132,7 +99,7 @@ func allTargetDirs(cfg config.Config) []string {
 	}
 	if rskDir, err := manifest.ProjectFolderPath(); err == nil {
 		if m, modErr := manifest.ReadMod(rskDir); modErr == nil {
-			dirs = append(dirs, projectSkillsDirs(filepath.Dir(rskDir), m)...)
+			dirs = append(dirs, install.ProjectSkillsDirs(filepath.Dir(rskDir), m)...)
 		}
 	}
 	return dirs

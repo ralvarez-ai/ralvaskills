@@ -69,7 +69,7 @@ func runInstallFrom(cmd *cobra.Command, opts installOpts, args []string) error {
 
 func oneOffTargets(cfg config.Config, opts installOpts) ([]string, error) {
 	if opts.global {
-		return resolveTargetDirs(cfg, true, opts.forTool)
+		return install.Targets(cfg, true, opts.forTool)
 	}
 	rskDir, err := manifest.ProjectFolderPath()
 	if err != nil {
@@ -79,5 +79,5 @@ func oneOffTargets(cfg config.Config, opts installOpts) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return projectSkillsDirs(filepath.Dir(rskDir), m), nil
+	return install.ProjectSkillsDirs(filepath.Dir(rskDir), m), nil
 }

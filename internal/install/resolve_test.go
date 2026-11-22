@@ -9,6 +9,7 @@ import (
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
+	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/source/sourcetest"
@@ -180,5 +181,23 @@ func TestABundleMemberIgnoresADeclaredPathSource(t *testing.T) {
 	got, warnings, err := install.Resolve(t.Context(), []string{"b"}, []config.Bundle{bundle}, chain)
 	if err != nil || len(warnings) != 0 || len(got) != 1 || got[0].Source != skill.SourceLocal {
 		t.Fatalf("Resolve = %+v, %v, %v", got, warnings, err)
+	}
+}
+
+// ResolveFromMod returns the skills in name order and turns a skill no source
+// can supply into a warning, so the rest of rsk.mod still installs.
+func TestResolveFromModOrdersByNameAndWarnsOnAMissingSkill(t *testing.T) {
+	t.Parallel()
+	chain := localModeChain(t, []string{"alpha", "beta"}, nil)
+	m := manifest.Mod{Skills: map[string]string{"beta": "*", "missing": "*", "alpha": "*"}}
+
+	skills, warnings := install.ResolveFromMod(t.Context(), m, chain)
+
+	if len(skills) != 2 || skills[0].Name != "alpha" || skills[1].Name != "beta" {
+		t.Errorf("skills = %v, want alpha then beta", skills)
+	}
+	if len(warnings) != 1 || !strings.HasPrefix(warnings[0], "missing: ") ||
+		!strings.HasSuffix(warnings[0], " — skipped") {
+		t.Errorf("warnings = %q, want one 'missing: ... — skipped'", warnings)
 	}
 }
