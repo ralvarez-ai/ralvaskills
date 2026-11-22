@@ -1,5 +1,5 @@
 ---
-status: draft
+status: active
 project: ralvaskills
 date: 2026-11-22
 related:
@@ -53,7 +53,18 @@ Order can change if a step uncovers coupling, but `update` stays last because it
 - **Smoke on a real project copy** after phases 5 and 6: `rsk status`, `rsk update --dry-run` and `rsk install --dry-run` against a copy of a v2 project with the sandboxed config the roll-out used; compare output with the previous binary.
 - **One commit per phase** (`refactor(<area>): move <thing> out of cmd/rsk`), no skill, registry or `internal/tool` adapter-config changes mixed in (adapter config-writing is an ask-first area).
 
-## Open questions for the owner
+## Decisions (owner, 2026-11-22)
+
+- Rendering stays in `cmd/rsk`; only the logic moves.
+- ADR 0004 records "`internal/` never imports cobra" (`cmdx` and `ui` excepted); `depguard` in `.golangci.yml` enforces it.
+- One patch release (v3.10.1) after all six phases.
+
+## Progress
+
+- ADR 0004 and the depguard rule: `9485d8f`.
+- Phase 1, `catalog`: done (`8a5784f`). `catalog.List` and `catalog.BundleRows`; warnings are returned, `cmd/rsk` prints them. Output of `catalog -o json`, `catalog bundles -o json`, `catalog bundle go-grpc -o json` and `catalog --source local` is byte-identical to the released 3.10.0. `task lint`, `go test ./...` and `lint:doccheck` pass; `deadcode` reports only `git.Clone`, which was already unreachable.
+
+## Open questions (answered above, kept for the record)
 
 - Is the target "cobra only" strict (rendering also moves out), or "wiring plus rendering" as above? The plan assumes rendering stays in `cmd`.
 - ADR: the rule "`internal/` never imports cobra" is structural; record it as `docs/adr/0004` before phase 1?
