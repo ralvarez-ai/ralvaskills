@@ -40,6 +40,27 @@ func (c Chain) Find(ctx context.Context, ref skill.Ref) (skill.Skill, error) {
 	return pickOne(ref.Name, hits)
 }
 
+// Answer is one source's reply to a name lookup. Err is nil when the source has
+// the skill, wraps ErrNotFound when it does not, and is any other error when
+// the source could not be consulted.
+type Answer struct {
+	Spec  Spec
+	Skill skill.Skill
+	Err   error
+}
+
+// Survey asks every source for name and keeps each answer, where Find stops at
+// the first source it cannot consult. It exists to explain a resolution, so
+// `rsk resolve` can say who has a name and who could not be asked.
+func (c Chain) Survey(ctx context.Context, name string) []Answer {
+	answers := make([]Answer, len(c))
+	for i, r := range c {
+		answers[i].Spec = r.Spec()
+		answers[i].Skill, answers[i].Err = r.Find(ctx, name)
+	}
+	return answers
+}
+
 func pickOne(name string, hits []hit) (skill.Skill, error) {
 	switch len(hits) {
 	case 0:

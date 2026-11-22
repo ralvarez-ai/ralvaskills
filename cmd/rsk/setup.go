@@ -50,6 +50,7 @@ func setupCommands() {
 	term.MarkTableView(canonicalTools.list)
 
 	registerSourceCommands()
+	registerResolveCommand()
 
 	// destroy command
 	rootCmd.AddCommand(destroyCmd)
@@ -189,7 +190,7 @@ func assignGroups() {
 		groupInstall:   {installCmd, uninstallCmd, updateCmd, syncCmd},
 		groupPinning:   {pinCmd},
 		groupToolsConf: {canonicalTools.root},
-		groupViews:     {listCmd, catalogCmd, statusCmd},
+		groupViews:     {listCmd, catalogCmd, statusCmd, resolveCmd},
 		groupOther:     {mcpCmd},
 	} {
 		for _, cmd := range cmds {
