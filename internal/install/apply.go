@@ -1,6 +1,7 @@
 package install
 
 import (
+	"fmt"
 	"path/filepath"
 	"slices"
 
@@ -43,6 +44,16 @@ type Result struct {
 // reported per skill rather than aborting, so the rest of the batch still
 // lands; a manifest write failure is returned as err.
 func Apply(skills []skill.Skill, opts Options) ([]Result, error) {
+	if opts.Scope == ScopeProject {
+		for i := range skills {
+			if skills[i].Source == skill.SourcePath {
+				return nil, fmt.Errorf(
+					"%s comes from a path source, which a project manifest cannot restore on another machine: "+
+						"install it with --global, or use --from for a one-off link", skills[i].Name,
+				)
+			}
+		}
+	}
 	results := make([]Result, 0, len(skills))
 	linked := make([]skill.Skill, 0, len(skills))
 

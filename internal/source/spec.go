@@ -30,16 +30,21 @@ type Spec struct {
 	// URL is the registry base URL, or the filesystem path of a path source.
 	URL string
 
-	// Rev is a git ref. Not honored yet: the factory rejects it.
+	// Rev is a git ref. Only a git source honors it; the factory rejects it
+	// elsewhere.
 	Rev string
 
-	// Roots are the directories to walk inside the source. Not honored yet:
-	// the factory rejects it.
+	// Roots are the directories to walk inside the source. Only a git source and
+	// a declared path source honor them; the factory rejects them elsewhere.
 	Roots []string
 
-	// Excludes are glob patterns pruned before walking. Not honored yet: the
-	// factory rejects it.
+	// Excludes are glob patterns pruned before walking, honored like Roots.
 	Excludes []string
+
+	// Declared marks a path source the user declared in sources.json: it is walked
+	// as given, honoring Roots and Excludes. A path Spec without it is the local
+	// clone of ralvaskills, which reads <URL>/skills.
+	Declared bool
 
 	// Private keeps a source out of surfaces that can leave the machine
 	// without a deliberate act. Not enforced yet: the factory rejects it, so a

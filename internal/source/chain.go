@@ -104,6 +104,19 @@ func (c Chain) Select(kinds ...Kind) Chain {
 	return out
 }
 
+// Primary returns the hosted registry or the local clone: the sources a bundle
+// member is read from. A path source the user declared is not one of them.
+func (c Chain) Primary() Chain {
+	var out Chain
+	for _, r := range c {
+		spec := r.Spec()
+		if spec.Type == KindRegistry || (spec.Type == KindPath && !spec.Declared) {
+			out = append(out, r)
+		}
+	}
+	return out
+}
+
 // Registry returns the chain's hosted registry, for the callers that need its
 // index rather than a single skill. It reports false when there is none.
 func (c Chain) Registry() (*Registry, bool) {

@@ -119,7 +119,7 @@ func sourceForRef(src skill.Source, chain source.Chain) (sub source.Chain, notFo
 		return chain.ByID(skill.OfficialID),
 			"%s (official) not in cache — run 'rsk update --include official' to fetch it"
 	}
-	return chain.Select(source.KindRegistry, source.KindPath), "%s is not yet available (planned) — skipped"
+	return chain.Primary(), "%s is not yet available (planned) — skipped"
 }
 
 // DedupSkills returns skills with duplicates removed, keeping first occurrences.

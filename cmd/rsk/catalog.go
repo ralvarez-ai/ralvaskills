@@ -190,7 +190,7 @@ func loadSkillsBySource(
 
 	walk(skill.SourceLocal, func(_ source.Resolver, err error) string {
 		return fmt.Sprintf("walk local skills: %v", err)
-	}, chain.Select(source.KindRegistry, source.KindPath))
+	}, chain.Primary())
 	walk(skill.SourceOfficial, func(_ source.Resolver, err error) string { return err.Error() },
 		chain.ByID(skill.OfficialID))
 	walk(skill.SourceGit, func(src source.Resolver, err error) string {
@@ -199,12 +199,15 @@ func loadSkillsBySource(
 	return all
 }
 
-// declaredSources is the chain's git sources other than the built-in official
-// one, which the catalog lists as its own source.
+// declaredSources is the chain's declared sources: git ones other than the
+// built-in official one, which the catalog lists as its own source, and path
+// ones.
 func declaredSources(chain source.Chain) source.Chain {
 	var out source.Chain
-	for _, r := range chain.Select(source.KindGit) {
-		if r.Spec().ID != skill.OfficialID {
+	for _, r := range chain {
+		spec := r.Spec()
+		if (spec.Type == source.KindGit && spec.ID != skill.OfficialID) ||
+			(spec.Type == source.KindPath && spec.Declared) {
 			out = append(out, r)
 		}
 	}

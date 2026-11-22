@@ -234,3 +234,54 @@ func TestApplyProjectRecordsAGitSkillInTheLock(t *testing.T) {
 		t.Errorf("a registry install kept git fields: %+v", entry)
 	}
 }
+
+// A path source is a directory on one machine: a project manifest cannot
+// restore it elsewhere, so it is refused before anything is linked or written.
+func TestApplyProjectRefusesASkillFromAPathSource(t *testing.T) {
+	t.Parallel()
+	project := t.TempDir()
+	rskDir := filepath.Join(project, ".rsk")
+	if err := manifest.WriteMod(rskDir, manifest.Mod{Tools: []tool.ID{tool.ClaudeID}}); err != nil {
+		t.Fatal(err)
+	}
+	src := filepath.Join(t.TempDir(), "scratch-skill")
+	if err := os.MkdirAll(src, fsperm.Dir); err != nil {
+		t.Fatal(err)
+	}
+	target := filepath.Join(project, ".claude", "skills")
+
+	_, err := install.Apply(
+		[]skill.Skill{{Name: "scratch-skill", Path: src, Source: skill.SourcePath}},
+		install.Options{
+			Scope: install.ScopeProject, Targets: []string{target}, RskDir: rskDir,
+		},
+	)
+	if err == nil || !strings.Contains(err.Error(), "path source") {
+		t.Fatalf("err = %v, want a refusal naming the path source", err)
+	}
+	if _, statErr := os.Lstat(filepath.Join(target, "scratch-skill")); statErr == nil {
+		t.Error("the skill was linked before the refusal")
+	}
+	if m, readErr := manifest.ReadMod(rskDir); readErr != nil || len(m.Skills) != 0 {
+		t.Errorf("manifest = %+v, %v", m, readErr)
+	}
+}
+
+func TestApplyGlobalLinksASkillFromAPathSource(t *testing.T) {
+	t.Parallel()
+	src := filepath.Join(t.TempDir(), "scratch-skill")
+	if err := os.MkdirAll(src, fsperm.Dir); err != nil {
+		t.Fatal(err)
+	}
+	target := filepath.Join(t.TempDir(), "skills")
+
+	results, err := install.Apply(
+		[]skill.Skill{{Name: "scratch-skill", Path: src, Source: skill.SourcePath}},
+		install.Options{
+			Scope: install.ScopeGlobal, Targets: []string{target},
+		},
+	)
+	if err != nil || len(results) != 1 || results[0].Err != nil {
+		t.Fatalf("Apply = %+v, %v", results, err)
+	}
+}

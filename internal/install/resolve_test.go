@@ -156,3 +156,29 @@ func TestParseNameVersionAndConstraintsHandleQualifiedReferences(t *testing.T) {
 		t.Errorf("constraints = %v", got)
 	}
 }
+
+// A bundle names its members by the registry or the clone, so a path source
+// the user declared that happens to hold the same name must not turn the bundle
+// ambiguous.
+func TestABundleMemberIgnoresADeclaredPathSource(t *testing.T) {
+	t.Parallel()
+	repo, scratch := t.TempDir(), t.TempDir()
+	writeSkillDir(t, repo, "member")
+	writeSkillDir(t, scratch, "member")
+	cfg := config.Config{RepoPath: repo, OfficialCache: filepath.Join(t.TempDir(), "anthropic")}
+	specs := append(cfg.SourceSpecs(), source.Spec{
+		ID: "@me/scratch", Type: source.KindPath, URL: scratch, Declared: true,
+	})
+	opts := cfg.SourceOptions()
+	opts.RepoFor = func(source.Spec) source.RepoOps { return &sourcetest.Repo{Commit: strings.Repeat("c", 40)} }
+	chain, err := source.Build(specs, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bundle := config.Bundle{Name: "b", Skills: []config.SkillRef{{Name: "member", Source: skill.SourceLocal}}}
+	got, warnings, err := install.Resolve(t.Context(), []string{"b"}, []config.Bundle{bundle}, chain)
+	if err != nil || len(warnings) != 0 || len(got) != 1 || got[0].Source != skill.SourceLocal {
+		t.Fatalf("Resolve = %+v, %v, %v", got, warnings, err)
+	}
+}

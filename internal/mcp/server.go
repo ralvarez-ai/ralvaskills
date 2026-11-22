@@ -67,7 +67,7 @@ func (d Deps) catalog(ctx context.Context) ([]catalog.Entry, error) {
 		return nil, err
 	}
 	if d.Cfg.LocalMode() {
-		local := chain.Select(source.KindPath)
+		local := chain.Primary()
 		if len(local) == 0 {
 			return nil, errors.New("no local source is configured")
 		}

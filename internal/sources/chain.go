@@ -23,9 +23,9 @@ type ChainOptions struct {
 
 // Chain builds the machine's source chain: the built-in sources first (the
 // local clone or the hosted registry, then the official cache), then every
-// declared git source in file order. Each git source is gated by trust.json, so
-// an untrusted one fails when it is consulted instead of being skipped. Declared
-// path sources are not resolvable yet and are left out.
+// declared source in file order. Each git source is gated by trust.json, so an
+// untrusted one fails when it is consulted instead of being skipped. A declared
+// path source needs no grant: it reads a directory and contacts nothing.
 func Chain(cfg config.Config, o ChainOptions) (source.Chain, error) {
 	return ChainAt(cfg, DefaultPath(), trust.DefaultPath(), o)
 }
@@ -43,9 +43,7 @@ func ChainAt(cfg config.Config, sourcesPath, trustPath string, o ChainOptions) (
 
 	specs := cfg.SourceSpecs()
 	for i := range declared.Sources {
-		if declared.Sources[i].Type == source.KindGit {
-			specs = append(specs, declared.Sources[i].Spec())
-		}
+		specs = append(specs, declared.Sources[i].Spec())
 	}
 
 	opts := cfg.SourceOptions()

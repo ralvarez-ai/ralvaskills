@@ -23,6 +23,11 @@ const (
 	// see DeclaredSource), so one value says both what kind of source it is and
 	// which one; Kind folds it back to SourceGit. ParseSource does not accept it.
 	SourceGit Source = "git"
+
+	// SourcePath is the kind of a skill read from a declared path source. It has
+	// no identity of its own and never reaches a lock: a machine path is not
+	// reproducible. ParseSource does not accept it.
+	SourcePath Source = "path"
 )
 
 // ParseSource converts a string to its Source value. Returns an error for
@@ -120,6 +125,8 @@ func (s Source) Label() string {
 		return "reg  "
 	case SourceGit:
 		return "git  "
+	case SourcePath:
+		return "path "
 	default:
 		return "?????"
 	}

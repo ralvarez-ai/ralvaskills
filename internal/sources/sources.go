@@ -97,7 +97,10 @@ func NewEntry(target string, o Options) (Entry, error) {
 
 // Spec converts the declaration to a source descriptor.
 func (e Entry) Spec() source.Spec {
-	return source.Spec{ID: e.ID, Type: e.Type, URL: e.URL, Rev: e.Rev, Roots: e.Roots, Excludes: e.Excludes}
+	return source.Spec{
+		ID: e.ID, Type: e.Type, URL: e.URL, Rev: e.Rev, Roots: e.Roots, Excludes: e.Excludes,
+		Declared: e.Type == source.KindPath,
+	}
 }
 
 func isPath(target string) bool {

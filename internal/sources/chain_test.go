@@ -1,6 +1,7 @@
 package sources_test
 
 import (
+	"context"
 	"errors"
 	"os"
 	"path/filepath"
@@ -107,10 +108,10 @@ func TestChainAddsDeclaredGitSourcesAfterTheBuiltInOnes(t *testing.T) {
 	m := newMachine(t)
 	m.declare(t, "@acme/skills", sources.Options{})
 	m.declare(t, "@acme/other", sources.Options{})
-	m.declare(t, t.TempDir(), sources.Options{ID: "@me/scratch"}) // a path source: not resolvable yet
+	m.declare(t, t.TempDir(), sources.Options{ID: "@me/scratch"}) // a path source: no trust, no network
 
 	got := ids(m.chain(t, false))
-	want := []string{"@local/repo", skill.OfficialID, "@acme/skills", "@acme/other"}
+	want := []string{"@local/repo", skill.OfficialID, "@acme/skills", "@acme/other", "@me/scratch"}
 	if len(got) != len(want) {
 		t.Fatalf("chain = %v, want %v", got, want)
 	}
@@ -118,6 +119,29 @@ func TestChainAddsDeclaredGitSourcesAfterTheBuiltInOnes(t *testing.T) {
 		if got[i] != want[i] {
 			t.Errorf("chain = %v, want %v", got, want)
 		}
+	}
+}
+
+func TestADeclaredPathSourceResolvesWithoutAGrantOrAClone(t *testing.T) {
+	t.Parallel()
+	m := newMachine(t)
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "tool"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := "---\nname: tool\nversion: 0.1.0\ndescription: x\n---\n"
+	if err := os.WriteFile(filepath.Join(dir, "tool", "SKILL.md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	m.declare(t, dir, sources.Options{ID: "@me/scratch"})
+
+	chain := m.chain(t, false)
+	s, err := chain.Find(context.Background(), skill.Ref{Source: "@me/scratch", Name: "tool"})
+	if err != nil || s.Source != skill.SourcePath {
+		t.Fatalf("Find = %+v, %v", s, err)
+	}
+	if _, err = chain.Find(context.Background(), skill.Ref{Name: "tool"}); err != nil {
+		t.Errorf("a bare name does not reach the path source: %v", err)
 	}
 }
 
