@@ -134,12 +134,12 @@ tasks:
   registry:remove:lint:
     desc: Lint the registry-remove tool
     cmds:
-      - golangci-lint run --config .golangci.yml ./cmd/registry-remove/...
+      - golangci-lint run --config .golangci.yml ./cmd/registry-remove/... ./internal/registryremove/...
 
   registry:remove:fmt:
     desc: Format the registry-remove tool
     cmds:
-      - golangci-lint fmt --config .golangci.yml ./cmd/registry-remove/...
+      - golangci-lint fmt --config .golangci.yml ./cmd/registry-remove/... ./internal/registryremove/...
 
   # aggregate
 
