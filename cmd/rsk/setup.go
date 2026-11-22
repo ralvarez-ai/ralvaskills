@@ -21,6 +21,20 @@ func setupCommands() {
 	rootCmd.SetHelpCommandGroupID(groupOther)
 	rootCmd.SetCompletionCommandGroupID(groupOther)
 
+	registerCatalogCommands()
+	registerToolsAndSources()
+	registerLifecycleCommands()
+	registerInstallCommands()
+	registerViewCommands()
+	registerStateCommands()
+	registerRowActions()
+
+	markDestructive()
+	assignGroups()
+}
+
+// registerCatalogCommands registers the catalog tree and its flags.
+func registerCatalogCommands() {
 	// catalog command tree: catalog (all skills), catalog bundles, and
 	// catalog bundle <name>. The bundles view used to hide behind a bare
 	// --bundle; it is its own subcommand now.
@@ -48,7 +62,10 @@ func setupCommands() {
 	f.String(cmdx.FlagSource, "", "Filter by source: local|official|git")
 	registerSourceCompletion(catalogBundleCmd)
 	addOutputFlag(catalogBundleCmd)
+}
 
+// registerToolsAndSources registers the tools, source and resolve commands.
+func registerToolsAndSources() {
 	// tools command (canonical) and the hidden legacy `claude tools` path,
 	// both built by the same factory.
 	rootCmd.AddCommand(canonicalTools.root)
@@ -56,19 +73,25 @@ func setupCommands() {
 
 	registerSourceCommands()
 	registerResolveCommand()
+}
 
+// registerLifecycleCommands registers destroy and init.
+func registerLifecycleCommands() {
 	// destroy command
 	rootCmd.AddCommand(destroyCmd)
 	destroyCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
 
 	// init command
 	rootCmd.AddCommand(initCmd)
-	f = initCmd.Flags()
+	f := initCmd.Flags()
 	f.Bool(cmdx.FlagForce, false, "Overwrite the existing machine config if present")
+}
 
+// registerInstallCommands registers install and the commands that share its flags.
+func registerInstallCommands() {
 	// install command
 	rootCmd.AddCommand(installCmd)
-	f = installCmd.Flags()
+	f := installCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "Install to the configured global skills dir(s)")
 	f.String(cmdx.FlagFor, "", forFlagUsage("With --global, scope to a single tool: "))
 	cmdx.RegisterInclude(installCmd, "Allow installing extra skills", cmdx.IncludePersonal)
@@ -106,11 +129,14 @@ func setupCommands() {
 	syncCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
 	syncCmd.Flags().
 		StringSlice(flagTrust, nil, "Approve a source the lock names but this machine has not declared, for this run only")
+}
 
+// registerViewCommands registers list, new and pin.
+func registerViewCommands() {
 	// list command
 	rootCmd.AddCommand(listCmd)
 	term.MarkTableView(listCmd)
-	f = listCmd.Flags()
+	f := listCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "List global skills")
 	f.String(cmdx.FlagFor, "", forFlagUsage("Scope --global to a single tool: "))
 	cmdx.RegisterInclude(listCmd, "Include extra skills in the output", cmdx.IncludePersonal)
@@ -130,11 +156,14 @@ func setupCommands() {
 	pinCmd.Flags().Bool(cmdx.FlagRemove, false, "Unpin the skill instead of pinning it")
 	pinCmd.Flags().Bool(flagShared, false, "Move a private source's skill into the committed rsk files, on purpose")
 	pinCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Accept the digest of a remote skill after showing it")
+}
 
+// registerStateCommands registers status, uninstall, update and mcp.
+func registerStateCommands() {
 	// status command
 	rootCmd.AddCommand(statusCmd)
 	term.MarkTableView(statusCmd)
-	f = statusCmd.Flags()
+	f := statusCmd.Flags()
 	f.Bool(cmdx.FlagGlobal, false, "Show global skills only")
 	f.String(cmdx.FlagFor, "", forFlagUsage("Scope --global to a single tool: "))
 	f.Bool("project", false, "Show project skills only")
@@ -175,7 +204,10 @@ func setupCommands() {
 	// mcp command
 	rootCmd.AddCommand(mcpCmd)
 	mcpCmd.Flags().Bool("read-only", false, "Expose only read-only MCP tools")
+}
 
+// registerRowActions binds the TUI row actions of the table views.
+func registerRowActions() {
 	// row actions: install/uninstall directly from a catalog/list table row
 	// in the TUI, instead of leaving the view to type the name.
 	ui.MarkRowAction(catalogCmd, "i", "install", installCmd)
@@ -198,9 +230,6 @@ func setupCommands() {
 	// status renders one table per scanned directory, so its uninstall action
 	// resolves --global/--for from the table the row came from.
 	ui.MarkRowActionScoped(statusCmd, "u", "uninstall", uninstallCmd, statusRowActionScope)
-
-	markDestructive()
-	assignGroups()
 }
 
 // markDestructive flags the commands that change or delete files, so the
