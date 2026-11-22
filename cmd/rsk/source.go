@@ -108,7 +108,11 @@ Examples:
 	f.String(flagRev, "", "Git branch or tag to read (default: the repository's default branch)")
 	f.StringSlice(flagRoots, nil, "Directories inside the source to search for skills")
 	f.StringSlice(flagExclude, nil, "Glob patterns to skip while searching")
-	f.Bool(flagPrivate, false, "Keep the source out of listings (not supported yet)")
+	f.Bool(
+		flagPrivate,
+		false,
+		"Keep the source out of the catalog and the MCP server; its pins stay out of committed files",
+	)
 	f.Bool(cmdx.FlagDryRun, false, "Show what would be added without doing it")
 	f.BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
 	addOutputFlag(add)
@@ -227,12 +231,6 @@ func runSourceAdd(cmd *cobra.Command, args []string) error {
 	if err := checkOutput(cmd); err != nil {
 		return err
 	}
-	if cmdx.Bool(cmd, flagPrivate) {
-		return fieldError(
-			flagPrivate,
-			"--private is not supported yet: private pins need the local overlay, which has not shipped",
-		)
-	}
 	roots, err := cmd.Flags().GetStringSlice(flagRoots)
 	if err != nil {
 		return err
@@ -243,6 +241,7 @@ func runSourceAdd(cmd *cobra.Command, args []string) error {
 	}
 	change, apply, err := sourceops.PlanAdd(sourceEnv(), args[0], sources.Options{
 		ID: cmdx.String(cmd, flagID), Rev: cmdx.String(cmd, flagRev), Roots: roots, Excludes: excludes,
+		Private: cmdx.Bool(cmd, flagPrivate),
 	})
 	if err != nil {
 		return err

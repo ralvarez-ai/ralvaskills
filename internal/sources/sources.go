@@ -47,6 +47,7 @@ type (
 		Rev      string      `json:"rev,omitempty"`
 		Roots    []string    `json:"roots,omitempty"`
 		Excludes []string    `json:"excludes,omitempty"`
+		Private  bool        `json:"private,omitempty"`
 	}
 
 	// File is the content of sources.json.
@@ -57,6 +58,7 @@ type (
 
 	// Options are what `rsk source add` accepts besides the target.
 	Options struct {
+		Private  bool
 		ID       string
 		Rev      string
 		Roots    []string
@@ -88,7 +90,7 @@ func NewEntry(target string, o Options) (Entry, error) {
 	if err != nil {
 		return Entry{}, err
 	}
-	e.Rev, e.Roots, e.Excludes = o.Rev, o.Roots, o.Excludes
+	e.Rev, e.Roots, e.Excludes, e.Private = o.Rev, o.Roots, o.Excludes, o.Private
 	if err = Validate(e); err != nil {
 		return Entry{}, err
 	}
@@ -99,7 +101,7 @@ func NewEntry(target string, o Options) (Entry, error) {
 func (e Entry) Spec() source.Spec {
 	return source.Spec{
 		ID: e.ID, Type: e.Type, URL: e.URL, Rev: e.Rev, Roots: e.Roots, Excludes: e.Excludes,
-		Declared: e.Type == source.KindPath,
+		Declared: e.Type == source.KindPath, Private: e.Private,
 	}
 }
 

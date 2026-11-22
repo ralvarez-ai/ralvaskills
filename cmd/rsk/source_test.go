@@ -93,7 +93,6 @@ func TestSourceAddRegistersUntrustedAndListShowsIt(t *testing.T) {
 func TestSourceAddRefusesWhatShouldNotBeDeclared(t *testing.T) {
 	isolateConfig(t)
 	for name, args := range map[string][]string{
-		"private flag":       {"add", "@acme/x", "--private", "--yes"},
 		"reserved identity":  {"add", "@anthropics/skills", "--yes"},
 		"hostile transport":  {"add", "ext::sh -c id", "--id", "@a/b", "--yes"},
 		"host needs an id":   {"add", "git@git.example.com:t/s.git", "--yes"},
@@ -331,5 +330,24 @@ func TestSourceScanRefusesAnUnregisteredRepositoryAndAnUntrustedOne(t *testing.T
 	); err == nil ||
 		!strings.Contains(err.Error(), "rsk source trust @acme/skills") {
 		t.Errorf("an untrusted repository: err = %v", err)
+	}
+}
+
+//nolint:paralleltest // the config folder override is process-wide
+func TestSourceAddPrivateIsRegisteredListedAndKeptOutOfTheCatalog(t *testing.T) {
+	isolateConfig(t)
+	if _, err := runSource(t, "add", "@acme/hidden", "--private", "--yes"); err != nil {
+		t.Fatal(err)
+	}
+	out, err := runSource(t, "list", "-o", "json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var views []sourceView
+	if err = json.Unmarshal([]byte(out), &views); err != nil || len(views) != 1 || !views[0].Private {
+		t.Fatalf("views = %+v, %v", views, err)
+	}
+	if _, err = runSource(t, "add", "@acme/x", "--private", "--dry-run", "-o", "json"); err != nil {
+		t.Errorf("a dry run of a private add failed: %v", err)
 	}
 }

@@ -14,12 +14,14 @@ import (
 const (
 	IncludePersonal = "personal"
 	IncludeOfficial = "official"
+	IncludePrivate  = "private"
 )
 
 // Includes reports which optional skill scopes a command was asked to cover.
 type Includes struct {
 	Personal bool
 	Official bool
+	Private  bool
 }
 
 // RegisterInclude registers --include on cmd, plus the legacy --personal
@@ -71,6 +73,8 @@ func ReadIncludes(cmd *cobra.Command, allowed ...string) (Includes, error) {
 			inc.Personal = true
 		case v == IncludeOfficial:
 			inc.Official = true
+		case v == IncludePrivate:
+			inc.Private = true
 		}
 	}
 

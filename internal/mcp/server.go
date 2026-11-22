@@ -43,7 +43,9 @@ type Deps struct {
 }
 
 // chain builds the chain the server resolves through: the built-in sources and
-// the ones the user declared, each git source behind the trust gate. It never
+// the ones the user declared, each git source behind the trust gate. A private
+// source is left out: the server never names, lists, resolves through or
+// installs from one, since its output can end up in a shared transcript. It never
 // offers a source for one run, so a reference to an unregistered source is
 // refused: only a person at a terminal can approve one.
 func (d Deps) chain() (source.Chain, error) {
@@ -56,7 +58,12 @@ func (d Deps) chain() (source.Chain, error) {
 	if trustPath == "" {
 		trustPath = trust.DefaultPath()
 	}
-	return sources.ChainAt(d.Cfg, d.SourcesPath, trustPath, sources.ChainOptions{RepoFor: d.RepoFor})
+	return sources.ChainAt(
+		d.Cfg,
+		d.SourcesPath,
+		trustPath,
+		sources.ChainOptions{RepoFor: d.RepoFor, ExcludePrivate: true},
+	)
 }
 
 // sourceEnv is where the source tools read and write.
@@ -64,6 +71,7 @@ func (d Deps) sourceEnv() sourceops.Env {
 	cfg := d.Cfg
 	return sourceops.Env{
 		Cfg: &cfg, SourcesPath: d.SourcesPath, TrustPath: d.TrustPath, RepoFor: d.RepoFor, LsRemote: d.LsRemote,
+		HidePrivate: true,
 	}
 }
 

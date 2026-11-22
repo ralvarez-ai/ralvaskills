@@ -232,3 +232,56 @@ func TestScanADeclaredGitSourceNeedsTrustAndAnUnregisteredOneIsRefused(t *testin
 		t.Errorf("an unregistered source: err = %v, want the command to register it", err)
 	}
 }
+
+func TestHidePrivateKeepsAPrivateSourceOutOfEveryReadAndRefusesToTouchIt(t *testing.T) {
+	t.Parallel()
+	env, dir := newEnv(t)
+	for _, o := range []sources.Options{{ID: "@acme/open"}, {ID: "@acme/hidden", Private: true}} {
+		_, apply, err := sourceops.PlanAdd(env, "git@github.com:"+strings.TrimPrefix(o.ID, "@")+".git", o)
+		if err != nil || apply() != nil {
+			t.Fatal(err)
+		}
+	}
+	grants := trust.Grant(trust.File{}, "@acme/hidden", "git@github.com:acme/hidden.git", time.Now())
+	if err := trust.Save(filepath.Join(dir, "trust.json"), grants); err != nil {
+		t.Fatal(err)
+	}
+
+	views, _ := sourceops.List(env)
+	private := false
+	for _, v := range views {
+		private = private || (v.ID == "@acme/hidden" && v.Private)
+	}
+	if !private {
+		t.Errorf("the owner's own listing must show the private source: %+v", views)
+	}
+
+	env.HidePrivate = true
+	views, _ = sourceops.List(env)
+	for _, v := range views {
+		if v.ID == "@acme/hidden" {
+			t.Errorf("a hidden listing names the private source: %+v", v)
+		}
+	}
+	if _, err := sourceops.Test(t.Context(), env, "@acme/hidden"); err == nil {
+		t.Errorf("a private source was tested through a hidden surface: %v", err)
+	}
+	if _, err := sourceops.Scan(t.Context(), env, "@acme/hidden"); err == nil {
+		t.Error("a private source was scanned through a hidden surface")
+	}
+	if _, _, err := sourceops.PlanRemove(env, "@acme/hidden"); err == nil {
+		t.Error("a private source was removed through a hidden surface")
+	}
+	if _, apply, err := sourceops.PlanAdd(
+		env,
+		"git@github.com:acme/third.git",
+		sources.Options{ID: "@acme/third"},
+	); err != nil ||
+		apply() != nil {
+		t.Fatalf("adding while private sources are hidden failed: %v", err)
+	}
+	f, _ := sources.Load(filepath.Join(dir, "sources.json"))
+	if _, ok := sources.Find(f, "@acme/hidden"); !ok {
+		t.Error("a write through a hidden surface dropped the private source from sources.json")
+	}
+}

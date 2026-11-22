@@ -46,9 +46,10 @@ type Spec struct {
 	// clone of ralvaskills, which reads <URL>/skills.
 	Declared bool
 
-	// Private keeps a source out of surfaces that can leave the machine
-	// without a deliberate act. Not enforced yet: the factory rejects it, so a
-	// source can never be believed private when nothing hides it.
+	// Private keeps a source out of the listings that can leave the machine
+	// without a deliberate act (catalog, the MCP server, rsk://catalog and
+	// search). Registering it is the opt-in to install from it. Git and path
+	// sources only: a registry is public.
 	Private bool
 }
 

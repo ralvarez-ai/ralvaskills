@@ -14,8 +14,8 @@ import (
 //
 //nolint:ireturn // returns interface so callers depend on the resolver, not the transport
 func New(spec Spec, opts Options) (Resolver, error) {
-	if spec.Private {
-		return nil, fmt.Errorf("source %s: private is not supported yet", spec.ID)
+	if spec.Private && spec.Type == KindRegistry {
+		return nil, fmt.Errorf("source %s: a registry is public and cannot be private", spec.ID)
 	}
 	if spec.Type != KindGit && spec.Rev != "" {
 		return nil, fmt.Errorf("source %s: rev applies to git sources only", spec.ID)

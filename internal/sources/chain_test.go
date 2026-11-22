@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -251,4 +252,37 @@ func TestRestoreRefusesASourceThisMachineDoesNotHaveOrTrust(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "evil.example") {
 		t.Errorf("a lock URL that differs from the declared one err = %v, want a refusal naming it", err)
 	}
+}
+
+func TestAPrivateSourceIsInTheChainUnlessAskedToLeaveItOut(t *testing.T) {
+	t.Parallel()
+	m := newMachine(t)
+	m.declare(t, "@acme/open", sources.Options{})
+	m.declare(t, "@acme/hidden", sources.Options{Private: true})
+
+	withAll := ids(m.chain(t, false))
+	if !slices.Contains(withAll, "@acme/hidden") || !slices.Contains(withAll, "@acme/open") {
+		t.Fatalf("chain = %v: registering a private source is the opt-in to use it", withAll)
+	}
+	chain, err := sources.ChainAt(m.cfg, m.sources, m.trustFile, sources.ChainOptions{ExcludePrivate: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := ids(chain)
+	if slices.Contains(got, "@acme/hidden") || !slices.Contains(got, "@acme/open") {
+		t.Errorf("chain = %v, want the private source left out", got)
+	}
+	e, _ := sources.Find(mustLoad(t, m.sources), "@acme/hidden")
+	if !e.Private || !e.Spec().Private {
+		t.Errorf("the declaration lost its private flag: %+v", e)
+	}
+}
+
+func mustLoad(t *testing.T, path string) sources.File {
+	t.Helper()
+	f, err := sources.Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return f
 }

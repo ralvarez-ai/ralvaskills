@@ -474,7 +474,6 @@ func TestNewBuildsAGitSourceOnlyWithAGateAndACache(t *testing.T) {
 		t.Error("a git source was built without a cache location")
 	}
 	for name, bad := range map[string]Spec{
-		"private":    {ID: testID, Type: KindGit, URL: testURL, Private: true},
 		"traversal":  {ID: "@acme/..", Type: KindGit, URL: testURL},
 		"ext url":    {ID: testID, Type: KindGit, URL: "ext::sh -c id"},
 		"file url":   {ID: testID, Type: KindGit, URL: "file:///srv/x.git"},

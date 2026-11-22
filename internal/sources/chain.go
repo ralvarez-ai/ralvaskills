@@ -23,6 +23,10 @@ type ChainOptions struct {
 	// is written to sources.json or trust.json, and the MCP server never sets it.
 	Implicit []Entry
 
+	// ExcludePrivate leaves the declared private sources out of the chain, for a
+	// surface that must never reach them, such as the MCP server.
+	ExcludePrivate bool
+
 	// RepoFor supplies the clone a git source reads, for tests above this
 	// package that must not reach a network. Nil means the real one.
 	RepoFor func(source.Spec) source.RepoOps
@@ -50,6 +54,9 @@ func ChainAt(cfg config.Config, sourcesPath, trustPath string, o ChainOptions) (
 
 	specs := cfg.SourceSpecs()
 	for i := range declared.Sources {
+		if o.ExcludePrivate && declared.Sources[i].Private {
+			continue
+		}
 		specs = append(specs, declared.Sources[i].Spec())
 	}
 	seen := map[string]bool{}

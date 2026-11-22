@@ -43,6 +43,20 @@ func TestNewBuildsEachKind(t *testing.T) {
 	}
 }
 
+func TestNewAcceptsPrivateForGitAndPathSources(t *testing.T) {
+	t.Parallel()
+	opts := source.Options{CacheRoot: t.TempDir(), Gate: func(string, string) error { return nil }}
+	for name, spec := range map[string]source.Spec{
+		"git":  {ID: "@acme/skills", Type: source.KindGit, URL: "git@github.com:acme/skills.git", Private: true},
+		"path": {ID: "@me/scratch", Type: source.KindPath, URL: t.TempDir(), Declared: true, Private: true},
+	} {
+		r, err := source.New(spec, opts)
+		if err != nil || !r.Spec().Private {
+			t.Errorf("%s: err = %v, private = %v", name, err, r != nil && r.Spec().Private)
+		}
+	}
+}
+
 func TestNewRejectsWhatItCannotHonour(t *testing.T) {
 	t.Parallel()
 	opts := source.Options{}
@@ -58,7 +72,7 @@ func TestNewRejectsWhatItCannotHonour(t *testing.T) {
 		{"unknown kind", source.Spec{ID: "@a/a", Type: "bogus", URL: "git@host:a/a.git"}},
 		{"git without a gate or a cache", source.Spec{ID: "@a/a", Type: source.KindGit, URL: "git@host:a/a.git"}},
 		{"empty kind", source.Spec{ID: "@a/a"}},
-		{"private is not enforced yet", path(func(s *source.Spec) { s.Private = true })},
+		{"a private registry", source.Spec{ID: "@a/a", Type: source.KindRegistry, URL: "https://x", Private: true}},
 		{"rev is not honored yet", path(func(s *source.Spec) { s.Rev = "main" })},
 		{"roots are not honored yet", path(func(s *source.Spec) { s.Roots = []string{"s"} })},
 		{"excludes are not honored yet", path(func(s *source.Spec) { s.Excludes = []string{"**"} })},

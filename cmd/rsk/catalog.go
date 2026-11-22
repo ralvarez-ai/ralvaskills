@@ -72,7 +72,7 @@ var catalogBundleCmd = &cobra.Command{
 // catalogSkillsOpts reads the flags shared by the skill-list views: the
 // --include/--personal scope, the --source filter, and the --output format.
 func catalogSkillsOpts(cmd *cobra.Command) (catalogOpts, error) {
-	inc, err := cmdx.ReadIncludes(cmd, cmdx.IncludePersonal)
+	inc, err := cmdx.ReadIncludes(cmd, cmdx.IncludePersonal, cmdx.IncludePrivate)
 	if err != nil {
 		return catalogOpts{}, err
 	}
@@ -80,12 +80,18 @@ func catalogSkillsOpts(cmd *cobra.Command) (catalogOpts, error) {
 	if err != nil {
 		return catalogOpts{}, err
 	}
-	return catalogOpts{personal: inc.Personal, source: sourceFilter, format: printer.Format(cmd)}, nil
+	return catalogOpts{
+		personal: inc.Personal,
+		private:  inc.Private,
+		source:   sourceFilter,
+		format:   printer.Format(cmd),
+	}, nil
 }
 
 type (
 	catalogOpts struct {
 		personal bool
+		private  bool
 		bundle   string
 		source   skill.Source
 		format   output.OutputFormat
@@ -131,7 +137,7 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 	if err != nil {
 		return err
 	}
-	all := loadSkillsBySource(ctx, out, capture, chain, opts.source)
+	all := loadSkillsBySource(ctx, out, capture, chain, opts.source, opts.private)
 
 	if opts.bundle != "" {
 		all, err = filterByBundle(out, capture, all, opts.bundle)
@@ -172,6 +178,7 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 // the rest are still listed.
 func loadSkillsBySource(
 	ctx context.Context, out io.Writer, capture *term.Capture, chain source.Chain, sourceFilter skill.Source,
+	includePrivate bool,
 ) []skill.Skill {
 	var all []skill.Skill
 	walk := func(want skill.Source, label func(source.Resolver, error) string, srcs source.Chain) {
@@ -195,17 +202,20 @@ func loadSkillsBySource(
 		chain.ByID(skill.OfficialID))
 	walk(skill.SourceGit, func(src source.Resolver, err error) string {
 		return fmt.Sprintf("source %s: %v", src.Spec().ID, err)
-	}, declaredSources(chain))
+	}, declaredSources(chain, includePrivate))
 	return all
 }
 
 // declaredSources is the chain's declared sources: git ones other than the
 // built-in official one, which the catalog lists as its own source, and path
 // ones.
-func declaredSources(chain source.Chain) source.Chain {
+func declaredSources(chain source.Chain, includePrivate bool) source.Chain {
 	var out source.Chain
 	for _, r := range chain {
 		spec := r.Spec()
+		if spec.Private && !includePrivate {
+			continue
+		}
 		if (spec.Type == source.KindGit && spec.ID != skill.OfficialID) ||
 			(spec.Type == source.KindPath && spec.Declared) {
 			out = append(out, r)

@@ -20,6 +20,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/source/sourcetest"
 	"go.ralva.dev/ralvaskills/v3/internal/sourceops"
+	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/trust"
 )
 
@@ -406,5 +407,60 @@ func TestProjectProfileListsTheConfiguredSources(t *testing.T) {
 	}
 	if len(out.Sources) != 1 || out.Sources[0].ID != "@acme/skills" || out.Sources[0].Trust != sourceops.TrustNone {
 		t.Errorf("sources = %+v, want the declared source and its trust state", out.Sources)
+	}
+}
+
+// A private source exists on the machine and is trusted, and the MCP server still
+// never names it, lists it, resolves through it or installs from it: those
+// outputs can end up in a transcript the owner did not mean to share.
+func TestThePrivateSourceIsInvisibleOverMCP(t *testing.T) {
+	t.Parallel()
+	w := newSourcesWorld(t, false)
+	entry := sources.Entry{
+		ID: "@acme/hidden", Type: source.KindGit, URL: "git@github.com:acme/hidden.git", Private: true,
+	}
+	file, err := sources.Add(sources.File{}, entry)
+	if err != nil || sources.Save(filepath.Join(w.dir, "sources.json"), file) != nil {
+		t.Fatal(err)
+	}
+	grants := trust.Grant(trust.File{}, entry.ID, entry.URL, time.Now())
+	if err = trust.Save(filepath.Join(w.dir, "trust.json"), grants); err != nil {
+		t.Fatal(err)
+	}
+
+	var list struct {
+		Sources []sourceops.View `json:"sources"`
+	}
+	w.call(t, "list_sources", nil, &list)
+	for _, v := range list.Sources {
+		if v.ID == "@acme/hidden" {
+			t.Errorf("list_sources names the private source: %+v", v)
+		}
+	}
+	var profile mcp.ProjectProfileOut
+	w.call(t, "project_profile", map[string]any{"path": t.TempDir()}, &profile)
+	if len(profile.Sources) != 0 {
+		t.Errorf("project_profile names %+v", profile.Sources)
+	}
+	for tool, args := range map[string]map[string]any{
+		"test_source":    {"id": "@acme/hidden"},
+		"scan_source":    {"target": "@acme/hidden"},
+		"remove_source":  {"id": "@acme/hidden"},
+		"install_skills": {"names": []string{"@acme/hidden/alpha"}, "scope": "global"},
+	} {
+		if res := w.call(t, tool, args, nil); !res.IsError {
+			t.Errorf("%s reached the private source", tool)
+		}
+	}
+	var res resolve.Result
+	w.call(t, "resolve_reference", map[string]any{"reference": "@acme/hidden/alpha"}, &res)
+	if res.Status != resolve.UnknownSource {
+		t.Errorf("resolve_reference status = %s, want the private source to look unregistered", res.Status)
+	}
+	if len(w.fetched()) != 0 || len(w.probed) != 0 {
+		t.Errorf("the server contacted %v %v", w.fetched(), w.probed)
+	}
+	if !w.exists("sources.json") {
+		t.Error("sources.json is gone")
 	}
 }

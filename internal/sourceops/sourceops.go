@@ -62,6 +62,11 @@ type (
 		// EffectiveURL says where git really goes for a URL. Nil means
 		// git.EffectiveURL.
 		EffectiveURL func(context.Context, git.RemoteURL) (string, error)
+
+		// HidePrivate makes a private source invisible to List, Test, Scan and
+		// PlanRemove, for a surface that must never name one (the MCP server).
+		// Writes still keep the private entries in sources.json.
+		HidePrivate bool
 	}
 
 	// View is one source as it is listed, and as JSON.
@@ -72,6 +77,7 @@ type (
 		Rev      string   `json:"rev,omitempty"`
 		Roots    []string `json:"roots,omitempty"`
 		Excludes []string `json:"excludes,omitempty"`
+		Private  bool     `json:"private,omitempty"`
 		Trust    string   `json:"trust"`
 	}
 
@@ -132,6 +138,16 @@ func (e Env) load() (state, error) {
 	return state{file: file, grants: grants}, nil
 }
 
+// find returns the declared entry, treating a private one as absent when the
+// environment hides them.
+func (e Env) find(f sources.File, id string) (sources.Entry, bool) {
+	entry, ok := sources.Find(f, id)
+	if ok && entry.Private && e.HidePrivate {
+		return sources.Entry{}, false
+	}
+	return entry, ok
+}
+
 // TrustHint is the command that trusts a source: only a person at a terminal
 // can run it.
 func TrustHint(id string) string {
@@ -148,7 +164,8 @@ func ViewOf(e sources.Entry, grants trust.File) View {
 		state = TrustTrusted
 	}
 	return View{
-		ID: e.ID, Type: string(e.Type), URL: e.URL, Rev: e.Rev, Roots: e.Roots, Excludes: e.Excludes, Trust: state,
+		ID: e.ID, Type: string(e.Type), URL: e.URL, Rev: e.Rev, Roots: e.Roots, Excludes: e.Excludes,
+		Private: e.Private, Trust: state,
 	}
 }
 
@@ -174,6 +191,9 @@ func List(env Env) ([]View, error) {
 		)
 	}
 	for i := range st.file.Sources {
+		if env.HidePrivate && st.file.Sources[i].Private {
+			continue
+		}
 		views = append(views, ViewOf(st.file.Sources[i], st.grants))
 	}
 	return views, nil
@@ -208,7 +228,7 @@ func PlanRemove(env Env, id string) (Change, func() error, error) {
 	if err != nil {
 		return Change{}, nil, err
 	}
-	entry, ok := sources.Find(st.file, id)
+	entry, ok := env.find(st.file, id)
 	if !ok {
 		return Change{}, nil, fmt.Errorf("source %s is not declared", id)
 	}
@@ -234,7 +254,7 @@ func Test(ctx context.Context, env Env, id string) (TestResult, error) {
 	if err != nil {
 		return TestResult{}, err
 	}
-	entry, ok := sources.Find(st.file, id)
+	entry, ok := env.find(st.file, id)
 	if !ok {
 		return TestResult{}, fmt.Errorf("source %s is not declared", id)
 	}
@@ -300,7 +320,7 @@ func Scan(ctx context.Context, env Env, target string) (ScanOutcome, error) {
 		return ScanOutcome{}, err
 	}
 	if strings.HasPrefix(target, "@") {
-		entry, ok := sources.Find(st.file, target)
+		entry, ok := env.find(st.file, target)
 		if !ok {
 			return ScanOutcome{}, fmt.Errorf("source %s is not declared: register it first with 'rsk source add %s'",
 				target, target)
