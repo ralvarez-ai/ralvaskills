@@ -64,7 +64,7 @@ func setupCommands() {
 	// init command
 	rootCmd.AddCommand(initCmd)
 	f = initCmd.Flags()
-	f.Bool(cmdx.FlagForce, false, "Overwrite existing rsk.mod if present")
+	f.Bool(cmdx.FlagForce, false, "Overwrite the existing machine config if present")
 
 	// install command
 	rootCmd.AddCommand(installCmd)
