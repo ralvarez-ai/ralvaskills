@@ -112,6 +112,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 # CLI releases
 
+## v3.10.0 (2026-11-22)
+
+Skills can now come from git repositories and directories as well as the hosted registry and `anthropics/skills`, with a per-machine trust gate. The entries under Unreleased above, from "MCP source tools" down to "`rsk source`", describe each piece in full.
+
+### Added
+- **Git and path sources, `rsk source` and trust.** `rsk source add|list|remove|test|scan|trust|untrust` declares sources in `~/.config/rsk/sources.json`. A git source is registered untrusted and nothing is contacted until the user runs `rsk source trust` in a terminal; a grant is keyed by identity and URL. Git is reached with the user's own SSH key or credential helper: rsk stores no credential. A hardened git runner accepts only `ssh://`, `https://` and `git@host:path`, never prompts, and scrubs credentials from errors.
+- **A reference grammar.** `@owner/repo/name[@version]` resolves in exactly that source; a bare name must exist in exactly one source and fails if two have it or one cannot be consulted. `rsk resolve <ref>` explains the outcome.
+- **Implicit sources and `--from`.** `rsk install @owner/repo/name` for an unregistered GitHub source shows the SSH and HTTPS URLs and asks, and only a person at a terminal can answer (`--yes` does not); CI passes `--trust @owner/repo` for one run. `--save` registers it untrusted. `rsk install --from <dir>` is a one-off. `rsk sync --trust` restores a lock naming an unregistered source.
+- **Locks that name their source.** Installing from a git source records url, commit, tree and path; `rsk sync` restores at the locked commit and checks the tree, and `rsk update` compares tree ids.
+- **Nine MCP tools.** `list_sources`, `test_source`, `scan_source`, `resolve_reference`, `add_source` and `remove_source` join `project_profile`, `search_skills` and `install_skills`. No tool can trust a source or take a secret.
+- **Pin confirmation.** Pinning a skill from any source but the default registry shows the text that lands in `.rsk/SKILLS.md` and asks.
+
+### Changed
+- **Migration: manifests become v2 when needed.** A project's `rsk.mod` and `rsk.lock` are written as v2 the first time it installs a skill from a non-default source, which includes an official one. An older `rsk` refuses a v2 file with "upgrade rsk", so move the pinned `rsk` version in `mise.toml` before running `rsk update` or `rsk install` on a project that uses official skills. Existing official links keep working and are re-pointed by the next `rsk update`.
+- **Official skills come through the git transport.** `anthropics/skills` is the one built-in git source; an unreachable official source now fails a bare-name lookup instead of being skipped.
+- **Bare names fail closed.** A name two sources provide is an error naming both, where the registry used to win silently.
+- **A flag-parse failure exits `2`** instead of `1`, and `--version` prints the shared line.
+
+### Fixed
+- **A versionless skill digests as its description** instead of "no digest, and not readable here".
+
 ## v3.9.1 (2026-11-12)
 
 ### Fixed
