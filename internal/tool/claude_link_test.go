@@ -220,3 +220,89 @@ func TestSyncPinned_regularFileEndToEnd(t *testing.T) {
 		t.Errorf("CLAUDE.md perm = %o, want 0644 preserved", got)
 	}
 }
+
+func TestSyncLocalImport_addsAndRemovesOnlyItsOwnLine(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	path := filepath.Join(dir, ClaudeLocalFileName)
+	claude := &ClaudeTool{}
+
+	// A personal CLAUDE.local.md is the user's: the import is appended, never replaced.
+	if err := os.WriteFile(path, []byte("my own note\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	for range 2 {
+		if err := claude.SyncLocal(dir, true); err != nil {
+			t.Fatal(err)
+		}
+	}
+	data, _ := os.ReadFile(path)
+	if strings.Count(string(data), "@.rsk/SKILLS.local.md") != 1 || !strings.Contains(string(data), "my own note") {
+		t.Errorf("CLAUDE.local.md = %q", data)
+	}
+	if err := claude.SyncLocal(dir, false); err != nil {
+		t.Fatal(err)
+	}
+	data, _ = os.ReadFile(path)
+	if strings.Contains(string(data), "SKILLS.local.md") || !strings.Contains(string(data), "my own note") {
+		t.Errorf("after removal CLAUDE.local.md = %q", data)
+	}
+
+	// A file rsk created is removed with its last line.
+	os.Remove(path)
+	if err := claude.SyncLocal(dir, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := claude.SyncLocal(dir, false); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(path); err == nil {
+		t.Error("an empty CLAUDE.local.md is left behind")
+	}
+	// Nothing to remove, nothing to create.
+	if err := claude.SyncLocal(dir, false); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(path); err == nil {
+		t.Error("removing an import created the file")
+	}
+}
+
+func TestSyncLocalImport_refusesASymlink(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	writeSymlink(t, filepath.Join(dir, "elsewhere.md"), filepath.Join(dir, ClaudeLocalFileName), "x\n")
+	if err := (&ClaudeTool{}).SyncLocal(dir, true); err == nil {
+		t.Fatal("rsk wrote through a symlinked CLAUDE.local.md")
+	}
+}
+
+func TestOpenCodeSyncLocal_listsTheLocalDigestOnlyWhenThereIsOne(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	oc := &openCodeTool{}
+	if err := oc.SyncPinned(dir, []string{"a"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := oc.SyncLocal(dir, true); err != nil {
+		t.Fatal(err)
+	}
+	data, _ := os.ReadFile(filepath.Join(dir, OpenCodeFileName))
+	if !strings.Contains(string(data), ".rsk/SKILLS.local.md") || !strings.Contains(string(data), ".rsk/SKILLS.md") {
+		t.Errorf("opencode.json = %s", data)
+	}
+	// SyncPinned rewrites the managed entries; the local one is re-added by SyncLocal.
+	if err := oc.SyncPinned(dir, []string{"a"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := oc.SyncLocal(dir, false); err != nil {
+		t.Fatal(err)
+	}
+	data, _ = os.ReadFile(filepath.Join(dir, OpenCodeFileName))
+	if strings.Contains(string(data), "SKILLS.local.md") || !strings.Contains(string(data), ".rsk/SKILLS.md") {
+		t.Errorf("after removal opencode.json = %s", data)
+	}
+	if err := oc.RemovePinned(dir); err != nil {
+		t.Fatal(err)
+	}
+}

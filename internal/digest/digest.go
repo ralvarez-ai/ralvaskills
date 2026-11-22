@@ -25,6 +25,10 @@ const (
 	// IndexFileName is the generated file inside .rsk/ that the adapters import.
 	IndexFileName = "SKILLS.md"
 
+	// LocalIndexFileName is the generated file for the pins from a private
+	// source. It is never committed: rsk keeps it out of git.
+	LocalIndexFileName = "SKILLS.local.md"
+
 	// BudgetTokens is the estimated size above which the generated file is
 	// considered too heavy for an always-loaded import.
 	BudgetTokens = 2000
@@ -182,15 +186,44 @@ func Measure(projectDir string, pinned []string) Size {
 // the project skill directories, or removes it when nothing is pinned. It returns the
 // estimated size of what it wrote.
 func Sync(projectDir string, pinned []string) (int, error) {
-	path := filepath.Join(projectDir, internal.ProjectFolderName, IndexFileName)
-	if len(pinned) == 0 {
+	return SyncLayers(projectDir, pinned, nil)
+}
+
+// SyncLayers is Sync with the pins from a private source kept apart: the names in
+// local are written to .rsk/SKILLS.local.md, which is not committed, and the rest
+// to .rsk/SKILLS.md. Each file is removed when it would be empty. It returns the
+// estimated size of the committed file.
+func SyncLayers(projectDir string, pinned []string, local map[string]bool) (int, error) {
+	var shared, private []string
+	for _, name := range pinned {
+		if local[name] {
+			private = append(private, name)
+		} else {
+			shared = append(shared, name)
+		}
+	}
+	tokens, err := writeIndex(projectDir, IndexFileName, shared)
+	if err != nil {
+		return 0, err
+	}
+	if _, err = writeIndex(projectDir, LocalIndexFileName, private); err != nil {
+		return 0, err
+	}
+	return tokens, nil
+}
+
+// writeIndex writes the digest of names to .rsk/<file>, or removes the file when
+// there are none.
+func writeIndex(projectDir, file string, names []string) (int, error) {
+	path := filepath.Join(projectDir, internal.ProjectFolderName, file)
+	if len(names) == 0 {
 		if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
 			return 0, fmt.Errorf("remove %s: %w", path, err)
 		}
 		return 0, nil
 	}
 
-	content := Render(loadEntries(projectDir, pinned))
+	content := Render(loadEntries(projectDir, names))
 
 	if err := fsx.WriteAtomic(path, internal.TempFilePattern, func(w io.Writer) error {
 		_, err := io.WriteString(w, content)

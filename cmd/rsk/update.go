@@ -198,7 +198,7 @@ func refreshPinnedDigest(out, errOut io.Writer) {
 	if !ok {
 		return
 	}
-	if _, err := digest.Sync(filepath.Dir(rskDir), m.Pinned); err != nil {
+	if _, err := digest.SyncLayers(filepath.Dir(rskDir), m.Pinned, m.Local); err != nil {
 		ui.Warn(out, fmt.Sprintf("update .rsk/%s: %v", digest.IndexFileName, err))
 	}
 	warnSkillsIndexBudget(errOut, filepath.Dir(rskDir), m.Pinned)

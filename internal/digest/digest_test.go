@@ -219,3 +219,59 @@ func TestLoad_aVersionlessSkillContributesItsDescription(t *testing.T) {
 		t.Errorf("a skill that is not installed must still say so: %+v", missing)
 	}
 }
+
+func TestSyncLayers_keepsALocalSkillOutOfTheCommittedFile(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, ".rsk"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeSkill(t, dir, "public-one", "1.0.0", "# d\n\n- shared rule\n")
+	writeSkill(t, dir, "private-one", "1.0.0", "# d\n\n- PRIVATE-CANARY rule\n")
+
+	if _, err := SyncLayers(
+		dir,
+		[]string{"public-one", "private-one"},
+		map[string]bool{"private-one": true},
+	); err != nil {
+		t.Fatal(err)
+	}
+	committed, _ := os.ReadFile(filepath.Join(dir, ".rsk", IndexFileName))
+	local, _ := os.ReadFile(filepath.Join(dir, ".rsk", LocalIndexFileName))
+	if strings.Contains(string(committed), "PRIVATE-CANARY") || strings.Contains(string(committed), "private-one") {
+		t.Errorf("the committed digest carries the private skill:\n%s", committed)
+	}
+	if !strings.Contains(string(committed), "shared rule") || !strings.Contains(string(local), "PRIVATE-CANARY") ||
+		strings.Contains(string(local), "shared rule") {
+		t.Errorf("layers are wrong:\ncommitted:\n%s\nlocal:\n%s", committed, local)
+	}
+
+	// Unpinning the private skill removes the local file; the committed one stays.
+	if _, err := SyncLayers(dir, []string{"public-one"}, nil); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, ".rsk", LocalIndexFileName)); err == nil {
+		t.Error("the local digest is left behind with no private pin")
+	}
+	if _, err := os.Stat(filepath.Join(dir, ".rsk", IndexFileName)); err != nil {
+		t.Errorf("the committed digest vanished: %v", err)
+	}
+}
+
+func TestSyncLayers_withOnlyPrivatePinsWritesNoCommittedFile(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, ".rsk"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeSkill(t, dir, "private-one", "1.0.0", "# d\n\n- rule\n")
+	if _, err := SyncLayers(dir, []string{"private-one"}, map[string]bool{"private-one": true}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, ".rsk", IndexFileName)); err == nil {
+		t.Error("a committed SKILLS.md exists for a project whose only pin is private")
+	}
+	if _, err := os.Stat(filepath.Join(dir, ".rsk", LocalIndexFileName)); err != nil {
+		t.Errorf("no local digest: %v", err)
+	}
+}

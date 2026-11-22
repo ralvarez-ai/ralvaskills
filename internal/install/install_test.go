@@ -285,3 +285,70 @@ func TestApplyGlobalLinksASkillFromAPathSource(t *testing.T) {
 		t.Fatalf("Apply = %+v, %v", results, err)
 	}
 }
+
+// The private pin is the one thing that must never reach a committed file: not
+// the manifest, not the generated digest, not a client's committed config.
+func TestSyncPinnedAllToolsKeepsAPrivatePinOutOfEveryCommittedFile(t *testing.T) {
+	t.Parallel()
+	project := t.TempDir()
+	rskDir := filepath.Join(project, ".rsk")
+	if err := os.MkdirAll(rskDir, fsperm.Dir); err != nil {
+		t.Fatal(err)
+	}
+	for name, desc := range map[string]string{"public-one": "shared words", "private-one": "PRIVATE-CANARY words"} {
+		dir := filepath.Join(project, ".claude", "skills", name)
+		if err := os.MkdirAll(dir, fsperm.Dir); err != nil {
+			t.Fatal(err)
+		}
+		body := "---\nname: " + name + "\nversion: 1.0.0\ndescription: " + desc + "\n---\n"
+		if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte(body), fsperm.File); err != nil {
+			t.Fatal(err)
+		}
+	}
+	m := manifest.Mod{
+		Tools:  []tool.ID{tool.ClaudeID, tool.OpenCodeID, tool.CodexID},
+		Skills: map[string]string{"public-one": "*", "private-one": "*"}, Pinned: []string{"public-one", "private-one"},
+		Local: map[string]bool{"private-one": true},
+	}
+	if err := install.SyncPinnedAllTools(rskDir, m); err != nil {
+		t.Fatal(err)
+	}
+
+	committed := []string{".rsk/SKILLS.md", ".rsk/CLAUDE.md", "CLAUDE.md", "AGENTS.md", "opencode.json"}
+	for _, rel := range committed {
+		data, err := os.ReadFile(filepath.Join(project, rel))
+		if err != nil {
+			continue
+		}
+		if strings.Contains(string(data), "PRIVATE-CANARY") || strings.Contains(string(data), "private-one") {
+			t.Errorf("%s carries the private pin:\n%s", rel, data)
+		}
+	}
+	local, _ := os.ReadFile(filepath.Join(project, ".rsk", "SKILLS.local.md"))
+	if !strings.Contains(string(local), "PRIVATE-CANARY") {
+		t.Errorf("SKILLS.local.md = %q", local)
+	}
+	claudeLocal, _ := os.ReadFile(filepath.Join(project, "CLAUDE.local.md"))
+	if !strings.Contains(string(claudeLocal), "@.rsk/SKILLS.local.md") {
+		t.Errorf("CLAUDE.local.md = %q", claudeLocal)
+	}
+	oc, _ := os.ReadFile(filepath.Join(project, "opencode.json"))
+	if !strings.Contains(string(oc), ".rsk/SKILLS.local.md") {
+		t.Errorf("opencode.json = %s", oc)
+	}
+
+	// Unpinning it removes every trace of the local digest.
+	m.Pinned = []string{"public-one"}
+	if err := install.SyncPinnedAllTools(rskDir, m); err != nil {
+		t.Fatal(err)
+	}
+	for _, rel := range []string{".rsk/SKILLS.local.md", "CLAUDE.local.md"} {
+		if _, err := os.Stat(filepath.Join(project, rel)); err == nil {
+			t.Errorf("%s is left behind", rel)
+		}
+	}
+	oc, _ = os.ReadFile(filepath.Join(project, "opencode.json"))
+	if strings.Contains(string(oc), "SKILLS.local.md") {
+		t.Errorf("opencode.json still lists the local digest: %s", oc)
+	}
+}

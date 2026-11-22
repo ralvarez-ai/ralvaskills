@@ -231,8 +231,17 @@ func ProjectSkillsDirs(projectRoot string, m manifest.Mod) []string {
 // pinned list.
 func SyncPinnedAllTools(rskDir string, m manifest.Mod) error {
 	projectDir := filepath.Dir(rskDir)
-	if _, err := digest.Sync(projectDir, m.Pinned); err != nil {
+	if _, err := digest.SyncLayers(projectDir, m.Pinned, m.Local); err != nil {
 		return err
+	}
+	hasLocal := false
+	for _, name := range m.Pinned {
+		hasLocal = hasLocal || m.Local[name]
+	}
+	if hasLocal {
+		if err := manifest.ExcludeLocalFiles(projectDir); err != nil {
+			return err
+		}
 	}
 	for _, id := range m.Tools {
 		t, ok := tool.Get(id)
@@ -241,6 +250,13 @@ func SyncPinnedAllTools(rskDir string, m manifest.Mod) error {
 		}
 		if err := t.SyncPinned(projectDir, m.Pinned); err != nil {
 			return err
+		}
+		// A client that cannot load an uncommitted file gets no private digest: it
+		// is not written anywhere it could be committed.
+		if importer, can := t.(tool.LocalImporter); can {
+			if err := importer.SyncLocal(projectDir, hasLocal); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

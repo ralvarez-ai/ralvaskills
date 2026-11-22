@@ -24,6 +24,11 @@ const (
 	// inside the user's home directory or inside the project.
 	ClaudeFolderName = internal.ClaudeFolderName
 
+	// ClaudeLocalFileName is Claude Code's personal, uncommitted instruction file
+	// at the project root. rsk keeps one line in it, the import of the digest of
+	// the pins from a private source, and leaves everything else alone.
+	ClaudeLocalFileName = "CLAUDE.local.md"
+
 	// ClaudeFileName is the name of the generated file inside .rsk/ that lists
 	// pinned skills for Claude Code to import.
 	ClaudeFileName = "CLAUDE.md"
@@ -34,6 +39,7 @@ const (
 	claudeSettingsAllowKey = "allow"
 	claudeSettingsDenyKey  = "deny"
 
+	claudeLocalImport   = "@" + internal.ProjectFolderName + "/" + digest.LocalIndexFileName
 	claudeImportLine    = "@" + internal.ProjectFolderName + "/" + ClaudeFileName
 	claudeFileOpenFlags = os.O_APPEND | os.O_CREATE | os.O_WRONLY
 	rskTempPattern      = internal.TempFilePattern
@@ -100,7 +106,79 @@ func (*ClaudeTool) SyncPinned(projectDir string, pinnedNames []string) error {
 // RemovePinned removes the import marker from the project CLAUDE.md.
 // Returns nil if the file does not exist.
 func (*ClaudeTool) RemovePinned(projectDir string) error {
+	if err := removeLocalLine(filepath.Join(projectDir, ClaudeLocalFileName)); err != nil {
+		return err
+	}
 	return removeClaudeImport(filepath.Join(projectDir, ClaudeFileName))
+}
+
+// SyncLocal keeps the import of .rsk/SKILLS.local.md in CLAUDE.local.md while
+// there are pins from a private source, and removes it, and the file if rsk's
+// line was all it held, when there are none.
+func (*ClaudeTool) SyncLocal(projectDir string, has bool) error {
+	path := filepath.Join(projectDir, ClaudeLocalFileName)
+	if !has {
+		return removeLocalLine(path)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("read %s: %w", path, err)
+	}
+	if hasLine(string(data), claudeLocalImport) {
+		return nil
+	}
+	if err = refuseIfLink(path); err != nil {
+		return err
+	}
+	text := string(data)
+	if text != "" && !strings.HasSuffix(text, "\n") {
+		text += "\n"
+	}
+	return fsx.WriteAtomic(path, rskTempPattern, func(w io.Writer) error {
+		_, writeErr := io.WriteString(w, text+claudeLocalImport+"\n")
+		return writeErr
+	})
+}
+
+func hasLine(text, line string) bool {
+	for l := range strings.SplitSeq(text, "\n") {
+		if strings.TrimSpace(l) == line {
+			return true
+		}
+	}
+	return false
+}
+
+// removeLocalLine deletes rsk's import from CLAUDE.local.md, and the file when
+// nothing else is left in it. A missing file is not an error.
+func removeLocalLine(path string) error {
+	data, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("read %s: %w", path, err)
+	}
+	if !hasLine(string(data), claudeLocalImport) {
+		return nil
+	}
+	if err = refuseIfLink(path); err != nil {
+		return err
+	}
+	var kept []string
+	for line := range strings.SplitSeq(string(data), "\n") {
+		if strings.TrimSpace(line) != claudeLocalImport {
+			kept = append(kept, line)
+		}
+	}
+	rest := strings.Join(kept, "\n")
+	if strings.TrimSpace(rest) == "" {
+		return os.Remove(path)
+	}
+	return fsx.WriteAtomic(path, rskTempPattern, func(w io.Writer) error {
+		_, writeErr := io.WriteString(w, rest)
+		return writeErr
+	})
 }
 
 func writePinnedClaude(rskDir string, pinnedNames []string) error {

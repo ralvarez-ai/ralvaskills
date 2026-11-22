@@ -17,7 +17,6 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
-	"go.ralva.dev/ralvaskills/v3/internal/digest"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
@@ -104,7 +103,7 @@ func runNew(cmd *cobra.Command, _ []string) error {
 	if err = manifest.WriteMod(rskDir, *m); err != nil {
 		return err
 	}
-	if err = syncToolConfigs(tools, cwd, m.Pinned); err != nil {
+	if err = install.SyncPinnedAllTools(rskDir, *m); err != nil {
 		return err
 	}
 
@@ -189,25 +188,6 @@ func loadOrCreateManifest(
 		Skills: make(map[string]string),
 		Pinned: []string{},
 	}, filepath.Join(cwd, internal.ProjectFolderName), true, nil
-}
-
-// syncToolConfigs pushes the currently pinned skills into each tool's
-// project config (CLAUDE.md / opencode.json), skipping any ID that isn't a
-// registered tool.
-func syncToolConfigs(tools []tool.ID, cwd string, pinned []string) error {
-	if _, err := digest.Sync(cwd, pinned); err != nil {
-		return err
-	}
-	for _, id := range tools {
-		t, ok := tool.Get(id)
-		if !ok {
-			continue
-		}
-		if err := t.SyncPinned(cwd, pinned); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // flagMCP is the boolean flag that registers the rsk MCP server without a

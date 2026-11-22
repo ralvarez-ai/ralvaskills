@@ -39,6 +39,11 @@ const (
 	// OpenCodeSkillsIndexEntry is the one rsk-managed entry in the instructions
 	// list: the generated .rsk/SKILLS.md, relative to the project root.
 	OpenCodeSkillsIndexEntry = internal.ProjectFolderName + "/" + digest.IndexFileName
+
+	// OpenCodeLocalIndexEntry is the instructions entry for the digest of the pins
+	// from a private source. The file is not committed and OpenCode ignores an
+	// entry whose file is missing, so a teammate without it sees nothing.
+	OpenCodeLocalIndexEntry = internal.ProjectFolderName + "/" + digest.LocalIndexFileName
 )
 
 // openCodeTool implements Tool for OpenCode.
@@ -65,6 +70,32 @@ func (*openCodeTool) ProjectSkillsDir(projectRoot string) string {
 // entries are preserved. Creates the file if it does not exist.
 func (*openCodeTool) SyncPinned(projectDir string, pinnedNames []string) error {
 	return updateOCInstructions(filepath.Join(projectDir, OpenCodeFileName), pinnedNames)
+}
+
+// SyncLocal lists .rsk/SKILLS.local.md in opencode.json while there are pins
+// from a private source, and drops the entry when there are none. SyncPinned
+// removes it with the other managed entries, so it runs after SyncPinned.
+func (*openCodeTool) SyncLocal(projectDir string, has bool) error {
+	path := filepath.Join(projectDir, OpenCodeFileName)
+	cfg, err := readJSONConfig(path)
+	if err != nil {
+		return err
+	}
+	kept := filterOCEntries(cfg[OpenCodeInstructionsKey])
+	// filterOCEntries drops the shared entry too; put back what was there.
+	if current, ok := cfg[OpenCodeInstructionsKey].([]any); ok &&
+		slices.Contains(current, any(OpenCodeSkillsIndexEntry)) {
+		kept = append(kept, OpenCodeSkillsIndexEntry)
+	}
+	if has {
+		kept = append(kept, OpenCodeLocalIndexEntry)
+	}
+	if len(kept) == 0 {
+		delete(cfg, OpenCodeInstructionsKey)
+	} else {
+		cfg[OpenCodeInstructionsKey] = kept
+	}
+	return writeJSONConfig(path, cfg)
 }
 
 // RemovePinned removes all rsk-managed .claude/skills/ entries from opencode.json
@@ -107,7 +138,7 @@ func filterOCEntries(raw any) []any {
 	kept := make([]any, 0, len(existing))
 	for _, e := range existing {
 		if s, isStr := e.(string); isStr &&
-			(strings.HasPrefix(s, OpenCodeSkillsPrefix) || s == OpenCodeSkillsIndexEntry) {
+			(strings.HasPrefix(s, OpenCodeSkillsPrefix) || s == OpenCodeSkillsIndexEntry || s == OpenCodeLocalIndexEntry) {
 			continue
 		}
 		kept = append(kept, e)

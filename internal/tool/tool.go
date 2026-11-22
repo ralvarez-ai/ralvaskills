@@ -46,6 +46,16 @@ type Tool interface {
 	UnregisterMCP(projectDir string) error
 }
 
+// LocalImporter is implemented by a client that can load an instruction file
+// that is not committed, which is how a pin from a private source reaches the
+// agent without reaching git. A client without it gets no private pins: rsk
+// never writes a private digest to a file it would commit.
+type LocalImporter interface {
+	// SyncLocal makes the client load .rsk/SKILLS.local.md when has is true, and
+	// stop when it is false, touching nothing else in the client's config.
+	SyncLocal(projectDir string, has bool) error
+}
+
 // registry is the global map of registered tools, keyed by ID.
 var registry = make(map[ID]Tool)
 
