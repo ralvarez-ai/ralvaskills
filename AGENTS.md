@@ -31,7 +31,8 @@ React 19 + TypeScript + Vite, one prerendered document. `task site:dev`, `task s
 `task site:check` (lint, typecheck, build, gate). Biome (`pnpm lint` in `site/`) owns formatting
 and lint there. The page's numbers are generated from this repository by
 `site/scripts/gen-data.mjs` before every dev run and build, and that script fails when the tree
-drifts from 65 skills / 15 bundles / 13 commands / 3 tools. `site/src/data/facts.ts` holds the
+drifts from 65 skills / 15 bundles / 13 commands / 9 MCP tools (the count of commands is the
+`AddCommand` list in `cmd/rsk/setup.go`, so `rsk source` and `rsk resolve` are not in it). `site/src/data/facts.ts` holds the
 hand-checked constants and labels them on the page. It consumes `@ralvarez-ts/tokens` directly
 (GitHub Packages, needs `NODE_AUTH_TOKEN`); nothing under `skills/**` or `registry/**` is read at
 runtime, only at build.
@@ -40,11 +41,15 @@ runtime, only at build.
 
 - `cmd/rsk/` — the CLI: subcommands, flags, output. Subcommands: `init`, `new`, `destroy`,
   `install`, `uninstall`, `update`, `pin`, `tools`, `catalog`, `list`, `status`, `completion`,
-  `mcp`.
+  `mcp`, `sync`, `source` (`add|list|remove|test|scan|trust|untrust`), `resolve`.
 - `internal/` — `catalog` (indexing), `config` (machine config `~/.config/rsk/config.json`,
   bundles), `cmdx` (cobra helpers), `fsx` (atomic writes), `install` (source selection,
   constraint solving), `manifest` (`rsk.mod`/`rsk.lock`), `mcp` (project detection, tool
-  registration, resources), `skill`, `source` (registry/local/official), `tool` (the Claude /
+  registration, resources), `skill`, `source` (the factory and the registry, git, path and local
+  transports), `sources` (declarations in `sources.json`, the chain, implicit sources),
+  `sourceops` and `resolve` (the operations `rsk source` and `rsk resolve` share with the MCP
+  tools, plain structs in and out), `trust` (`trust.json` grants), `git` (the hardened runner),
+  `digest` (`.rsk/SKILLS.md`), `tool` (the Claude /
   OpenCode / Codex adapters, and `jsonAdapter` plus `jsonMCPConfig` for the eight JSON clients),
   `ui` (termkit), `update`.
 - `cmd/{generate-registry,registry-remove,count-tokens}` — registry build helpers.
@@ -87,11 +92,13 @@ runtime, only at build.
 ## Agent surfaces
 
 - **`rsk mcp`** — stdio server (launched and killed per client session; registered in
-  `.claude/settings.json` under `mcp`). Planned tools: `search_skills` (read-only),
-  `install_skills` (destructive; `_meta["anthropic/requiresUserInteraction"] = true`),
-  `project_profile` (read-only), plus the `rsk://catalog` resource. Read-only tools carry
-  `readOnlyHint`; `install_skills` carries `destructiveHint`. In progress (design approved
-  2026-10-02); see `docs/plans/2026-10-02-mcp-server-plan.md`.
+  `.claude/settings.json` under `mcp`). Read-only tools: `project_profile`, `search_skills`,
+  `list_sources`, `test_source`, `scan_source`, `resolve_reference`. Mutating, each with
+  `_meta["anthropic/requiresUserInteraction"] = true` and `dry_run`: `install_skills`,
+  `add_source`, `remove_source`. Plus the `rsk://catalog` resource. No tool takes a trust flag, a
+  confirmation or a secret: trust is `rsk source trust` at a terminal, and `add_source` registers
+  untrusted. Every tool except `project_profile` has a CLI twin (a test enforces it). See
+  `docs/plans/2026-10-02-mcp-server-plan.md` and the phase 1 plan.
 - **`rsk` CLI** — the human-facing surface; `rsk <subcommand> --help`. Skills pinned for this repo
   itself (via `rsk`): cli-tool-architect, go-architect, logic-cleaner, repo-tooling-architect,
   skill-builder.
