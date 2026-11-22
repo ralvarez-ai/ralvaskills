@@ -35,8 +35,10 @@ const (
 	// TrustBuiltIn says rsk ships the source and trusts its own URL.
 	TrustBuiltIn = "built-in"
 
-	// ActionAdd and ActionRemove name the two mutating operations.
-	ActionAdd    = "add"
+	// ActionAdd names the operation that registers a source.
+	ActionAdd = "add"
+
+	// ActionRemove names the operation that drops one.
 	ActionRemove = "remove"
 )
 
