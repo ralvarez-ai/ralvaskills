@@ -18,3 +18,4 @@ Update 2026-11-21 (after step 1f): the release note also needs the new surface: 
 
 Update 2026-11-22: the release is `v3.10.0` (changelog section "v3.10.0", with the migration rule). It is tagged locally and waiting on the owner's push (`c3qwq1`). Start this item once the release assets exist.
 
+Update 2026-11-22 (later): the plan is [plans/2026-11-22-consumer-rollout-rsk-3-10.md](../../plans/2026-11-22-consumer-rollout-rsk-3-10.md). The survey: 149 projects have a lock, 21 use an official skill, none is v2 yet, 85 `mise.toml` files pin rsk (79 at 3.9.1, 6 at 3.7.0) and 62 lock projects have no pin. The release assets do not exist yet, so step 0 (`c3qwq1`) is the gate.
