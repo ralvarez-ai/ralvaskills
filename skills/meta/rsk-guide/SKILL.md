@@ -1,6 +1,6 @@
 ---
 name: rsk-guide
-version: 0.5.4
+version: 0.5.5
 description: Operator's guide to the rsk CLI - the .rsk/ manifest (new, install, pin, update), bundles, global installs and the `rsk mcp` server. Use when the user mentions rsk, installs or pins skills, or starts a project.
 ---
 
@@ -88,7 +88,7 @@ rsk init --force                      # overwrite existing config
 ```
 
 `rsk init` prompts for:
-1. **Skill source**: local clone (path to your `ralvaskills` repo) **or** hosted registry (`skills.ralvarez.dev`)
+1. **Skill source**: local clone (path to your `ralvaskills` repo) **or** hosted registry (`skills.ralva.dev`)
 2. **AI tools to support**: `claude-code`, `opencode`, or both
 3. **Global skills dir** per selected tool (defaults: `~/.claude/skills/`, `~/.config/opencode/skills/`)
 4. **Default scope** for bare `--global` (`all` configured tools, or a single tool)

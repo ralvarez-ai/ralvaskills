@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## Unreleased
 
 ### Changed
+- **`rsk-guide` 0.5.5 and `astro-architect` 1.1.3 (to publish as `rsk-guide@v0.5.5` and `astro-architect@v1.1.3`):** the registry host in the text is `skills.ralva.dev` now (`skills.ralvarez.dev` only redirects to it). No rule changes.
 - **Adopt `go.ralva.dev/lib/term/cli` for the root, the exit codes and the version stamp.** `rsk`
   builds its tree with `cli.NewRoot` and stamps `cli.{Version,Commit,BuildDate}`, so the goreleaser
   ldflags move with them; a flag-parse failure exits `2` instead of `1`, and `--version` prints the

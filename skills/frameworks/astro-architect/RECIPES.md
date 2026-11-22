@@ -109,7 +109,7 @@ category: tooling
 tags: [go, cli, ai-tooling, skills]
 updated: 2026-09-30
 github: https://github.com/ralvarezdev/ralvaskills
-demo: https://skills.ralvarez.dev
+demo: https://skills.ralva.dev
 focus: Registry caching and version pinning across machines.
 pinned: true
 ---
