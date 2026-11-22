@@ -95,8 +95,12 @@ A v2 file written by mistake is repaired by running the old `rsk` after restorin
 
 ## Exit criteria
 
-- [ ] `v3.10.0` assets exist and the owner's `rsk --version` prints it.
-- [ ] The pilot project is v2, restores with `rsk sync`, and its diff is only the three `.rsk` files.
+- [x] `v3.10.0` assets exist and the owner's `rsk --version` prints it (global pin 3.10.0; checked 2026-11-22).
+- [x] The pilot project is v2, `rsk sync --dry-run` is clean, and its diff is only `mise.toml` and the `.rsk` files (`ralvarez-ts/ui`, `ac420ef`, 2026-11-22).
 - [ ] Every repository whose `mise.toml` pins `ralvarez-ai/ralvaskills` is at 3.10.0 or newer, or is recorded in `w8nq2s`.
 - [ ] The check prints nothing: no v2 project is under an older pin.
 - [ ] The 21 official-skill projects have run `rsk update` and are v2, or the owner has said which ones are left on purpose.
+
+## Roll-out log
+
+- 2026-11-22, batch 1 (local commits, not pushed): `ralvarez-ts/ui`, `ralvagym`, `ralvafi`, `automation-labs-openhands-plc`. The check printed no FAIL (`official=20 v2=4 old-pin=98`). The config used is the real `~/.config/rsk` after the first run; `rsk sync` is never run in a consumer. Skipped: `automation-labs-coding-agents-benchmarks` (feature branch). Next: `uns-platform`, then the other active main checkouts.

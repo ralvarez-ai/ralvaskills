@@ -15,3 +15,5 @@ Every sweep rediscovers this, so it costs a pass each time. Done when each of th
 Note 2026-11-22: the roll-out of 3.10.0 will add to this list any repository whose push is refused (`9m3rtc`).
 
 Note 2026-11-22 (night): the roll-out survey found eight more active main checkouts with no upstream, so a pin commit there stays local: `autobacklog`, `ralvadocket`, `autoreports`, `automation-labs-iec-core`, `automation-labs-coding-agents-benchmarks`, `automation-labs-openevolve-plc`, `automation-labs-openevolve-plc-adapter`, `ports`. Also 24 archived `ralvarez-go/*` repos hold an uncommitted `mise.toml` edit (3.7.0 to 3.9.1) and uncommitted `opencode.json`/`.opencode/` changes from an earlier sweep: decide commit, discard or leave before any bump there. No push has been attempted by the roll-out yet.
+
+Note 2026-11-22 (batch 1): `ralvarez-ts/ui`, `ralvagym`, `ralvafi` and `automation-labs-openhands-plc` all have an upstream; their pin commits wait for a push after about 2026-11-23T05:21Z. `automation-labs-coding-agents-benchmarks` was not migrated: its main checkout sits on `feat/label-required` with no upstream.
