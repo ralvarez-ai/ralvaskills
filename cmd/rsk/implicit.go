@@ -203,6 +203,8 @@ func saveImplicit(out io.Writer, entries []sources.Entry) error {
 	for i := range entries {
 		ui.Success(out, "registered "+entries[i].ID+" at "+entries[i].URL)
 		ui.Info(out, trustHint(entries[i].ID))
+		ui.Info(out, "Until it is trusted, installing a bare skill name fails, since rsk cannot consult every source: "+
+			"'rsk source remove "+entries[i].ID+"' undoes this")
 	}
 	return nil
 }

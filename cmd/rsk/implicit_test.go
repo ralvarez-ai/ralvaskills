@@ -209,8 +209,10 @@ func TestSaveRegistersTheSourceUntrustedAndNeverGrantsTrust(t *testing.T) {
 	if w.wrote("trust.json") {
 		t.Error("--save with --trust granted trust: only a person at a terminal may")
 	}
-	if !strings.Contains(out, "rsk source trust @acme/skills") {
-		t.Errorf("--save does not hand back the trust command:\n%s", out)
+	for _, want := range []string{"rsk source trust @acme/skills", "bare skill name fails", "rsk source remove @acme/skills"} {
+		if !strings.Contains(out, want) {
+			t.Errorf("--save does not say %q:\n%s", want, out)
+		}
 	}
 }
 
