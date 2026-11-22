@@ -5,7 +5,7 @@ date: 2026-11-21
 related:
     - designs/2026-11-21-private-and-remote-skill-sources.md
     - adr/0003-source-chain-and-reference-grammar.md
-    - backlog/pending/9d3mhw-git-and-path-transports-rsk-source-and-trust-rules.md
+    - backlog/active/9d3mhw-git-and-path-transports-rsk-source-and-trust-rules.md
 ---
 
 # Phase 1: git and path sources, `rsk source`, and the trust rules
@@ -72,12 +72,26 @@ Decision 2: `@anthropics/skills` becomes an ordinary git source instead of its o
 - `name@1.2.0` resolves through a tag `<name>@v1.2.0` and is an error when the tag is missing; `*` or an exact tag only.
 - Unreachable locked commit (force-push) fails naming the commit.
 
-### 1f. Implicit sources, `--from`, `rsk resolve`
+### 1f. Implicit sources, `--from`, `rsk resolve` - done
 
 - `rsk install @owner/repo/name` for an unregistered source: shows the URL and transport and asks; `--yes` does not cover it; CI passes `--trust @owner/repo`; nothing is saved without `--save`. SSH first, HTTPS as fallback, and the lock stores identity and commit so each machine picks its own transport.
 - Pinning a skill from a non-default source shows its `DIGEST.md` text and asks (trust rule 7), since that text enters always-on context.
 - `rsk install --from ./path/to/skill` as a one-off path source, not persisted, not reproducible; `rsk resolve <ref>` explains what a reference resolves to and why a bare name is ambiguous.
 - **First releasable point.** Steps 1a to 1f together satisfy the "trust rules ship with the git transport" requirement.
+
+Built as planned, with these settled while building:
+
+- **One-run approval goes through the gate, not around it.** `sources.ChainOptions.Implicit` holds the entries approved for this run (by `--trust`, or by the person at the terminal). `ChainAt` validates each one like a declared source (GitHub only, identity equals URL, not built in, not already declared) and grants it in memory on top of `trust.json`, so the git source's own gate is the one that lets it through and nothing is written. The MCP chain never sets it, and a test pins that `install_skills` refuses an unregistered source without reaching for it.
+- **Only a person can approve.** `askHuman` never proceeds on its own: `term.Confirm` auto-approves with `--yes`, without a terminal and inside the session, which is right for "Proceed?" and wrong here, so the implicit and digest prompts use their own helper. The terminal check is a seam (`isInteractive`) so the tests can drive both sides.
+- **`--trust` covers an implicit source only.** For a declared source it is refused with the `rsk source trust` line, and an id nothing uses is an error. It is still a flag a shell can pass, so an agent that runs `rsk` through a shell tool can approve a source for one run; the control there is the harness's permission prompt and the digest rule, not rsk. Recorded as residual risk.
+- **`--save` writes the entry only, never `trust.json`, even with `--trust`.** `--trust` needs no terminal, so letting it persist a grant would let a script make the grant that only `rsk source trust` at a terminal may. A registered but untrusted source fails every bare-name lookup (fail closed), which the `--save` output says, with the command that undoes it. This is stricter than the suggestion to write the grant when `--trust` is also given.
+- **SSH first, HTTPS second, decided in `internal/sources` (`Candidate`, `Choose`).** After approval a probe (`git ls-remote`, injectable) tries SSH and then HTTPS; every URL passes the gate before it is contacted, and the approval shows both. Any SSH failure counts as unavailable, since BatchMode makes a missing key, an unknown host key and a refused connection look the same. The chosen URL is what the lock and `--save` record. `--offline` refuses an implicit source.
+- **Restore: the machine decides the transport.** A lock URL that differs from this machine's is followed when both name the same GitHub repository (so SSH on one machine and HTTPS on another both work) and refused otherwise, which keeps the earlier refusal of a lock naming another host. A lock naming an undeclared source goes through the same approval as an install (`rsk sync --trust`); it never opens a source on its own.
+- **Digest confirmation: `--yes` covers it, a missing terminal does not.** The text is always shown first. The non-default test is "from a git source", which includes the official one, matching the qualified-key rule. `rsk pin` gained `--yes` for it. Not covered: `rsk update` rewrites `.rsk/SKILLS.md` through `digest.Sync` when a pinned skill's digest changes, with no confirmation, and the MCP `install_skills` pin shows nothing (1h). `digest.Load` also gives a versionless skill the line "no digest, and not readable here" instead of its description (`skill.ReadFrontmatter` requires a version), so for a versionless skill, official ones included, the confirmation shows that line; fixing it changes generated files, so it is left for a decision.
+- **`--from` takes one skill directory** (a real directory, not a link), links it and records nothing. It combines with `--global`; with no `--global` it links into the project's tool directories, with no `rsk.mod` or `rsk.lock` entry. A directory of skills is pointed at `rsk source add`. `install.ScopeOneOff` is the link-only scope.
+- **A declared path source is `Spec.Declared`.** The local clone and a declared path are both `KindPath`; the flag tells the walker apart (`<path>/skills` versus as given), and `Chain.Primary` is the registry or the clone, which is what a bundle member resolves from, so a path source holding the same name cannot make a bundle ambiguous. Its skills have kind `path` (`skill.SourcePath`), never reach a lock, and `install.Apply` refuses them in a project.
+- **`rsk resolve` uses `Chain.Survey`**, which asks every source and keeps each answer where `Find` stops at the first it cannot consult, and applies the same verdict rules; a test checks that it never says "resolved" where `Find` fails. It exits non-zero unless the reference resolves or is a bundle. It is registered outside `setup.go`'s `AddCommand` list like `rsk source`, so the landing page's command count, which `gen-data.mjs` reads from that list, does not move and does not include either command; the page should say so or count them when it is next touched.
+- **A real run found what the tests could not:** `--from` was read but never registered, so the command panicked while every unit test, which calls `runInstall`, passed. A test now checks that each flag the commands read is registered and runs the whole command once.
 
 ### 1g. `private` and the local overlay (touches `internal/tool/*`: needs your approval)
 
@@ -109,9 +123,9 @@ Decision 2: `@anthropics/skills` becomes an ordinary git source instead of its o
 
 ## Exit criteria
 
-- [ ] An untrusted git source cannot be cloned from the CLI, a lock restore or MCP.
-- [ ] `rsk source add @owner/repo`, `trust`, `install @owner/repo/name` installs from a local bare-repo fixture and records `commit`, `tree` and `path` in a v2 lock.
-- [ ] A second machine restores from that lock without the chain and without a secret.
+- [x] An untrusted git source cannot be cloned from the CLI, a lock restore or MCP.
+- [x] `rsk source add @owner/repo`, `trust`, `install @owner/repo/name` installs from a local bare-repo fixture and records `commit`, `tree` and `path` in a v2 lock.
+- [x] A second machine restores from that lock without the chain and without a secret.
 - [ ] A source that is down fails a bare-name lookup instead of falling through to another source.
 - [ ] URL allowlist, option injection, embedded credentials and `roots` traversal tests pass.
 - [ ] `update` reports a skill outdated only when its own directory changed.
