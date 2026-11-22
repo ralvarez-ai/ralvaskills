@@ -78,6 +78,11 @@ func setupCommands() {
 		nil,
 		"Approve an unregistered @owner/repo source for this run only (for CI; --yes never does)",
 	)
+	f.String(
+		flagFrom,
+		"",
+		"Install the one skill in this directory as a one-off: nothing is recorded, nothing can restore it",
+	)
 	f.Bool(
 		flagSave,
 		false,

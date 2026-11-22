@@ -238,7 +238,9 @@ func TestHTTPSIsTheFallbackAndSaveKeepsWhatWorked(t *testing.T) {
 //nolint:paralleltest // the config folder override and the seams are process-wide
 func TestAnImplicitSourceNeedsTheNetworkSoOfflineRefusesIt(t *testing.T) {
 	w := implicitMachine(t)
-	installCmd.Flags().Bool(flagOffline, false, "")
+	if installCmd.Flags().Lookup(flagOffline) == nil {
+		installCmd.Flags().Bool(flagOffline, false, "")
+	}
 	_ = installCmd.Flags().Set(flagOffline, "true")
 	t.Cleanup(func() { _ = installCmd.Flags().Set(flagOffline, "false") })
 

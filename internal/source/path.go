@@ -246,3 +246,34 @@ func relTo(base, p string) string {
 	}
 	return filepath.ToSlash(rel)
 }
+
+// ScanSkillDir reads the one skill in dir, for `rsk install --from`. It applies
+// the rules a path source does: dir must be a real directory (not a link) with a
+// regular SKILL.md and no symlink inside, and its name must be a valid skill
+// name. A directory holding several skills is a source, not a skill.
+func ScanSkillDir(dir string) (skill.Skill, error) {
+	abs, err := filepath.Abs(dir)
+	if err != nil {
+		return skill.Skill{}, fmt.Errorf("resolve %s: %w", dir, err)
+	}
+	info, err := os.Lstat(abs)
+	switch {
+	case err != nil:
+		return skill.Skill{}, fmt.Errorf("--from %s: %w", dir, err)
+	case info.Mode()&os.ModeSymlink != 0:
+		return skill.Skill{}, fmt.Errorf("--from %s is a symlink: pass the real directory", dir)
+	case !info.IsDir():
+		return skill.Skill{}, fmt.Errorf("--from %s is not a directory", dir)
+	}
+	found, skip, handled := (&Path{}).readSkill(abs, filepath.Base(abs))
+	switch {
+	case !handled:
+		return skill.Skill{}, fmt.Errorf(
+			"%s has no %s: --from takes one skill directory; for a directory of skills use 'rsk source add %s'",
+			dir, skillFile, dir,
+		)
+	case skip != nil:
+		return skill.Skill{}, fmt.Errorf("--from %s: %s", dir, skip.Reason)
+	}
+	return found, nil
+}

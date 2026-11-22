@@ -34,6 +34,10 @@ entries in .rsk/rsk.mod and .rsk/rsk.lock.
 With --global the install targets the configured global skills directories
 without touching any project manifest.
 
+--from <dir> links one skill directory as a one-off. It is not recorded in rsk.mod or
+rsk.lock, so no other machine can restore it; for a directory you keep using, register
+it with 'rsk source add <dir>'.
+
 A qualified reference (@owner/repo/name) to a source this machine has not
 registered shows the URLs rsk would contact (SSH first, HTTPS as the fallback) and
 asks you to approve them for this run. --yes does not answer that question; in CI
@@ -49,6 +53,7 @@ Examples:
   rsk install go-grpc --global --for claude-code
   rsk install @owner/repo/name                 # ask, then install from an unregistered source
   rsk install @owner/repo/name --trust @owner/repo   # CI: approve that source for this run
+  rsk install --from ./path/to/skill           # one-off: link a skill directory, record nothing
   rsk install uru-thesis-writer --include personal
   rsk install go-grpc --dry-run`,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -74,6 +79,7 @@ Examples:
 			version:  cmdx.String(cmd, cmdx.FlagVersion),
 			trust:    trustIDs,
 			save:     cmdx.Bool(cmd, flagSave),
+			from:     cmdx.String(cmd, flagFrom),
 		}, args)
 	},
 }
@@ -83,6 +89,7 @@ type installOpts struct {
 	save                               bool
 	forTool                            tool.ID
 	version                            string
+	from                               string
 	trust                              []string
 
 	// onApplied runs once the skills are installed, never on a dry run or an
@@ -106,6 +113,9 @@ func runInstall(cmd *cobra.Command, opts installOpts, args []string) error {
 
 	if err := validateInstallOpts(opts); err != nil {
 		return err
+	}
+	if opts.from != "" {
+		return runInstallFrom(cmd, opts, args)
 	}
 
 	// Project-bundle install with no args: read rsk.mod and install everything.

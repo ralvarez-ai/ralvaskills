@@ -213,3 +213,45 @@ func TestOnlyADeclaredPathSourceMayCarryRootsAndExcludes(t *testing.T) {
 		t.Error("a path source accepted a rev")
 	}
 }
+
+func TestScanSkillDirReadsOneSkillDirectoryUnderTheSameRules(t *testing.T) {
+	t.Parallel()
+	root, outside := t.TempDir(), t.TempDir()
+	mkSkill(t, filepath.Join(root, "good-one"))
+	mkSkill(t, filepath.Join(root, "tainted"))
+	if err := os.Symlink(outside, filepath.Join(root, "tainted", "link")); err != nil {
+		t.Fatal(err)
+	}
+	mkSkill(t, filepath.Join(root, "Not_Kebab"))
+	if err := os.Symlink(filepath.Join(root, "good-one"), filepath.Join(root, "alias")); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(root, "group", "inner"), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	mkSkill(t, filepath.Join(root, "group", "inner", "deep"))
+
+	got, err := source.ScanSkillDir(filepath.Join(root, "good-one"))
+	if err != nil || got.Name != "good-one" || got.Version != "1.2.0" || got.Source != skill.SourcePath ||
+		got.Path != filepath.Join(root, "good-one") {
+		t.Fatalf("skill = %+v, %v", got, err)
+	}
+	for name, dir := range map[string]string{
+		"a symlink inside":      filepath.Join(root, "tainted"),
+		"a bad name":            filepath.Join(root, "Not_Kebab"),
+		"a symlinked directory": filepath.Join(root, "alias"),
+		"a directory of skills": filepath.Join(root, "group"),
+		"no such directory":     filepath.Join(root, "absent"),
+		"a file":                filepath.Join(root, "good-one", "SKILL.md"),
+	} {
+		if s, scanErr := source.ScanSkillDir(dir); scanErr == nil {
+			t.Errorf("%s was accepted: %+v", name, s)
+		}
+	}
+	if _, err = source.ScanSkillDir(
+		filepath.Join(root, "group"),
+	); err == nil ||
+		!strings.Contains(err.Error(), "rsk source add") {
+		t.Errorf("a directory of skills should point at 'rsk source add': %v", err)
+	}
+}

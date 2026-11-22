@@ -18,6 +18,11 @@ const (
 
 	// ScopeGlobal installs into the configured global skills dirs.
 	ScopeGlobal Scope = "global"
+
+	// ScopeOneOff links skills into the given targets and records nothing: no
+	// manifest, no lock. It is how `rsk install --from` installs a directory that
+	// exists on this machine only.
+	ScopeOneOff Scope = "one-off"
 )
 
 // Options configures Apply.
