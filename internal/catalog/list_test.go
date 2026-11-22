@@ -1,11 +1,11 @@
-package main
+package catalog_test
 
 import (
-	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"go.ralva.dev/ralvaskills/v3/internal/catalog"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 )
@@ -23,7 +23,7 @@ func writeCatalogSkill(t *testing.T, dir, name string) {
 
 // A declared path source is a declared source: the local-clone walk must leave
 // it alone, so `--source local` never lists it and the declared walk does.
-func TestCatalogListsADeclaredPathSourceWithTheDeclaredOnes(t *testing.T) {
+func TestListIncludesADeclaredPathSourceWithTheDeclaredOnes(t *testing.T) {
 	t.Parallel()
 	clone, scratch := t.TempDir(), t.TempDir()
 	writeCatalogSkill(t, filepath.Join(clone, "skills"), "from-clone")
@@ -37,14 +37,16 @@ func TestCatalogListsADeclaredPathSourceWithTheDeclaredOnes(t *testing.T) {
 	}
 
 	list := func(filter skill.Source) []string {
-		var warn bytes.Buffer
-		listed := loadSkillsBySource(t.Context(), &warn, nil, chain, filter, false)
-		names := make([]string, len(listed))
-		for i := range listed {
-			names[i] = listed[i].Name + ":" + string(listed[i].Source)
+		res, listErr := catalog.List(t.Context(), chain, catalog.ListOptions{Source: filter, Personal: true})
+		if listErr != nil {
+			t.Fatal(listErr)
 		}
-		if warn.Len() != 0 {
-			t.Errorf("warnings: %s", warn.String())
+		names := make([]string, len(res.Skills))
+		for i := range res.Skills {
+			names[i] = res.Skills[i].Name + ":" + string(res.Skills[i].Source)
+		}
+		if len(res.Warnings) != 0 {
+			t.Errorf("warnings: %v", res.Warnings)
 		}
 		return names
 	}
@@ -61,7 +63,7 @@ func TestCatalogListsADeclaredPathSourceWithTheDeclaredOnes(t *testing.T) {
 
 // A private source is registered, trusted by being declared, and still left out
 // of the catalog unless the listing is asked to include it.
-func TestCatalogLeavesAPrivateSourceOutUnlessIncluded(t *testing.T) {
+func TestListLeavesAPrivateSourceOutUnlessIncluded(t *testing.T) {
 	t.Parallel()
 	open, hidden := t.TempDir(), t.TempDir()
 	writeCatalogSkill(t, open, "public-one")
@@ -74,11 +76,13 @@ func TestCatalogLeavesAPrivateSourceOutUnlessIncluded(t *testing.T) {
 		t.Fatal(err)
 	}
 	names := func(includePrivate bool) []string {
-		var warn bytes.Buffer
-		listed := loadSkillsBySource(t.Context(), &warn, nil, chain, "", includePrivate)
-		out := make([]string, len(listed))
-		for i := range listed {
-			out[i] = listed[i].Name
+		res, listErr := catalog.List(t.Context(), chain, catalog.ListOptions{Private: includePrivate, Personal: true})
+		if listErr != nil {
+			t.Fatal(listErr)
+		}
+		out := make([]string, len(res.Skills))
+		for i := range res.Skills {
+			out[i] = res.Skills[i].Name
 		}
 		return out
 	}

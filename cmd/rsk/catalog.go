@@ -1,20 +1,17 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"io"
-	"sort"
 
 	"github.com/spf13/cobra"
 
 	"go.ralva.dev/lib/term"
 	"go.ralva.dev/lib/term/output"
 
+	"go.ralva.dev/ralvaskills/v3/internal/catalog"
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
-	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
 
@@ -106,12 +103,6 @@ type (
 		Path     string `json:"path"`
 	}
 
-	bundleRow struct {
-		config.Bundle
-		linked int
-		total  int
-	}
-
 	bundleEntry struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
@@ -137,25 +128,19 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 	if err != nil {
 		return err
 	}
-	all := loadSkillsBySource(ctx, out, capture, chain, opts.source, opts.private)
-
-	if opts.bundle != "" {
-		all, err = filterByBundle(out, capture, all, opts.bundle)
-		if err != nil {
-			return err
-		}
-	}
-
-	if !opts.personal {
-		all = filterSkills(all, func(s skill.Skill) bool { return !s.IsPersonal })
-	}
-
-	sort.Slice(all, func(i, j int) bool {
-		if all[i].Source != all[j].Source {
-			return all[i].Source < all[j].Source
-		}
-		return all[i].Name < all[j].Name
+	res, err := catalog.List(ctx, chain, catalog.ListOptions{
+		Source:   opts.source,
+		Private:  opts.private,
+		Bundle:   opts.bundle,
+		Personal: opts.personal,
 	})
+	for _, w := range res.Warnings {
+		warnOrCapture(out, capture, w)
+	}
+	if err != nil {
+		return err
+	}
+	all := res.Skills
 
 	if len(all) == 0 {
 		if capture != nil {
@@ -170,77 +155,6 @@ func runCatalogSkills(cmd *cobra.Command, opts catalogOpts) error {
 	tableRows := term.Rows(all, catalogSkillTable)
 
 	return renderList(cmd, opts.format, "", skillsToEntries(all), header, tableRows, skillNames(all))
-}
-
-// loadSkillsBySource walks the local, official and declared git sources per
-// sourceFilter ("" means all), warning on (rather than failing for) a source
-// that can't be walked: an unreachable or untrusted git source is reported and
-// the rest are still listed.
-func loadSkillsBySource(
-	ctx context.Context, out io.Writer, capture *term.Capture, chain source.Chain, sourceFilter skill.Source,
-	includePrivate bool,
-) []skill.Skill {
-	var all []skill.Skill
-	walk := func(want skill.Source, label func(source.Resolver, error) string, srcs source.Chain) {
-		if sourceFilter != "" && sourceFilter != want {
-			return
-		}
-		for _, src := range srcs {
-			listed, err := src.All(ctx)
-			if err != nil {
-				warnOrCapture(out, capture, label(src, err))
-				continue
-			}
-			all = append(all, listed...)
-		}
-	}
-
-	walk(skill.SourceLocal, func(_ source.Resolver, err error) string {
-		return fmt.Sprintf("walk local skills: %v", err)
-	}, chain.Primary())
-	walk(skill.SourceOfficial, func(_ source.Resolver, err error) string { return err.Error() },
-		chain.ByID(skill.OfficialID))
-	walk(skill.SourceGit, func(src source.Resolver, err error) string {
-		return fmt.Sprintf("source %s: %v", src.Spec().ID, err)
-	}, declaredSources(chain, includePrivate))
-	return all
-}
-
-// declaredSources is the chain's declared sources: git ones other than the
-// built-in official one, which the catalog lists as its own source, and path
-// ones.
-func declaredSources(chain source.Chain, includePrivate bool) source.Chain {
-	var out source.Chain
-	for _, r := range chain {
-		spec := r.Spec()
-		if spec.Private && !includePrivate {
-			continue
-		}
-		if (spec.Type == source.KindGit && spec.ID != skill.OfficialID) ||
-			(spec.Type == source.KindPath && spec.Declared) {
-			out = append(out, r)
-		}
-	}
-	return out
-}
-
-// filterByBundle keeps only the skills named in bundleName's catalog entry.
-func filterByBundle(
-	out io.Writer, capture *term.Capture, all []skill.Skill, bundleName string,
-) ([]skill.Skill, error) {
-	catalog, catalogWarn := config.LoadCatalog("")
-	if catalogWarn != nil {
-		warnOrCapture(out, capture, fmt.Sprintf("user catalog: %v", catalogWarn))
-	}
-	bundle, ok := config.FindBundle(catalog, bundleName)
-	if !ok {
-		return nil, fmt.Errorf("bundle %q not found — run 'rsk catalog bundles' to see all bundles", bundleName)
-	}
-	want := make(map[string]bool, len(bundle.Skills))
-	for _, ref := range bundle.Skills {
-		want[ref.Name] = true
-	}
-	return filterSkills(all, func(s skill.Skill) bool { return want[s.Name] }), nil
 }
 
 // skillNames extracts each skill's name, parallel to catalogSkillTable's
@@ -296,24 +210,11 @@ func runCatalogBundles(cmd *cobra.Command, opts catalogOpts) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	catalog, catalogWarn := config.LoadCatalog("")
-	if catalogWarn != nil {
-		warnOrCapture(out, capture, fmt.Sprintf("user catalog: %v", catalogWarn))
-	}
-
 	targets := allTargetDirs(cfg)
-	rows := make([]bundleRow, 0, len(catalog))
-	for _, b := range catalog {
-		linked := 0
-		for _, ref := range b.Skills {
-			if isLinkedAnywhere(ref.Name, targets) {
-				linked++
-			}
-		}
-		rows = append(rows, bundleRow{Bundle: b, linked: linked, total: len(b.Skills)})
+	rows, warnings := catalog.BundleRows(func(name string) bool { return isLinkedAnywhere(name, targets) })
+	for _, w := range warnings {
+		warnOrCapture(out, capture, w)
 	}
-
-	sort.Slice(rows, func(i, j int) bool { return rows[i].Name < rows[j].Name })
 
 	if len(rows) == 0 {
 		if capture != nil {
@@ -333,7 +234,7 @@ func runCatalogBundles(cmd *cobra.Command, opts catalogOpts) error {
 // bundleNames extracts each bundle's name, parallel to catalogBundleTable's
 // rows, so a captured table can identify the row a RowAction fires on
 // independently of how it's displayed.
-func bundleNames(rows []bundleRow) []string {
+func bundleNames(rows []catalog.BundleRow) []string {
 	names := make([]string, len(rows))
 	for i, r := range rows {
 		names[i] = r.Name
@@ -342,32 +243,32 @@ func bundleNames(rows []bundleRow) []string {
 }
 
 // catalogBundleTable projects one bundle row.
-var catalogBundleTable = term.Table[bundleRow]{
-	Row: func(r bundleRow) []any {
+var catalogBundleTable = term.Table[catalog.BundleRow]{
+	Row: func(r catalog.BundleRow) []any {
 		mark := ui.ErrorMark
 		switch {
-		case r.linked == r.total && r.total > 0:
+		case r.Linked == r.Total && r.Total > 0:
 			mark = ui.SuccessMark
-		case r.linked > 0:
+		case r.Linked > 0:
 			mark = ui.WarnMark
 		}
 		return []any{
 			mark,
 			ui.BundleTag(r.Name),
-			ui.MutedStyle.Render(fmt.Sprintf("%d/%d", r.linked, r.total)),
+			ui.MutedStyle.Render(fmt.Sprintf("%d/%d", r.Linked, r.Total)),
 			ui.MutedStyle.Render(r.Description),
 		}
 	},
 }
 
-func bundleRowsToEntries(rows []bundleRow) []bundleEntry {
+func bundleRowsToEntries(rows []catalog.BundleRow) []bundleEntry {
 	out := make([]bundleEntry, len(rows))
 	for i, r := range rows {
 		out[i] = bundleEntry{
 			Name:        r.Name,
 			Description: r.Description,
-			Skills:      r.total,
-			Linked:      r.linked,
+			Skills:      r.Total,
+			Linked:      r.Linked,
 		}
 	}
 	return out

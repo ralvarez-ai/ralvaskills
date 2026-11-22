@@ -81,17 +81,6 @@ func resolveNames(
 	return install.Resolve(ctx, names, catalog, chain)
 }
 
-// filterSkills returns a new slice containing only the skills for which keep returns true.
-func filterSkills(in []skill.Skill, keep func(skill.Skill) bool) []skill.Skill {
-	out := make([]skill.Skill, 0, len(in))
-	for _, s := range in {
-		if keep(s) {
-			out = append(out, s)
-		}
-	}
-	return out
-}
-
 // isLinkedAnywhere reports whether a skill named name is symlinked into any of
 // the given target directories.
 func isLinkedAnywhere(name string, targets []string) bool {
