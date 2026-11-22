@@ -226,7 +226,7 @@ func TestRestoreUsesTheMachinesOwnTransportForTheSameRepository(t *testing.T) {
 	l := source.LockedSkill{
 		Name:   "alpha",
 		Commit: strings.Repeat("d", 40),
-		Tree:   "t-skills/alpha",
+		Tree:   sourcetest.TreeOf("skills/alpha"),
 		Path:   "skills/alpha",
 	}
 	e := m.declare(t, "@acme/skills", sources.Options{}) // this machine uses SSH
@@ -254,7 +254,7 @@ func TestRestoreOfAnUndeclaredSourceNeedsTheRunsApproval(t *testing.T) {
 	l := source.LockedSkill{
 		Name:   "alpha",
 		Commit: strings.Repeat("d", 40),
-		Tree:   "t-skills/alpha",
+		Tree:   sourcetest.TreeOf("skills/alpha"),
 		Path:   "skills/alpha",
 	}
 	repo := &sourcetest.Repo{Commit: l.Commit, Skills: map[string]string{"alpha": ""}}

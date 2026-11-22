@@ -34,6 +34,12 @@ entries in .rsk/rsk.mod and .rsk/rsk.lock.
 With --global the install targets the configured global skills directories
 without touching any project manifest.
 
+A qualified reference (@owner/repo/name) to a source this machine has not
+registered shows the URLs rsk would contact (SSH first, HTTPS as the fallback) and
+asks you to approve them for this run. --yes does not answer that question; in CI
+pass --trust @owner/repo. Nothing is saved unless you add --save, which registers
+the source untrusted: trust it yourself with 'rsk source trust'.
+
 Examples:
   rsk install <name>                           # install a bundle or skill by name
   rsk install                                  # project: install everything in rsk.mod
@@ -41,6 +47,8 @@ Examples:
   rsk install go-architect --pin               # project: install + pin in CLAUDE.md
   rsk install global --global                  # global: bundle to every tool dir
   rsk install go-grpc --global --for claude-code
+  rsk install @owner/repo/name                 # ask, then install from an unregistered source
+  rsk install @owner/repo/name --trust @owner/repo   # CI: approve that source for this run
   rsk install uru-thesis-writer --include personal
   rsk install go-grpc --dry-run`,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -52,6 +60,10 @@ Examples:
 		if err != nil {
 			return err
 		}
+		trustIDs, err := cmd.Flags().GetStringSlice(flagTrust)
+		if err != nil {
+			return err
+		}
 		return runInstall(cmd, installOpts{
 			global:   cmdx.Bool(cmd, cmdx.FlagGlobal),
 			dryRun:   cmdx.Bool(cmd, cmdx.FlagDryRun),
@@ -60,14 +72,31 @@ Examples:
 			yes:      cmdx.Bool(cmd, cmdx.FlagYes),
 			forTool:  forTool,
 			version:  cmdx.String(cmd, cmdx.FlagVersion),
+			trust:    trustIDs,
+			save:     cmdx.Bool(cmd, flagSave),
 		}, args)
 	},
 }
 
 type installOpts struct {
 	global, dryRun, personal, pin, yes bool
+	save                               bool
 	forTool                            tool.ID
 	version                            string
+	trust                              []string
+
+	// onApplied runs once the skills are installed, never on a dry run or an
+	// aborted install. It is how --save registers a source only for an install
+	// that happened.
+	onApplied func() error
+}
+
+// applied runs the after-install hook, if any.
+func (o installOpts) applied() error {
+	if o.onApplied == nil {
+		return nil
+	}
+	return o.onApplied()
 }
 
 func runInstall(cmd *cobra.Command, opts installOpts, args []string) error {
@@ -97,7 +126,16 @@ func runInstall(cmd *cobra.Command, opts installOpts, args []string) error {
 		return fmt.Errorf("%w\n  Run 'rsk init' to set up rsk on this machine", err)
 	}
 
-	chain, err := sourceChain(cmd, cfg)
+	implicit, err := prepareImplicit(cmd, &opts, args)
+	if errors.Is(err, errImplicitDeclined) {
+		fmt.Fprintln(out, messageAborted)
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	chain, err := sourceChain(cmd, cfg, implicit...)
 	if err != nil {
 		return err
 	}
@@ -210,7 +248,10 @@ func runInstallGlobal(
 	if err != nil {
 		return err
 	}
-	return reportInstall(out, errOut, results)
+	if err = reportInstall(out, errOut, results); err != nil {
+		return err
+	}
+	return opts.applied()
 }
 
 // runInstallProject links each resolved skill into each configured tool's
@@ -258,7 +299,7 @@ func runInstallProject(
 		return err
 	}
 	reconcilePermissions(cmd, rskDir, skills)
-	return nil
+	return opts.applied()
 }
 
 // previewAndConfirm renders the install preview and, unless dryRun, asks the

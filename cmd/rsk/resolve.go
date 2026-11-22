@@ -26,18 +26,16 @@ const flagOffline = "offline"
 var sourceRepoFor func(source.Spec) source.RepoOps
 
 // sourceChain builds the chain a command resolves skill names through: the
-// built-in sources, then the declared git sources. Commands that only restore
+// built-in sources, then the declared ones, then any source offered for this run
+// only (see sources.ChainOptions.Implicit). Commands that only restore
 // or relink what a project already records use cfg.Sources() instead, so they
 // never depend on a declared source.
-func sourceChain(cmd *cobra.Command, cfg config.Config) (source.Chain, error) {
-	offline := false
-	if cmd.Flags().Lookup(flagOffline) != nil {
-		var err error
-		if offline, err = cmd.Flags().GetBool(flagOffline); err != nil {
-			return nil, err
-		}
+func sourceChain(cmd *cobra.Command, cfg config.Config, implicit ...sources.Entry) (source.Chain, error) {
+	offline, err := offlineRequested(cmd)
+	if err != nil {
+		return nil, err
 	}
-	chain, err := sources.Chain(cfg, sources.ChainOptions{Offline: offline, RepoFor: sourceRepoFor})
+	chain, err := sources.Chain(cfg, sources.ChainOptions{Offline: offline, RepoFor: sourceRepoFor, Implicit: implicit})
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +43,15 @@ func sourceChain(cmd *cobra.Command, cfg config.Config) (source.Chain, error) {
 		ui.Info(cmd.ErrOrStderr(), "offline: answering from cached source indexes")
 	}
 	return chain, nil
+}
+
+// offlineRequested reports whether --offline was given. A command without the
+// flag is online.
+func offlineRequested(cmd *cobra.Command) (bool, error) {
+	if cmd.Flags().Lookup(flagOffline) == nil {
+		return false, nil
+	}
+	return cmd.Flags().GetBool(flagOffline)
 }
 
 // projectSkillsDirs returns deduplicated per-tool project skills directories.

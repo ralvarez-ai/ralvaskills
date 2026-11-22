@@ -281,3 +281,42 @@ func TestInstallSkillsUnknownNameIsToolError(t *testing.T) {
 		t.Error("install_skills with an unknown name: want isError true")
 	}
 }
+
+// The MCP server resolves through the built-in chain only. A qualified reference
+// to a source this machine has not declared is refused: the server never opens a
+// source on an agent's say-so, whatever the user approves for the install itself.
+func TestInstallSkillsRefusesAnUnregisteredSourceAndNeverContactsIt(t *testing.T) {
+	t.Parallel()
+
+	var contacted []string
+	globalDir := t.TempDir()
+	session := newSession(t, mcp.Deps{
+		Cfg: config.Config{
+			RepoPath:           t.TempDir(),
+			GlobalTargets:      map[string]string{"claude-code": globalDir},
+			DefaultTargetScope: "claude-code",
+			OfficialCache:      filepath.Join(t.TempDir(), "anthropic"),
+		},
+		RepoFor: func(spec source.Spec) source.RepoOps {
+			contacted = append(contacted, spec.ID)
+			return &sourcetest.Repo{}
+		},
+		Logger:  slog.New(slog.DiscardHandler),
+		Version: "test",
+	})
+
+	for _, ref := range []string{"@acme/skills/alpha", "@acme/skills/alpha@1.0.0", "@ralvarezdev/skills/alpha"} {
+		res := callTool(t, session, "install_skills", map[string]any{"names": []string{ref}, "scope": "global"})
+		if !res.IsError {
+			t.Errorf("install_skills %s: want isError true", ref)
+		}
+	}
+	for _, id := range contacted {
+		if id != "@anthropics/skills" {
+			t.Errorf("the server reached for source %s", id)
+		}
+	}
+	if entries, err := os.ReadDir(globalDir); err != nil || len(entries) != 0 {
+		t.Errorf("a refused install linked %v, %v", entries, err)
+	}
+}

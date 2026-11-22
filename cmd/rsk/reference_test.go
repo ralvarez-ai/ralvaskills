@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/git"
 	"go.ralva.dev/ralvaskills/v3/internal/resolve"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
 )
@@ -107,6 +108,24 @@ func TestResolveJSONCarriesTheResultEvenWhenItIsNotResolved(t *testing.T) {
 		var res resolve.Result
 		if jsonErr := json.Unmarshal([]byte(out), &res); jsonErr != nil || res.Status != want {
 			t.Errorf("%s: status %q, want %q (%v)\n%s", ref, res.Status, want, jsonErr, out)
+		}
+	}
+}
+
+//nolint:paralleltest // the config folder override and the clone seam are process-wide
+func TestResolveSaysWhatInstallWouldDoForAnUnregisteredSourceWithoutContactingIt(t *testing.T) {
+	resolveMachine(t)
+	contacted := false
+	implicitProbe = func(context.Context, git.RemoteURL, string) (string, error) { contacted = true; return "", nil }
+	t.Cleanup(func() { implicitProbe = defaultImplicitProbe })
+
+	out, err := runResolveCmd(t, "@nobody/repo/x")
+	if err == nil || contacted {
+		t.Errorf("err = %v, contacted = %v", err, contacted)
+	}
+	for _, want := range []string{"unknown-source", "git@github.com:nobody/repo.git", "https://github.com/nobody/repo.git", "this run only"} {
+		if !strings.Contains(out, want) {
+			t.Errorf("output lacks %q:\n%s", want, out)
 		}
 	}
 }

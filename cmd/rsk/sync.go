@@ -38,7 +38,11 @@ the exact versions in rsk.lock. Refresh pinned instructions. Use --mcp to also
 register the rsk MCP server with each configured client.
 
 Existing links to another target and user-owned files are reported as conflicts.
-Locked registry skills must already be cached; sync does not update skills.`,
+Locked registry skills must already be cached; sync does not update skills.
+
+A lock may name a git source this machine has not registered. sync asks before
+contacting it (the lock never opens a source on its own); in CI pass
+--trust @owner/repo. This machine's own transport is used, whatever the lock holds.`,
 	Args: cobra.NoArgs,
 	RunE: runSync,
 }
@@ -61,7 +65,19 @@ func runSync(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("load rsk config: %w", err)
 	}
 	project := filepath.Dir(rskDir)
-	links, err := planSyncLinks(cmd.Context(), project, m, lock, cfg)
+	trustIDs, err := cmd.Flags().GetStringSlice(flagTrust)
+	if err != nil {
+		return err
+	}
+	approved, err := approveLockSources(cmd, lock, trustIDs)
+	if errors.Is(err, errImplicitDeclined) {
+		fmt.Fprintln(cmd.OutOrStdout(), messageAborted)
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	links, err := planSyncLinks(cmd.Context(), project, m, lock, cfg, approved...)
 	if err != nil {
 		return err
 	}
@@ -176,6 +192,7 @@ func planSyncLinks(
 	m manifest.Mod,
 	lock manifest.Lock,
 	cfg config.Config,
+	implicit ...sources.Entry,
 ) ([]syncLink, error) {
 	locked := make(map[string]manifest.LockEntry, len(lock.Skills))
 	for _, entry := range lock.Skills {
@@ -195,7 +212,7 @@ func planSyncLinks(
 		if !ok {
 			return nil, fmt.Errorf("%s has no lock entry; restore rsk.lock before syncing", name)
 		}
-		s, err := lockedSyncSkill(ctx, entry, cfg)
+		s, err := lockedSyncSkill(ctx, entry, cfg, implicit)
 		if err != nil {
 			return nil, err
 		}
@@ -212,12 +229,14 @@ func planSyncLinks(
 	return links, nil
 }
 
-func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.Config) (skill.Skill, error) {
+func lockedSyncSkill(
+	ctx context.Context, entry manifest.LockEntry, cfg config.Config, implicit []sources.Entry,
+) (skill.Skill, error) {
 	if err := skill.ValidateName(entry.Name); err != nil {
 		return skill.Skill{}, err
 	}
 	if entry.Source.UsesGit() {
-		return restoreGitEntry(ctx, entry, cfg)
+		return restoreGitEntry(ctx, entry, cfg, implicit)
 	}
 	if entry.Source != skill.SourceOfficial &&
 		(entry.Version == "" || filepath.Base(entry.Version) != entry.Version ||
@@ -251,10 +270,12 @@ func lockedSyncSkill(ctx context.Context, entry manifest.LockEntry, cfg config.C
 // source's own trust gate and never the chain. An official entry written before
 // the git transport has no record; it resolves to what the source has now, as it
 // always did, and the next update records it.
-func restoreGitEntry(ctx context.Context, entry manifest.LockEntry, cfg config.Config) (skill.Skill, error) {
+func restoreGitEntry(
+	ctx context.Context, entry manifest.LockEntry, cfg config.Config, implicit []sources.Entry,
+) (skill.Skill, error) {
 	if entry.Git != nil {
 		g := entry.Git
-		return sources.Restore(ctx, cfg, sources.ChainOptions{RepoFor: sourceRepoFor},
+		return sources.Restore(ctx, cfg, sources.ChainOptions{RepoFor: sourceRepoFor, Implicit: implicit},
 			entry.Source.Identity(), g.URL, source.LockedSkill{
 				Name: entry.Name, Rev: g.Rev, Commit: g.Commit, Tree: g.Tree, Path: g.Path,
 			})

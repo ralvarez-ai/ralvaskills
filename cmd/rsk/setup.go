@@ -73,12 +73,24 @@ func setupCommands() {
 	f.BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
 	f.Bool(cmdx.FlagApplyPermissions, false, "Write the tool permissions the skills declare without asking")
 	f.Bool(cmdx.FlagSkipPermissions, false, "Report the declared tool permissions and write none")
+	f.StringSlice(
+		flagTrust,
+		nil,
+		"Approve an unregistered @owner/repo source for this run only (for CI; --yes never does)",
+	)
+	f.Bool(
+		flagSave,
+		false,
+		"Register the unregistered source this install used, untrusted (trust it with 'rsk source trust')",
+	)
 	registerForCompletion(installCmd, false)
 
 	rootCmd.AddCommand(syncCmd)
 	syncCmd.Flags().Bool(flagMCP, false, "Also register the rsk MCP server")
 	syncCmd.Flags().Bool(cmdx.FlagDryRun, false, "Preview changes without applying them")
 	syncCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Skip the confirmation prompt")
+	syncCmd.Flags().
+		StringSlice(flagTrust, nil, "Approve a source the lock names but this machine has not declared, for this run only")
 
 	// list command
 	rootCmd.AddCommand(listCmd)

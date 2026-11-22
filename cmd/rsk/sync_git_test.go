@@ -8,6 +8,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/source/sourcetest"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 )
 
@@ -48,7 +49,10 @@ func TestPlanSyncRestoresAnOfficialEntryAtItsLockedCommit(t *testing.T) {
 	lock := manifest.Lock{Skills: []manifest.LockEntry{{
 		Name: "xlsx", Source: skill.SourceOfficial,
 		Git: &skill.GitRef{
-			URL: "https://github.com/anthropics/skills", Commit: locked, Tree: "t-skills/xlsx", Path: "skills/xlsx",
+			URL:    "https://github.com/anthropics/skills",
+			Commit: locked,
+			Tree:   sourcetest.TreeOf("skills/xlsx"),
+			Path:   "skills/xlsx",
 		},
 	}}}
 

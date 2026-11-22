@@ -4,6 +4,8 @@ package sourcetest
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/hex"
 	"os"
 	"path/filepath"
 	"strings"
@@ -49,11 +51,11 @@ func (r *Repo) Fetch(_ context.Context, _ git.RemoteURL, ref string) (string, er
 // ListTree implements source.RepoOps. It ignores roots and lists every skill.
 func (r *Repo) ListTree(context.Context, string, []string) ([]git.TreeEntry, error) {
 	entries := make([]git.TreeEntry, 0, 1+2*len(r.Skills))
-	entries = append(entries, git.TreeEntry{Mode: "040000", Type: "tree", ObjectID: "t-skills", Path: "skills"})
+	entries = append(entries, git.TreeEntry{Mode: "040000", Type: "tree", ObjectID: TreeOf("skills"), Path: "skills"})
 	for name := range r.Skills {
 		dir := "skills/" + name
 		entries = append(entries,
-			git.TreeEntry{Mode: "040000", Type: "tree", ObjectID: "t-" + dir, Path: dir},
+			git.TreeEntry{Mode: "040000", Type: "tree", ObjectID: TreeOf(dir), Path: dir},
 			git.TreeEntry{Mode: "100644", Type: "blob", ObjectID: "b-" + dir, Path: dir + "/SKILL.md"},
 		)
 	}
@@ -62,7 +64,14 @@ func (r *Repo) ListTree(context.Context, string, []string) ([]git.TreeEntry, err
 
 // TreeID implements source.RepoOps.
 func (r *Repo) TreeID(_ context.Context, _, dir string) (string, error) {
-	return "t-" + dir, nil
+	return TreeOf(dir), nil
+}
+
+// TreeOf is the tree id the repository gives the directory dir: a well-formed
+// object id, so a lock that records it passes the lock's own validation.
+func TreeOf(dir string) string {
+	sum := sha1.Sum([]byte("tree:" + dir)) //nolint:gosec // an object id, not a security hash
+	return hex.EncodeToString(sum[:])
 }
 
 // ReadBlobs implements source.RepoOps.
