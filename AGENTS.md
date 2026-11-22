@@ -92,7 +92,7 @@ runtime, only at build.
 ## Agent surfaces
 
 - **`rsk mcp`** — stdio server (launched and killed per client session; registered in
-  `.claude/settings.json` under `mcp`). Read-only tools: `project_profile`, `search_skills`,
+  `.mcp.json` under `mcpServers`). Read-only tools: `project_profile`, `search_skills`,
   `list_sources`, `test_source`, `scan_source`, `resolve_reference`. Mutating, each with
   `_meta["anthropic/requiresUserInteraction"] = true` and `dry_run`: `install_skills`,
   `add_source`, `remove_source`. Plus the `rsk://catalog` resource. No tool takes a trust flag, a
