@@ -13,3 +13,5 @@ Found in the SSH acceptance run. With a failing `ssh` first on `PATH`, `rsk cata
 This is the owner's own configuration, which the design accepts (trust rule 1: what git sends is the user's git configuration), but the prompt claims a transport it may not use. Decide: show the effective URL (`git ls-remote --get-url`) in the implicit prompt and in `rsk source test`, or run the runner with `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM` unset, which would also drop the owner's credential helpers and so needs its own decision.
 
 Done when the URL shown to the user and the host contacted agree, or the difference is documented where the prompt is.
+
+Resolved 2026-11-22: the first option. `git.EffectiveURL` asks `git ls-remote --get-url`, and the implicit-source prompt and `rsk source test` (field `via`) say when the user's git configuration rewrites a URL. The runner still honors those rules, so the credential helpers and aliases the owner relies on keep working; the grant stays keyed on the URL rsk holds, which is the URL the prompt now qualifies.
