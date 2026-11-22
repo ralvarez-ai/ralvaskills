@@ -19,6 +19,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/config"
 	"go.ralva.dev/ralvaskills/v3/internal/install"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	projectsetup "go.ralva.dev/ralvaskills/v3/internal/project"
 	"go.ralva.dev/ralvaskills/v3/internal/skill"
 	"go.ralva.dev/ralvaskills/v3/internal/source"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
@@ -107,8 +108,10 @@ func runSync(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("sync pinned instructions: %w", err)
 	}
 	if mcp {
-		if err = registerProjectMCP(out, project, m.Tools); err != nil {
-			return fmt.Errorf("sync MCP registration: %w", err)
+		notes, mcpErr := projectsetup.RegisterMCP(project, m.Tools)
+		printNotices(out, notes)
+		if mcpErr != nil {
+			return fmt.Errorf("sync MCP registration: %w", mcpErr)
 		}
 	}
 	fmt.Fprintln(out, "Project synchronization complete.")

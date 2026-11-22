@@ -1,25 +1,17 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
-	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
 
 	"go.ralva.dev/lib/term"
 
-	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/cmdx"
-	"go.ralva.dev/ralvaskills/v3/internal/config"
-	"go.ralva.dev/ralvaskills/v3/internal/install"
-	"go.ralva.dev/ralvaskills/v3/internal/manifest"
-	"go.ralva.dev/ralvaskills/v3/internal/skill"
+	"go.ralva.dev/ralvaskills/v3/internal/project"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
 )
@@ -89,41 +81,20 @@ func runNew(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return fmt.Errorf("get working directory: %w", err)
 	}
-	if registerMCP {
-		if err = tool.PreflightMCP(cwd, tools); err != nil {
-			return err
-		}
-	}
 
-	m, rskDir, isNew, err := loadOrCreateManifest(cwd, tools, forFlag, out)
-	if err != nil || m == nil {
+	res, err := project.Setup(cmd.Context(), cwd, project.SetupOptions{
+		Tools:        tools,
+		ForLabel:     forFlag,
+		RegisterMCP:  registerMCP,
+		InstallGuide: resolveGuideFlag(cmd),
+	})
+	printNotices(out, res.Notices)
+	if err != nil {
 		return err
-	}
-
-	if err = manifest.WriteMod(rskDir, *m); err != nil {
-		return err
-	}
-	if err = install.SyncPinnedAllTools(rskDir, *m); err != nil {
-		return err
-	}
-
-	if registerMCP {
-		if err = registerProjectMCP(out, cwd, tools); err != nil {
-			return fmt.Errorf(
-				"MCP registration incomplete; previously written project configuration was retained: %w",
-				err,
-			)
-		}
-	}
-
-	if resolveGuideFlag(cmd) {
-		if err = installRskGuide(cmd.Context(), out, cwd, rskDir); err != nil {
-			return err
-		}
 	}
 
 	fmt.Fprintln(out)
-	if isNew {
+	if res.Created {
 		ui.Success(out, "initialized .rsk/ for "+forFlag)
 	} else {
 		ui.Success(out, "updated .rsk/ for "+forFlag)
@@ -131,6 +102,20 @@ func runNew(cmd *cobra.Command, _ []string) error {
 	ui.Indent(out, "Run 'rsk install <name>' to add skills to this project.")
 	fmt.Fprintln(out)
 	return nil
+}
+
+// printNotices shows the messages a project operation produced, in order.
+func printNotices(out io.Writer, notices []project.Notice) {
+	for _, n := range notices {
+		switch n.Level {
+		case project.Warn:
+			ui.Warn(out, n.Text)
+		case project.Success:
+			ui.Success(out, n.Text)
+		default:
+			ui.Info(out, n.Text)
+		}
+	}
 }
 
 // resolveForFlag returns --for's value, prompting interactively when it
@@ -152,44 +137,6 @@ func resolveForFlag(cmd *cobra.Command, out io.Writer) (string, error) {
 	return choices[idx], nil
 }
 
-// loadOrCreateManifest reads the existing project manifest and adds any of
-// tools it's missing, or builds a fresh one if no project exists yet. A nil
-// *manifest.Mod with a nil error means the project is already configured for
-// every requested tool and the caller should return without further work.
-func loadOrCreateManifest(
-	cwd string, tools []tool.ID, forFlag string, out io.Writer,
-) (m *manifest.Mod, rskDir string, isNew bool, err error) {
-	existing, existErr := manifest.ProjectFolderPath()
-	if existErr == nil {
-		loaded, readErr := manifest.ReadMod(existing)
-		if readErr != nil {
-			return nil, "", false, readErr
-		}
-
-		var added []tool.ID
-		for _, t := range tools {
-			if !slices.Contains(loaded.Tools, t) {
-				added = append(added, t)
-				loaded.Tools = append(loaded.Tools, t)
-			}
-		}
-		if len(added) == 0 {
-			ui.Info(out, "rsk project already configured for "+forFlag)
-			return &loaded, existing, false, nil
-		}
-
-		ui.Info(out, fmt.Sprintf("Adding tools to existing project: %v", added))
-		return &loaded, existing, false, nil
-	}
-
-	// No project yet — existErr just signals "not found", nothing to surface.
-	return &manifest.Mod{
-		Tools:  tools,
-		Skills: make(map[string]string),
-		Pinned: []string{},
-	}, filepath.Join(cwd, internal.ProjectFolderName), true, nil
-}
-
 // flagMCP is the boolean flag that registers the rsk MCP server without a
 // prompt, for non-interactive use.
 const flagMCP = "mcp"
@@ -206,41 +153,6 @@ func resolveMCPFlag(cmd *cobra.Command) bool {
 	return term.Confirm(cmd, false, term.StdioIsTerminal(), "Register the rsk MCP server in this project?")
 }
 
-// registerProjectMCP writes the rsk server into each configured tool's project
-// config and, for Claude Code, the workflow pointer in ./CLAUDE.md. It skips
-// (with a warning) when rsk is not on PATH, since the client would fail to
-// launch the server.
-func registerProjectMCP(out io.Writer, cwd string, tools []tool.ID) error {
-	if _, err := exec.LookPath("rsk"); err != nil {
-		ui.Warn(out, "'rsk' is not on PATH — skipping MCP registration. Put rsk on PATH "+
-			"first, or the client will fail to launch the server.")
-		//nolint:nilerr // not being on PATH is a skip with a warning, not a failure
-		return nil
-	}
-
-	paths := make([]string, 0, len(tools))
-	for _, id := range tools {
-		t, ok := tool.Get(id)
-		if !ok {
-			continue
-		}
-		path, err := t.RegisterMCP(cwd)
-		if err != nil {
-			return err
-		}
-		paths = append(paths, path)
-	}
-
-	if slices.Contains(tools, tool.ClaudeID) {
-		if err := tool.WriteMCPPointer(cwd); err != nil {
-			return err
-		}
-	}
-
-	ui.Success(out, "registered the rsk MCP server ("+strings.Join(paths, ", ")+")")
-	return nil
-}
-
 // flagGuide is the boolean flag that installs rsk-guide without a prompt.
 const flagGuide = "guide"
 
@@ -254,54 +166,4 @@ func resolveGuideFlag(cmd *cobra.Command) bool {
 		return false
 	}
 	return term.Confirm(cmd, false, term.StdioIsTerminal(), "Install the rsk-guide skill in this project?")
-}
-
-// installRskGuide installs rsk-guide into the project and pins it, so the agent
-// loads the rsk policy automatically. It is best-effort: a missing config or an
-// unresolvable skill warns instead of failing the whole command.
-func installRskGuide(ctx context.Context, out io.Writer, cwd, rskDir string) error {
-	cfg, err := config.Load()
-	if err != nil {
-		ui.Warn(out, "skipping rsk-guide install: "+err.Error()+"\n  Run 'rsk init' first.")
-		//nolint:nilerr // rsk not initialized is a skip with a warning, not a failure
-		return nil
-	}
-
-	bundles, catalogErr := config.LoadCatalog("")
-	if catalogErr != nil {
-		ui.Warn(out, "user catalog: "+catalogErr.Error())
-	}
-
-	chain, resolveErr := cfg.Sources()
-	var skills []skill.Skill
-	if resolveErr == nil {
-		skills, _, resolveErr = install.Resolve(ctx, []string{"rsk-guide"}, bundles, chain)
-	}
-	if resolveErr != nil {
-		ui.Warn(out, "could not resolve rsk-guide: "+resolveErr.Error())
-		//nolint:nilerr // best-effort convenience install; the project is still set up
-		return nil
-	}
-
-	m, err := manifest.ReadMod(rskDir)
-	if err != nil {
-		return err
-	}
-	results, err := install.Apply(skills, install.Options{
-		Scope:   install.ScopeProject,
-		Targets: install.ProjectSkillsDirs(cwd, m),
-		RskDir:  rskDir,
-		Pin:     true,
-	})
-	if err != nil {
-		return err
-	}
-	for _, r := range results {
-		if r.Err != nil {
-			ui.Warn(out, "rsk-guide: "+r.Err.Error())
-			continue
-		}
-		ui.Success(out, "installed and pinned rsk-guide")
-	}
-	return nil
 }
