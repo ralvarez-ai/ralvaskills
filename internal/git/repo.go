@@ -343,3 +343,15 @@ func (r runner) lsRemote(ctx context.Context, remote RemoteURL, ref string) (str
 	}
 	return commit, nil
 }
+
+// EffectiveURL returns the URL git will contact for remote once the user's own
+// url.*.insteadOf rules are applied. The runner honors those rules, so a URL
+// shown to the user and the host git reaches can differ; this reports the
+// second. It reads configuration only and contacts nothing.
+func EffectiveURL(ctx context.Context, remote RemoteURL) (string, error) {
+	out, err := runner{}.run(ctx, "", "ls-remote --get-url", "ls-remote", "--get-url", "--", remote.String())
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(out)), nil
+}

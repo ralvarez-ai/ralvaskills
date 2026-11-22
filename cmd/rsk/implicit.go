@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -28,6 +29,10 @@ var (
 	// implicitProbe picks the transport for an approved implicit source. Tests
 	// replace it so none reaches a network.
 	implicitProbe = defaultImplicitProbe
+
+	// effectiveURL says which URL git will really contact for one the user is
+	// shown, once their own url.*.insteadOf rules apply. Tests replace it.
+	effectiveURL = git.EffectiveURL
 
 	// isInteractive reports whether a person can answer a prompt. Tests replace it.
 	isInteractive = term.StdioIsTerminal
@@ -172,7 +177,9 @@ func askImplicit(cmd *cobra.Command, c *sources.Candidate) error {
 	fmt.Fprintf(out, "\nSource %s is not registered on this machine.\n", c.ID)
 	fmt.Fprintln(out, "rsk would let git contact it with your own SSH key or credential helper:")
 	fmt.Fprintf(out, "  %s  (SSH, tried first)\n", c.SSH)
+	printRewrite(cmd, c.SSH)
 	fmt.Fprintf(out, "  %s  (HTTPS, if SSH cannot be used)\n", c.HTTPS)
+	printRewrite(cmd, c.HTTPS)
 	fmt.Fprintln(
 		out,
 		"Its skills are text your agents will follow. Nothing is saved: this approval is for this run only.",
@@ -182,6 +189,28 @@ func askImplicit(cmd *cobra.Command, c *sources.Candidate) error {
 		return errImplicitDeclined
 	}
 	return nil
+}
+
+// printRewrite says when the user's git configuration sends url somewhere else,
+// since the prompt would otherwise name a transport git does not use.
+func printRewrite(cmd *cobra.Command, url string) {
+	if actual := rewrittenURL(cmd.Context(), url); actual != "" {
+		fmt.Fprintf(cmd.ErrOrStderr(), "      your git configuration rewrites this to %s\n", actual)
+	}
+}
+
+// rewrittenURL returns where git will really go for url when that differs from
+// url, and "" otherwise or when it cannot tell.
+func rewrittenURL(ctx context.Context, url string) string {
+	remote, err := git.ParseRemoteURL(url)
+	if err != nil {
+		return ""
+	}
+	actual, err := effectiveURL(ctx, remote)
+	if err != nil || actual == "" || actual == url {
+		return ""
+	}
+	return actual
 }
 
 // saveImplicit registers the sources an install opened for one run, untrusted.

@@ -75,6 +75,7 @@ type (
 	sourceTest struct {
 		sourceView
 		Reachable bool   `json:"reachable"`
+		Via       string `json:"via,omitempty"`
 		Commit    string `json:"commit,omitempty"`
 		Error     string `json:"error,omitempty"`
 	}
@@ -439,6 +440,7 @@ func probeSource(ctx context.Context, e sources.Entry, grants trust.File, result
 	if err != nil {
 		return err
 	}
+	result.Via = rewrittenURL(ctx, e.URL)
 	have, err := git.Version(ctx)
 	if err != nil {
 		return err

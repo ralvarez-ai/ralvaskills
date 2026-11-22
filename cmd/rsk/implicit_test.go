@@ -327,3 +327,27 @@ func TestSyncRestoresAnUndeclaredSourceOnlyWithTheRunsApproval(t *testing.T) {
 		t.Errorf("restore fetched %v: it must not consult the branch", w.repo.Fetches)
 	}
 }
+
+//nolint:paralleltest // the config folder override and the seams are process-wide
+func TestThePromptNamesTheURLGitWillReallyUseWhenItRewritesOne(t *testing.T) {
+	w := implicitMachine(t)
+	isInteractive = func() bool { return true }
+	effectiveURL = func(_ context.Context, remote git.RemoteURL) (string, error) {
+		if strings.HasPrefix(remote.String(), "https://") {
+			return "git@github-alias:acme/skills.git", nil
+		}
+		return remote.String(), nil
+	}
+	t.Cleanup(func() { effectiveURL = git.EffectiveURL })
+
+	out, err := w.install(t, "n\n", installOpts{}, "@acme/skills/alpha")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(out, "your git configuration rewrites this to git@github-alias:acme/skills.git") {
+		t.Errorf("the prompt hides the rewrite:\n%s", out)
+	}
+	if strings.Count(out, "rewrites this to") != 1 {
+		t.Errorf("an unrewritten URL was reported as rewritten:\n%s", out)
+	}
+}

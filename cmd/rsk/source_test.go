@@ -14,6 +14,7 @@ import (
 	"go.ralva.dev/lib/term"
 
 	"go.ralva.dev/ralvaskills/v3/internal/config"
+	"go.ralva.dev/ralvaskills/v3/internal/git"
 	"go.ralva.dev/ralvaskills/v3/internal/sources"
 	"go.ralva.dev/ralvaskills/v3/internal/trust"
 )
@@ -185,6 +186,27 @@ func TestSourceTestReportsAnUnreachableTrustedSource(t *testing.T) {
 	}
 	if strings.Contains(out, "ghp_") {
 		t.Error("output leaked a credential")
+	}
+}
+
+//nolint:paralleltest // the config folder override is process-wide
+func TestSourceTestSaysWhenGitRewritesTheURL(t *testing.T) {
+	dir := isolateConfig(t)
+	url := "https://127.0.0.1:1/team/skills.git"
+	if _, err := runSource(t, "add", url, "--id", "@team/skills", "--yes"); err != nil {
+		t.Fatal(err)
+	}
+	grants := trust.Grant(trust.File{}, "@team/skills", url, time.Now())
+	if err := trust.Save(filepath.Join(dir, trust.FileName), grants); err != nil {
+		t.Fatal(err)
+	}
+	effectiveURL = func(context.Context, git.RemoteURL) (string, error) { return "git@alias:team/skills.git", nil }
+	t.Cleanup(func() { effectiveURL = git.EffectiveURL })
+
+	out, _ := runSource(t, "test", "@team/skills", "-o", "json")
+	var res sourceTest
+	if err := json.Unmarshal([]byte(out), &res); err != nil || res.Via != "git@alias:team/skills.git" {
+		t.Errorf("result = %+v, %v", res, err)
 	}
 }
 
