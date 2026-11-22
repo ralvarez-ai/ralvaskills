@@ -19,7 +19,7 @@ type (
 	// InstallSkillsIn is the install_skills tool input.
 	InstallSkillsIn struct {
 		Names []string `json:"names"`
-		Scope string   `json:"scope,omitempty" jsonschema:"project (por defecto) | global"`
+		Scope string   `json:"scope,omitempty" jsonschema:"project (default) | global"`
 		Pin   bool     `json:"pin,omitempty"`
 		For   string   `json:"for,omitempty"   jsonschema:"amp|antigravity|claude-code|codex|cursor|droid|gemini|kimi|opencode|qwen"`
 	}

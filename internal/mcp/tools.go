@@ -32,7 +32,7 @@ const (
 type (
 	// ProjectProfileIn is the project_profile tool input.
 	ProjectProfileIn struct {
-		Path string `json:"path,omitempty" jsonschema:"Ruta del proyecto; por defecto el cwd"`
+		Path string `json:"path,omitempty" jsonschema:"Project path; defaults to the current directory"`
 	}
 
 	// ProjectProfileOut is the project_profile tool output: the detected
@@ -67,7 +67,7 @@ type (
 	// SearchSkillsIn is the search_skills tool input.
 	SearchSkillsIn struct {
 		Query string `json:"query"`
-		Limit int    `json:"limit,omitempty" jsonschema:"Por defecto 10, máximo 25"`
+		Limit int    `json:"limit,omitempty" jsonschema:"Defaults to 10, at most 25"`
 	}
 
 	// SearchSkillsOut is the search_skills tool output. It is an object rather

@@ -29,8 +29,8 @@ func registerCatalogResource(srv *sdk.Server, deps Deps) {
 		URI:   catalogURI,
 		Name:  "rsk-catalog",
 		Title: "ralvaskills catalog",
-		Description: "Catálogo de skills disponibles en ralvaskills. Descripciones " +
-			"recortadas; usa search_skills para filtrar por proyecto.",
+		Description: "Catalog of the skills available in ralvaskills. Descriptions are " +
+			"truncated; use search_skills to filter by project.",
 		MIMEType: catalogMIME,
 	}, catalogHandler(deps))
 }
