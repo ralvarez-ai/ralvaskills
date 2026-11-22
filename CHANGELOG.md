@@ -115,6 +115,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 # CLI releases
 
+## v3.10.1 (2026-11-22)
+
+A refactor release: no command, flag, output or file format changes. Output of `catalog`, `tools`, `new`, `status`, `list`, `install` and `update` was compared with v3.10.0 on project copies, step by step, and matched byte for byte (the generated `AGENTS.md` title aside, which is the directory name).
+
+### Changed
+- **`cmd/rsk` holds less logic ([ADR 0004](docs/adr/0004-cmd-rsk-is-wiring-and-internal-never-imports-cobra.md)).** The logic of six commands moved into `internal/`, which returns plain structs and notices that `cmd/rsk` renders: `internal/catalog` (`List`, `BundleRows`), `internal/tool` (the `tools allow|deny|remove|list` rules), the new `internal/project` (`rsk new`) and `internal/status`, `internal/install` (`CheckNoPersonal`, `ResolveFromMod`; six pass-through wrappers removed) and `internal/update` (registry, git and lock planning). `skill.DetectSource` and `skill.ParseGitLink` moved into `internal/skill`. The six command files shrank from 3049 to 2173 lines; the local-clone update path and the permission-aware lock bump stay in `cmd/rsk`.
+- **`internal/` never imports cobra**, except `cmdx` and `ui`. A `depguard` rule in `.golangci.yml` enforces it.
+- **The registry host in the docs is `skills.ralva.dev`.** `skills.ralvarez.dev` only redirects to it. The stale root `CNAME` file is removed.
+
 ## v3.10.0 (2026-11-22)
 
 Skills can now come from git repositories and directories as well as the hosted registry and `anthropics/skills`, with a per-machine trust gate. The entries under Unreleased above, from "Private sources and the local overlay" down to "`rsk source`", describe each piece in full.
