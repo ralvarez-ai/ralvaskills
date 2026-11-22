@@ -23,3 +23,6 @@ Update 2026-11-21 (after step 1f), what 1h can reuse and must keep:
 - Open: the MCP pin (`install_skills` with `pin`) shows no digest text (trust rule 7 is enforced in the CLI only); the tool's forced approval does not show it either. Decide here whether the tool returns the text and refuses to pin until the user confirms it.
 - `project_profile` `sources` section: path sources show trust "not required"; an implicit source is never listed (nothing is registered).
 - No trust or `--yes` parameter; `add_source` must not take `--trust`, and must never write `trust.json` (`--save` in the CLI already follows this).
+
+Resolved 2026-11-22 (`1eb5327` scan, `ccb22d7` the six tools and the parity test, plus `3c4ab3f` `rsk source scan` and the move onto `internal/sourceops`). The decisions are in the plan, section 1h. Left open: the MCP pin shows no digest (`g1zk6n`).
+

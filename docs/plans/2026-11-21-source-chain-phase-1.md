@@ -99,11 +99,21 @@ Built as planned, with these settled while building:
 - Pins from a private source go to gitignored `.rsk/rsk.local.mod`, `rsk.local.lock` and `SKILLS.local.md`, merged with the committed files on read; the local files are appended to `.git/info/exclude`; `--shared` opts in to the committed files.
 - Adapters: Claude Code reads the local digest through `CLAUDE.local.md`; OpenCode and Codex need an equivalent that is not committed. Whether each client honors an uncommitted import is **unverified** and is the first thing this step tests. I will not change `internal/tool/*` before you approve that part.
 
-### 1h. MCP tools for sources
+### 1h. MCP tools for sources - done
 
 - Read-only: `list_sources`, `test_source`, `scan_source`, `resolve_reference`. Mutating with forced approval: `add_source`, `remove_source`. `project_profile` gains a `sources` section. `install_skills` refuses unknown or private sources unless the manifest already lists them.
 - No trust or `--yes` parameter over MCP; `add_source` registers as untrusted; tool output from a source is data. Every mutating tool takes `dry_run`.
 - The CLI/MCP parity test (a phase 3 item in the design) lands here, since these tools ship here.
+
+Built as planned, with these settled while building:
+
+- **`internal/sourceops` is the core** (`List`, `PlanAdd`, `PlanRemove`, `Test`, `Scan` over plain structs and an `Env` that holds the file paths and the test seams). A mutating operation is a plan plus the function that applies it, so the CLI previews and asks, and the MCP tool applies unless `dry_run`. `rsk source list|add|remove|test` were moved onto it with their tests unchanged.
+- **`scan` needed a lenient discovery.** Resolving a source still fails on a name two directories claim; `Path.Scan` and `Git.Scan` report the clash instead, leave the clashing names out of the skills, and add frontmatter issues (a name that differs from the directory, no version, no description). Scanning a repository fetches it, so it needs a registered, trusted source; an unregistered `@owner/repo` is refused with the `rsk source add` line, since the alternative is cloning code nobody approved.
+- **`install_skills` resolves through the declared sources behind the trust gate.** The design says it refuses unknown or private sources unless the manifest lists them; the server now builds its chain with `sources.ChainAt` (declared and path sources, never `Implicit`), so an unregistered source is still refused and a trusted one installs. A side effect is the CLI's: a registered but untrusted source fails a bare-name install over MCP too (fail closed). `Deps.SourcesPath` empty means no declared sources, which keeps the tests that do not exercise them off the real files; the command sets both paths.
+- **The schema test is the guard against a trust parameter**: it fails when any tool's input has a property whose name contains trust, yes, token, secret, password, credential, auth, key, private, confirm or force.
+- **Parity.** `mcp.ToolNames()` lists every tool (a test checks it against what the server registers), and `TestEveryMCPToolHasACLICounterpart` maps each to a command in the tree and requires `--dry-run` on the twins of the mutating tools. `project_profile` is the one agent-only tool, listed with that reason.
+- **The MCP pin still shows no digest.** `install_skills` with `pin` writes `.rsk/SKILLS.md` for a non-default source without the text confirmation the CLI makes (trust rule 7). The client's forced approval shows the input, not the digest. Left open in `g1zk6n`.
+- **Not done here:** `AGENTS.md` still calls the `rsk mcp` tools "planned" (editing it needs your approval) and `rsk-guide` does not know the new tools or commands (it publishes on push).
 
 ## Decisions (settled 2026-11-21)
 
