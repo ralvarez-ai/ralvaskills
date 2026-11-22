@@ -94,6 +94,20 @@ func Apply(skills []skill.Skill, opts Options) ([]Result, error) {
 	return results, nil
 }
 
+// isPrivate reports whether a skill from src belongs in the local layer.
+func (o Options) isPrivate(src skill.Source) bool {
+	return o.PrivateSources[src.Identity()] && !o.Shared
+}
+
+// setLocal puts name in the local layer of m, or takes it out.
+func setLocal(m *manifest.Mod, name string, local bool) {
+	if local {
+		m.Local[name] = true
+		return
+	}
+	delete(m.Local, name)
+}
+
 // applyProject upserts the linked skills into rsk.mod and rsk.lock, applies the
 // pin, and rewrites the pinned tool configs.
 func applyProject(linked []skill.Skill, opts Options) error {
@@ -123,12 +137,8 @@ func applyProject(linked []skill.Skill, opts Options) error {
 		}
 		m.Skills[s.Name] = constraint
 		m.SetOrigin(s.Name, s.Source)
-		private := opts.PrivateSources[s.Source.Identity()] && !opts.Shared
-		if private {
-			m.Local[s.Name] = true
-		} else {
-			delete(m.Local, s.Name)
-		}
+		private := opts.isPrivate(s.Source)
+		setLocal(&m, s.Name, private)
 		names = append(names, s.Name)
 		// Keep what the previous entry recorded about this skill's tool
 		// permissions: the reconcile that follows the link step updates those

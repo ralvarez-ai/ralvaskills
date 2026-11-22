@@ -205,15 +205,15 @@ func TestMutatingSourceToolsForceApprovalAndReadOnlyOnesDoNot(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, name := range []string{"add_source", "remove_source", "install_skills"} {
-		tool := findTool(t, tools.Tools, name)
-		if v, ok := tool.Meta["anthropic/requiresUserInteraction"].(bool); !ok || !v || tool.Annotations.ReadOnlyHint {
-			t.Errorf("%s does not force approval: %+v", name, tool.Meta)
+		got := findTool(t, tools.Tools, name)
+		if v, ok := got.Meta["anthropic/requiresUserInteraction"].(bool); !ok || !v || got.Annotations.ReadOnlyHint {
+			t.Errorf("%s does not force approval: %+v", name, got.Meta)
 		}
 	}
 	for _, name := range []string{"list_sources", "test_source", "scan_source", "resolve_reference", "project_profile", "search_skills"} {
-		tool := findTool(t, tools.Tools, name)
-		if !tool.Annotations.ReadOnlyHint || tool.Meta["anthropic/requiresUserInteraction"] != nil {
-			t.Errorf("%s is not plainly read-only: %+v", name, tool)
+		got := findTool(t, tools.Tools, name)
+		if !got.Annotations.ReadOnlyHint || got.Meta["anthropic/requiresUserInteraction"] != nil {
+			t.Errorf("%s is not plainly read-only: %+v", name, got)
 		}
 	}
 

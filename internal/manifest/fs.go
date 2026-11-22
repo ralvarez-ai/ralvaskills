@@ -16,10 +16,11 @@ const (
 	// LockFileName is the filename of the resolved skill lockfile.
 	LockFileName = "rsk.lock"
 
-	// LocalModFileName and LocalLockFileName hold the skills from a private
-	// source. They are never committed: rsk keeps them out of git and merges them
-	// with rsk.mod and rsk.lock on read.
-	LocalModFileName  = "rsk.local.mod"
+	// LocalModFileName holds the skills from a private source. It is never
+	// committed: rsk keeps it out of git and merges it with rsk.mod on read.
+	LocalModFileName = "rsk.local.mod"
+
+	// LocalLockFileName is the lock for those skills, kept the same way.
 	LocalLockFileName = "rsk.local.lock"
 
 	// TempFilePattern is the glob pattern for temporary files created during
