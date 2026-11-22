@@ -43,6 +43,20 @@ The numbers move: re-run the survey in step 0 rather than trusting them.
 5. **Verify with the check below** after each batch; it must print nothing.
 6. **The 62 unpinned projects** need no edit. Record which machines have a global `rsk` older than 3.10.0; a v2 project opened on one of them fails with the upgrade message.
 
+## Pilot dry run on a copy (2026-11-22, done)
+
+Before touching any real project, the released 3.10.0 binary was run against a copy of `ralvarez-ts/ui` in `/tmp`, with a sandboxed config (the project is clean, has a `mise.toml` pin at 3.9.1, 12 skills, one official). Results:
+
+- `rsk status` and `rsk update --dry-run` on the v1 project change nothing.
+- `rsk update --yes` made `rsk.lock` v2: the official skill gained `url`, `commit`, `tree` and `path` and a qualified key; the 11 registry skills stayed bare. The tracked diff was only `.rsk/rsk.lock` and `.rsk/SKILLS.md`. `rsk.mod` stayed version 1.
+- `SKILLS.md` changed by one line: `frontend-design` went from "no digest, and not readable here" to its description (the versionless-skill fix).
+- After wiping every skill link, `rsk sync` restored all 12, the official one at `cache/sources/anthropics/skills/frontend-design/<commit>`.
+- `rsk sync` also registers the rsk MCP server in `.mcp.json` and `opencode.json`, which is outside the three `.rsk` files: the roll-out uses `rsk update`, never `rsk sync`.
+- `SKILLS.md` is about 3700 tokens against the 2000 budget in this project (item `q7m2xd`): a warning, not a roll-out problem.
+- Not tested: a 3.9.1 binary reading the v2 lock. It is expected to refuse it with the upgrade message; the first pin bump in a real repository confirms it.
+
+The real pilot is `ralvarez-ts/ui`, unless the owner prefers another: it has the pin to bump and a clean tree. It is not started.
+
 ## The check (read-only)
 
 For every project with a v2 `.rsk/rsk.lock` or `rsk.mod`, the `mise.toml` pin in or above it must be 3.10.0 or newer. The survey script in this repository's history (the Python snippet in the session that wrote this plan) does the walk; the rule is the only part that matters, and a project failing it is the one to bump first. A project with no pin is reported separately as "unpinned", not as a failure.
