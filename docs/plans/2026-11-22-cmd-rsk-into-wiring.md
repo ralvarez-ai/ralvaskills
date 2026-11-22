@@ -69,6 +69,11 @@ Order can change if a step uncovers coupling, but `update` stays last because it
 - Phase 5, `install`: done, and smaller than planned. `internal/install` already owned the solver and `Apply`; what `cmd/rsk` held was six pass-through wrappers (`projectSkillsDirs`, `resolveTargetDirs`, `findSkillByName`, `resolveNames`, `dedupSkills`, `constraintsFromArgs`), the personal-skill rule and the rsk.mod resolution loop. The wrappers are gone (callers use `install.*`), and `install.CheckNoPersonal` and `install.ResolveFromMod` are new; their tests live in `internal/install`. What stays in `install.go` is the preview, the confirm and digest prompts, the report and the flag checks, which the ADR keeps in `cmd`. A twelve-step install session (dry run, project, repeat, pin, from rsk.mod, global, the four error cases) matches the released 3.10.0 in output, exit codes and the whole project and global file trees.
 - Phase 6a, `update` registry path: done. `internal/update` gains `Pair`, `NeedsUpdate`, `WithLockedNames`, `LockedVersions`, `LinkedNames`, `FindOutdated` (warnings returned) and `Relink` (one result per attempt); `cmd/rsk/update.go` keeps the cobra command, the confirm, the plan table and the success and failure lines. A seven-step `update` session with outdated lock entries (dry run, update, repeat, named, `--global`, `--for` error, unknown name) matches the released 3.10.0 in output, exit codes and the project tree.
 - Phase 6b, `update` git path: done. `internal/update/git.go` holds `GitInstall`, `GlobalGitInstalls`, `ProjectGitInstalls`, `PlanGit` (notices returned in order), `RelinkGit` (one `GitRelink` per skill), `LockGitUpdates`, `GitLockDrift`, `Short` and `PinLabel`; its tests moved with it. `cmd/rsk/update_git.go` keeps the confirm, the plan lines and the success and failure lines. A five-step session with stale commit and tree entries for the official skill and a private-source skill (dry run, update, repeat, named, `--global`) matches the released 3.10.0 in output, exit codes and the project tree.
+- Phase 6c, `update` lock: done. `update.LinkAndLock` moved to `internal/update/lock.go` with a test; `bumpLockForProject` stays in `cmd/rsk` because it reconciles permissions through the command.
+
+## Where it ended (2026-11-22)
+
+All six phases ran. The six files are 2173 lines now (from 3049: update 1053 to 649, install 518 to 482, status 461 to 339, claude 398 to 259, catalog 374 to 275, new 307 to 169), and `cmd/rsk` holds about 6000 lines outside tests (from about 7000). The gain is smaller than the item expected, for a reason found on the way: `internal/install` and `internal/source` already carried most of the logic, so `install` was mostly prompts, previews and rendering, which the ADR keeps in `cmd`. What is left in these files and could still move: in `update.go` the local-clone path (`applyLocalUpdate`, `refreshOfficialIndex`, `refreshPinnedDigest`) and the rename migration; `bumpLockForProject` (permissions go through the command); `offlineAliases` and `localAliases`. They need a `cobra`-free permission reconciler first, which is its own piece of work.
 
 ## Open questions (answered above, kept for the record)
 
@@ -78,8 +83,8 @@ Order can change if a step uncovers coupling, but `update` stays last because it
 
 ## Exit criteria
 
-- [ ] `cmd/rsk/{update,update_git,update_lock,install,status,claude,catalog,new}.go` each hold only cobra registration, flag parsing, prompts and rendering.
-- [ ] `internal/**` imports no `spf13/cobra`, and a lint rule enforces it.
-- [ ] `task lint`, `go test ./...`, `task deadcode` and `task lint:doccheck` pass.
-- [ ] Output of `rsk status`, `update --dry-run`, `install --dry-run`, `catalog` and `new --help` is identical before and after on a project copy.
+- [ ] `cmd/rsk/{update,update_git,update_lock,install,status,claude,catalog,new}.go` each hold only cobra registration, flag parsing, prompts and rendering. Partly: see "Where it ended"; `update.go` and `update_lock.go` still hold the local-clone path and the permission-aware lock bump.
+- [x] `internal/**` imports no `spf13/cobra` (only `cmdx` and `ui`), and a depguard rule enforces it (`9485d8f`).
+- [x] `task lint`, `go test ./...` and `task lint:doccheck` pass; `deadcode` reports only `git.Clone`, unreachable before this work.
+- [x] Output of `catalog`, `tools`, `new`, `status`, `list`, `install` and `update` is identical to the released 3.10.0 on project copies, per phase (see Progress).
 - [ ] `a7zmcr` moved to `done/`.
