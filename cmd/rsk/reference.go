@@ -67,7 +67,7 @@ func runResolve(cmd *cobra.Command, args []string) error {
 		cmd.Context(),
 		args[0],
 		chain,
-		resolve.Options{Bundles: catalog, ImplicitHint: implicitHint},
+		resolve.Options{Bundles: catalog, ImplicitHint: sources.ImplicitHint},
 	)
 	if err != nil {
 		return err
@@ -131,17 +131,4 @@ func printResolution(out io.Writer, res *resolve.Result) {
 func registerResolveCommand() {
 	rootCmd.AddCommand(resolveCmd)
 	term.MarkTableView(resolveCmd)
-}
-
-// implicitHint says what `rsk install` would do with a source this machine has
-// not declared. It derives the URLs and contacts nothing.
-func implicitHint(id string) string {
-	c, err := sources.Derive(id)
-	if err != nil {
-		return ""
-	}
-	return fmt.Sprintf(
-		"rsk install would derive %s (%s if SSH cannot be used) and ask you to approve it for this run only",
-		c.SSH, c.HTTPS,
-	)
 }

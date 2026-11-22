@@ -50,6 +50,20 @@ func Derive(id string) (Candidate, error) {
 	}, nil
 }
 
+// ImplicitHint says what `rsk install` would do with a qualified reference to
+// the source id when this machine has not registered it, or "" when nothing can
+// be derived. It contacts nothing.
+func ImplicitHint(id string) string {
+	c, err := Derive(id)
+	if err != nil {
+		return ""
+	}
+	return fmt.Sprintf(
+		"rsk install would derive %s (%s if SSH cannot be used) and ask you to approve it for this run only",
+		c.SSH, c.HTTPS,
+	)
+}
+
 // URLs returns the candidate's URLs in the order they are tried.
 func (c Candidate) URLs() []string {
 	return []string{c.SSH, c.HTTPS}

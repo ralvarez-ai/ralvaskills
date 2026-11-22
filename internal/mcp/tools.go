@@ -15,6 +15,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal"
 	"go.ralva.dev/ralvaskills/v3/internal/catalog"
 	"go.ralva.dev/ralvaskills/v3/internal/manifest"
+	"go.ralva.dev/ralvaskills/v3/internal/sourceops"
 )
 
 const (
@@ -42,6 +43,10 @@ type (
 		Installed   []InstalledRef `json:"installed"`
 		ProjectRoot string         `json:"project_root"`
 		Manifest    *ManifestState `json:"manifest,omitempty"`
+
+		// Sources are the sources the user declared and whether each is trusted:
+		// an untrusted one cannot be installed from until the user trusts it.
+		Sources []sourceops.View `json:"sources,omitempty"`
 	}
 
 	// InstalledRef is one skill already present in the project manifest.
@@ -90,6 +95,7 @@ func registerTools(srv *sdk.Server, deps Deps) {
 			"Read-only.",
 		Annotations: readOnlyAnnotations("Search skills"),
 	}, searchHandler(deps))
+	registerSourceReaders(srv, deps)
 	if deps.ReadOnly {
 		return
 	}
@@ -104,6 +110,7 @@ func registerTools(srv *sdk.Server, deps Deps) {
 	}
 	installTool.Meta = sdk.Meta{requiresUserInteractionKey: true}
 	sdk.AddTool(srv, installTool, installHandler(deps))
+	registerSourceWriters(srv, deps)
 }
 
 // mutatingAnnotations marks a tool that writes: the client asks for approval.
@@ -194,6 +201,7 @@ func buildProfile(ctx context.Context, deps Deps, prof Profile) ProjectProfileOu
 
 	mod, lock, state := readProjectState(prof.Root)
 	out.Manifest = state
+	out.Sources = declaredSources(deps)
 	out.Installed = installedRefs(lock, mod)
 
 	installed := make(map[string]struct{}, len(lock.Skills))

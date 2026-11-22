@@ -124,8 +124,8 @@ func TestReadOnlyServerOmitsInstall(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(result.Tools) != 2 {
-		t.Fatalf("read-only tools = %+v, want exactly two", result.Tools)
+	if len(result.Tools) != 6 {
+		t.Fatalf("read-only tools = %+v, want exactly six", result.Tools)
 	}
 	for _, entry := range result.Tools {
 		if entry.Name == "install_skills" || entry.Annotations == nil || !entry.Annotations.ReadOnlyHint {
