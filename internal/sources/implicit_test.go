@@ -59,7 +59,9 @@ func (p *probeLog) probe(_ context.Context, remote git.RemoteURL, _ string) (str
 	return p.commit, nil
 }
 
-func allow(id, url string) error { return nil }
+func allow(string, string) error {
+	return nil
+}
 
 func TestChooseKeepsSSHWhenItWorks(t *testing.T) {
 	t.Parallel()
