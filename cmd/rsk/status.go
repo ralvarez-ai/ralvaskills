@@ -19,6 +19,7 @@ import (
 	"go.ralva.dev/ralvaskills/v3/internal/status"
 	"go.ralva.dev/ralvaskills/v3/internal/tool"
 	"go.ralva.dev/ralvaskills/v3/internal/ui"
+	updatecheck "go.ralva.dev/ralvaskills/v3/internal/update"
 )
 
 var statusCmd = &cobra.Command{
@@ -165,7 +166,7 @@ func printGitLockDrift(out io.Writer, rskDir string, projectDirs []string, cfg c
 	if err != nil {
 		return
 	}
-	for _, line := range gitLockDrift(lock, projectDirs, cfg.SourceOptions().CacheRoot) {
+	for _, line := range updatecheck.GitLockDrift(lock, projectDirs, cfg.SourceOptions().CacheRoot) {
 		ui.Warn(out, line)
 	}
 }

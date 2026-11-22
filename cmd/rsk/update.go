@@ -210,7 +210,7 @@ func refreshOfficialIndex(cmd *cobra.Command, cfg config.Config, dryRun bool) er
 		return err
 	}
 	for _, r := range chain.ByID(skill.OfficialID) {
-		rf, ok := r.(refresher)
+		rf, ok := r.(updatecheck.Refresher)
 		if !ok {
 			continue
 		}
