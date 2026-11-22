@@ -115,7 +115,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## v3.10.0 (2026-11-22)
 
-Skills can now come from git repositories and directories as well as the hosted registry and `anthropics/skills`, with a per-machine trust gate. The entries under Unreleased above, from "MCP source tools" down to "`rsk source`", describe each piece in full.
+Skills can now come from git repositories and directories as well as the hosted registry and `anthropics/skills`, with a per-machine trust gate. The entries under Unreleased above, from "Private sources and the local overlay" down to "`rsk source`", describe each piece in full.
 
 ### Added
 - **Git and path sources, `rsk source` and trust.** `rsk source add|list|remove|test|scan|trust|untrust` declares sources in `~/.config/rsk/sources.json`. A git source is registered untrusted and nothing is contacted until the user runs `rsk source trust` in a terminal; a grant is keyed by identity and URL. Git is reached with the user's own SSH key or credential helper: rsk stores no credential. A hardened git runner accepts only `ssh://`, `https://` and `git@host:path`, never prompts, and scrubs credentials from errors.
@@ -124,6 +124,8 @@ Skills can now come from git repositories and directories as well as the hosted 
 - **Locks that name their source.** Installing from a git source records url, commit, tree and path; `rsk sync` restores at the locked commit and checks the tree, and `rsk update` compares tree ids.
 - **Nine MCP tools.** `list_sources`, `test_source`, `scan_source`, `resolve_reference`, `add_source` and `remove_source` join `project_profile`, `search_skills` and `install_skills`. No tool can trust a source or take a secret.
 - **Pin confirmation.** Pinning a skill from any source but the default registry shows the text that lands in `.rsk/SKILLS.md` and asks.
+- **Private sources.** `rsk source add --private` keeps a source out of `rsk catalog` (unless `--include private`) and out of the MCP server entirely. Skills installed from it are recorded in gitignored `.rsk/rsk.local.mod` and `.rsk/rsk.local.lock` and pinned through `.rsk/SKILLS.local.md`, which Claude Code (through `CLAUDE.local.md`) and OpenCode load; none of it reaches a committed file, and `--shared` opts in to the committed ones for a project that is itself private. A teammate without the local files sees a clean project.
+- **`rsk source scan`.** A dry run over a directory or a registered, trusted repository: the skills it would provide, what is left out and why, names two directories claim (which make resolving the source fail), and frontmatter problems.
 
 ### Changed
 - **Migration: manifests become v2 when needed.** A project's `rsk.mod` and `rsk.lock` are written as v2 the first time it installs a skill from a non-default source, which includes an official one. An older `rsk` refuses a v2 file with "upgrade rsk", so move the pinned `rsk` version in `mise.toml` before running `rsk update` or `rsk install` on a project that uses official skills. Existing official links keep working and are re-pointed by the next `rsk update`.
