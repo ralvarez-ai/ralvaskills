@@ -22,3 +22,5 @@ Progress 2026-11-21: steps 1a to 1e are built and committed, not pushed (`478179
 
 Update 2026-11-22: steps 1a to 1f and 1h are done and the SSH acceptance run passed; the versionless digest fix and the `AGENTS.md` update are in. `v3.10.0` is tagged locally at `869bedc` and not pushed (`c3qwq1`). Remaining: 1g (`8d2nwx`, approved, own session), the `rsk-guide` 0.6.0 update (`7bxgw3`, blocked on a permission rule), the consumer roll-out (`9m3rtc`, after the release) and `g1zk6n`.
 
+Update 2026-11-22 (later): step 1g is built too (`8d2nwx` in done): `--private`, the local layers, `SKILLS.local.md`, the Claude Code and OpenCode imports (verified in the real clients) and `--shared`. All of phase 1 is built. Open: the push of these commits, the `rsk-guide` update, the consumer roll-out and the follow-ups in `g1zk6n`.
+

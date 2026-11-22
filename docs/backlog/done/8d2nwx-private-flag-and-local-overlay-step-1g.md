@@ -22,3 +22,5 @@ Update 2026-11-21 (after step 1f): `--save` registers a source untrusted and `rs
 
 Update 2026-11-22: the owner approved changing `internal/tool/*` for this step ("go ahead with the 4 items"). Not started: the first thing it must do is test, in the real clients, whether Claude Code (`CLAUDE.local.md`), OpenCode and Codex honor an uncommitted import, which cannot be done from the unit tests. Where a client cannot be verified, refuse to pin a private skill for it instead of writing its digest to a committed file. Start it in its own session; `internal/digest` now reads a versionless skill's description, and `internal/sourceops` and `internal/resolve` already carry the source views a `private` flag would filter.
 
+Resolved 2026-11-22 (`0de382e` the private flag, `d8c717f` the manifest layers, `f2d3ed9` the local digest and the Claude Code and OpenCode imports, `cdf1bf9` install, pin and `--shared`, plus the follow-up fixes). The decisions and what each client did are in the plan, section 1g. Not covered: an implicit source is never private.
+

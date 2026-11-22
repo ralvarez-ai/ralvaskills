@@ -93,11 +93,22 @@ Built as planned, with these settled while building:
 - **`rsk resolve` uses `Chain.Survey`**, which asks every source and keeps each answer where `Find` stops at the first it cannot consult, and applies the same verdict rules; a test checks that it never says "resolved" where `Find` fails. It exits non-zero unless the reference resolves or is a bundle. It is registered outside `setup.go`'s `AddCommand` list like `rsk source`, so the landing page's command count, which `gen-data.mjs` reads from that list, does not move and does not include either command; the page should say so or count them when it is next touched.
 - **A real run found what the tests could not:** `--from` was read but never registered, so the command panicked while every unit test, which calls `runInstall`, passed. A test now checks that each flag the commands read is registered and runs the whole command once.
 
-### 1g. `private` and the local overlay (touches `internal/tool/*`: needs your approval)
+### 1g. `private` and the local overlay - done
 
 - Honor `Private`: excluded from `catalog`, MCP resources, `rsk://catalog` and `search_skills` unless `--include private`.
 - Pins from a private source go to gitignored `.rsk/rsk.local.mod`, `rsk.local.lock` and `SKILLS.local.md`, merged with the committed files on read; the local files are appended to `.git/info/exclude`; `--shared` opts in to the committed files.
 - Adapters: Claude Code reads the local digest through `CLAUDE.local.md`; OpenCode and Codex need an equivalent that is not committed. Whether each client honors an uncommitted import is **unverified** and is the first thing this step tests. I will not change `internal/tool/*` before you approve that part.
+
+Built as planned (the owner approved the `internal/tool/*` change on 2026-11-22), with these settled while building:
+
+- **The clients were tested first, for real.** `claude -p` and `opencode run` in a sandbox project, with a canary string: Claude Code loads a `CLAUDE.local.md` that imports `.rsk/SKILLS.local.md`; a missing imported file, and a missing `CLAUDE.local.md`, are ignored without an error. OpenCode loads a file named in the committed `instructions` array and ignores one that is missing. In the end-to-end run the owner's checkout showed the private skill and a clone with only the committed files showed `NONE`, in both clients. Codex has no `@` import in `AGENTS.md` (`AGENTS.override.md` replaces the file, it does not add to it), and rsk writes no digest for Codex or the eight JSON clients, so they need no refusal: there is nothing to leak. Codex itself was not run.
+- **Privacy is a property of the source, not of `skill.Skill`.** Adding a field would have taken `Skill` past the 128-byte copy gate. `Spec.Private` and `sources.Entry.Private` carry it; the install path asks `PrivateSources` (identities) and the manifest carries a per-skill layer mark (`Mod.Local`, `LockEntry.Local`).
+- **The reader merges, the writer splits.** `ReadMod` and `ReadLock` merge the local files and mark what came from them; `WriteMod` and `WriteLock` send each skill back to its layer. That is what makes the invariant hold for `uninstall`, `update`, `pin`, `sync` and `rename` without touching them: none can write a private skill to a committed file. A name in both layers is an error.
+- **What is excluded is more than the local files.** The first real run showed the install links (`.claude/skills/<name>`, one per client) are named after the skill and would have been committed, so they are in `.git/info/exclude` with the local files. The exclude file is found by reading `.git` (a worktree's `commondir` included), with no git binary.
+- **A client that cannot import gets nothing, which is the refusal.** `tool.LocalImporter` is implemented by Claude Code and OpenCode only.
+- **The MCP server cannot see a private source at all** (`ChainOptions.ExcludePrivate`, `Env.HidePrivate`), which is stricter than the design's "unless the manifest already lists it": a private source is used from the CLI. `project_profile` and its install counts leave the local layer out.
+- **Not covered:** an implicit source cannot be private (nothing says it is), so its pins are committed; the install path warns in the changelog only. A project whose `rsk.mod` is committed with private skills from before the flag existed keeps them there until reinstalled. Windows path handling of the exclude file is untested.
+
 
 ### 1h. MCP tools for sources - done
 

@@ -20,3 +20,6 @@ Found while building and running step 1f; none blocks the first release.
 - ~~`AGENTS.md` still calls the `rsk mcp` tools "planned" and lists three.~~ Fixed 2026-11-22 (`2a2e35d`).
 - **The `rsk-guide` skill does not know `resolve`, `--from`, `--trust`, `--save`, `source scan` and the six source tools yet.** Approved by the owner 2026-11-22; blocked by the permission classifier, tracked as `7bxgw3`.
 - **An implicit source cannot carry `roots`, `excludes` or a `rev`.** A repository that needs them (`cursor/plugins` has `pr-review-canvas` twice) is registered with `rsk source add --roots`. `rsk source scan` (1h) should show the clash before a user hits it.
+- **An implicit source cannot be private,** so `rsk install @owner/repo/name` for a private repository pins into the committed files. Decide whether the implicit prompt should offer to register it private, or `--private` should be a flag of `install`.
+- **Codex was not run for 1g.** rsk writes no digest for it, so nothing can leak, but whether a future Codex import exists is worth re-checking; the exclude file's Windows paths are untested.
+
