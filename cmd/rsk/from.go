@@ -16,8 +16,8 @@ import (
 
 // oneOffNote is shown with every --from install, and says plainly what is not
 // kept: a path on this machine is not something another machine can restore.
-const oneOffNote = "--from is a one-off: it is not recorded in rsk.mod or rsk.lock, so rsk sync, rsk update and " +
-	"rsk status do not know it and another machine cannot restore it. For a directory you keep using, " +
+const oneOffNote = "--from is a one-off: it is not recorded in rsk.mod or rsk.lock, so rsk sync and rsk update " +
+	"do not manage it and another machine cannot restore it. For a directory you keep using, " +
 	"register it: rsk source add <dir>"
 
 // validateFromOpts checks the flag combinations --from allows: it installs one
