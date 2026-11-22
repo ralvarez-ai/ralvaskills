@@ -38,17 +38,33 @@ The numbers move: re-run the survey in step 0 rather than trusting them.
 0. **Gate: the release exists.** `c3qwq1` done: assets on the GitHub Release, `rsk --version` from the released binary prints 3.10.0. Re-run the survey (script below). Nothing else starts before this.
 1. **Move the owner's own binary** to 3.10.0 (global install, and this repository's `mise.toml`). Run `rsk status` and `rsk list` in one v1 project to confirm a v1 file still reads and is not rewritten.
 2. **Pilot on one official-skill project** the owner picks (a small one). With the owner's go: bump its `mise.toml` pin, run `rsk update --dry-run`, then `rsk update`, and check that `rsk.lock` is v2, that `rsk sync` restores it, and that the `.rsk` diff is only the lock, the mod and `SKILLS.md`. Commit it with explicit pathspecs, one `chore(rsk)` commit. Keep this project as the control for step 5.
-3. **Bump the pins in batches**, official-skill projects first (21), then the rest, in the order the earlier sweeps used. One `mise.toml` edit per repo, committed on its own (`chore(mise): bump rsk to 3.10.0`), pushed or recorded in `w8nq2s` when a push is refused. A repository on 3.7.0 moves straight to 3.10.0.
+3. **Bump the pins in batches** (not before the `minimum_release_age` hold lifts, see "Second pass"), official-skill projects first (21), then the rest, in the order the earlier sweeps used. One `mise.toml` edit per repo, committed on its own (`chore(mise): bump rsk to 3.10.0`), pushed or recorded in `w8nq2s` when a push is refused. A repository on 3.7.0 moves straight to 3.10.0.
 4. **Let `rsk update` run per project only after its pin moved**, and only the projects the owner wants refreshed: the pin bump alone changes nothing about `.rsk`.
 5. **Verify with the check below** after each batch; it must print nothing.
 6. **The 62 unpinned projects** need no edit. Record which machines have a global `rsk` older than 3.10.0; a v2 project opened on one of them fails with the upgrade message.
+
+## Second pass (2026-11-22, evening, read-only)
+
+The survey is now `scripts/rsk-rollout-check.py` (read-only; `--list official|v2|old-pin` lists the projects behind a number; exit 1 on a FAIL line). Re-run against `~/Dev`: 152 locks, 22 with an official skill, 0 v2, 88 pins (82 at 3.9.1, 6 at 3.7.0), 51 lock projects with no pin, no FAIL. The counts moved from the first pass (149 / 21 / 85 / 62) because worktrees and nested checkouts come and go, and because the first pass resolved "no pin" differently; trust the script, not the table above.
+
+What the 88 pinned projects really are (`mise.toml` read from the working tree):
+
+- 24 are in `~/Dev/archived/libraries/ralvarez-go/*`. Each has an **uncommitted** edit to `mise.toml` (3.7.0 to 3.9.1) plus uncommitted `opencode.json`/`.opencode/` changes from an earlier sweep. A pin bump there would commit the owner's older edit with it. Leave them until the owner decides (archived repos may not need the bump at all).
+- 22 are git **worktrees** (`*.wt/*`, `*-tmp`, `*-resume`, nested `third-party/`). Each is a branch checkout of a repo that is also in the list; bumping the main checkout is enough once its branch merges. Treat worktrees as out of the batches unless the owner says otherwise.
+- That leaves 46 active, clean main checkouts to bump, 6 of them with an official skill (`ralvagym`, `ralvafi`, `uns-platform`, `automation-labs-coding-agents-benchmarks`, `automation-labs-openhands-plc`, `ralvarez-ts/ui`); the other pinned official-skill checkouts are worktrees, and 8 official-skill projects have no pin (`kaucrow`, `claude-design` and its worktree, `wro-fe-2027`, `automation-labs-ml-lab`, `automation-labs-mando`, `ralvarez-ts/tokens`, `ralvarez-ts/charts`): they run the global `rsk`, so do not `rsk update` them until it is 3.10.0.
+- 8 of the active main checkouts have no upstream (`autobacklog`, `ralvadocket`, `autoreports`, `automation-labs-iec-core`, `automation-labs-coding-agents-benchmarks`, `automation-labs-openevolve-plc`, `automation-labs-openevolve-plc-adapter`, `ports`): their commit stays local; they are recorded in `w8nq2s`.
+- This repository itself pins 3.9.1; moving it is step 1 and the owner's.
+
+**Hold: `mise` cannot resolve 3.10.0 yet.** `mise ls-remote github:ralvarez-ai/ralvaskills` ends at 3.9.1 and warns "1 newer release hidden by minimum_release_age". The release was published 2026-11-22T05:21Z; the hold is 24 hours, so it lifts about **2026-11-23T05:21Z**. A pin bumped before then makes `mise install` fail to find the version in every consumer. Do not commit step 2 or 3 before that time (the owner's global `rsk` is still 3.9.1; `rsk --version` confirms).
+
+The `rsk-3.10.0-linux-amd64` binary was re-downloaded to `/tmp/rsk-3.10.0/rsk` (checksum OK, prints 3.10.0) for the pilot.
 
 ## Pilot dry run on a copy (2026-11-22, done)
 
 Before touching any real project, the released 3.10.0 binary was run against a copy of `ralvarez-ts/ui` in `/tmp`, with a sandboxed config (the project is clean, has a `mise.toml` pin at 3.9.1, 12 skills, one official). Results:
 
 - `rsk status` and `rsk update --dry-run` on the v1 project change nothing.
-- `rsk update --yes` made `rsk.lock` v2: the official skill gained `url`, `commit`, `tree` and `path` and a qualified key; the 11 registry skills stayed bare. The tracked diff was only `.rsk/rsk.lock` and `.rsk/SKILLS.md`. `rsk.mod` stayed version 1.
+- `rsk update --yes` made `rsk.lock` v2: the official skill gained `url`, `commit`, `tree` and `path` and a qualified key; the 11 registry skills kept their bare names, but every registry entry was rewritten from `source = "registry"` to `source = "@ralvarez-ai/ralvaskills"` plus `transport = "registry"` (a second rehearsal on a fresh clone with a sandboxed config repeated this exactly: 3 files, 32 insertions, 16 deletions; the sandbox needs a seeded `config.json` with cache and global paths inside it, or `rsk update` stops with "run rsk init"). The tracked diff was only `.rsk/rsk.lock` and `.rsk/SKILLS.md`. `rsk.mod` stayed version 1.
 - `SKILLS.md` changed by one line: `frontend-design` went from "no digest, and not readable here" to its description (the versionless-skill fix).
 - After wiping every skill link, `rsk sync` restored all 12, the official one at `cache/sources/anthropics/skills/frontend-design/<commit>`.
 - `rsk sync` also registers the rsk MCP server in `.mcp.json` and `opencode.json`, which is outside the three `.rsk` files: the roll-out uses `rsk update`, never `rsk sync`.
@@ -59,7 +75,7 @@ The real pilot is `ralvarez-ts/ui`, unless the owner prefers another: it has the
 
 ## The check (read-only)
 
-For every project with a v2 `.rsk/rsk.lock` or `rsk.mod`, the `mise.toml` pin in or above it must be 3.10.0 or newer. The survey script in this repository's history (the Python snippet in the session that wrote this plan) does the walk; the rule is the only part that matters, and a project failing it is the one to bump first. A project with no pin is reported separately as "unpinned", not as a failure.
+For every project with a v2 `.rsk/rsk.lock` or `rsk.mod`, the `mise.toml` pin in or above it must be 3.10.0 or newer. `python3 -I scripts/rsk-rollout-check.py` does the walk and prints one FAIL line per violation (exit 1); a project failing it is the one to bump first. A project with no pin is reported separately as "unpinned", not as a failure.
 
 ## What may change in a consumer
 
