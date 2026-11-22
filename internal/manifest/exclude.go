@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"go.ralva.dev/ralvaskills/v3/internal/fsperm"
@@ -19,8 +20,10 @@ var localFiles = []string{
 // ExcludeLocalFiles appends the local files to the repository's
 // .git/info/exclude, not to the shared .gitignore: whether a developer keeps
 // private skills is not the project's business. It is idempotent, and does
-// nothing outside a git repository, where nothing can be committed.
-func ExcludeLocalFiles(projectRoot string) error {
+// nothing outside a git repository, where nothing can be committed. links are
+// extra paths, relative to the project root, to exclude with them: the installed
+// links of private skills, which are named after the skill.
+func ExcludeLocalFiles(projectRoot string, links ...string) error {
 	root, excludePath, ok := findGitExclude(projectRoot)
 	if !ok {
 		return nil
@@ -38,7 +41,7 @@ func ExcludeLocalFiles(projectRoot string) error {
 		}
 	}
 	var add []string
-	for _, file := range localFiles {
+	for _, file := range append(slices.Clone(localFiles), links...) {
 		if line := "/" + prefix + file; !have[line] && !have[file] {
 			add = append(add, line)
 		}

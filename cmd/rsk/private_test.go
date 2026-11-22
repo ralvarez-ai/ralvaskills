@@ -92,7 +92,7 @@ func TestAPrivatePinNeverReachesACommittedFile(t *testing.T) {
 	}
 	status, _ := exec.CommandContext(t.Context(), "git", "-C", project, "status", "--porcelain", "-uall").Output()
 	for line := range strings.SplitSeq(string(status), "\n") {
-		if strings.Contains(line, "local") {
+		if strings.Contains(line, "local") || strings.Contains(line, "alpha") {
 			t.Errorf("git would commit a local file: %q", line)
 		}
 	}

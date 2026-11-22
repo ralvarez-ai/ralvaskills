@@ -165,7 +165,7 @@ func WriteMod(rskDir string, m Mod) error {
 	if len(local) == 0 {
 		return removeIfPresent(LocalModPath(rskDir))
 	}
-	if err := ExcludeLocalFiles(filepath.Dir(rskDir)); err != nil {
+	if err := ExcludeLocalFiles(filepath.Dir(rskDir), m.localLinks(filepath.Dir(rskDir), local)...); err != nil {
 		return err
 	}
 	return writeModFile(LocalModPath(rskDir), &m, func(name string) bool { return m.Local[name] }, false)
@@ -214,4 +214,24 @@ func removeIfPresent(path string) error {
 		return fmt.Errorf("remove %s: %w", path, err)
 	}
 	return nil
+}
+
+// localLinks are the paths, relative to the project root, where the named
+// skills are linked for each of the project's tools.
+func (m *Mod) localLinks(root string, names []string) []string {
+	var links []string
+	for _, id := range m.Tools {
+		t, ok := tool.Get(id)
+		if !ok {
+			continue
+		}
+		rel, err := filepath.Rel(root, t.ProjectSkillsDir(root))
+		if err != nil {
+			continue
+		}
+		for _, name := range names {
+			links = append(links, filepath.ToSlash(filepath.Join(rel, name)))
+		}
+	}
+	return links
 }

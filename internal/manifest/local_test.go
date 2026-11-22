@@ -82,7 +82,12 @@ func TestAPrivateSkillIsWrittenOnlyToTheLocalFiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, line := range []string{"/.rsk/rsk.local.mod", "/.rsk/rsk.local.lock", "/.rsk/SKILLS.local.md", "/CLAUDE.local.md"} {
+	// The install's link is named after the skill, so it would give the name away
+	// as surely as the manifest does.
+	for _, line := range []string{
+		"/.rsk/rsk.local.mod", "/.rsk/rsk.local.lock", "/.rsk/SKILLS.local.md", "/CLAUDE.local.md",
+		"/.claude/skills/" + secretName,
+	} {
 		if !slices.Contains(strings.Split(string(exclude), "\n"), line) {
 			t.Errorf(".git/info/exclude lacks %q:\n%s", line, exclude)
 		}
