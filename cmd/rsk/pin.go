@@ -62,6 +62,18 @@ func runPin(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
+	if origin := m.Origin[name]; origin != "" {
+		preview := installedDigestPreview(filepath.Dir(rskDir), name, origin)
+		confirmed, confirmErr := confirmDigests(cmd, []digestPreview{preview}, cmdx.Bool(cmd, cmdx.FlagYes))
+		if confirmErr != nil {
+			return confirmErr
+		}
+		if !confirmed {
+			fmt.Fprintln(out, messageAborted)
+			return nil
+		}
+	}
+
 	m.Pinned = append(m.Pinned, name)
 	if err = manifest.WriteMod(rskDir, m); err != nil {
 		return err

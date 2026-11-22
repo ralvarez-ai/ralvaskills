@@ -113,6 +113,7 @@ func setupCommands() {
 	// pin and unpin commands
 	rootCmd.AddCommand(pinCmd)
 	pinCmd.Flags().Bool(cmdx.FlagRemove, false, "Unpin the skill instead of pinning it")
+	pinCmd.Flags().BoolP(cmdx.FlagYes, "y", false, "Accept the digest of a remote skill after showing it")
 
 	// status command
 	rootCmd.AddCommand(statusCmd)

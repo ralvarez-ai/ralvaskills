@@ -279,6 +279,16 @@ func runInstallProject(
 	if !previewAndConfirm(cmd, out, skills, targets, warnings, opts.dryRun, opts.yes) {
 		return nil
 	}
+	if opts.pin {
+		confirmed, confirmErr := confirmDigests(cmd, digestPreviews(skills), opts.yes)
+		if confirmErr != nil {
+			return confirmErr
+		}
+		if !confirmed {
+			fmt.Fprintln(out, messageAborted)
+			return nil
+		}
+	}
 
 	constraints, err := constraintsFromArgs(args)
 	if err != nil {

@@ -88,13 +88,19 @@ func Render(entries []Entry) string {
 	var b strings.Builder
 	b.WriteString(generatedNote + "\n\n# Pinned skills\n")
 	for _, e := range entries {
-		heading := "## " + e.Name
-		if e.Version != "" {
-			heading += " v" + e.Version
-		}
-		b.WriteString("\n" + heading + "\n\n" + e.Body + "\n")
+		b.WriteString("\n" + Section(e) + "\n")
 	}
 	return b.String()
+}
+
+// Section is how one entry reads inside the generated file: its heading and its
+// body. It is what a person is shown before a remote skill is pinned.
+func Section(e Entry) string {
+	heading := "## " + e.Name
+	if e.Version != "" {
+		heading += " v" + e.Version
+	}
+	return heading + "\n\n" + e.Body
 }
 
 // EstimateTokens approximates the token count of s.
@@ -126,17 +132,23 @@ func (s Size) OverBudget() bool {
 func loadEntries(projectDir string, pinned []string) []Entry {
 	entries := make([]Entry, 0, len(pinned))
 	for _, name := range pinned {
-		dir := filepath.Join(projectDir, ".rsk", "missing-skills", name)
-		for _, base := range []string{internal.ClaudeFolderName, internal.OpenCodeProjectFolderName, internal.AgentsFolderName} {
-			candidate := filepath.Join(projectDir, base, skill.SkillsFolderName, name)
-			if _, err := os.Stat(filepath.Join(candidate, skill.SkillFileName)); err == nil {
-				dir = candidate
-				break
-			}
-		}
-		entries = append(entries, Load(dir, name))
+		entries = append(entries, LoadInstalled(projectDir, name))
 	}
 	return entries
+}
+
+// LoadInstalled reads the digest of the skill installed under name in the
+// project, from whichever tool's skills directory has it.
+func LoadInstalled(projectDir, name string) Entry {
+	dir := filepath.Join(projectDir, ".rsk", "missing-skills", name)
+	for _, base := range []string{internal.ClaudeFolderName, internal.OpenCodeProjectFolderName, internal.AgentsFolderName} {
+		candidate := filepath.Join(projectDir, base, skill.SkillsFolderName, name)
+		if _, err := os.Stat(filepath.Join(candidate, skill.SkillFileName)); err == nil {
+			dir = candidate
+			break
+		}
+	}
+	return Load(dir, name)
 }
 
 // Measure estimates the file Sync would write for pinned, without touching
