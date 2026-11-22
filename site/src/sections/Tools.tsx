@@ -11,9 +11,9 @@ export function Tools() {
     <Section id="tools" labelledBy="c-tools-h">
       <div className="container">
         <div className="rule" aria-hidden="true" />
-        <Eyebrow>From internal/mcp/tools.go</Eyebrow>
+        <Eyebrow>From internal/mcp/tools.go and sources_tools.go</Eyebrow>
         <h2 id="c-tools-h" className="reveal">
-          Three tools. One writes, and it is marked to say so.
+          Nine tools. Three write, and each is marked to say so.
         </h2>
         <p className="lede reveal">
           The descriptions are the ones the agent reads. <code>destructiveHint</code> is only advice to the client; the{' '}

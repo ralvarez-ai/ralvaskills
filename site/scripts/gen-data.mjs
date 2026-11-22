@@ -6,7 +6,7 @@
  * fails — not warns — when the tree drifts from the anchors the copy relies on:
  *
  *   65 skills · 15 bundles · 12 cobra AddCommand (+ `completion` = 13)
- *   3 MCP tools, exactly one mutating · rsk://catalog present
+ *   9 MCP tools, exactly three mutating · rsk://catalog present
  *
  * Hand-checked constants that cannot be derived (a real `rsk new` run, the real
  * project_profile response) live in src/data/facts.ts.
@@ -99,10 +99,14 @@ function main() {
   const setup = read('cmd/rsk/setup.go');
   assert((setup.match(/rootCmd\.AddCommand\(/g) ?? []).length === 13, 'expected 13 AddCommand calls in setup.go');
 
-  const toolsGo = read('internal/mcp/tools.go');
+  const toolsGo = read('internal/mcp/tools.go') + read('internal/mcp/sources_tools.go');
   const tools = [...toolsGo.matchAll(/Name:\s+"([a-z_]+)"/g)].map((m) => m[1]);
-  assert(tools.join() === 'project_profile,search_skills,install_skills', `unexpected MCP tools: ${tools.join()}`);
-  assert((toolsGo.match(/mutatingAnnotations\("/g) ?? []).length === 1, 'expected exactly one mutating tool');
+  assert(
+    tools.join() ===
+      'project_profile,search_skills,install_skills,list_sources,test_source,scan_source,resolve_reference,add_source,remove_source',
+    `unexpected MCP tools: ${tools.join()}`,
+  );
+  assert((toolsGo.match(/mutatingAnnotations\("/g) ?? []).length === 3, 'expected exactly three mutating tools');
 
   const resource = read('internal/mcp/resource.go');
   assert(resource.includes('"rsk://catalog"') && resource.includes('"rsk-catalog"'), 'rsk://catalog is missing');

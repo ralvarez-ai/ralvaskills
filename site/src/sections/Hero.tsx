@@ -65,15 +65,17 @@ export function Hero() {
           </div>
           <div>
             <p className="agent-hero__lede reveal" style={{ '--i': 2 } as CSSProperties}>
-              <code>rsk</code> gives your coding agent three tools. Two only read: your project’s files and a catalogue
-              of {data.skills.length} skills. The one that writes, <code>install_skills</code>, makes Claude Code ask
-              you on every call; the other clients get the read-only pair until their approval flow is verified.
+              <code>rsk</code> gives your coding agent nine tools. Six only read: your project’s files, a catalogue of{' '}
+              {data.skills.length} skills and the skill sources on your machine. The three that write,{' '}
+              <code>install_skills</code>, <code>add_source</code> and <code>remove_source</code>, make Claude Code ask
+              you on every call; the other clients get the read-only six until their approval flow is verified. None can
+              trust a source: only you can, in a terminal.
             </p>
             <div className="agent-hero__actions reveal" style={{ '--i': 3 } as CSSProperties}>
               <ButtonLink href="#start" variant="primary">
                 Install rsk
               </ButtonLink>
-              <ButtonLink href="#tools">The three tools</ButtonLink>
+              <ButtonLink href="#tools">The nine tools</ButtonLink>
             </div>
           </div>
         </div>

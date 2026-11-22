@@ -146,7 +146,7 @@ export interface Tool {
   kind: ToolKind;
 }
 
-/** internal/mcp/tools.go — the agent-facing descriptions, verbatim. */
+/** internal/mcp/tools.go and sources_tools.go — the agent-facing descriptions, verbatim. */
 export const tools: Tool[] = [
   {
     name: 'project_profile',
@@ -161,6 +161,36 @@ export const tools: Tool[] = [
   {
     name: 'install_skills',
     desc: 'Install one or more skills or bundles into this project by name, resolving them through the ralvaskills catalog. Writes symlinks and the project manifest. The client asks the user to approve.',
+    kind: 'de',
+  },
+  {
+    name: 'list_sources',
+    desc: 'List the skill sources on this machine (the built-in ones and the declared ones) and whether each is trusted.',
+    kind: 'ro',
+  },
+  {
+    name: 'test_source',
+    desc: 'Check that a declared source is trusted and reachable. An untrusted git source is refused before anything is contacted, with the command the user runs in a terminal to trust it.',
+    kind: 'ro',
+  },
+  {
+    name: 'scan_source',
+    desc: 'Dry-run discovery of a directory or a declared, trusted source: the skills it would provide, what is left out and why, names two directories claim, and frontmatter problems. Installs and registers nothing.',
+    kind: 'ro',
+  },
+  {
+    name: 'resolve_reference',
+    desc: 'Explain what a skill reference resolves to: source, path, version and commit, or why a bare name is ambiguous or unavailable. An unregistered source is reported, never contacted.',
+    kind: 'ro',
+  },
+  {
+    name: 'add_source',
+    desc: 'Register a skill source on this machine, untrusted. Nothing is contacted: the user trusts it themselves in a terminal with rsk source trust before any skill can be installed from it. Use dry_run to preview.',
+    kind: 'de',
+  },
+  {
+    name: 'remove_source',
+    desc: 'Remove a declared source and withdraw its trust grant. Use dry_run to preview.',
     kind: 'de',
   },
 ];
@@ -178,7 +208,7 @@ export const sources: { what: string; where: string }[] = [
   { what: '17 domains', where: 'skills/<domain>/' },
   { what: '15 bundles', where: 'internal/config/catalog.toml' },
   { what: '14 commands', where: 'cmd/rsk/setup.go (+ cobra completion)' },
-  { what: '3 MCP tools, 1 writes', where: 'internal/mcp/tools.go' },
+  { what: '9 MCP tools, 3 write', where: 'internal/mcp/tools.go · sources_tools.go' },
   { what: 'rsk://catalog', where: 'internal/mcp/resource.go' },
   { what: 'Detection rules', where: 'internal/mcp/signals.go' },
   { what: 'Releases and dates', where: 'registry/index.json versions[].published_at' },
