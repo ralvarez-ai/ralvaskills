@@ -1,6 +1,6 @@
 [tools]
 "go:golang.org/x/tools/cmd/goimports" = "0.53.0"
-"github:ralvarez-ai/ralvaskills" = "3.9.1"
+"github:ralvarez-ai/ralvaskills" = "3.10.0"
 act = "0.2.89"
 "go:golang.org/x/tools/cmd/deadcode" = "0.53.0"
 go = "1.27.4"
