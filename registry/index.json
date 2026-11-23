@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-22T17:46:35Z",
+  "generated_at": "2026-11-23T22:00:06Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -715,8 +715,8 @@
     },
     "go-architect": {
       "name": "go-architect",
-      "description": "Go 1.27.3 architectural standards - memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/\u003cprotocol\u003e, postgres/, inbound \u003cprotocol\u003e packages) with the shared cross-context vocabulary package, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module and its frontend live in a repo.",
-      "latest": "1.20.3",
+      "description": "Go 1.27.3 architectural standards - memory-aligned structs, typed enums, interface design, goroutine safety, iterators, idiomatic errors, package and adapter naming (client/\u003cprotocol\u003e, postgres/, inbound \u003cprotocol\u003e packages) with the shared cross-context vocabulary package, co-located gen/ layout for generated contract code, sqlx + //go:embed SQL pattern, go.work multi-module layout, and the two app-repo shapes for a Go module with a SPA (module at the root + web/, or backend/ + frontend/, module path, cmd/internal pairing). Use when writing, reviewing, or scaffolding Go code, naming or placing a shared package, or deciding where a Go module, its generated code and its frontend live in a repo.",
+      "latest": "1.21.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -817,6 +817,11 @@
           "version": "1.20.3",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-architect@v1.20.3/go-architect-v1.20.3.tar.gz"
+        },
+        "1.21.0": {
+          "version": "1.21.0",
+          "published_at": "2026-11-23T22:00:06Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/go-architect@v1.21.0/go-architect-v1.21.0.tar.gz"
         },
         "1.3.0": {
           "version": "1.3.0",
