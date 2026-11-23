@@ -111,9 +111,22 @@ The layouts above describe the model. The process shape on top differs:
 
 ## Generated code and SQL
 
-- **Where:** next to the consumer that owns the schema - `<feature>/<impl>/db` for sqlc output and `//go:embed` SQL, `contracts/<name>/gen` for proto/OpenAPI. A central `gen/` is fine when output is shared by many features.
+- **Where:** a `gen/` directory beside the hand-written package that consumes the contract. Split server and client types when both exist: `internal/api/gen/server/` (OpenAPI handler types), `internal/api/gen/client/` (wire types), with the hand-written client in `internal/api/client/`. Other shapes: `gym/rest/handler/gen/`, `internal/controlplane/api/gen/`, `internal/mcpserver/gen/` (`internal/mcpserver/schemas/` stays hand-written).
+- **Mixed packages must be split.** A directory holding `client.go` plus `types.gen.go` is the anti-pattern: move `types.gen.go` to `gen/`, keep the hand-written client in the parent, and compile after the split. A package that is mostly generated still keeps its hand-written tests and docs in the parent; only the generated files move.
+- **Standalone contracts:** when a contract is its own module consumed by other repos, `contracts/<name>/gen` is fine. Inside an app, generated output goes beside its consumer, not at the module root.
+- **SQLC stays with its context.** `<ctx>/postgres/db` is repository-layer code, not a contract model; do not move it into `gen/`.
+
+```text
+internal/api/
+├── client/              # hand-written HTTP client
+└── gen/
+    ├── server/          # generated OpenAPI server types
+    └── client/          # generated client wire types
+```
+
 - **Committed or not:** commit generated code when consumers must build without the generator; otherwise generate in CI. Pick one rule per repo and write it down.
 - **Tooling:** exclude generated paths from the rank test, linters and coverage by pattern (`**/gen/**`, `*.pb.go`, `*.sql.go`), and mark files `// Code generated ... DO NOT EDIT.`
+- **Guard the location, not just the header.** A script fails when `*.gen.go`, `*.pb.go`, `*.gen.ts` or `schema.d.ts` appears outside `**/gen/**` (allowlist tool scaffolding and sqlc: `web/src/routeTree.gen.ts`, `web/src/vite-env.d.ts`, `telemetry/*.pb.go`, `**/postgres/db/`). It catches the file that drifts back beside hand-written code and the generated output that scatters again.
 - **Migrations:** per-service next to the schema owner, one numbered sequence per database, not per feature.
 
 ## Cross-context communication

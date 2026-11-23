@@ -15,6 +15,7 @@ Go 1.27.3: enums, struct layout, interfaces, concurrency, errors, DB access, pac
 - `context.Context` first parameter for blocking or I/O; `signal.NotifyContext` for shutdown.
 - Tests: table-driven, `package x_test`, `t.Parallel()`, `t.Helper()`, `t.TempDir()`, `testing/synctest` for async.
 - DB: sqlc by default, generated code committed and drift-checked; never hand-edit it; sqlx + `//go:embed` only where sqlc cannot express the query; never mix the two in one package.
+- Generated contract code lives in a `gen/` directory beside its consumer; split mixed packages, never move hand-written code into `gen/`, and keep sqlc output with its context.
 - DI through constructors; container only at the composition root; libraries expose `New(deps...)` and never import fx or wire.
 - Lint: golangci-lint v2 (the skill's template); `gofmt` + `goimports`; `go fix` periodically.
 - Dead code: `deadcode -test ./...`; confirm each hit before deleting.

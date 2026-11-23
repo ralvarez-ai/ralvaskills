@@ -1,7 +1,7 @@
 ---
 status: active
 project: ralvaskills
-date: 2026-11-21
+date: 2026-11-23
 related: []
 ---
 
@@ -11,7 +11,7 @@ related: []
 >
 > Estimate: ~4 bytes/token for bodies, ~3 bytes/token for descriptions (Claude tokenizer). Actual range ±15%.
 
-_Last updated: 2026-11-21 · 65 skills · 15 bundles_
+_Last updated: 2026-11-23 · 65 skills · 15 bundles_
 
 ## Load model
 
@@ -19,15 +19,15 @@ Description tokens hit **every turn** for installed skills. Body tokens are paid
 
 | What | When loaded | Estimated tokens |
 |---|---|---:|
-| All `SKILL.md` bodies | Only when invoked | ~149869 |
-| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~170945 |
-| All `description:` fields (every skill) | Every turn, if all installed | ~7083 |
+| All `SKILL.md` bodies | Only when invoked | ~150212 |
+| All side files (`STACK` + `RECIPES` + topic files) | On-demand only | ~171401 |
+| All `description:` fields (every skill) | Every turn, if all installed | ~7107 |
 
 ## Session profiles
 
 Budgets: **global ≤ 1500** desc tokens (paid by every project), **session ≤ 2200** desc tokens (global + one project bundle). Status: `ok` < 90% · `warn` ≥ 90% · `OVER` ≥ 100%.
 
-**Global baseline** (`rsk install global --global`): 18 skills · ~1328 / 1500 desc tokens every turn (`ok`) · ~31970 body tokens if all invoked.
+**Global baseline** (`rsk install global --global`): 18 skills · ~1328 / 1500 desc tokens every turn (`ok`) · ~31969 body tokens if all invoked.
 
 Per-project bundle additions on top of the global baseline:
 
@@ -41,12 +41,12 @@ Per-project bundle additions on top of the global baseline:
 | `design` *(+1 external)* | 3 | +310 | ~1638 | 2200 | `ok` |
 | `code-review` | 4 | +359 | ~1687 | 2200 | `ok` |
 | `llm-app` *(+2 missing)* | 4 | +386 | ~1714 | 2200 | `ok` |
-| `go-cli` | 3 | +419 | ~1747 | 2200 | `ok` |
+| `go-cli` | 3 | +443 | ~1771 | 2200 | `ok` |
 | `python-grpc` | 5 | +472 | ~1800 | 2200 | `ok` |
 | `fastapi` | 5 | +505 | ~1833 | 2200 | `ok` |
-| `go-grpc` | 5 | +604 | ~1932 | 2200 | `ok` |
-| `gin` | 5 | +625 | ~1953 | 2200 | `ok` |
-| `nethttp` | 5 | +637 | ~1965 | 2200 | `ok` |
+| `go-grpc` | 5 | +628 | ~1956 | 2200 | `ok` |
+| `gin` | 5 | +649 | ~1977 | 2200 | `ok` |
+| `nethttp` | 5 | +661 | ~1989 | 2200 | `warn` |
 
 ## Personal / unbundled skills
 
@@ -67,7 +67,7 @@ These skills are not part of any bundle. They are installed individually with `r
 | `mockup-architect` | frontend | ~885 | ~136 | ~474 |
 | `notify-on-finish` | tooling | ~1443 | ~135 | ~488 |
 | `narration-writer` | frontend | ~2095 | ~133 | ~3027 |
-| `astro-architect` | frameworks | ~2872 | ~131 | ~4450 |
+| `astro-architect` | frameworks | ~2872 | ~131 | ~4449 |
 | `secrets-architect` | infra | ~2550 | ~131 | ~558 |
 | `ml-paper-format` | academic | ~2537 | ~121 | ~2203 |
 | `website-concept-designer` | frontend | ~2278 | ~121 | ~1197 |
@@ -84,13 +84,13 @@ These skills are not part of any bundle. They are installed individually with `r
 
 | Category | Skills | ~Body tkns | ~Desc tkns | ~Side tkns |
 |---|---:|---:|---:|---:|
-| frameworks | 11 | ~26841 | ~1338 | ~33648 |
+| frameworks | 11 | ~26841 | ~1338 | ~33647 |
 | protocols | 4 | ~16552 | ~659 | ~23611 |
 | frontend | 8 | ~15407 | ~1039 | ~17357 |
 | quality | 7 | ~14611 | ~757 | ~10528 |
-| languages | 3 | ~13401 | ~403 | ~16497 |
+| languages | 3 | ~13745 | ~427 | ~16954 |
 | infra | 5 | ~12026 | ~543 | ~12414 |
-| meta | 6 | ~10665 | ~453 | ~8803 |
+| meta | 6 | ~10664 | ~453 | ~8803 |
 | tooling | 3 | ~7569 | ~308 | ~7631 |
 | workflows | 6 | ~7392 | ~530 | ~10855 |
 | refactoring | 4 | ~6600 | ~276 | ~8092 |
@@ -107,13 +107,13 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 
 | Bundle | Local | External | Missing | ~Body tkns (local) | ~Desc tkns (local) |
 |---|---:|---:|---:|---:|---:|
-| `global` | 18 | 0 | 0 | ~31970 | ~1328 |
+| `global` | 18 | 0 | 0 | ~31969 | ~1328 |
 | `docs` | 1 | 5 | 0 | ~780 | ~94 |
 | `design` | 3 | 1 | 0 | ~8099 | ~310 |
-| `go-grpc` | 5 | 0 | 0 | ~15826 | ~604 |
-| `gin` | 5 | 0 | 0 | ~15834 | ~625 |
-| `nethttp` | 5 | 0 | 0 | ~16053 | ~637 |
-| `go-cli` | 3 | 0 | 0 | ~12206 | ~419 |
+| `go-grpc` | 5 | 0 | 0 | ~16170 | ~628 |
+| `gin` | 5 | 0 | 0 | ~16178 | ~649 |
+| `nethttp` | 5 | 0 | 0 | ~16397 | ~661 |
+| `go-cli` | 3 | 0 | 0 | ~12550 | ~443 |
 | `fastapi` | 5 | 0 | 0 | ~11985 | ~505 |
 | `llm-app` | 4 | 0 | 2 | ~9682 | ~386 |
 | `ros2` | 3 | 0 | 0 | ~8102 | ~300 |
@@ -128,7 +128,7 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | # | Skill | Category | Body bytes | ~Body tkns | ~Desc tkns | ~Stack tkns | ~Recipes tkns | ~Topic tkns |
 |---|---|---|---:|---:|---:|---:|---:|---:|
 | 1 | `mcp-architect` | protocols | 34034 | ~8509 | ~300 | ~1509 | ~10199 | ~915 |
-| 2 | `go-architect` | languages | 28816 | ~7204 | ~210 | ~471 | ~4416 | ~7522 |
+| 2 | `go-architect` | languages | 30191 | ~7548 | ~234 | ~471 | ~4455 | ~7940 |
 | 3 | `backend-performance-architect` | quality | 13570 | ~3393 | ~202 | ~0 | ~2742 | ~750 |
 | 4 | `repo-tooling-architect` | tooling | 13164 | ~3353 | ~81 | ~682 | ~1328 | ~2672 |
 | 5 | `remotion-architect` | frameworks | 12828 | ~3207 | ~138 | ~316 | ~2588 | ~1581 |
@@ -138,10 +138,10 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 9 | `landing-page-designer` | frontend | 12177 | ~3057 | ~165 | ~0 | ~0 | ~1134 |
 | 10 | `connectrpc-architect` | protocols | 12110 | ~3028 | ~153 | ~775 | ~2418 | ~552 |
 | 11 | `latex-architect` | languages | 12035 | ~3009 | ~115 | ~331 | ~1837 | ~546 |
-| 12 | `rsk-guide` | meta | 11100 | ~2957 | ~70 | ~0 | ~0 | ~738 |
+| 12 | `rsk-guide` | meta | 11097 | ~2956 | ~70 | ~0 | ~0 | ~738 |
 | 13 | `nextjs-architect` | frameworks | 11808 | ~2952 | ~107 | ~365 | ~1820 | ~555 |
 | 14 | `react-architect` | frameworks | 11798 | ~2950 | ~101 | ~412 | ~1421 | ~535 |
-| 15 | `astro-architect` | frameworks | 11430 | ~2872 | ~131 | ~600 | ~3291 | ~559 |
+| 15 | `astro-architect` | frameworks | 11430 | ~2872 | ~131 | ~600 | ~3290 | ~559 |
 | 16 | `cli-tool-architect` | tooling | 11073 | ~2773 | ~92 | ~509 | ~1429 | ~523 |
 | 17 | `event-driven-architect` | messaging | 10975 | ~2749 | ~82 | ~513 | ~2136 | ~517 |
 | 18 | `hugo-architect` | frameworks | 10777 | ~2695 | ~106 | ~399 | ~971 | ~460 |
@@ -193,15 +193,15 @@ Catalog from `internal/config/catalog.toml`. `External` are `source = "official"
 | 64 | `logic-cleaner` | refactoring | 2340 | ~585 | ~93 | ~0 | ~0 | ~405 |
 | 65 | `caveman` | meta | 1825 | ~457 | ~71 | ~0 | ~0 | ~272 |
 
-**Totals:** 596496 body bytes · ~149869 body tokens · ~7083 desc tokens · ~170945 side tokens
+**Totals:** 597868 body bytes · ~150212 body tokens · ~7107 desc tokens · ~171401 side tokens
 
 ## Topic files
 
 Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typically topic-specific reference docs referenced by name from `SKILL.md` (e.g. `PAYLOADS.md`, `AUTH_PATTERNS.md`). These contribute to the `~Topic tkns` column above and are loaded only when the parent skill chooses to read them.
 
-- `go-architect` (~7522 tokens total):
-  - `LAYOUTS.md` — ~6645 tokens
-  - `DIGEST.md` — ~877 tokens
+- `go-architect` (~7940 tokens total):
+  - `LAYOUTS.md` — ~7019 tokens
+  - `DIGEST.md` — ~921 tokens
 - `docs-architect` (~5815 tokens total):
   - `BACKLOG.md` — ~2334 tokens
   - `MIGRATION.md` — ~1071 tokens
@@ -378,7 +378,7 @@ Side files in a skill directory other than `STACK.md` and `RECIPES.md` — typic
 Body > 2500 tokens — consider moving examples to `RECIPES.md` or topic files:
 
 - `mcp-architect` (~8509 body tokens)
-- `go-architect` (~7204 body tokens)
+- `go-architect` (~7548 body tokens)
 - `backend-performance-architect` (~3393 body tokens)
 - `repo-tooling-architect` (~3353 body tokens)
 - `remotion-architect` (~3207 body tokens)
@@ -388,7 +388,7 @@ Body > 2500 tokens — consider moving examples to `RECIPES.md` or topic files:
 - `landing-page-designer` (~3057 body tokens)
 - `connectrpc-architect` (~3028 body tokens)
 - `latex-architect` (~3009 body tokens)
-- `rsk-guide` (~2957 body tokens)
+- `rsk-guide` (~2956 body tokens)
 - `nextjs-architect` (~2952 body tokens)
 - `react-architect` (~2950 body tokens)
 - `astro-architect` (~2872 body tokens)
@@ -405,7 +405,7 @@ Body > 2500 tokens — consider moving examples to `RECIPES.md` or topic files:
 Heaviest 10 descriptions — each desc token is paid every turn for any session that installs the skill:
 
 - `mcp-architect` (~300 desc tokens)
-- `go-architect` (~210 desc tokens)
+- `go-architect` (~234 desc tokens)
 - `backend-performance-architect` (~202 desc tokens)
 - `manim-architect` (~197 desc tokens)
 - `explainer-designer` (~186 desc tokens)

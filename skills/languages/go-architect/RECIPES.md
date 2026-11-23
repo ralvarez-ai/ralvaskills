@@ -519,6 +519,8 @@ internal/userrepo/
 └── db/              # generated: models.go, query.sql.go, db.go - never hand-edit
 ```
 
+`db/` stays beside its queries. The co-located `gen/` rule is for contract-derived code (OpenAPI, protobuf, JSON Schema), not the sqlc repository layer.
+
 ### sqlx + `//go:embed` (alternative)
 
 ```go
