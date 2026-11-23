@@ -6,7 +6,7 @@ topics:
     - deploy
     - cloudflare
 blocked_by:
-    - 6azjzw
+    - ralvaskills#6azjzw
 ---
 Decided 2026-11-06, host moved to ralva.dev (owner bought ralva.dev and ralva.app; supersedes the Pages decision below): a Cloudflare Worker `ralvaskills` with static assets (`site/wrangler.jsonc`), deployed with `wrangler deploy`, separate from any application and not embedded in one. The registry stays on GitHub Pages at skills.ralvarez.dev (`internal/config/fs.go` hardcodes that URL).
 

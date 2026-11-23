@@ -7,8 +7,8 @@ topics:
     - skill-naming
 blocked_by: []
 related:
-  - r4n8kw
-  - n6v2wk
+  - ralvaskills#r4n8kw
+  - ralvaskills#n6v2wk
 ---
 Step 3 of [ADR 0002](../../adr/0002-rename-ten-skills-with-registry-aliases.md). Measured 2026-11-11: 30 of 111 project manifests under `~/Dev` reference a renamed skill, and five carry more than one.
 

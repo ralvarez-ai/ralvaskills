@@ -6,8 +6,8 @@ topics:
     - rsk
     - cli
 related:
-    - nqk50d
-    - z8c3rn
+    - ralvaskills#nqk50d
+    - ralvaskills#z8c3rn
 ---
 `rsk update` decides whether a skill is current from the link in `.claude/skills/`, not from the version recorded in `.rsk/rsk.lock`. Found 2026-11-12 while verifying v3.7.0 on `ralvarez-go/corekit`: setting `docs-architect` to 1.2.0 in `rsk.lock` while the link still pointed at 1.2.1 made `rsk update docs-architect` print "All installed skills are up to date" and leave the stale lock in place. Re-pointing the symlink at 1.2.0 was what made the update apply.
 

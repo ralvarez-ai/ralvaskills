@@ -6,8 +6,8 @@ topics:
     - cli
     - skills
 related:
-    - jefdb1
-    - afwhb0
+    - ralvaskills#jefdb1
+    - ralvaskills#afwhb0
 ---
 `rsk update` re-linked a skill and bumped `rsk.lock`, but never re-rendered `.rsk/SKILLS.md`, the file the tool adapters actually import. The skills are symlinks, so a pulled `DIGEST.md` was live, but the generated index kept the previous rules until the next `rsk pin` or `rsk install`. Both the header of `.rsk/SKILLS.md` and `docs/designs/2026-11-06-skill-digests-and-skills-md.md` claimed `rsk update` regenerated it, so nothing in review pointed at the gap.
 

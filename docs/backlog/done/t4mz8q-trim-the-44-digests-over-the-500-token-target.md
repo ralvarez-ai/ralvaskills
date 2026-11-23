@@ -6,7 +6,7 @@ topics:
     - skills
     - tokens
 related:
-    - yg8j26
+    - ralvaskills#yg8j26
 ---
 The 2026-11-11 digest audit ([review](../../reviews/2026-11-11-digest-audit.md)) put accuracy first and added about 220 tokens across the catalogue, so 44 of 67 `DIGEST.md` files are over the design's ~500-token target (measured at ~4 bytes/token; ~36k tokens in total). Largest: `go-architect` 955, `backend-performance-architect` 790, `repo-tooling-architect` 772, `wails-architect` 756, `python-architect` 732, `mcp-architect` 710, `go-library-builder` 704, `fastapi-architect` 695, `grpc-architect` 652, `uru-thesis-reviewer` 628.
 

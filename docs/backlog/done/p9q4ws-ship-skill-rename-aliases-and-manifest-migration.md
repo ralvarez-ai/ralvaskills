@@ -6,7 +6,7 @@ topics:
     - rsk
     - registry
 related:
-  - n6v2wk
+  - ralvaskills#n6v2wk
 ---
 Renames decided in [ADR 0002](../../adr/0002-rename-ten-skills-with-registry-aliases.md) cannot land until the redirect exists, so this ships first, as a minor release with no skill changed. Design: [skill rename aliases](../../designs/2026-11-11-skill-rename-aliases.md).
 

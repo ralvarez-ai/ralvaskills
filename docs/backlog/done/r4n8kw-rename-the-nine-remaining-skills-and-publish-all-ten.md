@@ -6,7 +6,7 @@ topics:
     - skill-naming
     - registry
 related:
-  - n6v2wk
+  - ralvaskills#n6v2wk
 ---
 Step 2 of [ADR 0002](../../adr/0002-rename-ten-skills-with-registry-aliases.md). Step 1 has landed in the working tree: alias resolution in `internal/source`, `manifest.RenameMod`/`RenameLock`, the migration in `rsk update`, the `registry/aliases.toml` guard, and `cmd/generate-registry` emitting `aliases` + `deprecated`. `hexagonal-arch` is tracked separately in `n6v2wk` and closes in the same commit.
 

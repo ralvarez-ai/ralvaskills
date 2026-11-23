@@ -6,7 +6,7 @@ topics:
     - rsk
     - git
 related:
-  - m4pnr7
+  - ralvaskills#m4pnr7
 ---
 A newer `rsk` writes the generated block, so `.rsk/CLAUDE.md` becomes the single import `@SKILLS.md` (it was empty, or `@../.claude/skills/docs-architect/SKILL.md`) and `.rsk/SKILLS.md` is re-rendered from the pinned digests. Nothing commits those files, so 22 repos and worktrees under `~/Dev` carry them uncommitted — found 2026-11-12 during the rename migration, and none of them is rename-related (no retired name is in any manifest).
 
