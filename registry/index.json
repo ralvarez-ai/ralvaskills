@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-24T20:56:31Z",
+  "generated_at": "2026-11-24T20:59:28Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -1667,7 +1667,7 @@
     "rest-api-architect": {
       "name": "rest-api-architect",
       "description": "Cross-language REST conventions - resource URLs, method semantics, status codes, URL-prefix versioning, cursor pagination, snake_case JSON, ISO 8601 timestamps, RFC 9457 errors, Idempotency-Key, ETag/If-Match, OpenAPI as source of truth. Framework-agnostic. Use when designing or auditing REST endpoints.",
-      "latest": "1.2.3",
+      "latest": "1.2.4",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1703,6 +1703,11 @@
           "version": "1.2.3",
           "published_at": "2026-11-24T20:56:31Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rest-api-architect@v1.2.3/rest-api-architect-v1.2.3.tar.gz"
+        },
+        "1.2.4": {
+          "version": "1.2.4",
+          "published_at": "2026-11-24T20:59:28Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rest-api-architect@v1.2.4/rest-api-architect-v1.2.4.tar.gz"
         }
       }
     },
