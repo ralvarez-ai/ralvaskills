@@ -15,7 +15,7 @@ Framework-agnostic JSON-over-HTTP REST conventions: URLs, methods, status codes,
 - HTTPS always; reject plaintext in production at the load balancer.
 - `Cache-Control` on every response; `Vary` when responses differ by user or encoding.
 - Rate limits: `429` with `RateLimit-*` headers and `Retry-After`; limit per caller, not per IP.
-- OpenAPI 3.1 is generated from code, snapshot-tested and linted in CI.
+- OpenAPI 3.1 is generated from code, snapshot-tested, linted with `redocly lint` and gated on breaking changes with `oasdiff breaking --fail-on ERR` (pin the version; triage `WARN` by hand).
 
 ## Hard constraints
 - Every `POST` and `PATCH` requires an `Idempotency-Key` header; without it the server returns `400 Bad Request`.
