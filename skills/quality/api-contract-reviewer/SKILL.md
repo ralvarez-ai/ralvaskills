@@ -1,7 +1,7 @@
 ---
 name: api-contract-reviewer
-version: 1.1.1
-description: Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. References rest-api-architect / protobuf-architect / grpc-architect for rules; runs `buf breaking` / `openapi-diff`. Severity-keyed findings. Use when reviewing a new endpoint, proto change, or before a breaking-change release.
+version: 1.2.0
+description: Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. References rest-api-architect / protobuf-architect / grpc-architect for rules; runs `buf breaking` / `oasdiff breaking`. Severity-keyed findings. Use when reviewing a new endpoint, proto change, or before a breaking-change release.
 ---
 
 # API Contract Reviewer
@@ -37,7 +37,7 @@ Severity guide:
 
 ## 3. Review approach
 
-1. **Mechanical pass** (REST: `openapi-diff`; gRPC: `buf breaking`) - surfaces wire-breaking changes.
+1. **Mechanical pass** (REST: `oasdiff breaking`; gRPC: `buf breaking`) - surfaces wire-breaking changes.
 2. **Convention pass** - read the spec / proto files against the architect rules in §4.
 3. **Completeness pass** - every endpoint, every model, every error has the metadata clients need (examples, descriptions, types).
 
@@ -127,8 +127,10 @@ Run these on the diff before the read pass; their output goes into the report.
 |---|---|
 | `buf breaking --against '.git#branch=main,subdir=proto'` | Wire-breaking changes in `.proto` files |
 | `buf lint` | proto3 style + Buf-style package naming |
-| `openapi-diff <old> <new>` | Wire-breaking changes in OpenAPI specs (additions, removals, type changes) |
-| `swagger-cli validate openapi.yaml` (or `redocly lint`) | OpenAPI 3.1 validity + completeness rules |
+| `oasdiff breaking <old> <new> --fail-on ERR` | Wire-breaking changes in OpenAPI 3.0/3.1/3.2 (additions, removals, type and nullability changes); `WARN` marks changes the spec alone cannot confirm |
+| `oasdiff changelog <old> <new>` | Every consumer-visible change, breaking and additive, for the report |
+| `oasdiff validate openapi.yaml` | Per-RFC spec validity: bad types, missing required fields, unresolved `$ref`s |
+| `redocly lint openapi.yaml` | OpenAPI 3.1 style and completeness rules (`oasdiff validate` does not lint) |
 | Snapshot diff in CI | `assert(app.openapi() == snapshot)` per [fastapi-architect §10](../../frameworks/fastapi-architect/SKILL.md#10-testing) |
 
 These run in CI per [rest-api-architect §15](../../protocols/rest-api-architect/SKILL.md#15-openapi-as-the-source-of-truth) and [protobuf-architect §8](../../encoding/protobuf-architect/SKILL.md#8-breaking-change-detection--buf-breaking-in-ci) - review they're actually wired and failing builds on findings.

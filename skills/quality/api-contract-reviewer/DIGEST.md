@@ -3,7 +3,7 @@
 Reviews REST OpenAPI specs and gRPC/protobuf contracts for stability, versioning and completeness. Output is a severity-keyed findings table.
 
 ## Always-on rules
-- Passes in order: mechanical (`openapi-diff` for OpenAPI, `buf breaking` for proto), convention, completeness.
+- Passes in order: mechanical (`oasdiff breaking` for OpenAPI, `buf breaking` for proto), convention, completeness.
 - Findings table columns: Severity | Rule | Location | Evidence | Fix.
 - Severity: Critical = wire-breaking change in a stable version; High = expensive convention violation; Medium = completeness gap; Low = polish.
 - Versioning: REST under `/vN/`; proto version in the package path, never in message names; additive changes stay in the current version; breaking changes bump the major version.

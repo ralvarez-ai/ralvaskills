@@ -30,7 +30,7 @@ This skill pins **specifications**, not libraries. Library choices live in the f
   - Idempotency: **`Idempotency-Key` mandatory** on POST/PATCH
   - Concurrency: **`ETag` + `If-Match` mandatory** on PUT/PATCH
 - **No library pinning here.** For Python implementations see [fastapi-architect/STACK.md](../../frameworks/fastapi-architect/STACK.md); for Go see (planned) `gin-architect/STACK.md`.
-- **OpenAPI tooling (CI, not library):** [Redocly CLI](https://redocly.com/docs/cli/) for `lint`/`bundle` on every PR. Rendered docs UI is project-dependent - [Scalar](https://github.com/scalar/scalar) is a solid modern default, but not mandatory.
+- **OpenAPI tooling (CI, not library):** [Redocly CLI](https://redocly.com/docs/cli/) for `lint`/`bundle` and [oasdiff](https://github.com/oasdiff/oasdiff) for `validate`/`breaking` on every PR (pin the version; OpenAPI 3.1 support is GA). `oasdiff validate` checks spec validity, not lint style - keep both. Rendered docs UI is project-dependent - [Scalar](https://github.com/scalar/scalar) is a solid modern default, but not mandatory.
 
-_Last reviewed: 2026-09-29_
-_Skill version at last review: 1.1.1_
+_Last reviewed: 2026-11-24_
+_Skill version at last review: 1.2.3_

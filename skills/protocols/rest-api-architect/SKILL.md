@@ -1,6 +1,6 @@
 ---
 name: rest-api-architect
-version: 1.2.2
+version: 1.2.3
 description: Cross-language REST conventions - resource URLs, method semantics, status codes, URL-prefix versioning, cursor pagination, snake_case JSON, ISO 8601 timestamps, RFC 9457 errors, Idempotency-Key, ETag/If-Match, OpenAPI as source of truth. Framework-agnostic. Use when designing or auditing REST endpoints.
 ---
 
@@ -119,6 +119,7 @@ Framework-specific implementation: [fastapi-architect §6](../../frameworks/fast
 - **Generated from the code, not hand-written** - frameworks (FastAPI, gin-openapi, etc.) emit it from the route definitions. Hand-written specs rot the day after they ship.
 - **CI snapshot-tests the spec** - diff against `openapi.snapshot.json` on every PR; any change is reviewed.
 - **CI lints the spec with `redocly lint`** - catches missing descriptions, broken `$ref`s, and style violations before the diff review even starts.
+- **CI fails on breaking spec changes with `oasdiff breaking`** - `oasdiff breaking origin/main:openapi.yaml openapi.yaml --fail-on ERR`, pinned to a version. Gate on `ERR`; triage `WARN` by hand (it means the spec alone cannot confirm the change) and add `--flatten-allof` when `allOf` hides a change.
 - **Spec is published** at a stable URL (e.g. `/v1/openapi.json`) and consumed by client-SDK generators, Postman collections, and API documentation tooling.
 - **Rendered docs UI is project-dependent** - [Scalar](https://github.com/scalar/scalar) is a good modern default (open-source, fast, themeable), but Redoc, Swagger UI, or a generated static site are equally valid depending on the project's constraints.
 - **Examples on every model and parameter.** They drive the rendered docs and seed mock servers.

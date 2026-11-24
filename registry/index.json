@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-23T22:00:06Z",
+  "generated_at": "2026-11-24T20:42:36Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -40,8 +40,8 @@
     },
     "api-contract-reviewer": {
       "name": "api-contract-reviewer",
-      "description": "Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. References rest-api-architect / protobuf-architect / grpc-architect for rules; runs `buf breaking` / `openapi-diff`. Severity-keyed findings. Use when reviewing a new endpoint, proto change, or before a breaking-change release.",
-      "latest": "1.1.1",
+      "description": "Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. References rest-api-architect / protobuf-architect / grpc-architect for rules; runs `buf breaking` / `oasdiff breaking`. Severity-keyed findings. Use when reviewing a new endpoint, proto change, or before a breaking-change release.",
+      "latest": "1.2.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -62,6 +62,11 @@
           "version": "1.1.1",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/api-contract-reviewer@v1.1.1/api-contract-reviewer-v1.1.1.tar.gz"
+        },
+        "1.2.0": {
+          "version": "1.2.0",
+          "published_at": "2026-11-24T20:42:36Z",
+          "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/api-contract-reviewer@v1.2.0/api-contract-reviewer-v1.2.0.tar.gz"
         }
       }
     },
@@ -1662,7 +1667,7 @@
     "rest-api-architect": {
       "name": "rest-api-architect",
       "description": "Cross-language REST conventions - resource URLs, method semantics, status codes, URL-prefix versioning, cursor pagination, snake_case JSON, ISO 8601 timestamps, RFC 9457 errors, Idempotency-Key, ETag/If-Match, OpenAPI as source of truth. Framework-agnostic. Use when designing or auditing REST endpoints.",
-      "latest": "1.2.2",
+      "latest": "1.2.3",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1693,6 +1698,11 @@
           "version": "1.2.2",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/rest-api-architect@v1.2.2/rest-api-architect-v1.2.2.tar.gz"
+        },
+        "1.2.3": {
+          "version": "1.2.3",
+          "published_at": "2026-11-24T20:42:36Z",
+          "archive_url": "https://github.com/ralvarezdev/ralvaskills/releases/download/rest-api-architect@v1.2.3/rest-api-architect-v1.2.3.tar.gz"
         }
       }
     },

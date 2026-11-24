@@ -84,7 +84,7 @@ Skills are grouped by what they shape. Every folder with a `SKILL.md` is a skill
 
 ### `quality/` — reviewers
 
-- **`api-contract-reviewer`** — Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. Runs `buf breaking` / `openapi-diff`. Severity-keyed findings.
+- **`api-contract-reviewer`** — Reviews REST + gRPC contracts for stability, versioning, completeness, backwards compatibility. Runs `buf breaking` / `oasdiff breaking`. Severity-keyed findings.
 - **`performance-reviewer`** — Cross-language perf review: N+1, missing indexes, blocking I/O in async, allocation hot paths, unbounded memory. Findings grounded in EXPLAIN / pprof / py-spy / metrics.
 - **`security-reviewer`** — Cross-language security review: injection, auth/authz, secrets, insecure defaults, deserialization, CSRF/SSRF/IDOR, dep vulns. Critical/High/Medium/Low with file:line + fixes.
 - **`codebase-hygiene-reviewer`** — Evidence-based declutter audit: dead code, unused exports, duplication, oversized files/functions, modularization candidates. Proposes, never edits.
