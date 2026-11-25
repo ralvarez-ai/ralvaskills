@@ -9,6 +9,7 @@ Traefik v3 and Compose v2 standards for routing web services by name and keeping
 - Routed services have no `ports:`. Router, service and middleware names equal the container name.
 - Rule ``Host(`<service>.${BASE_DOMAIN}`)``; set `loadbalancer.server.port` explicitly. `BASE_DOMAIN` lives in the untracked `.env`, never in a tracked compose file.
 - Names: `*.localhost` locally (SSH `-L` to reach a remote one), a per-machine wildcard `*.<machine>.<domain>` for stable names. Avoid `.local`, `.dev`, `.app`. A wildcard covers one label; never wildcard the apex.
+- Environments share the base and differ in the name: `<service>.<base>` prod, `<service>-dev.<base>` dev (same label, so one wildcard covers both); dev labels in an opt-in `compose.proxy.yml` override.
 - Wildcard HTTPS through the DNS challenge; the API token is passed by file, never inline.
 - Bind the proxy to a private interface; use a socket proxy, not the raw Docker socket, on shared hosts.
 - Proxy HTTP(S) only. TCP/UDP services keep fixed ports.

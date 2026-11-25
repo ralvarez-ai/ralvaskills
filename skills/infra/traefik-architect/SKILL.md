@@ -1,6 +1,6 @@
 ---
 name: traefik-architect
-version: 1.0.0
+version: 1.1.0
 description: Traefik v3 standards - host-based routing from Docker labels, one proxy per machine on a shared network, BASE_DOMAIN per machine, *.localhost / sslip.io / wildcard DNS naming, DNS-challenge HTTPS, private-interface binding, socket proxy, and the fixed-port convention for the TCP/UDP services a proxy cannot cover. Use when publishing web services behind a proxy, fixing host port collisions, or setting up local, lab and homelab stacks.
 ---
 
@@ -35,6 +35,9 @@ One Traefik per machine replaces per-service published ports for everything that
 - **The only thing that differs per machine is the base.** Keep it in one variable, `BASE_DOMAIN`, in the untracked `.env`, and write every rule as ``Host(`app.${BASE_DOMAIN}`)``. The same compose file then runs on a laptop and a server.
 - **Service names stay identical everywhere**: `grafana.localhost` on the laptop, `grafana.<server-base>` on the server.
 - **Never hard-code a domain** in a tracked compose file.
+- **Environments on one machine share the base and differ in the name**: `<service>.<base>` for prod, `<service>-dev.<base>` for dev, with router names `<container>-dev`. Keep the suffix in the same label (`-dev`, not `.dev.`), so one wildcard record and one wildcard certificate cover every environment.
+- **Dev labels live in an opt-in override** (`compose.proxy.yml` with `ports: !reset []`), so the default dev flow keeps working without a proxy.
+- **Different machines get different bases**, never different service names.
 
 ## 5. Name schemes (no DNS work to start)
 
@@ -69,11 +72,17 @@ One Traefik per machine replaces per-service published ports for everything that
 
 ## 8. Fixed ports for what a proxy cannot cover
 
-- **Allocate flat, from one list per machine.** One record of `machine, port, protocol, service`. A port is claimed when the record is committed.
-- **Stay out of the ephemeral range.** Linux defaults to 32768-60999 (`sysctl net.ipv4.ip_local_port_range`). Pick fixed ports below it, or reserve them (`net.ipv4.ip_local_reserved_ports`).
+General publishing rules (loopback, dynamic ports and ranges, the ephemeral range, no published databases) live in [docker-architect](../docker-architect/SKILL.md) section 13. With a proxy in place they reduce to:
+
+| Service | Host port |
+|---|---|
+| HTTP(S), including gRPC once TLS is on | none, a hostname |
+| Reached only by other containers | none |
+| Dependency of a backend run on the host | fixed in a reserved range, or dynamic |
+| External non-HTTP client | fixed, listed |
+
+- **Allocate the fixed ones flat, from one list per machine.** One record of `machine, port, protocol, service`. A port is claimed when the record is committed. Routed hostnames are not recorded there.
 - **Uniqueness is per `(machine, port, protocol)`.** Ignore the bind address; a `127.0.0.1` versus `0.0.0.0` overlap is a safe false positive.
-- **Bind to loopback when only the host needs it** (`127.0.0.1:5432:5432`).
-- **Let Docker choose for throwaway use.** `ports: ["127.0.0.1::5432"]` picks a free host port; read it with `docker compose port <service> 5432`.
 - **Check claims against reality.** A listing of listening sockets (`ss -ltn`) misses stopped stacks. Compare the record with the compose files (`docker compose config --profile '*'`) and with the live listeners.
 - **Claimed but not listening is dormant, not free.**
 
