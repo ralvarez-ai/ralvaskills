@@ -33,7 +33,13 @@ A square of a distance is easier to believe when it is a *square*.
 - Show the item with the largest distance first, with `d` and `d²` printed. A far item gives a big square and a near one a small square, which is the reason the squared sum is dominated by far items.
 - Fade it out before the sum is drawn, so the sum is read as "all the squares added up" and not as a new object.
 
-## 4. Draft sweep
+## 4. A highlight and a sampled frame
+
+- `Indicate(shape, color=...)` sets the shape's colour for the whole animation, fill included: a frame sampled during it shows a solid block, and a viewer sees a flash. Scale the shape (`shape.animate.scale(1.07)`) or change its stroke.
+- A frame sampled at 85% of a scene can land on a late fade or a cue that has not fired yet. Sample near the end (about 97%), and open the last second of a scene that still looks wrong before changing it.
+- A diagram that two scenes share (a gate, a pipeline) is kept across them (section 1), not redrawn: a redraw flashes and the second copy drifts from the first.
+
+## 5. Draft sweep
 
 Overlapping text, a missing set of dots and an empty half of the frame were real bugs in the first drafts and are cheap to find at draft quality.
 

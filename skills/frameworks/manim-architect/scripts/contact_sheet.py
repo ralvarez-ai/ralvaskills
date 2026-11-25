@@ -2,10 +2,10 @@
 """One image with a frame from every scene, so a version can be reviewed without playing it.
 
     python3 contact_sheet.py video.mp4 video.sections.json            # -> video.sheet.png
-    python3 contact_sheet.py video.mp4 video.sections.json out.png --at 0.85 --cols 3 --width 640
+    python3 contact_sheet.py video.mp4 video.sections.json out.png --at 0.97 --cols 3 --width 640
     python3 contact_sheet.py video.mp4 --every 5                       # no sections file: a frame every 5 s
 
-Frame position is a fraction of each scene (default 0.85: the finished drawing, before the fade-out).
+Frame position is a fraction of each scene (default 0.97: the finished drawing, before the fade-out; 0.85 can catch a late fade half drawn).
 Run it for every version and keep the sheets next to the videos (`v1.sheet.png`, `v2.sheet.png`):
 two sheets side by side show what a rework changed. Each tile is labelled with its scene id when
 ffmpeg has drawtext; otherwise the order and ids are printed instead.
@@ -65,7 +65,7 @@ def main() -> int:
     p.add_argument("video", type=Path)
     p.add_argument("sections", nargs="?", type=Path, help="sections json: [{id,start,end}, ...]")
     p.add_argument("out", nargs="?", type=Path)
-    p.add_argument("--at", type=float, default=0.85, help="position inside each scene, 0..1")
+    p.add_argument("--at", type=float, default=0.97, help="position inside each scene, 0..1")
     p.add_argument("--cols", type=int, default=3)
     p.add_argument("--width", type=int, default=640, help="tile width in pixels")
     p.add_argument("--every", type=float, default=5.0, help="seconds between frames when there is no sections file")

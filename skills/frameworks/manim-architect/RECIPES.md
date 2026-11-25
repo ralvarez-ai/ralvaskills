@@ -62,6 +62,36 @@ def cue(scene, phrase, delay=0.0):
 
 Use it before the animation that should land on the word: `cue(self, "and the end mark")`.
 
+A scene drawn by hand carries its phrases in code, so check them before a render. This reads the scene methods and fails on a phrase that is not in the scene's narration, and on a cue that comes before the one drawn earlier:
+
+```python
+import ast
+
+def phrase_of(call):                               # cue(self, "phrase") or self.beat("phrase") / self.go("phrase", ...)
+    name = call.func.attr if isinstance(call.func, ast.Attribute) else getattr(call.func, "id", "")
+    index = {"cue": 1, "beat": 0, "go": 0}.get(name)
+    if index is None or len(call.args) <= index or not isinstance(call.args[index], ast.Constant):
+        return None
+    return call.args[index].value
+
+def cue_errors(source, narration):                 # narration: {scene_id: text}; methods are named scene_<id>
+    bad = []
+    for method in (n for c in ast.walk(ast.parse(source)) if isinstance(c, ast.ClassDef) for n in c.body if isinstance(n, ast.FunctionDef)):
+        scene, last = method.name.removeprefix("scene_"), -1
+        calls = sorted((n for n in ast.walk(method) if isinstance(n, ast.Call) and phrase_of(n)), key=lambda n: (n.lineno, n.col_offset))
+        for call in calls:
+            phrase = phrase_of(call)
+            at = narration.get(scene, "").find(phrase)
+            if at < 0:
+                bad.append(f"{scene}: {phrase!r} is not in the narration")
+            elif at < last:
+                bad.append(f"{scene}: {phrase!r} comes earlier in the narration than the cue before it")
+            else:
+                last = at
+    return bad
+```
+
+
 ## 3. Muxing the audio
 
 ```
@@ -128,4 +158,58 @@ Use `scene_seconds` in `close_scene` and `cue_time` in `cue`. Count spoken words
 
 - Never type a scene length next to audio with a measured one. A take with another voice gets its own lengths because it has its own manifest.
 - A clip that holds several parts (a long recorded animation inside a longer video) has one narration and one audio per part. Each part is a scene in the sections file with its own `start`, so the mux places each audio at its part. One long voice over a long clip drifts.
+
+## 8. Flow scenes
+
+Draw what moves. One drawing per sentence, cued to its phrase, objects kept while the next sentence adds to them. Tested on Manim 0.22.
+
+**A sequence diagram:** one vertical line per actor, one arrow per message, the label above the arrow.
+
+```python
+from manim import Arrow, Line, Text, VGroup
+
+XS = {"client": -4.6, "service": 0.0, "backend": 4.6}
+
+def lifelines(top=1.85, bottom=-2.75):
+    return VGroup(*[Line([x, top, 0], [x, bottom, 0], stroke_width=2) for x in XS.values()])
+
+def message(label, y, source, target, color="#ffffff"):
+    right = XS[target] > XS[source]
+    start = [XS[source] + (0.05 if right else -0.05), y, 0]
+    end = [XS[target] + (-0.05 if right else 0.05), y, 0]
+    arrow = Arrow(start, end, buff=0, stroke_width=3, color=color, tip_length=0.16, max_tip_length_to_length_ratio=1.0)
+    text = Text(label, font_size=16, color=color).move_to([(XS[source] + XS[target]) / 2, y + 0.2, 0])
+    return VGroup(arrow, text)
+
+# cue(self, "asks the service"); self.play(FadeIn(message("POST /replay", 1.2, "service", "backend")))
+```
+
+Space the messages 0.45 to 0.55 units apart from the top. A repeated poll is two or three arrows, the last one with the answer.
+
+**A check list with a bounce:** the item travels down a list of checks; each check turns green as it passes; a failing check turns red and the item returns to where it started with the reason beside it. It shows both the happy path and a refusal on the same drawing.
+
+```python
+def checklist(names, x=-2.3, top=1.5, step=0.6):
+    ys = [top - i * step for i in range(len(names))]
+    dots = [Circle(radius=0.09, stroke_color="#8892a0").set_fill("#101820", 1).move_to([x - 1.9, y, 0]) for y in ys]
+    rows = [Text(n, font_size=16).move_to([x - 1.6, y, 0], aligned_edge=LEFT) for n, y in zip(names, ys)]
+    return ys, dots, rows
+
+for dot, y in zip(dots[:2], ys):                                   # passes the first two
+    self.play(item.animate.move_to([-5.2, y, 0]), dot.animate.set_fill(GREEN, 1).set_stroke(GREEN), run_time=0.3)
+self.play(item.animate.move_to([-5.2, ys[2], 0]), dots[2].animate.set_fill(RED, 1).set_stroke(RED), run_time=0.3)
+self.play(item.animate.move_to(start).set_color(RED), FadeIn(Text("no_evidence", font_size=16, color=RED).move_to(reason_at)))
+```
+
+Reset the dots between two attempts (`dot.animate.set_fill(PANEL, 1).set_stroke(GREY)`), and dim the checks that do not apply to an item (`row.animate.set_opacity(0.3)`).
+
+**A packet along a path:** `self.play(MoveAlongPath(Dot(color=GREEN), Line(a, b)), run_time=0.8)` shows direction and time; use it where an arrow would only fade in.
+
+**Layers and architecture:** boxes in columns, an arrow from each to the next, drawn left to right as the narration names them. Group the boxes that share a contract and label the contract once.
+
+**Bars:** `Line(a, b, stroke_width=26)` from a common left edge, grown with `GrowFromEdge(bar, LEFT)`; one scale for the whole chart (units per second, per point); a range is a solid bar and a lighter extension; write the number at the end of each bar and the sample size in a note.
+
+**Columns by maturity:** a coloured header, a rule under it and a stack of chips per column (built and tested, still to battle test, designed but not built); chips drop in with `LaggedStart(FadeIn(c, shift=DOWN * 0.15) ...)` as the narration lists them. Highlight a chip by scaling it.
+
+**An orientation map** for a video of more than about five minutes: a copy of the system diagram scaled to a quarter and placed in a corner, every part dim, the current part lit (`part.animate.set_opacity(1)`); each scene lights its own part.
 
