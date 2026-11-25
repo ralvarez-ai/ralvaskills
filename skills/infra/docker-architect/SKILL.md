@@ -1,7 +1,7 @@
 ---
 name: docker-architect
-version: 1.5.0
-description: Docker standards - multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2, Docker Sandboxes (sbx) for isolated coding agents. Use when writing or reviewing Dockerfiles or Compose files, or running an agent in a sandbox.
+version: 1.6.0
+description: Docker standards - multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2, port publishing (loopback, dynamic, ephemeral range), Docker Sandboxes (sbx) for isolated coding agents. Use when writing or reviewing Dockerfiles or Compose files, or running an agent in a sandbox.
 ---
 
 # Docker Architecture & Container Standards
@@ -99,6 +99,28 @@ Docker Sandboxes (`sbx` CLI) run an AI coding agent in a **microVM** with its ow
 - **The agent has sudo inside the VM.** That is contained; the boundary is what you mount or forward. Don't forward `SSH_AUTH_SOCK` or share the skills store read-write unless needed.
 - **Its Docker is not yours.** Containers the agent builds run on the sandbox's engine with no path to the host daemon. Never mount the host `docker.sock` into a sandbox to "help" it.
 - **Sandboxes persist** after the agent exits (state kept). `sbx rm` reclaims disk and is irreversible; `sbx run --rm` for throwaway sessions.
+
+## 13. Publishing ports
+
+A host port is needed only by a client outside Docker. Everything else talks over a Compose network by service name.
+
+- **Publish nothing by default.** Container to container uses `<service>:<container-port>`; that path needs no `ports:`.
+- **Container ports need not be unique.** Each container has its own IP, so ten services can all listen on 8080. Only host ports collide.
+- **HTTP goes through a reverse proxy, not a host port.** One proxy per machine on 80/443 routes by hostname. See [traefik-architect](../traefik-architect/SKILL.md).
+- **Never publish a database, cache or broker in production.** Reach it with `docker exec <container> psql`, a throwaway client on the network (`docker run --rm --network <net> postgres:18 psql ...`), or an SSH tunnel for a GUI.
+- **Bind to loopback** when only the host needs a port: `127.0.0.1:5432:5432`. A bare `5432:5432` listens on every interface and bypasses host firewalls such as `ufw`.
+- **Let Docker choose for dev and tests:** `127.0.0.1::5432` picks a free host port; a range (`127.0.0.1:41000-41099:5432`) picks the first free one in it. Read it with `docker compose port <service> 5432`.
+- **Fix a port only for a known client:** a backend run on the host whose `.env` points at it, a saved GUI connection, a public non-HTTP service (SSH, game servers, a `localhost:5000` registry).
+- **Keep fixed ports out of the ephemeral range** (`sysctl net.ipv4.ip_local_port_range`, default 32768-60999), or reserve them with `net.ipv4.ip_local_reserved_ports` in `/etc/sysctl.d/`. Otherwise an outgoing connection can hold the port while the stack is down, and `up` fails.
+- **Record fixed ports in one per-machine list.** Dynamic, routed and internal ports are not recorded.
+
+| Client | Host port |
+|---|---|
+| Another container | none, service name |
+| Browser, HTTP client | none, proxy hostname |
+| Host tool, ad hoc | dynamic (`127.0.0.1::<port>`) or none (`docker exec`) |
+| Host-run dev backend, saved GUI | fixed, loopback, reserved range |
+| External non-HTTP client | fixed, listed |
 
 ## New project checklist
 

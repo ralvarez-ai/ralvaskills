@@ -43,6 +43,7 @@ Use this checklist when scaffolding a new project with Docker and Compose. Answe
 - [ ] **HEALTHCHECK on every long-running service**?
   - [ ] HTTP: `curl -f http://localhost:3000/healthz`
   - [ ] Database: `pg_isready`, `mysqladmin ping`, `redis-cli ping`
+- [ ] **Ports published only for a client outside Docker?** No database, cache or broker in prod; HTTP through the proxy; dev ports on `127.0.0.1`, dynamic or in a reserved range
 
 ## Security
 
