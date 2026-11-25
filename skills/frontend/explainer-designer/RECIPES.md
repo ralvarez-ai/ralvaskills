@@ -25,7 +25,7 @@ One JSON file per video. The scene code reads facts from it; narration stays in 
 ```
 
 - A lint step can fail the build when a scene's chip is missing, when a chip is `SOURCE` or `REAL RUN` and the scene lists no source, or when a source key does not exist.
-- The last scene is generated from `unchecked`, so the list cannot be forgotten.
+- `unchecked` holds what was not checked. A scene that states it is generated from the list only when the owner's rule allows a closing scene; otherwise the list stays in the file and each caveat sits beside its claim.
 
 ## 2. The contact sheet
 
@@ -34,9 +34,10 @@ Needs `ffmpeg`. `sections.json` is a list of `{id, start, end, seconds}` (the re
 ```python
 import json, subprocess, os, sys
 video, sections, out = sys.argv[1:4]          # video.mp4 sections.json outdir
+AT = 0.97                                     # 0.85 catches a late fade half drawn
 os.makedirs(out, exist_ok=True)
 for i, s in enumerate(json.load(open(sections))):
-    t = s["start"] + 0.85 * s["seconds"]
+    t = s["start"] + AT * s["seconds"]            # AT = 0.97: the finished drawing
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{t:.2f}", "-i", video,
                     "-frames:v", "1", f"{out}/{i:02d}-{s['id']}.png"], check=True)
 ```
@@ -82,3 +83,36 @@ For a video whose scenes show the results of a batch of runs (a benchmark, a sea
 5. **Put a caveat where it changes the reading.** A comparison scene carries its own caveats (cost stop rules, what the spend leaves out). If the repository's rule is no closing caveat scene, keep the rest in the content file's `unchecked` list.
 6. **Name the version of the thing measured.** A run is a release only when its tag says so; otherwise the footer says "development" and the chip stays `REAL RUN`.
 7. **Draft, then final.** Render a low-quality draft, read the contact sheet, then render once at full size and add the voice. Report what was not verified: audio not listened to, a source not re-read, a lint script not run.
+
+## 6. Facts from the source, with a drift check
+
+A list on screen (the kinds of something, the tools of a service, the stores it supports) is read from a facts file, and a script
+regenerates that file from the source, so the video never types it.
+
+```python
+def read(repo):                      # the source of truth: a schema, a folder, a registry
+    tools = sorted(p.name.split(".")[0] for p in (repo / "contracts/tools").glob("*.json"))
+    if sorted(ORDER) != tools:       # the ORDER shown is the video's choice; a new name stops the script
+        raise SystemExit(f"the tools are {tools}: place the change in ORDER and in the narration")
+    return {"tools": " · ".join(ORDER)}
+
+# --check exits 1 when the committed file differs from read(repo): run it before every render
+```
+
+- The set comes from the source; the order and the grouping are the video's. A new or removed name stops the script and asks.
+- Warn when the source's own documentation lacks a name the code has: a video can catch a stale README.
+
+## 7. The shape of a scene
+
+Pick the drawing from what the narration says, before any animation code.
+
+| The narration says | Draw |
+|---|---|
+| a list of facts or settings | a table or cards |
+| A, then B, then C; a request and its answer; who calls whom | the thing that moves along the path (lifelines and arrows) |
+| a check that can fail | a list of checks the item passes, and one that bounces back with its reason |
+| how parts sit together | layers or boxes with arrows between them |
+| how much, how long | bars on one scale, with the range when it is one |
+| what exists and what does not | columns by maturity |
+
+A scene made only of text and a table needs a reason. Draw the movement in a flow; then the table, if any, sits beside it as the summary.
