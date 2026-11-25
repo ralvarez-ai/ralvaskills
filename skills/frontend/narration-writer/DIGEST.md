@@ -9,7 +9,8 @@ Writes explainer-video narration and on-screen text in a controlled, STE-style E
 - One word per meaning: glossary first, same term in every scene, a spoken form (`say`) for each acronym and mixed name.
 - Plan at 2.5 words per second: `floor((seconds - lead-in - tail) * rate)`. Then measure the real voice on the slowest scene (not the mean, spoken words) and set that rate in the script; it times scenes and cues alike.
 - The screen carries names, numbers and code; the voice carries the reason. No symbols, paths or identifiers in speech.
-- Say what is not real: where the picture is an illustration, the narration says so.
+- Say what is not real: where the picture is an illustration, the narration says so. Say what does not exist yet: name a stand-in or an unbuilt part in words, as well as on screen.
+- Choose each cue phrase while writing the sentence: unique in the scene, in the order of the pictures, re-checked after every edit. Measure the rate again when the voice changes.
 - Run `scripts/narration_lint.py` (add `--audio-dir` for the length gate) before declaring a script done. Errors block; warnings are heuristics.
 - Interview first: length, scene table, audience, language, who supplies the voice, what is real, sources.
 

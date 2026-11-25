@@ -1,6 +1,6 @@
 ---
 name: narration-writer
-version: 2.0.1
+version: 2.1.0
 description: Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) - short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.
 ---
 
@@ -36,19 +36,21 @@ Writes the words of an explainer video: voiceover and on-screen text, in a contr
 
 ## 4. Narrating for video
 
-- **Plan at 2.5 words per second.** The words allowed in a scene are `floor((scene seconds - lead-in - tail) * rate)`, with 0.5 s of silence at each end. 2.5 is a first guess: replace it with the measured rate of the real voice.
+- **Plan at 2.5 words per second.** The words allowed in a scene are `floor((scene seconds - lead-in - tail) * rate)`, with 0.5 s of silence at each end. 2.5 is a first guess: replace it with the measured rate of the real voice, and measure again when the voice changes: a library voice and a hosted voice differ in rate and in the pause after a sentence.
 - **Measure on the slowest scene, not the mean.** Real voices vary a lot between scenes (one video ran from 1.75 to 3.1 words per second, and a plan at 2.5 failed 7 of 15 scenes). Count spoken words, after the `say` forms: an acronym said as letters is one word per letter. The lint script prints the mean and the slowest rate when it is given `--audio-dir`.
 - **One rate drives both the scene length and the cues.** If scenes are timed from words and drawings are cued to phrases, a wrong rate makes the scene too short and every cue early. Set the measured rate in the script file; do not patch single scenes.
 - **Tie each sentence to a cue.** Note the second at which its picture appears, so the audio lines up with the animation (`<Sequence from>` in Remotion, `wait` and `run_time` in Manim).
+- **Choose the cue phrase while you write the sentence.** A drawing that is cued to a phrase needs one that is unique in the scene, shows what the picture shows (a noun or a verb the viewer sees) and comes in the order the pictures appear. After you edit the words, run the cue check again ([manim-architect](../../frameworks/manim-architect/SKILL.md)): a changed sentence can leave a cue pointing at nothing.
 - **Leave silence.** Give a new diagram one or two seconds before speaking, and do not talk over dense text.
 - **First sentence says what the scene shows.** The last may bridge to the next scene, only when it states a reason.
 - **Say what is not real.** Where the picture is an illustration and not a recording, the narration says so in words, as well as the on-screen badge.
+- **Say what does not exist yet.** When a diagram shows a part that is only a stand-in, or is not built, the sentence names it ("a test double answers; the real one is not built") and the picture carries the tag. Narration that makes a stand-in sound like the real part is a claim the sources do not support.
 - **One voice and one language per video.** Translate from the English source and keep the glossary.
 
 ## 5. Spoken form
 
 - **Keep a pronunciation map.** Each term gets a `say` form: acronyms as letters ("P L C"), mixed names spelled out, "C plus plus". Check the map with the real engine.
-- **No symbols in speech.** Arrows, comparison signs, paths and identifiers are said as what they mean. Keep the exact identifier in the caption, and the spoken form in the narration.
+- **No symbols in speech.** Arrows, comparison signs, paths and identifiers are said as what they mean. Keep the exact identifier in the caption, and the spoken form in the narration. A short id such as `w1` is said "worker one"; a name in camel case is spelled at its capitals ("Report F B"); a status code such as `401` is said as words.
 - **Plain punctuation.** Full stops and commas. Avoid parentheses, dashes and semicolons: engines pause on them unpredictably.
 
 ## 6. Pipeline
@@ -84,7 +86,8 @@ Provider choice, cost, privacy and voice rights belong to the owner. Keys live i
 - [ ] The script's `rate` is the measured slowest rate, not the planning guess.
 - [ ] No symbol, path or identifier is spoken.
 - [ ] Every claim traces to a source shown or cited with the video.
-- [ ] Anything not recorded is said to be an illustration.
+- [ ] Anything not recorded is said to be an illustration, and a stand-in or an unbuilt part is named as such.
+- [ ] Each cue phrase is unique in its scene, in the order of the pictures, and still in the text after the last edit.
 - [ ] No key, token or private detail is in any file.
 
 For prose outside the spoken script (notes, READMEs, reports), review the wording with [unslop](../../meta/unslop/SKILL.md); the spoken-form and sentence limits above take precedence for narration.

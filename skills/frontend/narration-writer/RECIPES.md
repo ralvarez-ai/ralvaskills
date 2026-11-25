@@ -37,6 +37,9 @@ One entry per term. The lint script reads `term` and `avoid`; the audio generato
 {"term": "scan cycle", "avoid": ["scan loop", "PLC cycle"], "say": "scan cycle"}
 {"term": "PLC", "avoid": ["controller"], "say": "P L C"}
 {"term": "STruC++", "avoid": [], "say": "S T r u C plus plus"}
+{"term": "w1", "avoid": [], "say": "worker one"}
+{"term": "ReportFB", "avoid": [], "say": "Report F B"}
+{"term": "401", "avoid": [], "say": "four oh one"}
 ```
 
 - One meaning per term. If a word needs two meanings, it needs two terms.
@@ -123,6 +126,14 @@ Rule shown: one idea per sentence, active voice with a named actor, no contracti
 Condition first:
 "The fan must start if the temperature goes over 80." becomes "If the temperature is over 80, the fan must start."
 
+Passive warning (the lint prints one per sentence; rewrite it with an actor, do not silence it):
+"Nothing is written to the file." becomes "The file stays unchanged."
+"The request is refused." becomes "The service refuses the request."
+"The part is claimed by a worker." becomes "A worker claims the part."
+
+Say what does not exist yet:
+"The checker confirms the result." becomes "A test double confirms the result. The real checker is not built yet."
+
 Say what was not run:
 "The result should hold for other programs." becomes "This was run on one program. It was not run on others."
 
@@ -134,6 +145,6 @@ Ask in order, and wait for each answer:
 2. Audience and their language level.
 3. Language of the narration, and whether a translation is planned.
 4. Where the audio is made: a hosted engine or a local one. This is the owner's decision (cost, privacy, rights to the voice).
-5. What is real and what is an illustration. This sets the lines that say so.
+5. What is real and what is an illustration, and which parts exist, which are only a stand-in and which are not built. This sets the lines that say so.
 6. The sources behind each scene, so no sentence says more than they do.
 7. Terms that need a spoken form.
