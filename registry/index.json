@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-24T20:59:28Z",
+  "generated_at": "2026-11-25T22:20:42Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -607,8 +607,8 @@
     },
     "explainer-designer": {
       "name": "explainer-designer",
-      "description": "Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) - the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).",
-      "latest": "2.1.1",
+      "description": "Engine-independent design of teaching videos (explainers for a mechanism, formula, protocol or data structure) - the drawing teaches and the formula sits beside it, one idea per scene, drawings cued to narration phrases, every scene marked as source, textbook, derived, real run or illustration, facts held in a content file with sources, words defined before they are used, a scene shaped to its idea (a flow is drawn moving, a list is a table), maturity tags for parts that are built, untested or only designed, v1/v2 and A/B versions that never overwrite a render, and a contact-sheet look check before handoff. Use when planning, storyboarding or reviewing an explainer video, whatever draws it (Remotion, Manim or another tool).",
+      "latest": "2.2.0",
       "versions": {
         "2.0.0": {
           "version": "2.0.0",
@@ -624,6 +624,11 @@
           "version": "2.1.1",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-designer@v2.1.1/explainer-designer-v2.1.1.tar.gz"
+        },
+        "2.2.0": {
+          "version": "2.2.0",
+          "published_at": "2026-11-25T22:20:42Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/explainer-designer@v2.2.0/explainer-designer-v2.2.0.tar.gz"
         }
       }
     },
@@ -1165,8 +1170,8 @@
     },
     "manim-architect": {
       "name": "manim-architect",
-      "description": "Manim Community 0.22 explainer scenes for formal objects that change shape - graphs explored, formulas built piece by piece, tables filled in, traces unrolled - with LaTeX formulas fitted to the frame, a base class that times scenes from the narration and writes a sections file, a cue helper, a teaching-helper package, audio muxed per scene, 1080p review renders and the traps that waste hours (morphing text, a failing formula failing the whole render, unredirected output). Use when writing, structuring, rendering or reviewing Manim scenes, alone or as a companion to a Remotion video.",
-      "latest": "1.2.1",
+      "description": "Manim Community 0.22 explainer scenes for formal objects that change shape - graphs explored, formulas built piece by piece, tables filled in, traces unrolled - with LaTeX formulas fitted to the frame, a base class that times scenes from the narration and writes a sections file, a cue helper (checked for order in hand-drawn scenes too), flow scenes (sequence diagrams, check lists with a bounce, layers, bars, maturity columns), a legibility budget, a teaching-helper package, audio muxed per scene, 1080p review renders and the traps that waste hours (morphing text, a highlight that fills a shape, a failing formula failing the whole render, unredirected output). Use when writing, structuring, rendering or reviewing Manim scenes, alone or as a companion to a Remotion video.",
+      "latest": "1.3.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1187,6 +1192,11 @@
           "version": "1.2.1",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/manim-architect@v1.2.1/manim-architect-v1.2.1.tar.gz"
+        },
+        "1.3.0": {
+          "version": "1.3.0",
+          "published_at": "2026-11-25T22:20:42Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/manim-architect@v1.3.0/manim-architect-v1.3.0.tar.gz"
         }
       }
     },
@@ -1335,7 +1345,7 @@
     "narration-writer": {
       "name": "narration-writer",
       "description": "Narration and on-screen text for explainer videos in a controlled, STE-style English (about 80% of ASD-STE100) - short active sentences, one word per meaning, a glossary, spoken-form rules, per-scene word budgets, audio-length gates and a stdlib lint script. Use when writing voiceover or captions for Remotion or Manim videos, simplifying dense technical prose, or fitting narration to scene timing.",
-      "latest": "2.0.1",
+      "latest": "2.1.0",
       "versions": {
         "2.0.0": {
           "version": "2.0.0",
@@ -1346,6 +1356,11 @@
           "version": "2.0.1",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-writer@v2.0.1/narration-writer-v2.0.1.tar.gz"
+        },
+        "2.1.0": {
+          "version": "2.1.0",
+          "published_at": "2026-11-25T22:20:42Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/narration-writer@v2.1.0/narration-writer-v2.1.0.tar.gz"
         }
       }
     },
@@ -1577,8 +1592,8 @@
     },
     "remotion-architect": {
       "name": "remotion-architect",
-      "description": "Remotion 4.0.542 programmatic video - compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.",
-      "latest": "1.2.1",
+      "description": "Remotion 4.0.542 programmatic video - compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, flow scenes drawn with SVG, a legibility floor, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.",
+      "latest": "1.3.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1599,6 +1614,11 @@
           "version": "1.2.1",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/remotion-architect@v1.2.1/remotion-architect-v1.2.1.tar.gz"
+        },
+        "1.3.0": {
+          "version": "1.3.0",
+          "published_at": "2026-11-25T22:20:42Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/remotion-architect@v1.3.0/remotion-architect-v1.3.0.tar.gz"
         }
       }
     },
