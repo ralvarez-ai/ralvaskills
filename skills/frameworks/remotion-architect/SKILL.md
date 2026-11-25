@@ -1,7 +1,7 @@
 ---
 name: remotion-architect
-version: 1.2.1
-description: Remotion 4.0.542 programmatic video - compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.
+version: 1.3.0
+description: Remotion 4.0.542 programmatic video - compositions, frame-deterministic animation (interpolate, spring), Sequence/Series/TransitionSeries timing, assets and fonts, Zod props and calculateMetadata, Studio, CLI/SSR/Lambda rendering, licensing. Includes a guide for explainer videos (scene kinds, A/B variants, flow scenes drawn with SVG, a legibility floor, embedding a Manim clip). Use when building, structuring, rendering, or reviewing a Remotion video project.
 ---
 
 # Remotion Architect
@@ -98,7 +98,7 @@ Remotion is source-available, **not** plain MIT: individuals and eligible small 
 
 ## 11. Explainer and teaching videos
 
-When the video teaches, plan it with [explainer-designer](../../frontend/explainer-designer/SKILL.md) (scene rule, provenance chips, content file, cues, versions, look check), write its words with [narration-writer](../../frontend/narration-writer/SKILL.md), and read [EXPLAINERS.md](EXPLAINERS.md) for the Remotion side: scenes as a union of kinds with optional `a`/`b` variants, a `style` prop whose default is the old look, charts wired through the schema, embedding a Manim clip ([manim-architect](../manim-architect/SKILL.md)), and render pitfalls.
+When the video teaches, plan it with [explainer-designer](../../frontend/explainer-designer/SKILL.md) (scene rule, provenance chips, content file, cues, versions, look check), write its words with [narration-writer](../../frontend/narration-writer/SKILL.md), and read [EXPLAINERS.md](EXPLAINERS.md) for the Remotion side: scenes as a union of kinds with optional `a`/`b` variants, a `style` prop whose default is the old look, charts wired through the schema, flow scenes (an arrow that draws itself, a packet that travels, a check list with a bounce), a legibility floor, embedding a Manim clip ([manim-architect](../manim-architect/SKILL.md)), and render pitfalls. How a scene looks and moves is [VISUAL.md](../../frontend/explainer-designer/VISUAL.md).
 
 ## 12. Anti-patterns and review checklist
 
@@ -112,6 +112,7 @@ Rules already stated above, checked on review:
 - Mixed or `^`-ranged `@remotion/*` versions (§8).
 - Re-bundling per render in batch jobs; unvalidated `inputProps` on a server (§7).
 - Hardcoded dimensions in scene math (§5).
+- A flow drawn as a table, a label under the legibility floor, or a highlight that fills a shape (EXPLAINERS.md, section 6).
 - A teaching scene that opens with the formula, scene times from a guessed speech rate, a render that overwrote an earlier version, a new look that changes the default render (§11).
 
-Before handing off: `remotion compositions` lists every id; a still of a first, middle and last frame of each composition renders with no console errors; duration constants add up to `durationInFrames`; the license question (§10) was raised.
+Before handing off: `remotion compositions` lists every id; a still of a first, middle and last frame of each composition renders with no console errors, and for an explainer a still at about 97% of each scene shows its finished drawing; duration constants add up to `durationInFrames`; the license question (§10) was raised.

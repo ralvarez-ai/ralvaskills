@@ -32,3 +32,44 @@ Render the clip silent, copy it to `public/clips/`, play it with `<Video>` from 
 - Several tasks may write the same default output file (for example `out/video.mp4`). Render with an explicit output path per version: `remotion render src/index.ts <id> out/videos/<name>.mp4 --props=...`.
 - Never kill a render with `pkill -f <pattern>` when the pattern also appears in your own command line; kill by PID or use a bracketed pattern (`[r]emotion`).
 - Parallel renders of one project need a worktree and an install each; take stills one at a time per worktree.
+
+## 6. Flow scenes
+
+A request, a check that can fail or a message between two parties is drawn as something that travels ([VISUAL.md](../../frontend/explainer-designer/VISUAL.md)). In Remotion that is SVG driven by `interpolate`, with no extra package. Make each of these a scene kind of its own (`sequence`, `checklist`, `columns`) with its schema, not a special case of `cards`. Typechecked against Remotion 4.
+
+```tsx
+import {interpolate, useCurrentFrame} from 'remotion';
+
+type Point = {x: number; y: number};
+const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+
+// An arrow that draws itself from `start` over `length` frames, with its label above it.
+export const Message = ({from, to, start, length = 15, color, label}: {from: Point; to: Point; start: number; length?: number; color: string; label: string}) => {
+  const frame = useCurrentFrame();
+  const progress = interpolate(frame, [start, start + length], [0, 1], clamp);
+  const end = {x: from.x + (to.x - from.x) * progress, y: from.y + (to.y - from.y) * progress};
+  return (
+    <g opacity={progress > 0 ? 1 : 0}>
+      <line x1={from.x} y1={from.y} x2={end.x} y2={end.y} stroke={color} strokeWidth={4} />
+      <text x={(from.x + to.x) / 2} y={from.y - 12} fill={color} fontSize={26} textAnchor="middle">{label}</text>
+    </g>
+  );
+};
+
+// A packet that travels and stays at the end. Two Packets in a row make a pass (down a list) or a bounce (back to the start).
+export const Packet = ({from, to, start, length = 20, color}: {from: Point; to: Point; start: number; length?: number; color: string}) => {
+  const frame = useCurrentFrame();
+  const x = interpolate(frame, [start, start + length], [from.x, to.x], clamp);
+  const y = interpolate(frame, [start, start + length], [from.y, to.y], clamp);
+  return <circle cx={x} cy={y} r={12} fill={color} />;
+};
+```
+
+- **A sequence diagram:** one vertical line per actor, one `Message` per sentence with `start` at the cue's frame, 0.45 to 0.55 of the height of a row between messages.
+- **A check list with a bounce:** a dot per check turns from the neutral colour to the pass colour as the packet reaches its row; the failing check turns the fail colour and a second `Packet` takes it back to the start, with the reason beside it. Reset the dots between two attempts.
+- **Columns by maturity:** a header, a rule and a stack of chips per column; delay each chip by subtracting frames (`frame - cueFrame - index * 8`) as the narration lists it.
+- **Legibility floor:** pick a minimum font size for the final frame (for example 24 px at 1920x1080, a smaller one only for a short status tag) and check the theme, not each scene: a label under it cannot be read on a phone.
+- **Maturity badge:** a status badge with a tone per state (`built`, `open`, `proposed`, `illustrative`) carries what the chip says about provenance and what a part's maturity is; one badge per part, not per video.
+- **Review:** `remotion still <id> --frame=<n>` at about 97% of each scene's `durationInFrames`, tiled; open the last second of a scene that looks wrong before changing it.
+- **Cues:** check them at load, as in section 2, and also that the cues of a scene follow the order of its narration: a cue earlier than the one before it is drawn late.
+
