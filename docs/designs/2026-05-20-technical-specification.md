@@ -171,7 +171,8 @@ ralvaskills/                          # current state — (📋) marks planned a
 │   │   ├── ci-cd-architect/          # ✅ exists (v1.0.0 — principles-first CI/CD; GitHub Actions recipes; suggestion-mode framing; pairs with docker-architect)
 │   │   ├── grafana-architect/        # ✅ exists (v1.0.0 — dashboards-as-code via Grizzly, unified alerting, per-service folders)
 │   │   ├── secrets-architect/        # ✅ exists (v1.0.0 — reference-based secret handling for one external store: consumer decision matrix, layout/permission + uid rules, migration workflow, live verification, pitfalls)
-│   │   └── observability-architect/  # ✅ exists (v1.0.0 — Prometheus metrics + OTel logs/traces, RED+USE, head sampling at 10%)
+│   │   ├── observability-architect/  # ✅ exists (v1.0.0 — Prometheus metrics + OTel logs/traces, RED+USE, head sampling at 10%)
+│   │   └── traefik-architect/        # ✅ exists (v1.0.0 — Traefik v3 host-based routing from Docker labels, BASE_DOMAIN per machine, name schemes, DNS-challenge HTTPS, fixed-port convention)
 │   ├── robotics/
 │   │   └── ros2-architect/           # ✅ exists (v1.0.0 — Jazzy/Kilted/Lyrical, Pixi + RoboStack env, C++/Python equal, lifecycle nodes, explicit QoS)
 │   ├── quality/
@@ -1255,6 +1256,7 @@ Status legend: ✅ exists · 🔨 in progress · 📋 planned
 | `observability-architect` | ✅ | v1.0.0 — application-side signal production. Prometheus for metrics (naming convention, cardinality cap), OTLP for logs+traces, `log/slog` (Go) + `structlog` (Python), trace_id correlation across all three pillars, head sampling at 10% + 100% on errors, PII/secret redaction at SDK, RED + USE golden signals, SLOs per critical user journey |
 | `grafana-architect` | ✅ | v1.0.0 — dashboard + alert consumption layer. Dashboards-as-code via Grizzly (`grr`), one-folder-per-service ownership, one-question-per-panel design, unified alerting with multi-window/multi-burn-rate SLOs, mandatory `runbook_url` annotations, drift detection on UI edits. Pairs with `observability-architect` |
 | `secrets-architect` | ✅ | v1.0.0 — reference-based secret handling for a single external store (`$SECRETS_DIR`, default `~/Secrets`). Consumer decision matrix (Compose `secrets:` / `<VAR>_FILE` / systemd `LoadCredential` / shell / writable bind mount / CI), by-kind-then-owner layout with `700`/`600` + direct-open `644` exceptions, `_FILE` + specific naming, per-secret migration workflow, live verification checklist (config-render, recreate, prove-not-fallback, hash compare, data round-trip), ten pitfalls (image lags repo, non-swarm bind-mount semantics, systemd does not expand vars, moving files does not affect running containers). References `docker-architect`, `ci-cd-architect`, `security-reviewer`, `repo-tooling-architect`. **Exempt from `STACK.md`** (process methodology, not library-version-sensitive); standalone — not bundled |
+| `traefik-architect` | ✅ | v1.0.0 — Traefik v3 standards. One proxy per machine on a shared network, host-based routing from Docker labels with no published ports, `BASE_DOMAIN` per machine, name schemes (`*.localhost`, sslip.io, per-machine wildcard), wildcard HTTPS via DNS challenge, private-interface binding and socket proxy, and the fixed-port convention for TCP/UDP services (flat list, ephemeral range, dormant vs free). References `docker-architect`, `secrets-architect`, `observability-architect`, `repo-tooling-architect`. Recipes in `RECIPES.md`; standalone, not bundled |
 
 #### Robotics
 | Skill | Status | Notes |
