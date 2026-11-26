@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-11-25T22:20:42Z",
+  "generated_at": "2026-11-26T16:32:49Z",
   "aliases": {
     "demo-presentation-architect": "demo-deck-designer",
     "demo-script-architect": "demo-script-designer",
@@ -488,8 +488,8 @@
     },
     "docker-architect": {
       "name": "docker-architect",
-      "description": "Docker standards - multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2, Docker Sandboxes (sbx) for isolated coding agents. Use when writing or reviewing Dockerfiles or Compose files, or running an agent in a sandbox.",
-      "latest": "1.5.0",
+      "description": "Docker standards - multi-stage builds, per-language base defaults (distroless Go, slim Python/Node), BuildKit cache mounts, non-root, multi-arch amd64+arm64, digest-pinned bases, Trivy scanning, Compose v2, port publishing (loopback, dynamic, ephemeral range), Docker Sandboxes (sbx) for isolated coding agents. Use when writing or reviewing Dockerfiles or Compose files, or running an agent in a sandbox.",
+      "latest": "1.6.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -520,6 +520,11 @@
           "version": "1.5.0",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/docker-architect@v1.5.0/docker-architect-v1.5.0.tar.gz"
+        },
+        "1.6.0": {
+          "version": "1.6.0",
+          "published_at": "2026-11-26T16:32:49Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/docker-architect@v1.6.0/docker-architect-v1.6.0.tar.gz"
         }
       }
     },
@@ -1203,7 +1208,7 @@
     "mcp-architect": {
       "name": "mcp-architect",
       "description": "MCP (Model Context Protocol) 2026-07-28 server standards - tools, resources, prompts, stateless core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name routing, MRTR for elicitation/sampling, cacheable lists (ttlMs/cacheScope), OAuth 2.1 (RFC 8707 resources, RFC 9207 issuer), annotations, structured output, JSON-RPC errors, injection/SSRF defenses, Inspector testing. Tool-surface economy: the token budget of the tool list, merging reads, endpoint splits, resources for read-mostly data. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing or scaffolding an MCP server, or when its tool list has grown too large. Go schema-driven contracts - JSON Schemas as the source of truth, types via atombender/go-jsonschema, enums in $defs, and the traps (SDK OutputSchema with no loader; generator ignores $ref). MCP Apps panels only add to a complete text result.",
-      "latest": "2.5.1",
+      "latest": "2.6.0",
       "versions": {
         "1.0.0": {
           "version": "1.0.0",
@@ -1259,6 +1264,11 @@
           "version": "2.5.1",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/mcp-architect@v2.5.1/mcp-architect-v2.5.1.tar.gz"
+        },
+        "2.6.0": {
+          "version": "2.6.0",
+          "published_at": "2026-11-26T16:32:49Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/mcp-architect@v2.6.0/mcp-architect-v2.6.0.tar.gz"
         }
       }
     },
@@ -2060,6 +2070,18 @@
           "version": "1.1.3",
           "published_at": "2026-11-20T18:13:58Z",
           "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/token-economy@v1.1.3/token-economy-v1.1.3.tar.gz"
+        }
+      }
+    },
+    "traefik-architect": {
+      "name": "traefik-architect",
+      "description": "Traefik v3 standards - host-based routing from Docker labels, one proxy per machine on a shared network, BASE_DOMAIN per machine, *.localhost / sslip.io / wildcard DNS naming, DNS-challenge HTTPS, private-interface binding, socket proxy, and the fixed-port convention for the TCP/UDP services a proxy cannot cover. Use when publishing web services behind a proxy, fixing host port collisions, or setting up local, lab and homelab stacks.",
+      "latest": "1.1.0",
+      "versions": {
+        "1.1.0": {
+          "version": "1.1.0",
+          "published_at": "2026-11-26T16:32:49Z",
+          "archive_url": "https://github.com/ralvarez-ai/ralvaskills/releases/download/traefik-architect@v1.1.0/traefik-architect-v1.1.0.tar.gz"
         }
       }
     },
