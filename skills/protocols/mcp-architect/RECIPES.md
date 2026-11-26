@@ -905,6 +905,7 @@ Rules of thumb: **~1k tokens per tool** with real schemas (bytes / 3.6), **~50-8
 - Grouped registration: `Register(server, deps, groups...)`, so an endpoint is a list, not a fork.
 - Endpoint split: one server graph per domain, one binary, one auth chain, one shared caller-keyed state store.
 - Shared `$defs` for entity schemas copied across contexts.
+- Output schemas without prose, and a large repeated type listed as `object` with a server-side check ([14.9](#149-output-schema-trims-and-a-byte-budget-go)).
 - Per-surface instructions and prompts; each names only its own tools.
 - Tool descriptions: move repeated caution text into instructions, once.
 
@@ -989,3 +990,99 @@ Invariant test: connect a client, call `tools/list`, compare to `catalog[group]`
 - A new CRUD on a tiny ordered list → replace-all first.
 - A new "read one" → does the list with an `id` filter suffice?
 - A new second source for `diff`/`apply` → one argument first.
+
+### 14.9 Output-schema trims and a byte budget (Go)
+
+Measured on one server (7 tools): 179 KB with every referenced file inlined at each use, 57 KB after hoisting into `$defs` and stripping output prose, 25 KB after listing the one large shared type (a 7 KB entity in 6 output schemas) as `object`. Apply in that order and stop when the list is under budget.
+
+```go
+// bare drops the annotations of an output schema; every constraint stays.
+// Keys under properties/$defs/patternProperties are names, not keywords.
+func bare(node any) any {
+	switch v := node.(type) {
+	case map[string]any:
+		for _, k := range []string{"description", "title", "examples", "$comment"} {
+			delete(v, k)
+		}
+		for k, child := range v {
+			if m, ok := child.(map[string]any); ok && slices.Contains(named, k) {
+				for name, sub := range m {
+					m[name] = bare(sub)
+				}
+				continue
+			}
+			v[k] = bare(child)
+		}
+	case []any:
+		for i, child := range v {
+			v[i] = bare(child)
+		}
+	}
+	return node
+}
+
+var named = []string{"properties", "patternProperties", "$defs", "dependentSchemas"}
+
+// opaque lists the large shared types as plain objects, then drops every $defs
+// entry nothing references any more.
+func opaque(doc map[string]any, keys ...string) map[string]any {
+	defs, _ := doc["$defs"].(map[string]any)
+	for _, k := range keys {
+		if _, ok := defs[k]; ok {
+			defs[k] = map[string]any{"type": "object"}
+		}
+	}
+	pruneUnreferenced(doc, defs) // walk $ref from the root, delete the rest
+	return doc
+}
+
+// checked holds every successful answer to the full contract: the SDK only
+// sees the short schema. An answer that breaks it is logged and becomes an
+// isError result; what the call already wrote stays written.
+func checked[In, Out any](name string, full *jsonschema.Resolved, log *slog.Logger,
+	h mcp.ToolHandlerFor[In, Out]) mcp.ToolHandlerFor[In, Out] {
+	return func(ctx context.Context, req *mcp.CallToolRequest, in In) (*mcp.CallToolResult, Out, error) {
+		res, out, err := h(ctx, req, in)
+		if err != nil || (res != nil && res.IsError) {
+			return res, out, err
+		}
+		raw, _ := json.Marshal(out)
+		var v any
+		_ = json.Unmarshal(raw, &v)
+		if verr := full.Validate(v); verr != nil {
+			log.Error("answer breaks its output contract", "tool", name, "err", verr)
+			var zero Out
+			return &mcp.CallToolResult{IsError: true, Content: []mcp.Content{
+				&mcp.TextContent{Text: "internal error: the answer did not match its contract"}}}, zero, nil
+		}
+		return res, out, nil
+	}
+}
+```
+
+Resolve each tool's full contract once at startup (`jsonschema.Schema.Resolve`), not per request. Register with `OutputSchema: opaque(bare(doc), "entity")` and the handler wrapped in `checked`.
+
+Budget test:
+
+```go
+const toolListBudget = 30_000 // bytes; a raise is a decision, note why here
+
+func TestTheToolListStaysWithinItsBudget(t *testing.T) {
+	session := connect(t) // in-process client, RECIPES §9
+	listed, err := session.ListTools(t.Context(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := json.Marshal(listed.Tools)
+	if len(raw) > toolListBudget {
+		for _, tool := range listed.Tools {
+			in, _ := json.Marshal(tool.InputSchema)
+			out, _ := json.Marshal(tool.OutputSchema)
+			t.Logf("%s: input %d, output %d bytes", tool.Name, len(in), len(out))
+		}
+		t.Fatalf("tool list %d bytes, budget %d", len(raw), toolListBudget)
+	}
+}
+```
+
+Keep a test that validates every answer the client receives against the full contract too, so a regression fails in CI before it is logged in production.

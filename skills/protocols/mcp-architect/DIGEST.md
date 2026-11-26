@@ -6,6 +6,7 @@ Design and review MCP servers on spec 2026-07-28: tools, resources, prompts over
 - Primitive by who invokes: model -> tool; read-only data -> resource; user menu -> prompt.
 - Tools: one verb, narrow scope, full JSON Schema with descriptions; description leads with the action, <300 tokens.
 - Tool list is a budget: ~1k tokens per tool with real schemas; past ~30 tools or ~35k tokens on one surface, split it into endpoints.
+- Trim output schemas: no prose (the model reads the text result), referenced files once in `$defs`; a large repeated type may be `{"type": "object"}` only if the server checks answers against the full contract. A test caps the tool list in bytes.
 - Merge before adding: a read another read answers, a tiny config list (replace-all), an analytic (aggregate key), a parent sub-resource, a lifecycle pair, a second `diff`/`apply` source.
 - Resources carry no schema: use for small, read-mostly, unfiltered collections; content is paid on read, and keep the list tool until clients read resources.
 - Past ~20 tools, one catalog of tool groups with tests: group == catalog, groups disjoint, hints declared, instructions cite only owned tools.

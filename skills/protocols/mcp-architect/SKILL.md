@@ -1,6 +1,6 @@
 ---
 name: mcp-architect
-version: 2.5.1
+version: 2.6.0
 description: MCP (Model Context Protocol) 2026-07-28 server standards - tools, resources, prompts, stateless core (no initialize handshake, no Mcp-Session-Id), Mcp-Method/Mcp-Name routing, MRTR for elicitation/sampling, cacheable lists (ttlMs/cacheScope), OAuth 2.1 (RFC 8707 resources, RFC 9207 issuer), annotations, structured output, JSON-RPC errors, injection/SSRF defenses, Inspector testing. Tool-surface economy: the token budget of the tool list, merging reads, endpoint splits, resources for read-mostly data. Python (FastMCP) and Go (official SDK) recipes. Use when designing, reviewing or scaffolding an MCP server, or when its tool list has grown too large. Go schema-driven contracts - JSON Schemas as the source of truth, types via atombender/go-jsonschema, enums in $defs, and the traps (SDK OutputSchema with no loader; generator ignores $ref). MCP Apps panels only add to a complete text result.
 ---
 
@@ -96,6 +96,8 @@ Every tool definition - name, description, input schema, output schema, annotati
 
 - **Cost model.** A tool with real schemas costs roughly 1k tokens (3.5-4 KB of JSON); a resource listing costs 50-80 and its content is paid only when read. Eighty tools spend ~80k tokens before the agent's first action, and selection accuracy falls as near-identical `list_*`/`get_*` names accumulate.
 - **Budgets.** Past ~20 tools, add the catalog and invariants below. Past ~30 tools or ~35k tokens on one surface, split it into separate endpoints. If a handful of tools pass ~1k tokens each, the schemas are the problem, not the count: share `$defs`.
+- **Trim the output schemas.** The model reads a result's `content[]` text, not the `outputSchema`; only the client validates against it. Strip `description`, `title` and `examples` from output schemas (constraints stay), and hoist every referenced file once into the tool's `$defs` instead of inlining it per use. A large type repeated across many output schemas (an entity returned by half the tools) may be listed as `{"type": "object"}` if the server checks each answer against the full contract before sending it: the SDK then validates only the short schema, and a client that generates types from `outputSchema` loses that type's fields. Input schemas and tool descriptions keep their prose: they are what the model reads to call correctly.
+- **Budget the bytes in a test.** Connect a client, `tools/list`, marshal, fail past a byte cap set just above today's size; on failure log input and output bytes per tool. A raise is a decision, recorded next to the constant.
 - **Merge before you add.** A new tool is justified only if no existing tool answers it with an argument. The safe folds:
   - a read another read already answers → drop it and add an `id` filter to the list;
   - CRUD over a tiny ordered config list → one replace-all tool;
